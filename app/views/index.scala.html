@@ -2,7 +2,7 @@
  * This template takes a single argument, a String containing a
  * message to display.
  *@
-@(message: String)
+@(message: String, events:List[Event])
 
 <!DOCTYPE html>
 <html lang="ja" ng-app="contestApp">
@@ -15,25 +15,34 @@
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.js"></script>
 <script>
 var app = angular.module('contestApp', []);
-app.controller('EventListCtrl', function($scope) {
-    $scope.events = [
-        {'id': '333', 'name': '3x3x3'},
-        {'id': '444', 'name': '4x4x4'},
-        {'id': '555', 'name': '5x5x5'},
-        {'id': '222', 'name': '2x2x2'},
-        {'id': '333oh', 'name': '3x3x3 片手'}
-    ];
-});
+@if(events != null){
+    app.controller('EventListCtrl', function($scope) {
+        $scope.events = [
+            @for(event:Event <- events){
+                {'id': @event.id, 'tag': '@event.tag', 'name': '@event.name'},
+            }
+        ];
+    });
+}
 </script>
     </head>
     <body ng-controller="EventListCtrl">
         <h1>tribox Contest</h1>
         <p>@message</p>
 
+        @if(events != null){
+            <table>
+                <tr><th>tag</th><th>name</th></tr>
+                @for(event:Event <- events){
+                    <tr><td>@event.tag</td><td>@event.name</td></tr>
+                }
+            </table>
+        }
+
         <p>開催中のコンテスト: {{events.length}} events.</p>
         <ul>
             <li ng-repeat="event in events">
-                {{event.id}} {{event.name}}
+                {{event.id}} : {{event.tag}} : {{event.name}}
             </li>
         </ul>
 
