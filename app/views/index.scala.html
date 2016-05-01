@@ -4,17 +4,38 @@
  *@
 @(message: String)
 
-@*
- * Call the `main` template with two arguments. The first
- * argument is a `String` with the title of the page, the second
- * argument is an `Html` object containing the body of the page.
- *@
-@main("Welcome to Play") {
+<!DOCTYPE html>
+<html lang="ja" ng-app="contestApp">
+    <head>
+        <meta charset="UTF-8">
+        <title>tribox Contest</title>
+        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
+        <script src="@routes.Assets.versioned("javascripts/hello.js")" type="text/javascript"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.js"></script>
+<script>
+var app = angular.module('contestApp', []);
+app.controller('EventListCtrl', function($scope) {
+    $scope.events = [
+        {'id': '333', 'name': '3x3x3'},
+        {'id': '444', 'name': '4x4x4'},
+        {'id': '555', 'name': '5x5x5'},
+        {'id': '222', 'name': '2x2x2'},
+        {'id': '333oh', 'name': '3x3x3 片手'}
+    ];
+});
+</script>
+    </head>
+    <body ng-controller="EventListCtrl">
+        <h1>tribox Contest</h1>
+        <p>@message</p>
 
-    @*
-     * Get an `Html` object by calling the built-in Play welcome
-     * template and passing a `String` message.
-     *@
-    @play20.welcome(message, style = "Scala")
+        <p>開催中のコンテスト: {{events.length}} events.</p>
+        <ul>
+            <li ng-repeat="event in events">
+                {{event.id}} {{event.name}}
+            </li>
+        </ul>
 
-}
+    </body>
+</html>
