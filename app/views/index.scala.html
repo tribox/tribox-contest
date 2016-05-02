@@ -20,46 +20,12 @@ app.factory('Auth', ['$firebaseAuth', function($firebaseAuth) {
 }]);
 
 app.controller('AuthCtrl', ['$scope', 'Auth', function($scope, Auth) {
-    $scope.createUser = function() {
-        $scope.message = null;
-        $scope.error = null;
-
-        Auth.$createUser({
-            email: $scope.email,
-            password: $scope.password
-        }).then(function(userData) {
-            $scope.message = 'User created with uid: ' + userData.uid;
-        }).catch(function(error) {
-            $scope.error = error;
-        });
-    };
-
-    $scope.removeUser = function() {
-        $scope.message = null;
-        $scope.error = null;
-
-        Auth.$removeUser({
-            email: $scope.email,
-            password: $scope.password
-        }).then(function() {
-            $scope.message = 'User removed';
-        }).catch(function(error) {
-            $scope.error = error;
-        });
-    };
-
-    /*var ref = new Firebase('https://@{firebaseapp}.firebaseio.com');
-    var auth = $firebaseAuth(ref);
-    auth.authWithPassword({
-        email:    'kotaro@@tribox.jp',
-        password: 'easypassword'
-    }, function(error, authData) {
-        if (error) {
-            console.log('Login Failed!', error);
-        } else {
-            console.log('Authenticated successfully with payload:', authData);
-        }
-    });*/
+    var authData = Auth.$getAuth();
+    if (authData) {
+        $scope.message = 'Logged in as: ' + authData.uid;
+    } else {
+        $scope.message = 'Logged out';
+    }
 }]);
 
 app.controller('EventListCtrl', function($scope) {
@@ -79,15 +45,16 @@ app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $fi
     <body>
         <h1>tribox Contest</h1>
 
+        <div>
+            <ul>
+                <li><a href="/login">Login</a></li>
+                <li><a href="/logout">Logout</a></li>
+                <li><a href="/join">Join</a></li>
+            </ul>
+        </div>
+
         <div ng-controller="AuthCtrl">
-            Email: <input type="text" ng-model="email">
-            Password: <input type="text" ng-model="password">
-            <br>
-            <button ng-click="createUser()">Create User</button>
-            <br>
-            <button ng-click="removeUser()">Remove User</button>
             <p ng-if="message">Message: <strong>{{ message }}</strong></p>
-            <p ng-if="error">Error: <strong>{{ error }}</strong></p>
         </div>
 
         <div>

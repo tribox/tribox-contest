@@ -25,4 +25,19 @@ class HomeController @Inject() extends Controller {
     Ok(views.html.index(firebaseapp, events))
   }
 
+  def login = Action {
+    val firebaseapp = Play.application.configuration.getString("contest.firebaseapp").getOrElse("tribox-contest")
+    Ok(views.html.login(firebaseapp))
+  }
+
+  def logout = Action {
+    val firebaseapp = Play.application.configuration.getString("contest.firebaseapp").getOrElse("tribox-contest")
+    Ok(views.html.logout(firebaseapp))
+  }
+
+  def join = Action {
+    val firebaseapp = Play.application.configuration.getString("contest.firebaseapp").getOrElse("tribox-contest")
+    Ok(views.html.join(firebaseapp))
+  }
+
 }

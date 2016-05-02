@@ -1,0 +1,55 @@
+@(firebaseapp: String)
+
+<!DOCTYPE html>
+<html lang="ja" ng-app="contestApp">
+    <head>
+        <meta charset="UTF-8">
+        <title>Login -- tribox Contest</title>
+        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
+        <script src="@routes.Assets.versioned("javascripts/hello.js")" type="text/javascript"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
+        <script src="https://cdn.firebase.com/js/client/2.4.2/firebase.js"></script>
+        <script src="https://cdn.firebase.com/libs/angularfire/1.2.0/angularfire.min.js"></script>
+<script>
+var app = angular.module('contestApp', ['firebase']);
+
+app.factory('Auth', ['$firebaseAuth', function($firebaseAuth) {
+    var ref = new Firebase('https://@{firebaseapp}.firebaseio.com');
+    return $firebaseAuth(ref);
+}]);
+
+app.controller('AuthCtrl', ['$scope', 'Auth', function($scope, Auth) {
+    $scope.login = function() {
+        $scope.message = null;
+        $scope.error = null;
+
+        Auth.$authWithPassword({
+            email: $scope.email,
+            password: $scope.password
+        }).then(function(authData) {
+            $scope.message = 'Logged in as: ' + authData.uid;
+
+            location.href = '@routes.HomeController.index';
+        }).catch(function(error) {
+            $scope.error = error
+        });
+    };
+}]);
+</script>
+    </head>
+    <body>
+        <h1>Login -- tribox Contest</h1>
+
+        <div ng-controller="AuthCtrl">
+            Email: <input type="text" ng-model="email"><br>
+            Password: <input type="text" ng-model="password"><br>
+
+            <button ng-click="login()">Login</button><br>
+
+            <p ng-if="message">Message: <strong>{{ message }}</strong></p>
+            <p ng-if="error">Error: <strong style="color:#f00;">{{ error }}</strong></p>
+        </div>
+
+    </body>
+</html>

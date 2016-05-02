@@ -4,6 +4,12 @@
 
 # An example controller showing a sample home page
 GET     /                           controllers.HomeController.index
+
+# Login / Logout / Join
+GET     /login                      controllers.HomeController.login
+GET     /logout                     controllers.HomeController.logout
+GET     /join                       controllers.HomeController.join
+
 # An example controller showing how to use dependency injection
 GET     /count                      controllers.CountController.count
 # An example controller showing how to write asynchronous code
