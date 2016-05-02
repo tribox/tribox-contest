@@ -1,4 +1,4 @@
-@(message: String, events:List[Event])
+@(firebaseapp: String, events:List[Event])
 
 <!DOCTYPE html>
 <html lang="ja" ng-app="contestApp">
@@ -8,39 +8,71 @@
         <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
         <script src="@routes.Assets.versioned("javascripts/hello.js")" type="text/javascript"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
+        <script src="https://cdn.firebase.com/js/client/2.4.2/firebase.js"></script>
+        <script src="https://cdn.firebase.com/libs/angularfire/1.2.0/angularfire.min.js"></script>
 <script>
-var app = angular.module('contestApp', []);
-@if(events != null){
-    app.controller('EventListCtrl', function($scope) {
-        $scope.events = [
-            @for(event:Event <- events){
-                {'id': @event.id, 'tag': '@event.tag', 'name': '@event.name'},
-            }
-        ];
+var app = angular.module('contestApp', ['firebase']);
+
+app.controller('AuthCtrl', ['$scope', '$firebaseAuth', function($scope, $firebaseAuth) {
+    var ref = new Firebase('https://@{firebaseapp}.firebaseio.com');
+    var auth = $firebaseAuth(ref);
+    auth.authWithPassword({
+        email:    'kotaro@@tribox.jp',
+        password: 'easypassword'
+    }, function(error, authData) {
+        if (error) {
+            console.log('Login Failed!', error);
+        } else {
+            console.log('Authenticated successfully with payload:', authData);
+        }
     });
-}
+}]);
+
+app.controller('EventListCtrl', function($scope) {
+    $scope.events = [
+        @for(event:Event <- events){
+            {'id': @event.id, 'tag': '@event.tag', 'name': '@event.name'},
+        }
+    ];
+});
+
+app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $firebaseObject) {
+    var ref = new Firebase('https://@{firebaseapp}.firebaseio.com');
+    $scope.data = $firebaseObject(ref);
+}]);
 </script>
     </head>
-    <body ng-controller="EventListCtrl">
+    <body>
         <h1>tribox Contest</h1>
-        <p>@message</p>
 
-        @if(events != null){
-            <table>
-                <tr><th>tag</th><th>name</th></tr>
+        <div>
+            <p>開催中のコンテスト (MySQL):<br>@{events.length} events.</p>
+            <ul>
                 @for(event:Event <- events){
-                    <tr><td>@event.tag</td><td>@event.name</td></tr>
+                    <li><a href="#@event.tag">@event.name</a></li>
                 }
-            </table>
-        }
+            </ul>
+        </div>
 
-        <p>開催中のコンテスト: {{events.length}} events.</p>
-        <ul>
-            <li ng-repeat="event in events">
-                {{event.id}} : {{event.tag}} : {{event.name}}
-            </li>
-        </ul>
+        <div ng-controller="EventListCtrl">
+            <p>開催中のコンテスト (MySQL + AngularJS):<br>{{events.length}} events.</p>
+            <ul>
+                <li ng-repeat="event in events">
+                    <a href="#{{event.tag}}">{{event.name}}</a>
+                </li>
+            </ul>
+        </div>
+
+        <div ng-controller="ContestCtrl">
+            <!--<pre>{{data|json}}</pre>-->
+            <p>開催中のコンテスト (Firebase + AngularJS):<br>{{data.events.length}} events.</p>
+            <ul>
+                <li ng-repeat="event in data.events">
+                    <a href="#{{event.tag}}">{{event.name}}</a>
+                </li>
+            </ul>
+        </div>
 
     </body>
 </html>

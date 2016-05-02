@@ -4,6 +4,7 @@ import javax.inject._
 import models._
 import play.api._
 import play.api.mvc._
+import play.api.Play.current
 
 /**
  * This controller creates an `Action` to handle HTTP requests to the
@@ -19,8 +20,9 @@ class HomeController @Inject() extends Controller {
    * a path of `/`.
    */
   def index = Action {
+    val firebaseapp = Play.application.configuration.getString("contest.firebaseapp").getOrElse("tribox-contest")
     val events = Event.getAll
-    Ok(views.html.index("Your new application is ready.", events))
+    Ok(views.html.index(firebaseapp, events))
   }
 
 }
