@@ -9,3 +9,6 @@ target
 
 .sbtserver
 .sbtserver.lock
+
+/conf/dev.conf
+/conf/prod.conf
