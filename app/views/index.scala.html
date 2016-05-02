@@ -28,13 +28,13 @@ app.controller('AuthCtrl', ['$scope', 'Auth', function($scope, Auth) {
     }
 }]);
 
-app.controller('EventListCtrl', function($scope) {
+/*app.controller('EventListCtrl', function($scope) {
     $scope.events = [
         @for(event:Event <- events){
             {'id': @event.id, 'tag': '@event.tag', 'name': '@event.name'},
         }
     ];
-});
+});*/
 
 app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $firebaseObject) {
     var ref = new Firebase('https://@{firebaseapp}.firebaseio.com');
@@ -57,23 +57,23 @@ app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $fi
             <p ng-if="message">Message: <strong>{{ message }}</strong></p>
         </div>
 
-        <div>
+        <!--<div>
             <p>開催中のコンテスト (MySQL):<br>@{events.length} events.</p>
             <ul>
                 @for(event:Event <- events){
                     <li><a href="#@event.tag">@event.name</a></li>
                 }
             </ul>
-        </div>
+        </div>-->
 
-        <div ng-controller="EventListCtrl">
+        <!--<div ng-controller="EventListCtrl">
             <p>開催中のコンテスト (MySQL + AngularJS):<br>{{events.length}} events.</p>
             <ul>
                 <li ng-repeat="event in events">
                     <a href="#{{event.tag}}">{{event.name}}</a>
                 </li>
             </ul>
-        </div>
+        </div>-->
 
         <div ng-controller="ContestCtrl">
             <!--<pre>{{data|json}}</pre>-->
