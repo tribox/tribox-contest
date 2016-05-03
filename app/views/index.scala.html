@@ -20,11 +20,15 @@ app.factory('Auth', ['$firebaseAuth', function($firebaseAuth) {
 }]);
 
 app.controller('AuthCtrl', ['$scope', 'Auth', function($scope, Auth) {
+    $scope.loggingin = false;
+
     var authData = Auth.$getAuth();
     if (authData) {
         $scope.message = 'Logged in as: ' + authData.uid;
+        $scope.loggingin = true;
     } else {
         $scope.message = 'Logged out';
+        $scope.loggingin = false;
     }
 }]);
 
@@ -45,16 +49,15 @@ app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $fi
     <body>
         <h1>tribox Contest</h1>
 
-        <div>
-            <ul>
-                <li><a href="/login">Login</a></li>
-                <li><a href="/logout">Logout</a></li>
-                <li><a href="/join">Join</a></li>
-            </ul>
-        </div>
-
         <div ng-controller="AuthCtrl">
-            <p ng-if="message">Message: <strong>{{ message }}</strong></p>
+            <p ng-if="message">Auth status: <strong>{{ message }}</strong></p>
+
+            <ul>
+                <li ng-hide="loggingin"><a href="/join">Join</a></li>
+                <li ng-hide="loggingin"><a href="/login">Login</a></li>
+                <li ng-show="loggingin"><a href="/mypage">My page</a></li>
+                <li ng-show="loggingin"><a href="/logout">Logout</a></li>
+            </ul>
         </div>
 
         <!--<div>
