@@ -12,6 +12,17 @@
         <script src="https://cdn.firebase.com/js/client/2.4.2/firebase.js"></script>
         <script src="https://cdn.firebase.com/libs/angularfire/1.2.0/angularfire.min.js"></script>
 <script>
+// Random string for initial password
+var getRandomStr = function(l) {
+    var c = 'qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890';
+    var cl = c.length;
+    var r = '';
+    for (var i = 0; i < l; i++) {
+        r += c[Math.floor(Math.random() * cl)];
+    }
+    return r;
+};
+
 var app = angular.module('contestApp', ['firebase']);
 
 app.factory('Auth', ['$firebaseAuth', function($firebaseAuth) {
@@ -25,19 +36,17 @@ app.controller('AuthCtrl', ['$scope', 'Auth', function($scope, Auth) {
         $scope.error = null;
 
         var _email = $scope.email;
-        var _password = $scope.password;
+        var _password = 'tmp-' + getRandomStr(12);
         Auth.$createUser({
             email: _email,
             password: _password
         }).then(function(userData) {
             $scope.message = 'User created with uid: ' + userData.uid;
 
-            Auth.$authWithPassword({
-                email: _email,
-                password: _password
-            }).then(function(authData) {
-                $scope.message = 'Logged in as: ' + authData.uid;
-                location.href = '@routes.HomeController.index';
+            Auth.$resetPassword({
+                email: _email
+            }).then(function() {
+                $scope.message = 'Password reset email sent successfully!';
             }).catch(function(error) {
                 $scope.error = error;
             });
@@ -45,25 +54,18 @@ app.controller('AuthCtrl', ['$scope', 'Auth', function($scope, Auth) {
             $scope.error = error;
         });
     };
-
-    /*$scope.removeUser = function() {
-        $scope.message = null;
-        $scope.error = null;
-
-        Auth.$removeUser({
-            email: $scope.email,
-            password: $scope.password
-        }).then(function() {
-            $scope.message = 'User removed';
-        }).catch(function(error) {
-            $scope.error = error;
-        });
-    };*/
 }]);
 </script>
     </head>
     <body>
         <h1>Join -- tribox Contest</h1>
+
+        <p>
+            メールアドレスを入力してください。
+            入力されたメールアドレス宛てに初期パスワードが記載されたメールが送信されます
+            (送信元: noreply@@@{firebaseapp}.firebaseapp.com)。
+            初期パスワードでログインしてパスワードを変更してください。
+        </p>
 
         <div ng-controller="AuthCtrl">
             <form novalidate name="joinForm" ng-submit="createUser()">
@@ -72,13 +74,8 @@ app.controller('AuthCtrl', ['$scope', 'Auth', function($scope, Auth) {
                     <span ng-show="joinForm.email.$error.email">Not valid email!</span>
                     <span ng-show="joinForm.email.$error.required">Required!</span>
                 </p>
-                <p>
-                    Password: <input type="password" name="password" ng-model="password" required>
-                    <span ng-show="joinForm.password.$error.required">Required!</span>
-                </p>
 
                 <input type="submit" value="Create User"><br>
-                <!--<button ng-click="removeUser()">Remove User</button><br>-->
             </form>
 
             <p ng-if="message">Message: <strong>{{ message }}</strong></p>

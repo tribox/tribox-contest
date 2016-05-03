@@ -5,13 +5,13 @@
 # An example controller showing a sample home page
 GET     /                           controllers.HomeController.index
 
-# Join / Login / Logout / My page / Change email & password
+# Join / Login / Logout / Forget password / My page / Change email & password
 GET     /join                       controllers.HomeController.join
 GET     /login                      controllers.HomeController.login
 GET     /logout                     controllers.HomeController.logout
+GET     /forget                     controllers.HomeController.forget
 GET     /my                         controllers.HomeController.mypage
 GET     /change                     controllers.HomeController.change
-GET     /forget                     controllers.HomeController.forget
 
 # An example controller showing how to use dependency injection
 GET     /count                      controllers.CountController.count

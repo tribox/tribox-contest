@@ -44,6 +44,11 @@ class HomeController @Inject() extends Controller {
     Ok(views.html.logout(firebaseapp))
   }
 
+  def forget = Action {
+    val firebaseapp = Play.application.configuration.getString("contest.firebaseapp").getOrElse("tribox-contest")
+    Ok(views.html.forget(firebaseapp))
+  }
+
   def mypage = Action {
     val firebaseapp = Play.application.configuration.getString("contest.firebaseapp").getOrElse("tribox-contest")
     Ok(views.html.mypage(firebaseapp))
@@ -52,11 +57,6 @@ class HomeController @Inject() extends Controller {
   def change = Action {
     val firebaseapp = Play.application.configuration.getString("contest.firebaseapp").getOrElse("tribox-contest")
     Ok(views.html.change(firebaseapp))
-  }
-
-  def forget = Action {
-    val firebaseapp = Play.application.configuration.getString("contest.firebaseapp").getOrElse("tribox-contest")
-    Ok(views.html.forget(firebaseapp))
   }
 
 }
