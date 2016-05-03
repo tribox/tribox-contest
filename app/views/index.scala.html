@@ -20,15 +20,17 @@ app.factory('Auth', ['$firebaseAuth', function($firebaseAuth) {
 }]);
 
 app.controller('AuthCtrl', ['$scope', 'Auth', function($scope, Auth) {
-    $scope.loggingin = false;
+    $scope.authStatus = null;
+    $scope.isLoggingin = false;
 
     var authData = Auth.$getAuth();
+    $scope.debug = authData;
     if (authData) {
-        $scope.message = 'Logged in as: ' + authData.uid;
-        $scope.loggingin = true;
+        $scope.authStatus = 'Logged in as: ' + authData.uid + ' (' + authData.password.email + ')';
+        $scope.isLoggingin = true;
     } else {
-        $scope.message = 'Logged out';
-        $scope.loggingin = false;
+        $scope.authStatus = 'Logged out';
+        $scope.isLoggingin = false;
     }
 }]);
 
@@ -50,13 +52,16 @@ app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $fi
         <h1>tribox Contest</h1>
 
         <div ng-controller="AuthCtrl">
-            <p ng-if="message">Auth status: <strong>{{ message }}</strong></p>
+            <p ng-if="authStatus">Auth status: <strong>{{ authStatus }}</strong></p>
+            <pre>{{ debug | json }}</pre>
 
             <ul>
-                <li ng-hide="loggingin"><a href="/join">Join</a></li>
-                <li ng-hide="loggingin"><a href="/login">Login</a></li>
-                <li ng-show="loggingin"><a href="/mypage">My page</a></li>
-                <li ng-show="loggingin"><a href="/logout">Logout</a></li>
+                <li ng-hide="isLoggingin"><a href="/join">Join</a></li>
+                <li ng-hide="isLoggingin"><a href="/login">Login</a></li>
+                <li ng-hide="isLoggingin"><a href="/forget">Forget password? -- Reset password</a></li>
+                <li ng-show="isLoggingin"><a href="/my">My page</a></li>
+                <li ng-show="isLoggingin"><a href="/change">Change email &amp; password</a></li>
+                <li ng-show="isLoggingin"><a href="/logout">Logout</a></li>
             </ul>
         </div>
 

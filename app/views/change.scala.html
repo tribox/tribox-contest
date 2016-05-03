@@ -1,0 +1,146 @@
+@(firebaseapp: String)
+
+<!DOCTYPE html>
+<html lang="ja" ng-app="contestApp">
+    <head>
+        <meta charset="UTF-8">
+        <title>Change email &amp; password -- tribox Contest</title>
+        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
+        <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
+        <script src="@routes.Assets.versioned("javascripts/hello.js")" type="text/javascript"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
+        <script src="https://cdn.firebase.com/js/client/2.4.2/firebase.js"></script>
+        <script src="https://cdn.firebase.com/libs/angularfire/1.2.0/angularfire.min.js"></script>
+<script>
+var app = angular.module('contestApp', ['firebase']);
+
+app.factory('Auth', ['$firebaseAuth', function($firebaseAuth) {
+    var ref = new Firebase('https://@{firebaseapp}.firebaseio.com');
+    return $firebaseAuth(ref);
+}]);
+
+app.controller('AuthCtrl', ['$scope', 'Auth', function($scope, Auth) {
+    $scope.authStatus = null;
+    $scope.isLoggingin = false;
+
+    var authData = Auth.$getAuth();
+    $scope.debug = authData;
+    if (authData) {
+        $scope.authStatus = 'Logged in as: ' + authData.uid + ' (' + authData.password.email + ')';
+        $scope.isLoggingin = true;
+    } else {
+        $scope.authStatus = 'Logged out';
+        $scope.isLoggingin = false;
+        location.href = '@routes.HomeController.index';
+    }
+}]);
+
+app.controller('AuthEmailCtrl', ['$scope', 'Auth', function($scope, Auth) {
+    var authData = Auth.$getAuth();
+    if (authData) {
+        $scope.oldEmail = authData.password.email;
+    } else {
+        location.href = '@routes.HomeController.index';
+    }
+
+    $scope.changeEmail = function() {
+        $scope.message = null;
+        $scope.error = null;
+
+        var _oldEmail = $scope.oldEmail;
+        var _newEmail = $scope.newEmail;
+        var _password = $scope.password;
+        Auth.$changeEmail({
+            oldEmail: _oldEmail,
+            newEmail: _newEmail,
+            password: _password
+        }).then(function() {
+            $scope.message = 'Email changed successfully!';
+            Auth.$unauth();
+            Auth.$authWithPassword({
+                email: _newEmail,
+                password: _password
+            }).then(function(authData) {
+                $scope.message = 'Logged in as: ' + authData.uid;
+                location.href = '@routes.HomeController.index';
+            }).catch(function(error) {
+                $scope.error = error;
+            });
+        }).catch(function(error) {
+            $scope.error = error;
+        });
+    };
+}]);
+
+app.controller('AuthPasswordCtrl', ['$scope', 'Auth', function($scope, Auth) {
+    var authData = Auth.$getAuth();
+    if (authData) {
+        $scope.email = authData.password.email;
+    } else {
+        location.href = '@routes.HomeController.index';
+    }
+
+    $scope.changePassword = function() {
+        $scope.message = null;
+        $scope.error = null;
+
+        var _email = $scope.email;
+        var _oldPassword = $scope.oldPassword;
+        var _newPassword = $scope.newPassword;
+        Auth.$changePassword({
+            email: _email,
+            oldPassword: _oldPassword,
+            newPassword: _newPassword
+        }).then(function() {
+            $scope.message = 'Password changed successfully!';
+            Auth.$unauth();
+            Auth.$authWithPassword({
+                email: _email,
+                password: _newPassword
+            }).then(function(authData) {
+                $scope.message = 'Logged in as: ' + authData.uid;
+                location.href = '@routes.HomeController.index';
+            }).catch(function(error) {
+                $scope.error = error;
+            });
+        }).catch(function(error) {
+            $scope.error = error;
+        });
+    };
+}]);
+</script>
+    </head>
+    <body>
+        <h1>Change email &amp; password -- tribox Contest</h1>
+
+        <div ng-controller="AuthCtrl">
+            <p ng-if="authStatus">Auth status: <strong>{{ authStatus }}</strong></p>
+            <pre>{{ debug | json }}</pre>
+        </div>
+
+        <div ng-controller="AuthEmailCtrl">
+            Old email: <input type="email" ng-model="oldEmail" readonly="readonly"><br>
+            New email: <input type="email" ng-model="newEmail"><br>
+            Password: <input type="password" ng-model="password"><br>
+
+            <button ng-click="changeEmail()">Change email</button><br>
+
+            <p ng-if="message">Message: <strong>{{ message }}</strong></p>
+            <p ng-if="error">Error: <strong style="color:#f00;">{{ error }}</strong></p>
+        </div>
+
+        <div ng-controller="AuthPasswordCtrl">
+            <p ng-if="status">Auth status: <strong>{{ status }}</strong></p>
+
+            Email: <input type="email" ng-model="email" readonly="readonly"><br>
+            Old Password: <input type="password" ng-model="oldPassword"><br>
+            New Password: <input type="password" ng-model="newPassword"><br>
+
+            <button ng-click="changePassword()">Change password</button><br>
+
+            <p ng-if="message">Message: <strong>{{ message }}</strong></p>
+            <p ng-if="error">Error: <strong style="color:#f00;">{{ error }}</strong></p>
+        </div>
+
+    </body>
+</html>

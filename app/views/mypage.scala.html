@@ -4,7 +4,7 @@
 <html lang="ja" ng-app="contestApp">
     <head>
         <meta charset="UTF-8">
-        <title>Mypage -- tribox Contest</title>
+        <title>My page -- tribox Contest</title>
         <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
         <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
         <script src="@routes.Assets.versioned("javascripts/hello.js")" type="text/javascript"></script>
@@ -20,32 +20,34 @@ app.factory('Auth', ['$firebaseAuth', function($firebaseAuth) {
 }]);
 
 app.controller('AuthCtrl', ['$scope', 'Auth', function($scope, Auth) {
-    $scope.status = null;
-    $scope.loggingin = false;
+    $scope.authStatus = null;
+    $scope.isLoggingin = false;
 
     var authData = Auth.$getAuth();
+    $scope.debug = authData;
     if (authData) {
-        $scope.status = 'Logged in as: ' + authData.uid;
-        $scope.loggingin = true;
+        $scope.authStatus = 'Logged in as: ' + authData.uid + ' (' + authData.password.email + ')';
+        $scope.isLoggingin = true;
     } else {
-        $scope.status = 'Logged out';
-        $scope.loggingin = false;
+        $scope.authStatus = 'Logged out';
+        $scope.isLoggingin = false;
+        location.href = '@routes.HomeController.index';
     }
 }]);
 </script>
     </head>
     <body>
-        <h1>Mypage -- tribox Contest</h1>
+        <h1>My page -- tribox Contest</h1>
 
         <div ng-controller="AuthCtrl">
-            <p ng-if="status">Auth status: <strong>{{ status }}</strong></p>
+            <p ng-if="authStatus">Auth status: <strong>{{ authStatus }}</strong></p>
+            <pre>{{ debug | json }}</pre>
 
             Email: <input type="text" ng-model="email"><br>
             Password: <input type="text" ng-model="password"><br>
             Name: <input type="text" ng-model="name"><br>
 
-            <button ng-click="createUser()">Update</button><br>
-            <!--<button ng-click="removeUser()">Remove User</button><br>-->
+            <button ng-click="update()">Update</button><br>
 
             <p ng-if="message">Message: <strong>{{ message }}</strong></p>
             <p ng-if="error">Error: <strong style="color:#f00;">{{ error }}</strong></p>

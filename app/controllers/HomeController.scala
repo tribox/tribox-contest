@@ -12,6 +12,7 @@ import play.api.Play.current
  */
 @Singleton
 class HomeController @Inject() extends Controller {
+  //val firebaseapp = Play.application.configuration.getString("contest.firebaseapp").getOrElse("tribox-contest")
 
   /**
    * Create an Action to render an HTML page with a welcome message.
@@ -26,7 +27,7 @@ class HomeController @Inject() extends Controller {
   }
 
   /**
-   * Join / Login / Logout / Mypage
+   * Join / Login / Logout / My page / Change email & password
    */
   def join = Action {
     val firebaseapp = Play.application.configuration.getString("contest.firebaseapp").getOrElse("tribox-contest")
@@ -46,6 +47,16 @@ class HomeController @Inject() extends Controller {
   def mypage = Action {
     val firebaseapp = Play.application.configuration.getString("contest.firebaseapp").getOrElse("tribox-contest")
     Ok(views.html.mypage(firebaseapp))
+  }
+
+  def change = Action {
+    val firebaseapp = Play.application.configuration.getString("contest.firebaseapp").getOrElse("tribox-contest")
+    Ok(views.html.change(firebaseapp))
+  }
+
+  def forget = Action {
+    val firebaseapp = Play.application.configuration.getString("contest.firebaseapp").getOrElse("tribox-contest")
+    Ok(views.html.forget(firebaseapp))
   }
 
 }

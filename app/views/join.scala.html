@@ -24,15 +24,22 @@ app.controller('AuthCtrl', ['$scope', 'Auth', function($scope, Auth) {
         $scope.message = null;
         $scope.error = null;
 
+        var _email = $scope.email;
+        var _password = $scope.password;
         Auth.$createUser({
-            email: $scope.email,
-            password: $scope.password
+            email: _email,
+            password: _password
         }).then(function(userData) {
             $scope.message = 'User created with uid: ' + userData.uid;
-            
-            return Auth.$authWithPassword({
-                email: $scope.email,
-                password: $scope.password
+
+            Auth.$authWithPassword({
+                email: _email,
+                password: _password
+            }).then(function(authData) {
+                $scope.message = 'Logged in as: ' + authData.uid;
+                location.href = '@routes.HomeController.index';
+            }).catch(function(error) {
+                $scope.error = error;
             });
         }).catch(function(error) {
             $scope.error = error;
@@ -59,11 +66,20 @@ app.controller('AuthCtrl', ['$scope', 'Auth', function($scope, Auth) {
         <h1>Join -- tribox Contest</h1>
 
         <div ng-controller="AuthCtrl">
-            Email: <input type="text" ng-model="email"><br>
-            Password: <input type="text" ng-model="password"><br>
+            <form novalidate name="joinForm" ng-submit="createUser()">
+                <p>
+                    Email: <input type="email" name="email" ng-model="email" required>
+                    <span ng-show="joinForm.email.$error.email">Not valid email!</span>
+                    <span ng-show="joinForm.email.$error.required">Required!</span>
+                </p>
+                <p>
+                    Password: <input type="password" name="password" ng-model="password" required>
+                    <span ng-show="joinForm.password.$error.required">Required!</span>
+                </p>
 
-            <button ng-click="createUser()">Create User</button><br>
-            <!--<button ng-click="removeUser()">Remove User</button><br>-->
+                <input type="submit" value="Create User"><br>
+                <!--<button ng-click="removeUser()">Remove User</button><br>-->
+            </form>
 
             <p ng-if="message">Message: <strong>{{ message }}</strong></p>
             <p ng-if="error">Error: <strong style="color:#f00;">{{ error }}</strong></p>
