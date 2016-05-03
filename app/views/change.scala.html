@@ -20,28 +20,32 @@ app.factory('Auth', ['$firebaseAuth', function($firebaseAuth) {
 }]);
 
 app.controller('AuthCtrl', ['$scope', 'Auth', function($scope, Auth) {
-    $scope.authStatus = null;
+    $scope.message = null;
+    $scope.authData = null;
     $scope.isLoggingin = false;
 
-    var authData = Auth.$getAuth();
-    $scope.debug = authData;
-    if (authData) {
-        $scope.authStatus = 'Logged in as: ' + authData.uid + ' (' + authData.password.email + ')';
-        $scope.isLoggingin = true;
-    } else {
-        $scope.authStatus = 'Logged out';
-        $scope.isLoggingin = false;
-        location.href = '@routes.HomeController.index';
-    }
+    Auth.$onAuth(function(authData) {
+        if (authData) {
+            $scope.message = 'Logged in as: ' + authData.uid + ' (' + authData.password.email + ')';
+            $scope.authData = authData;
+            $scope.isLoggingin = true;
+        } else {
+            $scope.message = 'Logged out';
+            $scope.authData = null;
+            $scope.isLoggingin = false;
+            location.href = '@routes.HomeController.index';
+        }
+    });
 }]);
 
 app.controller('AuthEmailCtrl', ['$scope', 'Auth', function($scope, Auth) {
-    var authData = Auth.$getAuth();
-    if (authData) {
-        $scope.oldEmail = authData.password.email;
-    } else {
-        location.href = '@routes.HomeController.index';
-    }
+    Auth.$onAuth(function(authData) {
+        if (authData) {
+            $scope.oldEmail = authData.password.email;
+        } else {
+            location.href = '@routes.HomeController.index';
+        }
+    });
 
     $scope.changeEmail = function() {
         $scope.message = null;
@@ -73,12 +77,13 @@ app.controller('AuthEmailCtrl', ['$scope', 'Auth', function($scope, Auth) {
 }]);
 
 app.controller('AuthPasswordCtrl', ['$scope', 'Auth', function($scope, Auth) {
-    var authData = Auth.$getAuth();
-    if (authData) {
-        $scope.email = authData.password.email;
-    } else {
-        location.href = '@routes.HomeController.index';
-    }
+    Auth.$onAuth(function(authData) {
+        if (authData) {
+            $scope.email = authData.password.email;
+        } else {
+            location.href = '@routes.HomeController.index';
+        }
+    });
 
     $scope.changePassword = function() {
         $scope.message = null;
@@ -114,8 +119,8 @@ app.controller('AuthPasswordCtrl', ['$scope', 'Auth', function($scope, Auth) {
         <h1>Change email &amp; password -- tribox Contest</h1>
 
         <div ng-controller="AuthCtrl">
-            <p ng-if="authStatus">Auth status: <strong>{{ authStatus }}</strong></p>
-            <pre>{{ debug | json }}</pre>
+            <p ng-if="message">Auth status: <strong>{{ message }}</strong></p>
+            <pre>{{ authData | json }}</pre>
         </div>
 
         <div ng-controller="AuthEmailCtrl">

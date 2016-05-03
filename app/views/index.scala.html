@@ -13,25 +13,28 @@
         <script src="https://cdn.firebase.com/libs/angularfire/1.2.0/angularfire.min.js"></script>
 <script>
 var app = angular.module('contestApp', ['firebase']);
+var ref = new Firebase('https://@{firebaseapp}.firebaseio.com');
 
 app.factory('Auth', ['$firebaseAuth', function($firebaseAuth) {
-    var ref = new Firebase('https://@{firebaseapp}.firebaseio.com');
     return $firebaseAuth(ref);
 }]);
 
 app.controller('AuthCtrl', ['$scope', 'Auth', function($scope, Auth) {
-    $scope.authStatus = null;
+    $scope.message = null;
+    $scope.authData = null;
     $scope.isLoggingin = false;
 
-    var authData = Auth.$getAuth();
-    $scope.debug = authData;
-    if (authData) {
-        $scope.authStatus = 'Logged in as: ' + authData.uid + ' (' + authData.password.email + ')';
-        $scope.isLoggingin = true;
-    } else {
-        $scope.authStatus = 'Logged out';
-        $scope.isLoggingin = false;
-    }
+    Auth.$onAuth(function(authData) {
+        if (authData) {
+            $scope.message = 'Logged in as: ' + authData.uid + ' (' + authData.password.email + ')';
+            $scope.authData = authData;
+            $scope.isLoggingin = true;
+        } else {
+            $scope.message = 'Logged out';
+            $scope.authData = null;
+            $scope.isLoggingin = false;
+        }
+    });
 }]);
 
 /*app.controller('EventListCtrl', function($scope) {
@@ -43,8 +46,8 @@ app.controller('AuthCtrl', ['$scope', 'Auth', function($scope, Auth) {
 });*/
 
 app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $firebaseObject) {
-    var ref = new Firebase('https://@{firebaseapp}.firebaseio.com');
-    $scope.data = $firebaseObject(ref);
+    $scope.inProgress = $firebaseObject(ref.child('inProgress'));
+    $scope.events = $firebaseObject(ref.child('events'));
 }]);
 </script>
     </head>
@@ -52,8 +55,8 @@ app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $fi
         <h1>tribox Contest</h1>
 
         <div ng-controller="AuthCtrl">
-            <p ng-if="authStatus">Auth status: <strong>{{ authStatus }}</strong></p>
-            <pre>{{ debug | json }}</pre>
+            <p ng-if="message">Auth status: <strong>{{ message }}</strong></p>
+            <pre>{{ authData | json }}</pre>
 
             <ul>
                 <li ng-hide="isLoggingin"><a href="/join">Join</a></li>
@@ -84,13 +87,16 @@ app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $fi
         </div>-->
 
         <div ng-controller="ContestCtrl">
-            <!--<pre>{{data|json}}</pre>-->
-            <p>開催中のコンテスト (Firebase + AngularJS):<br>{{data.events.length}} events.</p>
+            <p>開催中のコンテスト: {{ inProgress.contest }}</p>
+            <!--<pre>{{ inProgress | json}}</pre>-->
+
+            <p>競技リスト (Firebase + AngularJS):<br>{{ events.length }} events.</p>
             <ul>
-                <li ng-repeat="event in data.events">
-                    <a href="#{{event.tag}}">{{event.name}}</a>
+                <li ng-repeat="(eid, e) in events">
+                    <a href="#{{ eid }}">{{ e.name }} ({{ e.format }} of {{ e.attempts }}, decimal={{ e.decimal }})</a>
                 </li>
             </ul>
+            <!--<pre>{{ events | json }}</pre>-->
         </div>
 
     </body>

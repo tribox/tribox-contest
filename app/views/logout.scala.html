@@ -13,9 +13,9 @@
         <script src="https://cdn.firebase.com/libs/angularfire/1.2.0/angularfire.min.js"></script>
 <script>
 var app = angular.module('contestApp', ['firebase']);
+var ref = new Firebase('https://@{firebaseapp}.firebaseio.com');
 
 app.factory('Auth', ['$firebaseAuth', function($firebaseAuth) {
-    var ref = new Firebase('https://@{firebaseapp}.firebaseio.com');
     return $firebaseAuth(ref);
 }]);
 

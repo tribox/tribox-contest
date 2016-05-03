@@ -24,9 +24,9 @@ var getRandomStr = function(l) {
 };
 
 var app = angular.module('contestApp', ['firebase']);
+var ref = new Firebase('https://@{firebaseapp}.firebaseio.com');
 
 app.factory('Auth', ['$firebaseAuth', function($firebaseAuth) {
-    var ref = new Firebase('https://@{firebaseapp}.firebaseio.com');
     return $firebaseAuth(ref);
 }]);
 
@@ -46,7 +46,7 @@ app.controller('AuthCtrl', ['$scope', 'Auth', function($scope, Auth) {
             Auth.$resetPassword({
                 email: _email
             }).then(function() {
-                $scope.message = 'Password reset email sent successfully!';
+                $scope.message = 'Password email sent successfully!';
             }).catch(function(error) {
                 $scope.error = error;
             });
@@ -69,13 +69,10 @@ app.controller('AuthCtrl', ['$scope', 'Auth', function($scope, Auth) {
 
         <div ng-controller="AuthCtrl">
             <form novalidate name="joinForm" ng-submit="createUser()">
-                <p>
-                    Email: <input type="email" name="email" ng-model="email" required>
-                    <span ng-show="joinForm.email.$error.email">Not valid email!</span>
-                    <span ng-show="joinForm.email.$error.required">Required!</span>
-                </p>
-
-                <input type="submit" value="Create User"><br>
+                Email: <input type="email" name="email" ng-model="email" required>
+                <span ng-show="joinForm.email.$error.email">Not valid email!</span><br>
+                <span ng-show="joinForm.email.$error.required">Required!</span><br>
+                <input type="submit" value="Create User">
             </form>
 
             <p ng-if="message">Message: <strong>{{ message }}</strong></p>

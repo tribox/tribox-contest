@@ -13,26 +13,29 @@
         <script src="https://cdn.firebase.com/libs/angularfire/1.2.0/angularfire.min.js"></script>
 <script>
 var app = angular.module('contestApp', ['firebase']);
+var ref = new Firebase('https://@{firebaseapp}.firebaseio.com');
 
 app.factory('Auth', ['$firebaseAuth', function($firebaseAuth) {
-    var ref = new Firebase('https://@{firebaseapp}.firebaseio.com');
     return $firebaseAuth(ref);
 }]);
 
 app.controller('AuthCtrl', ['$scope', 'Auth', function($scope, Auth) {
-    $scope.authStatus = null;
+    $scope.message = null;
+    $scope.authData = null;
     $scope.isLoggingin = false;
 
-    var authData = Auth.$getAuth();
-    $scope.debug = authData;
-    if (authData) {
-        $scope.authStatus = 'Logged in as: ' + authData.uid + ' (' + authData.password.email + ')';
-        $scope.isLoggingin = true;
-    } else {
-        $scope.authStatus = 'Logged out';
-        $scope.isLoggingin = false;
-        location.href = '@routes.HomeController.index';
-    }
+    Auth.$onAuth(function(authData) {
+        if (authData) {
+            $scope.message = 'Logged in as: ' + authData.uid + ' (' + authData.password.email + ')';
+            $scope.authData = authData;
+            $scope.isLoggingin = true;
+        } else {
+            $scope.message = 'Logged out';
+            $scope.authData = null;
+            $scope.isLoggingin = false;
+            location.href = '@routes.HomeController.index';
+        }
+    });
 }]);
 </script>
     </head>
@@ -40,8 +43,8 @@ app.controller('AuthCtrl', ['$scope', 'Auth', function($scope, Auth) {
         <h1>My page -- tribox Contest</h1>
 
         <div ng-controller="AuthCtrl">
-            <p ng-if="authStatus">Auth status: <strong>{{ authStatus }}</strong></p>
-            <pre>{{ debug | json }}</pre>
+            <p ng-if="message">Auth status: <strong>{{ message }}</strong></p>
+            <pre>{{ authData | json }}</pre>
 
             Email: <input type="text" ng-model="email"><br>
             Password: <input type="text" ng-model="password"><br>
