@@ -1,6 +1,36 @@
 {
     "rules": {
-        ".read": true,
-        ".write": true
+        ".read": false,
+        ".write": false,
+        "users": {
+            ".read": "auth !== null",
+            ".write": "auth !== null && newData.val() === auth.uid",
+            "$user_id": {
+                ".write": "auth.uid === $user_id",
+                ".validate": "newData.hasChildren(['createdAt', 'loggedinAt', 'screenName'])",
+                "createdAt": {
+                    ".write": "auth.uid === $user_id && !data.exists()"
+                },
+                "tribox": {
+                    ".read": "auth.uid === $user_id"
+                }
+            }
+        },
+        "inProgress": {
+            ".read": true,
+            ".write": false
+        },
+        "events": {
+            ".read": true,
+            ".write": false
+        },
+        "contests": {
+            ".read": true,
+            ".write": false
+        },
+        "results": {
+            ".read": true,
+            ".write": false
+        }
     }
 }
