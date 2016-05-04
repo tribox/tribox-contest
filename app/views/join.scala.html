@@ -17,10 +17,10 @@ var getRandomStr = function(l) {
 };
 
 var app = angular.module('contestApp', ['firebase']);
-var ref = new Firebase('https://@{firebaseappContest}.firebaseio.com');
+var contestRef = new Firebase('https://@{firebaseappContest}.firebaseio.com');
 
 app.factory('Auth', ['$firebaseAuth', function($firebaseAuth) {
-    return $firebaseAuth(ref);
+    return $firebaseAuth(contestRef);
 }]);
 
 app.controller('AuthCtrl', ['$scope', 'Auth', function($scope, Auth) {

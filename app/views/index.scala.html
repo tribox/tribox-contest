@@ -7,10 +7,10 @@
         @header(title, contestName)
 <script>
 var app = angular.module('contestApp', ['firebase']);
-var ref = new Firebase('https://@{firebaseappContest}.firebaseio.com');
+var contestRef = new Firebase('https://@{firebaseappContest}.firebaseio.com');
 
 app.factory('Auth', ['$firebaseAuth', function($firebaseAuth) {
-    return $firebaseAuth(ref);
+    return $firebaseAuth(contestRef);
 }]);
 
 app.controller('AuthCtrl', ['$scope', '$firebaseObject', 'Auth', function($scope, $firebaseObject, Auth) {
@@ -23,7 +23,7 @@ app.controller('AuthCtrl', ['$scope', '$firebaseObject', 'Auth', function($scope
         if (authData) {
             $scope.message = 'Logged in as: ' + authData.uid + ' (' + authData.password.email + ')';
             $scope.authData = authData;
-            $scope.userData = $firebaseObject(ref.child('users').child(authData.uid));
+            $scope.userData = $firebaseObject(contestRef.child('users').child(authData.uid));
             $scope.isLoggingin = true;
         } else {
             $scope.message = 'Logged out';
@@ -43,8 +43,8 @@ app.controller('AuthCtrl', ['$scope', '$firebaseObject', 'Auth', function($scope
 });*/ *@
 
 app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $firebaseObject) {
-    $scope.inProgress = $firebaseObject(ref.child('inProgress'));
-    $scope.events = $firebaseObject(ref.child('events'));
+    $scope.inProgress = $firebaseObject(contestRef.child('inProgress'));
+    $scope.events = $firebaseObject(contestRef.child('events'));
 }]);
 </script>
     </head>

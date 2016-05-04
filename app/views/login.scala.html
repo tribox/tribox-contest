@@ -6,10 +6,10 @@
         @header(title, contestName)
 <script>
 var app = angular.module('contestApp', ['firebase']);
-var ref = new Firebase('https://@{firebaseappContest}.firebaseio.com');
+var contestRef = new Firebase('https://@{firebaseappContest}.firebaseio.com');
 
 app.factory('Auth', ['$firebaseAuth', function($firebaseAuth) {
-    return $firebaseAuth(ref);
+    return $firebaseAuth(contestRef);
 }]);
 
 app.controller('AuthCtrl', ['$scope', 'Auth', function($scope, Auth) {
@@ -24,10 +24,10 @@ app.controller('AuthCtrl', ['$scope', 'Auth', function($scope, Auth) {
             console.log('Checking: ' + authData.uid);
 
             // Get users list from DB
-            ref.child('users').child(authData.uid).once('value', function(snapshot) {
+            contestRef.child('users').child(authData.uid).once('value', function(snapshot) {
                 if (snapshot.exists()) {
                     // Second or more time of login because user data exists
-                    ref.child('users').child(authData.uid).update({
+                    contestRef.child('users').child(authData.uid).update({
                         'loggedinAt': Firebase.ServerValue.TIMESTAMP
                     }, function(error) {
                         if (error) {

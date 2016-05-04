@@ -6,10 +6,11 @@
         @header(title, contestName)
 <script>
 var app = angular.module('contestApp', ['firebase']);
+var contestRef = new Firebase('https://@{firebaseappContest}.firebaseio.com');
 
 app.factory('Auth', ['$firebaseAuth', function($firebaseAuth) {
-    var ref = new Firebase('https://@{firebaseappContest}.firebaseio.com');
-    return $firebaseAuth(ref);
+    
+    return $firebaseAuth(contestRef);
 }]);
 
 app.controller('AuthCtrl', ['$scope', 'Auth', function($scope, Auth) {

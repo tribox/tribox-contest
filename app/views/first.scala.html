@@ -6,10 +6,10 @@
         @header(title, contestName)
 <script>
 var app = angular.module('contestApp', ['firebase']);
-var ref = new Firebase('https://@{firebaseappContest}.firebaseio.com');
+var contestRef = new Firebase('https://@{firebaseappContest}.firebaseio.com');
 
 app.factory('Auth', ['$firebaseAuth', function($firebaseAuth) {
-    return $firebaseAuth(ref);
+    return $firebaseAuth(contestRef);
 }]);
 
 app.controller('AuthCtrl', ['$scope', '$firebaseObject', 'Auth', function($scope, $firebaseObject, Auth) {
@@ -22,9 +22,9 @@ app.controller('AuthCtrl', ['$scope', '$firebaseObject', 'Auth', function($scope
         if (authData) {
             $scope.message = 'Logged in as: ' + authData.uid + ' (' + authData.password.email + ')';
             $scope.authData = authData;
-            $scope.userData = $firebaseObject(ref.child('users').child(authData.uid));
+            $scope.userData = $firebaseObject(contestRef.child('users').child(authData.uid));
             $scope.isLoggingin = true;
-            ref.child('users').child(authData.uid).once('value', function(userSnap) {
+            contestRef.child('users').child(authData.uid).once('value', function(userSnap) {
                 if (userSnap.exists()) {
                     // Second or more time
                     console.log('No need for first setting: ' + authData.uid);
@@ -42,7 +42,7 @@ app.controller('AuthCtrl', ['$scope', '$firebaseObject', 'Auth', function($scope
 }]);
 
 app.factory('Users', ['$firebaseObject', function($firebaseObject) {
-    return $firebaseObject(ref.child('users'));
+    return $firebaseObject(contestRef.child('users'));
 }]);
 
 app.controller('AuthFirstSettingCtrl', ['$scope', 'Users', 'Auth', function($scope, Users, Auth) {
@@ -63,20 +63,20 @@ app.controller('AuthFirstSettingCtrl', ['$scope', 'Users', 'Auth', function($sco
 
         Auth.$onAuth(function(authData) {
             if (authData) {
-                ref.child('users').child(authData.uid).once('value', function(userSnap) {
+                contestRef.child('users').child(authData.uid).once('value', function(userSnap) {
                     if (userSnap.exists()) {
                         // Second or more time
                         console.log('No need for first setting: ' + authData.uid);
                         location.href = '@routes.HomeController.index';
                     } else {
                         // Really the first time
-                        ref.child('usernames').child(_username).once('value', function(usernameSnap) {
+                        contestRef.child('usernames').child(_username).once('value', function(usernameSnap) {
                             if (usernameSnap.exists()) {
                                 // Username already used
                                 console.error('Username already exists: ' + _username);
                             } else {
                                 // Store to usernames DB and users DB
-                                ref.child('usernames').child(_username).set({
+                                contestRef.child('usernames').child(_username).set({
                                     'uid': authData.uid,
                                     'createdAt': Firebase.ServerValue.TIMESTAMP,
                                     'changedAt': Firebase.ServerValue.TIMESTAMP
@@ -85,7 +85,7 @@ app.controller('AuthFirstSettingCtrl', ['$scope', 'Users', 'Auth', function($sco
                                         console.error(error);
                                         Auth.$unauth();
                                     } else {
-                                        ref.child('users').child(authData.uid).set({
+                                        contestRef.child('users').child(authData.uid).set({
                                             'createdAt': Firebase.ServerValue.TIMESTAMP,
                                             'loggedinAt': Firebase.ServerValue.TIMESTAMP,
                                             'username': _username,
