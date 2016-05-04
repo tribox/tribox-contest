@@ -70,7 +70,7 @@ app.controller('AuthCtrl', ['$scope', 'Auth', function($scope, Auth) {
         <div ng-controller="AuthCtrl">
             <form novalidate name="joinForm" ng-submit="createUser()">
                 Email: <input type="email" name="email" ng-model="email" required>
-                <span ng-show="joinForm.email.$error.email">Not valid email!</span><br>
+                <span ng-show="joinForm.email.$error.email">Not valid email!</span>
                 <span ng-show="joinForm.email.$error.required">Required!</span><br>
                 <input type="submit" value="Create User">
             </form>

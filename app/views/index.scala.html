@@ -19,19 +19,22 @@ app.factory('Auth', ['$firebaseAuth', function($firebaseAuth) {
     return $firebaseAuth(ref);
 }]);
 
-app.controller('AuthCtrl', ['$scope', 'Auth', function($scope, Auth) {
+app.controller('AuthCtrl', ['$scope', '$firebaseObject', 'Auth', function($scope, $firebaseObject, Auth) {
     $scope.message = null;
     $scope.authData = null;
+    $scope.userData = null;
     $scope.isLoggingin = false;
 
     Auth.$onAuth(function(authData) {
         if (authData) {
             $scope.message = 'Logged in as: ' + authData.uid + ' (' + authData.password.email + ')';
             $scope.authData = authData;
+            $scope.userData = $firebaseObject(ref.child('users').child(authData.uid));
             $scope.isLoggingin = true;
         } else {
             $scope.message = 'Logged out';
             $scope.authData = null;
+            $scope.userData = null;
             $scope.isLoggingin = false;
         }
     });
@@ -57,6 +60,7 @@ app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $fi
         <div ng-controller="AuthCtrl">
             <p ng-if="message">Auth status: <strong>{{ message }}</strong></p>
             <pre>{{ authData | json }}</pre>
+            <pre>{{ userData | json }}</pre>
 
             <ul>
                 <li ng-hide="isLoggingin"><a href="/join">Join</a></li>
@@ -93,7 +97,7 @@ app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $fi
             <p>競技リスト (Firebase + AngularJS):<br>{{ events.length }} events.</p>
             <ul>
                 <li ng-repeat="(eid, e) in events">
-                    <a href="#{{ eid }}">{{ e.name }} ({{ e.format }} of {{ e.attempts }}, decimal={{ e.decimal }})</a>
+                    <a href="#{{ eid }}">{{ e.name }} ({{ e.method }} of {{ e.attempts }}, format={{ e.format }})</a>
                 </li>
             </ul>
             <!--<pre>{{ events | json }}</pre>-->

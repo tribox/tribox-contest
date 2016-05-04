@@ -12,7 +12,6 @@ import play.api.Play.current
  */
 @Singleton
 class HomeController @Inject() extends Controller {
-  //val firebaseapp = Play.application.configuration.getString("contest.firebaseapp").getOrElse("tribox-contest")
 
   /**
    * Create an Action to render an HTML page with a welcome message.
@@ -47,6 +46,11 @@ class HomeController @Inject() extends Controller {
   def forget = Action {
     val firebaseapp = Play.application.configuration.getString("contest.firebaseapp").getOrElse("tribox-contest")
     Ok(views.html.forget(firebaseapp))
+  }
+
+  def first = Action {
+    val firebaseapp = Play.application.configuration.getString("contest.firebaseapp").getOrElse("tribox-contest")
+    Ok(views.html.first(firebaseapp))
   }
 
   def mypage = Action {

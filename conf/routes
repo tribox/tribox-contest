@@ -10,6 +10,7 @@ GET     /join                       controllers.HomeController.join
 GET     /login                      controllers.HomeController.login
 GET     /logout                     controllers.HomeController.logout
 GET     /forget                     controllers.HomeController.forget
+GET     /first                      controllers.HomeController.first
 GET     /my                         controllers.HomeController.mypage
 GET     /change                     controllers.HomeController.change
 

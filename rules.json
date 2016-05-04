@@ -2,20 +2,26 @@
     "rules": {
         ".read": false,
         ".write": false,
+
         "users": {
             ".read": "auth !== null",
             ".write": "auth !== null && newData.val() === auth.uid",
             "$user_id": {
                 ".write": "auth.uid === $user_id",
-                ".validate": "newData.hasChildren(['createdAt', 'loggedinAt', 'screenName'])",
+                ".validate": "newData.hasChildren(['createdAt', 'loggedinAt', 'screenName', 'displayName'])",
                 "createdAt": {
-                    ".write": "auth.uid === $user_id && !data.exists()"
+                    ".write": "auth.uid === $user_id",
+                    ".validate": "newData.val() <= now && !data.exists() && newData.exists()"
+                },
+                "loggedinAt": {
+                    ".validate": "newData.val() <= now"
                 },
                 "tribox": {
                     ".read": "auth.uid === $user_id"
                 }
             }
         },
+
         "inProgress": {
             ".read": true,
             ".write": false

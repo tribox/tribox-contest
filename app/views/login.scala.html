@@ -28,25 +28,30 @@ app.controller('AuthCtrl', ['$scope', 'Auth', function($scope, Auth) {
             email: $scope.email,
             password: $scope.password
         }).then(function(authData) {
-            // Get user data
-            ref.child('users').child(authData.uid).once('value', function(snap) {
-                if (snap) {
+            console.log('Checking: ' + authData.uid);
+
+            // Get users list from DB
+            ref.child('users').child(authData.uid).once('value', function(snapshot) {
+                if (snapshot.exists()) {
+                    // Second or more time of login because user data exists
                     ref.child('users').child(authData.uid).update({
                         'loggedinAt': Firebase.ServerValue.TIMESTAMP
                     }, function(error) {
                         if (error) {
-                            $scope.error = error;
+                            console.err(error);
                             Auth.$unauth();
                         } else {
-                            $scope.message = 'Logged in as: ' + authData.uid;
+                            console.log('Logged in as: ' + authData.uid);
                             location.href = '@routes.HomeController.index';
                         }
                     });
                 } else {
                     // First login because no user data yet
-                    $scope.message = 'Logged in as: ' + authData.uid + ' (first login)';
-                    @* location.href = '@routes.HomeController.first'; *@
+                    console.log('Logged in as: ' + authData.uid + ' (first login)');
+                    location.href = '@routes.HomeController.first';
                 }
+            }, function(error) {
+                $scope.error = error;
             });
         }).catch(function(error) {
             $scope.error = error;
@@ -59,7 +64,7 @@ app.controller('AuthCtrl', ['$scope', 'Auth', function($scope, Auth) {
         <h1>Login -- tribox Contest</h1>
 
         <div ng-controller="AuthCtrl">
-            <form novalidate name="loginForm" ng-submit="login()">
+            <form name="loginForm" ng-submit="login()">
                 Email: <input type="email" ng-model="email"><br>
                 Password: <input type="password" ng-model="password"><br>
                 <input type="submit" value="Login">
