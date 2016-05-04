@@ -14,20 +14,5 @@ GET     /first                      controllers.HomeController.first
 GET     /my                         controllers.HomeController.mypage
 GET     /change                     controllers.HomeController.change
 
-# An example controller showing how to use dependency injection
-GET     /count                      controllers.CountController.count
-# An example controller showing how to write asynchronous code
-GET     /message                    controllers.AsyncController.message
-
-# hello
-GET     /hello                      controllers.HelloController.hello
-GET     /hello1                     controllers.HelloController.hello1
-GET     /hello2                     controllers.HelloController.hello2
-GET     /hello3                     controllers.HelloController.hello3
-GET     /hello4                     controllers.HelloController.hello4
-GET     /hello5                     controllers.HelloController.hello5
-
-GET     /chat                       controllers.ChatController.chat
-
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
