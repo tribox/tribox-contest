@@ -13,5 +13,9 @@ db {
   default.password = "playdbpassword"
 }
 
-# 3) Change firebase app name.
-contest.firebaseapp = "your-firebase-app"
+# 3) Change contest info.
+contest.name = "tribox Contest"
+contest.url = "https://contest.tribox.com"
+
+# 4) Change firebase app name.
+firebaseapp.contest = "firebase-contest-app"

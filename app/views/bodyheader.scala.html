@@ -1,0 +1,7 @@
+@(title: String, contestName: String)
+
+    @if(title.isEmpty) {
+        <h1>@contestName</h1>
+    } else {
+        <h1>@title &mdash; @contestName</h1>
+    }

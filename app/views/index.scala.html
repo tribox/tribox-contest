@@ -1,19 +1,13 @@
-@(firebaseapp: String, events:List[Event])
+@(title: String, contestName: String, contestUrl: String, firebaseappContest: String)
+@* @(titie: String, contestName: String, contestUrl: String, firebaseappContest: String, events:List[Event]) *@
 
 <!DOCTYPE html>
 <html lang="ja" ng-app="contestApp">
     <head>
-        <meta charset="UTF-8">
-        <title>tribox Contest</title>
-        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
-        <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
-        <script src="@routes.Assets.versioned("javascripts/hello.js")" type="text/javascript"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
-        <script src="https://cdn.firebase.com/js/client/2.4.2/firebase.js"></script>
-        <script src="https://cdn.firebase.com/libs/angularfire/1.2.0/angularfire.min.js"></script>
+        @header(title, contestName)
 <script>
 var app = angular.module('contestApp', ['firebase']);
-var ref = new Firebase('https://@{firebaseapp}.firebaseio.com');
+var ref = new Firebase('https://@{firebaseappContest}.firebaseio.com');
 
 app.factory('Auth', ['$firebaseAuth', function($firebaseAuth) {
     return $firebaseAuth(ref);
@@ -40,13 +34,13 @@ app.controller('AuthCtrl', ['$scope', '$firebaseObject', 'Auth', function($scope
     });
 }]);
 
-/*app.controller('EventListCtrl', function($scope) {
+@* /*app.controller('EventListCtrl', function($scope) {
     $scope.events = [
         @for(event:Event <- events){
             {'id': @event.id, 'tag': '@event.tag', 'name': '@event.name'},
         }
     ];
-});*/
+});*/ *@
 
 app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $firebaseObject) {
     $scope.inProgress = $firebaseObject(ref.child('inProgress'));
@@ -55,7 +49,7 @@ app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $fi
 </script>
     </head>
     <body>
-        <h1>tribox Contest</h1>
+        @bodyheader(title, contestName)
 
         <div ng-controller="AuthCtrl">
             <p ng-if="message">Auth status: <strong>{{ message }}</strong></p>
@@ -72,23 +66,23 @@ app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $fi
             </ul>
         </div>
 
-        <!--<div>
+        @* <!--<div>
             <p>開催中のコンテスト (MySQL):<br>@{events.length} events.</p>
             <ul>
                 @for(event:Event <- events){
                     <li><a href="#@event.tag">@event.name</a></li>
                 }
             </ul>
-        </div>-->
+        </div>--> *@
 
-        <!--<div ng-controller="EventListCtrl">
+        @* <!--<div ng-controller="EventListCtrl">
             <p>開催中のコンテスト (MySQL + AngularJS):<br>{{events.length}} events.</p>
             <ul>
                 <li ng-repeat="event in events">
                     <a href="#{{event.tag}}">{{event.name}}</a>
                 </li>
             </ul>
-        </div>-->
+        </div>--> *@
 
         <div ng-controller="ContestCtrl">
             <p>開催中のコンテスト: {{ inProgress.contest }}</p>
@@ -103,5 +97,6 @@ app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $fi
             <!--<pre>{{ events | json }}</pre>-->
         </div>
 
+        @bodyfooter(contestName)
     </body>
 </html>

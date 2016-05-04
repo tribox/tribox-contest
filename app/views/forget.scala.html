@@ -1,19 +1,12 @@
-@(firebaseapp: String)
+@(title: String, contestName: String, contestUrl: String, firebaseappContest: String)
 
 <!DOCTYPE html>
 <html lang="ja" ng-app="contestApp">
     <head>
-        <meta charset="UTF-8">
-        <title>Forget -- tribox Contest</title>
-        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
-        <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
-        <script src="@routes.Assets.versioned("javascripts/hello.js")" type="text/javascript"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
-        <script src="https://cdn.firebase.com/js/client/2.4.2/firebase.js"></script>
-        <script src="https://cdn.firebase.com/libs/angularfire/1.2.0/angularfire.min.js"></script>
+        @header(title, contestName)
 <script>
 var app = angular.module('contestApp', ['firebase']);
-var ref = new Firebase('https://@{firebaseapp}.firebaseio.com');
+var ref = new Firebase('https://@{firebaseappContest}.firebaseio.com');
 
 app.factory('Auth', ['$firebaseAuth', function($firebaseAuth) {
     return $firebaseAuth(ref);
@@ -36,7 +29,7 @@ app.controller('AuthForgetCtrl', ['$scope', 'Auth', function($scope, Auth) {
 </script>
     </head>
     <body>
-        <h1>Forget &amp; password -- tribox Contest</h1>
+        @bodyheader(title, contestName)
 
         <div ng-controller="AuthForgetCtrl">
             Email: <input type="email" ng-model="email"><br>
@@ -47,5 +40,6 @@ app.controller('AuthForgetCtrl', ['$scope', 'Auth', function($scope, Auth) {
             <p ng-if="error">Error: <strong style="color:#f00;">{{ error }}</strong></p>
         </div>
 
+        @bodyfooter(contestName)
     </body>
 </html>

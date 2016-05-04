@@ -1,19 +1,12 @@
-@(firebaseapp: String)
+@(title: String, contestName: String, contestUrl: String, firebaseappContest: String)
 
 <!DOCTYPE html>
 <html lang="ja" ng-app="contestApp">
     <head>
-        <meta charset="UTF-8">
-        <title>First setting -- tribox Contest</title>
-        <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
-        <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("images/favicon.png")">
-        <script src="@routes.Assets.versioned("javascripts/hello.js")" type="text/javascript"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
-        <script src="https://cdn.firebase.com/js/client/2.4.2/firebase.js"></script>
-        <script src="https://cdn.firebase.com/libs/angularfire/1.2.0/angularfire.min.js"></script>
+        @header(title, contestName)
 <script>
 var app = angular.module('contestApp', ['firebase']);
-var ref = new Firebase('https://@{firebaseapp}.firebaseio.com');
+var ref = new Firebase('https://@{firebaseappContest}.firebaseio.com');
 
 app.factory('Auth', ['$firebaseAuth', function($firebaseAuth) {
     return $firebaseAuth(ref);
@@ -122,7 +115,7 @@ app.controller('AuthFirstSettingCtrl', ['$scope', 'Users', 'Auth', function($sco
 </script>
     </head>
     <body>
-        <h1>First setting -- tribox Contest</h1>
+        @bodyheader(title, contestName)
 
         <div ng-controller="AuthCtrl">
             <p ng-if="message">Auth status: <strong>{{ message }}</strong></p>
@@ -135,7 +128,7 @@ app.controller('AuthFirstSettingCtrl', ['$scope', 'Users', 'Auth', function($sco
                 ユーザ名: <input type="text" ng-model="username">
                   アルファベットと数字で1文字以上16文字以内。
                   他のアカウントのユーザ名と重複できません。
-                  個人ページのURLは http://contest.tribox.com/user/{{ username }} になります。
+                  個人ページのURLは @{contestUrl}/user/{{ username }} になります。
                   あとで変更できます。<br>
                 名前: <input type="text" ng-model="displayname">
                   ランキング等で表示される名前。日本語OK。ハンドルネームOK。
@@ -147,5 +140,6 @@ app.controller('AuthFirstSettingCtrl', ['$scope', 'Users', 'Auth', function($sco
             <p ng-if="error">Error: <strong style="color:#f00;">{{ error }}</strong></p>
         </div>
 
+        @bodyfooter(contestName)
     </body>
 </html>
