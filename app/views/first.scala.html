@@ -31,6 +31,13 @@ app.controller('AuthCtrl', ['$scope', '$firebaseObject', 'Auth', function($scope
             $scope.authData = authData;
             $scope.userData = $firebaseObject(ref.child('users').child(authData.uid));
             $scope.isLoggingin = true;
+            ref.child('users').child(authData.uid).once('value', function(userSnap) {
+                if (userSnap.exists()) {
+                    // Second or more time
+                    console.log('No need for first setting: ' + authData.uid);
+                    location.href = '@routes.HomeController.index';
+                }
+            });
         } else {
             $scope.message = 'Logged out';
             $scope.authData = null;
@@ -49,35 +56,56 @@ app.controller('AuthFirstSettingCtrl', ['$scope', 'Users', 'Auth', function($sco
     $scope.updateFirstSetting = function() {
         $scope.message = null;
         $scope.error = null;
-        var _screenName = $scope.screenName;
-        var _displayName = $scope.displayName;
+        var _username = $scope.username ? $scope.username : '';
+        var _displayname = $scope.displayname ? $scope.displayname : '';
+
+        if (!(_username.match(/^[a-zA-Z0-9_]{1,15}$/))) {
+            console.error('Invalid username');
+            return;
+        }
+        if (!(_displayname.match(/^.{1,31}$/))) {
+            console.error('Invalid displayname');
+            return;
+        }
 
         Auth.$onAuth(function(authData) {
             if (authData) {
-                ref.child('users').child(authData.uid).once('value', function(snapshot) {
-                    if (snapshot.exists()) {
+                ref.child('users').child(authData.uid).once('value', function(userSnap) {
+                    if (userSnap.exists()) {
                         // Second or more time
-                        console.log('No need to update: ' + authData.uid);
-                        //location.href = '@routes.HomeController.index';
+                        console.log('No need for first setting: ' + authData.uid);
+                        location.href = '@routes.HomeController.index';
                     } else {
                         // Really the first time
-                        ref.child('users').startAt(_screenName).endAt(_screenName).once('value', function(snapshot) {
-                            if (snapshot.exists()) {
-                                // Screenname already used
-                                console.error('Screenname already exists: ' + _screenName);
+                        ref.child('usernames').child(_username).once('value', function(usernameSnap) {
+                            if (usernameSnap.exists()) {
+                                // Username already used
+                                console.error('Username already exists: ' + _username);
                             } else {
-                                ref.child('users').child(authData.uid).setWithPriority({
+                                // Store to usernames DB and users DB
+                                ref.child('usernames').child(_username).set({
+                                    'uid': authData.uid,
                                     'createdAt': Firebase.ServerValue.TIMESTAMP,
-                                    'loggedinAt': Firebase.ServerValue.TIMESTAMP,
-                                    'screenName': _screenName,
-                                    'displayName': _displayName
-                                }, _screenName, function(error) {
+                                    'changedAt': Firebase.ServerValue.TIMESTAMP
+                                }, function(error) {
                                     if (error) {
                                         console.error(error);
                                         Auth.$unauth();
                                     } else {
-                                        console.log('Update successfully: ' + authData.uid);
-                                        //location.href = '@routes.HomeController.index';
+                                        ref.child('users').child(authData.uid).set({
+                                            'createdAt': Firebase.ServerValue.TIMESTAMP,
+                                            'loggedinAt': Firebase.ServerValue.TIMESTAMP,
+                                            'username': _username,
+                                            'displayname': _displayname
+                                        }, function(error) {
+                                            if (error) {
+                                                console.error(error);
+                                                Auth.$unauth();
+                                            } else {
+                                                console.log('Update successfully: ' + authData.uid + ' (' + _username + ')');
+                                                location.href = '@routes.HomeController.index';
+                                            }
+                                        });
                                     }
                                 });
                             }
@@ -86,7 +114,7 @@ app.controller('AuthFirstSettingCtrl', ['$scope', 'Users', 'Auth', function($sco
                 });
             } else {
                 console.log('Logged out');
-                //location.href = '@routes.HomeController.index';
+                location.href = '@routes.HomeController.login';
             }
         });
     };
@@ -104,12 +132,12 @@ app.controller('AuthFirstSettingCtrl', ['$scope', 'Users', 'Auth', function($sco
 
         <div ng-controller="AuthFirstSettingCtrl">
             <form name="firstSettingForm" ng-submit="updateFirstSetting()">
-                ユーザ名: <input type="text" ng-model="screenName">
+                ユーザ名: <input type="text" ng-model="username">
                   アルファベットと数字で1文字以上16文字以内。
                   他のアカウントのユーザ名と重複できません。
-                  個人ページのURLは http://contest.tribox.com/user/{{ screenName }} になります。
+                  個人ページのURLは http://contest.tribox.com/user/{{ username }} になります。
                   あとで変更できます。<br>
-                名前: <input type="text" ng-model="displayName">
+                名前: <input type="text" ng-model="displayname">
                   ランキング等で表示される名前。日本語OK。ハンドルネームOK。
                   あとで変更できます。<br>
                 <input type="submit" value="Update">
