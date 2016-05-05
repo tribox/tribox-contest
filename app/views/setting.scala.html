@@ -8,6 +8,24 @@
 @basejs(firebaseappContest)
 @authjs(redirectLogin="", redirectLogout=routes.HomeController.index.toString(), checkFirst=true)
 <script>
+app.controller('AuthSettingCtrl', ['$scope', '$firebaseObject', 'Auth', function($scope, $firebaseObject, Auth) {
+    $scope.authData = null;
+    $scope.userData = null;
+    $scope.usersecretData = null;
+
+    Auth.$onAuth(function(authData) {
+        if (authData) {
+            $scope.authData = authData;
+            $scope.userData = $firebaseObject(contestRef.child('users').child(authData.uid));
+            $scope.usersecretData = $firebaseObject(contestRef.child('usersecrets').child(authData.uid));
+        } else {
+            $scope.authData = null;
+            $scope.userData = null;
+            $scope.usersecretData = null;
+        }
+    });
+}]);
+
 app.controller('AuthEmailCtrl', ['$scope', 'Auth', function($scope, Auth) {
     Auth.$onAuth(function(authData) {
         if (authData) {
@@ -94,6 +112,51 @@ app.controller('AuthPasswordCtrl', ['$scope', 'Auth', function($scope, Auth) {
             <p>authData:</p><pre>{{ authData | json }}</pre>
             <p>userData:</p><pre>{{ userData | json }}</pre>
             <p>usersecretData:</p><pre>{{ usersecretData | json }}</pre>
+        </div>
+
+        <div ng-controller="AuthSettingCtrl">
+            <table>
+                <tr>
+                    <th>メールアドレス</th>
+                    <td>{{ authData.password.email }} <a href="#">変更する</a></td>
+                </tr>
+                <tr>
+                    <th>パスワード</th>
+                    <td>******** <a href="#">変更する</a></td>
+                </tr>
+                <tr>
+                    <th>ユーザ名</th>
+                    <td>{{ userData.username }} <a href="#">変更する</a></td>
+                </tr>
+                <tr>
+                    <th>表示名</th>
+                    <td><input type="text" ng-model="userData.displayname"></td>
+                </tr>
+                <tr>
+                    <th>所属</th>
+                    <td><input type="text" ng-model="userData.organization"></td>
+                </tr>
+                <tr>
+                    <th>WCA ID</th>
+                    <td><input type="text" ng-model="userData.wcaId"></td>
+                </tr>
+                <tr>
+                    <th>Twitter ID</th>
+                    <td><input type="text" ng-model="userData.twitterId"></td>
+                </tr>
+                <tr>
+                    <th>自己紹介</th>
+                    <td><textarea ng-model="userData.bio"></textarea></td>
+                </tr>
+                <tr>
+                    <th>スポンサーアカウント</th>
+                    <td>{{ userData.isTriboxTeam }}</td>
+                </tr>
+                <tr>
+                    <th>認証アカウント</th>
+                    <td>{{ userData.isTriboxCustomer }} <a href="#">変更する</a></td>
+                </tr>
+            </table>
         </div>
 
         <div ng-controller="AuthEmailCtrl">
