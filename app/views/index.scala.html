@@ -11,6 +11,21 @@
 @basejs(firebaseappContest)
 @authjs(redirectLogin="", redirectLogout="", checkFirst=true)
 <script>
+var timestampToDate = function(timestamp) {
+    var d = new Date(timestamp);
+    var year = d.getFullYear();
+    var month = (d.getMonth() + 1 < 10) ? '0' + (d.getMonth() + 1) : d.getMonth() + 1;
+    var day = (d.getDate() < 10) ? '0' + d.getDate() : d.getDate();
+    var hour = (d.getHours() < 10) ? '0' + d.getHours() : d.getHours();
+    var min = (d.getMinutes() < 10) ? '0' + d.getMinutes() : d.getMinutes();
+    var sec = (d.getSeconds() < 10) ? '0' + d.getSeconds() : d.getSeconds();
+    return year + '-' + month + '-' + day + ' ' + hour + ':' + min + ':' + sec;
+};
+
+app.filter('toDate', [function() {
+    return timestampToDate;
+}]);
+
 @* /*app.controller('EventListCtrl', function($scope) {
     $scope.events = [
         @for(event:Event <- events){
@@ -20,8 +35,29 @@
 });*/ *@
 
 app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $firebaseObject) {
-    $scope.inProgress = $firebaseObject(contestRef.child('inProgress'));
-    $scope.events = $firebaseObject(contestRef.child('events'));
+    $scope.events = null;
+    $scope.inProgress = null;
+    $scope.inProgressContest = null;
+    $scope.inProgressContestEvents = null;
+    contestRef.child('events').once('value', function(snapEvents) {
+        if (snapEvents.exists()) {
+            $scope.events = snapEvents.val();
+            contestRef.child('inProgress').child('contest').once('value', function(snapshot) {
+                if (snapshot.exists()) {
+                    $scope.inProgress = snapshot.val();
+                    $scope.inProgressContest = $firebaseObject(contestRef.child('contests').child($scope.inProgress));
+                } else {
+                    console.error('Contest does not defined');
+                }
+            }, function(error) {
+                console.error(error);
+            });
+        } else {
+            console.error('Events does not defined');
+        }
+    }, function(error) {
+        console.error(error);
+    });
 }]);
 </script>
     </head>
@@ -44,6 +80,8 @@ app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $fi
             </ul>
         </div>
 
+        <hr>
+
         @* <!--<div>
             <p>開催中のコンテスト (MySQL):<br>@{events.length} events.</p>
             <ul>
@@ -63,16 +101,33 @@ app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $fi
         </div>--> *@
 
         <div ng-controller="ContestCtrl">
-            <p>開催中のコンテスト: {{ inProgress.contest }}</p>
-            <!--<pre>{{ inProgress | json}}</pre>-->
-
-            <p>競技リスト (Firebase + AngularJS):<br>{{ events.length }} events.</p>
+            <p>
+                開催中のコンテスト:
+                <a href="/contest/{{ inProgressContest.contestId }}">{{ inProgressContest.contestName }} ({{ inProgress }})</a>
+            </p>
+            <p>
+                開始: {{ inProgressContest.beginAt | toDate }}<br>
+                終了: {{ inProgressContest.endAt | toDate }}
+            </p>
+            <p>
+                競技一覧:
+            </p>
             <ul>
-                <li ng-repeat="(eid, e) in events">
-                    <a href="#{{ eid }}">{{ e.name }} ({{ e.method }} of {{ e.attempts }}, format={{ e.format }})</a>
+                <li ng-repeat="e in inProgressContest.events">
+                    <a href="/contest/{{ inProgressContest.contestId }}#{{ e }}">{{ events[e].name }} ({{ events[e].method }} of {{ events[e].attempts }})</a>
                 </li>
             </ul>
-            <!--<pre>{{ events | json }}</pre>-->
+
+            <p>inProgressContest:</p>
+            <pre>{{ inProgressContest | json }}</pre>
+
+            <p>全競技リスト:</p>
+            <ul>
+                <li ng-repeat="(eid, e) in events">
+                    {{ e.name }} ({{ eid }}: {{ e.method }} of {{ e.attempts }}, format={{ e.format }})
+                </li>
+            </ul>
+            <pre>{{ events | json }}</pre>
         </div>
 
         @bodyfooter(contestName)

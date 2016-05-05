@@ -140,6 +140,9 @@
             ".write": false,
             "$contest_id": {
                 ".validate": "$contest_id.matches(/^c[0-9]{4}(1|2)[0-9]{2}$/) && newData.hasChildren(['contestName', 'year', 'season', 'number', 'beginAt', 'endAt', 'events', 'scrambles'])",
+                "contestId": {
+                    ".validate": "newData.isNumber()"
+                },
                 "contestName": {
                     ".validate": "newData.isString() && newData.val().matches(/^.{1,63}$/)"
                 },
