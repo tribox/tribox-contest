@@ -1,4 +1,6 @@
-@(title: String, contestName: String, contestUrl: String, firebaseappContest: String)
+@(contestName: String, contestUrl: String, firebaseappContest: String)
+
+@defining("Forget Password?") { title =>
 
 <!DOCTYPE html>
 <html lang="ja" ng-app="contestApp">
@@ -48,3 +50,5 @@ app.controller('AuthForgetCtrl', ['$scope', 'Auth', function($scope, Auth) {
         @bodyfooter(contestName)
     </body>
 </html>
+
+}

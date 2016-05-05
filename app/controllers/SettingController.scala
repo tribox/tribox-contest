@@ -20,14 +20,14 @@ class SettingController @Inject() extends Controller {
     val contestName = Play.application.configuration.getString("contest.name").getOrElse("tribox Contest")
     val contestUrl = Play.application.configuration.getString("contest.url").getOrElse("https://contest.tribox.com/")
     val firebaseappContest = Play.application.configuration.getString("firebaseapp.contest").getOrElse("tribox-contest")
-    Ok(views.html.setting("Setting", contestName, contestUrl, firebaseappContest))
+    Ok(views.html.setting(contestName, contestUrl, firebaseappContest))
   }
 
   def settingfirst = Action {
     val contestName = Play.application.configuration.getString("contest.name").getOrElse("tribox Contest")
     val contestUrl = Play.application.configuration.getString("contest.url").getOrElse("https://contest.tribox.com/")
     val firebaseappContest = Play.application.configuration.getString("firebaseapp.contest").getOrElse("tribox-contest")
-    Ok(views.html.settingfirst("First Setting", contestName, contestUrl, firebaseappContest))
+    Ok(views.html.settingfirst(contestName, contestUrl, firebaseappContest))
   }
 
 }

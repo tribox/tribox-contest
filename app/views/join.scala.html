@@ -1,4 +1,6 @@
-@(title: String, contestName: String, contestUrl: String, firebaseappContest: String)
+@(contestName: String, contestUrl: String, firebaseappContest: String)
+
+@defining("Join") { title =>
 
 <!DOCTYPE html>
 <html lang="ja" ng-app="contestApp">
@@ -80,3 +82,5 @@ app.controller('AuthJoinCtrl', ['$scope', 'Auth', function($scope, Auth) {
         @bodyfooter(contestName)
     </body>
 </html>
+
+}

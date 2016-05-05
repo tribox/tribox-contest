@@ -1,4 +1,6 @@
-@(title: String, contestName: String, contestUrl: String, firebaseappContest: String)
+@(contestName: String, contestUrl: String, firebaseappContest: String)
+
+@defining("Setting") { title =>
 
 <!DOCTYPE html>
 <html lang="ja" ng-app="contestApp">
@@ -186,3 +188,5 @@ app.controller('AuthPasswordCtrl', ['$scope', 'Auth', function($scope, Auth) {
         @bodyfooter(contestName)
     </body>
 </html>
+
+}

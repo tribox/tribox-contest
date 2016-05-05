@@ -1,5 +1,7 @@
-@(title: String, contestName: String, contestUrl: String, firebaseappContest: String)
-@* @(titie: String, contestName: String, contestUrl: String, firebaseappContest: String, events:List[Event]) *@
+@(contestName: String, contestUrl: String, firebaseappContest: String)
+@* @(contestName: String, contestUrl: String, firebaseappContest: String, events:List[Event]) *@
+
+@defining("") { title =>
 
 <!DOCTYPE html>
 <html lang="ja" ng-app="contestApp">
@@ -76,3 +78,5 @@ app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $fi
         @bodyfooter(contestName)
     </body>
 </html>
+
+}
