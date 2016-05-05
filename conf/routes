@@ -15,5 +15,8 @@ GET     /forget                     controllers.HomeController.forget
 GET     /setting                    controllers.SettingController.setting
 GET     /setting/first              controllers.SettingController.settingfirst
 
+# Users
+GET     /user/$id<[a-zA-Z0-9_]{1,15}> controllers.UserController.user(id: String)
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

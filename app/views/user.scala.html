@@ -1,0 +1,23 @@
+@(id: String, contestName: String, contestUrl: String, firebaseappContest: String)
+
+@defining("User: " + id) { title =>
+
+<!DOCTYPE html>
+<html lang="ja" ng-app="contestApp">
+    <head>
+        @header(title, contestName)
+
+@basejs(firebaseappContest)
+@authjs(redirectLogin="", redirectLogout="", checkFirst=true)
+    </head>
+    <body>
+        @bodyheader(title, contestName)
+
+        <div>
+            <p>@id</p>
+        </div>
+
+    </body>
+</html>
+
+}
