@@ -9,14 +9,37 @@
 
 @basejs(firebaseappContest)
 @authjs(redirectLogin="", redirectLogout="", checkFirst=true)
+<script>
+app.controller('UserCtrl', ['$scope', '$firebaseObject', function($scope, $firebaseObject) {
+    $scope.userData = null;
+    contestRef.child('usernames').child('@id').once('value', function(usernameSnap) {
+        if (usernameSnap.val() != null && usernameSnap.val().uid != null && usernameSnap.val()._dummy == null) {
+            $scope.userData = $firebaseObject(contestRef.child('users').child(usernameSnap.val().uid));
+        } else {
+            console.log('Username does not exist: @id');
+        }
+    }, function(error) {
+        console.error(error);
+    });
+}]);
+</script>
     </head>
     <body>
         @bodyheader(title, contestName)
 
-        <div>
-            <p>@id</p>
+        <div ng-controller="AuthCtrl">
+            <p ng-if="message">Auth status: <strong>{{ message }}</strong></p>
+            <p ng-if="isTemporaryPassword" style="color:#f00">Please change pasword!</p>
+            <p>authData:</p><pre>{{ authData | json }}</pre>
+            <p>userData:</p><pre>{{ userData | json }}</pre>
+            <p>usersecretData:</p><pre>{{ usersecretData | json }}</pre>
         </div>
 
+        <div ng-controller="UserCtrl">
+            <p>@id -> userData:</p><pre>{{ userData | json }}</pre>
+        </div>
+
+        @bodyfooter(contestName)
     </body>
 </html>
 
