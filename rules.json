@@ -3,46 +3,40 @@
         ".read": false,
         ".write": false,
 
+        // List of user's usernames
         "usernames": {
-            ".read": "auth !== null",
+            ".read": true,
             ".write": false,
-            ".indexOn": ["changedAt"],
+            //".indexOn": ["changedAt"],
             "$username": {
                 ".write": "auth.uid === newData.child('uid').val()",
-                ".validate": "newData.hasChildren(['uid', 'createdAt', 'changedAt']) && $username.matches(/^[a-zA-Z0-9_]{1,15}$/)",
+                ".validate": "newData.hasChildren(['uid', 'createdAt']) && $username.matches(/^[a-zA-Z0-9_]{1,15}$/)",
+                //".validate": "newData.hasChildren(['uid', 'createdAt', 'changedAt']) && $username.matches(/^[a-zA-Z0-9_]{1,15}$/)",
                 "uid": {
                     ".validate": "newData.isString() && auth.uid === newData.val()"
                 },
                 "createdAt": {
                     ".validate": "newData.isNumber() && newData.val() <= now && !data.exists()"
                 },
-                "changedAt": {
-                    ".validate": "newData.isNumber() && newData.val() <= now"
-                },
+                //"changedAt": {
+                //    ".validate": "newData.isNumber() && newData.val() <= now"
+                //},
                 "$other": {
                     ".validate": false
                 }
             }
         },
 
+        // List of user's public data
         "users": {
-            ".read": "auth !== null",
+            ".read": true,
             ".write": false,
             ".indexOn": ["username"],
             "$user_id": {
                 ".write": "auth.uid === $user_id",
-                ".validate": "newData.hasChildren(['createdAt', 'loggedinAt', 'username', 'displayname'])",
+                ".validate": "newData.hasChildren(['createdAt', 'username', 'displayname'])",
                 "createdAt": {
                     ".validate": "newData.isNumber() && newData.val() <= now && !data.exists()"
-                },
-                "loggedinAt": {
-                    ".validate": "newData.isNumber() && newData.val() <= now"
-                },
-                "emailChangedAt": {
-                    ".validate": "newData.isNumber() && newData.val() <= now"
-                },
-                "passwordChangedAt": {
-                    ".validate": "newData.isNumber() && newData.val() <= now"
                 },
                 "username": {
                     ".validate": "newData.isString() && root.child('usernames').hasChild(newData.val())"
@@ -65,20 +59,8 @@
                 "isTriboxTeam": {
                     ".validate": "newData.isBoolean()"
                 },
-                "tribox": {
-                    ".read": "auth.uid === $user_id",
-                    "isTriboxCustomer": {
-                        ".validate": "newData.isBoolean()"
-                    },
-                    "triboxStoreCustomerId": {
-                        ".validate": "newData.isNumber() && 0 < newData.val()"
-                    },
-                    "triboxStickersCustomerId": {
-                        ".validate": "newData.isNumber() && 0 < newData.val()"
-                    },
-                    "$other": {
-                        ".validate": false
-                    }
+                "isTriboxCustomer": {
+                    ".validate": "newData.isBoolean()"
                 },
                 "$other": {
                     ".validate": false
@@ -86,6 +68,36 @@
             }
         },
 
+        // List of user's private data
+        "usersecrets": {
+            ".read": false,
+            ".write": false,
+            "$user_id": {
+                ".read": "auth.uid === $user_id",
+                ".write": "auth.uid === $user_id",
+                ".validate": "newData.hasChildren(['loggedinAt'])",
+                "loggedinAt": {
+                    ".validate": "newData.isNumber() && newData.val() <= now"
+                },
+                "emailChangedAt": {
+                    ".validate": "newData.isNumber() && newData.val() <= now"
+                },
+                "passwordChangedAt": {
+                    ".validate": "newData.isNumber() && newData.val() <= now"
+                },
+                "triboxStoreCustomerId": {
+                    ".validate": "newData.isNumber() && 0 < newData.val() && root.child('users').child($user_id).child('isTriboxCustomer').val() === true"
+                },
+                "triboxStickersCustomerId": {
+                    ".validate": "newData.isNumber() && 0 < newData.val() && root.child('users').child($user_id).child('isTriboxCustomer').val() === true"
+                },
+                "$other": {
+                    ".validate": false
+                }
+            }
+        },
+
+        // Pointer to the contest in progress
         "inProgress": {
             ".read": true,
             ".write": false,
@@ -98,6 +110,7 @@
             }
         },
 
+        // Database of events
         "events": {
             ".read": true,
             ".write": false,
@@ -121,6 +134,7 @@
             }
         },
 
+        // Data for contests
         "contests": {
             ".read": true,
             ".write": false,
@@ -163,6 +177,7 @@
             }
         },
 
+        // Data for contest results
         "results": {
             ".read": true,
             ".write": false

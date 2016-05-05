@@ -4,15 +4,11 @@
 <html lang="ja" ng-app="contestApp">
     <head>
         @header(title, contestName)
+
+@basejs(firebaseappContest)
+@authjs(routes.HomeController.index.toString(), "")
 <script>
-var app = angular.module('contestApp', ['firebase']);
-var contestRef = new Firebase('https://@{firebaseappContest}.firebaseio.com');
-
-app.factory('Auth', ['$firebaseAuth', function($firebaseAuth) {
-    return $firebaseAuth(contestRef);
-}]);
-
-app.controller('AuthCtrl', ['$scope', 'Auth', function($scope, Auth) {
+app.controller('AuthLoginCtrl', ['$scope', 'Auth', function($scope, Auth) {
     $scope.login = function() {
         $scope.message = null;
         $scope.error = null;
@@ -27,7 +23,7 @@ app.controller('AuthCtrl', ['$scope', 'Auth', function($scope, Auth) {
             contestRef.child('users').child(authData.uid).once('value', function(snapshot) {
                 if (snapshot.exists()) {
                     // Second or more time of login because user data exists
-                    contestRef.child('users').child(authData.uid).update({
+                    contestRef.child('usersecrets').child(authData.uid).update({
                         'loggedinAt': Firebase.ServerValue.TIMESTAMP
                     }, function(error) {
                         if (error) {
@@ -44,6 +40,7 @@ app.controller('AuthCtrl', ['$scope', 'Auth', function($scope, Auth) {
                     location.href = '@routes.HomeController.first';
                 }
             }, function(error) {
+                Auth.$unauth();
                 $scope.error = error;
             });
         }).catch(function(error) {
@@ -56,7 +53,7 @@ app.controller('AuthCtrl', ['$scope', 'Auth', function($scope, Auth) {
     <body>
         @bodyheader(title, contestName)
 
-        <div ng-controller="AuthCtrl">
+        <div ng-controller="AuthLoginCtrl">
             <form name="loginForm" ng-submit="login()">
                 Email: <input type="email" ng-model="email"><br>
                 Password: <input type="password" ng-model="password"><br>

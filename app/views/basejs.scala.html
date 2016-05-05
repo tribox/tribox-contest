@@ -1,0 +1,6 @@
+@(firebaseappContest: String)
+
+<script>
+var app = angular.module('contestApp', ['firebase']);
+var contestRef = new Firebase('https://@{firebaseappContest}.firebaseio.com');
+</script>

@@ -1,0 +1,39 @@
+@(redirectLogin: String, redirectLogout: String)
+
+<script>
+app.factory('Auth', ['$firebaseAuth', function($firebaseAuth) {
+    return $firebaseAuth(contestRef);
+}]);
+
+app.controller('AuthCtrl', ['$scope', '$firebaseObject', 'Auth', function($scope, $firebaseObject, Auth) {
+    $scope.message = null;
+    $scope.authData = null;
+    $scope.userData = null;
+    $scope.usersecretData = null;
+    $scope.isLoggingin = false;
+    $scope.isTemporaryPassword = false;
+
+    Auth.$onAuth(function(authData) {
+        if (authData) {
+            $scope.message = 'Logged in as: ' + authData.uid + ' (' + authData.password.email + ')';
+            $scope.authData = authData;
+            $scope.userData = $firebaseObject(contestRef.child('users').child(authData.uid));
+            $scope.usersecretData = $firebaseObject(contestRef.child('usersecrets').child(authData.uid));
+            $scope.isLoggingin = true;
+            $scope.isTemporaryPassword = authData.password.isTemporaryPassword;
+            @if(!redirectLogin.isEmpty){
+                location.href = '@redirectLogin';
+            }
+        } else {
+            $scope.message = 'Logged out';
+            $scope.authData = null;
+            $scope.userData = null;
+            $scope.usersecretData = null;
+            $scope.isLoggingin = false;
+            @if(!redirectLogout.isEmpty){
+                location.href = '@redirectLogout';
+            }
+        }
+    });
+}]);
+</script>

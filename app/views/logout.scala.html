@@ -4,15 +4,11 @@
 <html lang="ja" ng-app="contestApp">
     <head>
         @header(title, contestName)
+
+@basejs(firebaseappContest)
+@authjs("", routes.HomeController.index.toString())
 <script>
-var app = angular.module('contestApp', ['firebase']);
-var contestRef = new Firebase('https://@{firebaseappContest}.firebaseio.com');
-
-app.factory('Auth', ['$firebaseAuth', function($firebaseAuth) {
-    return $firebaseAuth(contestRef);
-}]);
-
-app.controller('AuthCtrl', ['$scope', 'Auth', function($scope, Auth) {
+app.controller('AuthLogoutCtrl', ['$scope', 'Auth', function($scope, Auth) {
     $scope.logout = function() {
         Auth.$unauth();
         location.href = '@routes.HomeController.index';
@@ -23,7 +19,7 @@ app.controller('AuthCtrl', ['$scope', 'Auth', function($scope, Auth) {
     <body>
         @bodyheader(title, contestName)
 
-        <div ng-controller="AuthCtrl">
+        <div ng-controller="AuthLogoutCtrl">
             <button ng-click="logout()">Logout</button><br>
         </div>
 

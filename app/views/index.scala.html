@@ -5,35 +5,10 @@
 <html lang="ja" ng-app="contestApp">
     <head>
         @header(title, contestName)
+
+@basejs(firebaseappContest)
+@authjs("", "")
 <script>
-var app = angular.module('contestApp', ['firebase']);
-var contestRef = new Firebase('https://@{firebaseappContest}.firebaseio.com');
-
-app.factory('Auth', ['$firebaseAuth', function($firebaseAuth) {
-    return $firebaseAuth(contestRef);
-}]);
-
-app.controller('AuthCtrl', ['$scope', '$firebaseObject', 'Auth', function($scope, $firebaseObject, Auth) {
-    $scope.message = null;
-    $scope.authData = null;
-    $scope.userData = null;
-    $scope.isLoggingin = false;
-
-    Auth.$onAuth(function(authData) {
-        if (authData) {
-            $scope.message = 'Logged in as: ' + authData.uid + ' (' + authData.password.email + ')';
-            $scope.authData = authData;
-            $scope.userData = $firebaseObject(contestRef.child('users').child(authData.uid));
-            $scope.isLoggingin = true;
-        } else {
-            $scope.message = 'Logged out';
-            $scope.authData = null;
-            $scope.userData = null;
-            $scope.isLoggingin = false;
-        }
-    });
-}]);
-
 @* /*app.controller('EventListCtrl', function($scope) {
     $scope.events = [
         @for(event:Event <- events){
@@ -53,8 +28,10 @@ app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $fi
 
         <div ng-controller="AuthCtrl">
             <p ng-if="message">Auth status: <strong>{{ message }}</strong></p>
+            <p ng-if="isTemporaryPassword" style="color:#f00">Please change pasword!</p>
             <pre>{{ authData | json }}</pre>
             <pre>{{ userData | json }}</pre>
+            <pre>{{ usersecretData | json }}</pre>
 
             <ul>
                 <li ng-hide="isLoggingin"><a href="/join">Join</a></li>

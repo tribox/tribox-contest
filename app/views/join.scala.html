@@ -4,6 +4,7 @@
 <html lang="ja" ng-app="contestApp">
     <head>
         @header(title, contestName)
+
 <script>
 // Random string for initial password
 var getRandomStr = function(l) {
@@ -15,15 +16,11 @@ var getRandomStr = function(l) {
     }
     return r;
 };
-
-var app = angular.module('contestApp', ['firebase']);
-var contestRef = new Firebase('https://@{firebaseappContest}.firebaseio.com');
-
-app.factory('Auth', ['$firebaseAuth', function($firebaseAuth) {
-    return $firebaseAuth(contestRef);
-}]);
-
-app.controller('AuthCtrl', ['$scope', 'Auth', function($scope, Auth) {
+</script>
+@basejs(firebaseappContest)
+@authjs(routes.HomeController.index.toString(), "")
+<script>
+app.controller('AuthJoinCtrl', ['$scope', 'Auth', function($scope, Auth) {
     $scope.createUser = function() {
         $scope.message = null;
         $scope.error = null;
@@ -60,7 +57,7 @@ app.controller('AuthCtrl', ['$scope', 'Auth', function($scope, Auth) {
             初期パスワードでログインしてパスワードを変更してください。
         </p>
 
-        <div ng-controller="AuthCtrl">
+        <div ng-controller="AuthJoinCtrl">
             <form novalidate name="joinForm" ng-submit="createUser()">
                 Email: <input type="email" name="email" ng-model="email" required>
                 <span ng-show="joinForm.email.$error.email">Not valid email!</span>

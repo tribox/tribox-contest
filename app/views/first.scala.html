@@ -4,10 +4,9 @@
 <html lang="ja" ng-app="contestApp">
     <head>
         @header(title, contestName)
-<script>
-var app = angular.module('contestApp', ['firebase']);
-var contestRef = new Firebase('https://@{firebaseappContest}.firebaseio.com');
 
+@basejs(firebaseappContest)
+<script>
 app.factory('Auth', ['$firebaseAuth', function($firebaseAuth) {
     return $firebaseAuth(contestRef);
 }]);
@@ -16,6 +15,7 @@ app.controller('AuthCtrl', ['$scope', '$firebaseObject', 'Auth', function($scope
     $scope.message = null;
     $scope.authData = null;
     $scope.userData = null;
+    $scope.usersecretData = null;
     $scope.isLoggingin = false;
 
     Auth.$onAuth(function(authData) {
@@ -23,6 +23,7 @@ app.controller('AuthCtrl', ['$scope', '$firebaseObject', 'Auth', function($scope
             $scope.message = 'Logged in as: ' + authData.uid + ' (' + authData.password.email + ')';
             $scope.authData = authData;
             $scope.userData = $firebaseObject(contestRef.child('users').child(authData.uid));
+            $scope.usersecretData = $firebaseObject(contestRef.child('usersecrets').child(authData.uid));
             $scope.isLoggingin = true;
             contestRef.child('users').child(authData.uid).once('value', function(userSnap) {
                 if (userSnap.exists()) {
@@ -35,17 +36,14 @@ app.controller('AuthCtrl', ['$scope', '$firebaseObject', 'Auth', function($scope
             $scope.message = 'Logged out';
             $scope.authData = null;
             $scope.userData = null;
+            $scope.usersecretData = null;
             $scope.isLoggingin = false;
             location.href = '@routes.HomeController.index';
         }
     });
 }]);
 
-app.factory('Users', ['$firebaseObject', function($firebaseObject) {
-    return $firebaseObject(contestRef.child('users'));
-}]);
-
-app.controller('AuthFirstSettingCtrl', ['$scope', 'Users', 'Auth', function($scope, Users, Auth) {
+app.controller('AuthFirstSettingCtrl', ['$scope', 'Auth', function($scope, Auth) {
     $scope.updateFirstSetting = function() {
         $scope.message = null;
         $scope.error = null;
@@ -75,11 +73,10 @@ app.controller('AuthFirstSettingCtrl', ['$scope', 'Users', 'Auth', function($sco
                                 // Username already used
                                 console.error('Username already exists: ' + _username);
                             } else {
-                                // Store to usernames DB and users DB
+                                // Set new data to usernames DB and users DB
                                 contestRef.child('usernames').child(_username).set({
                                     'uid': authData.uid,
-                                    'createdAt': Firebase.ServerValue.TIMESTAMP,
-                                    'changedAt': Firebase.ServerValue.TIMESTAMP
+                                    'createdAt': Firebase.ServerValue.TIMESTAMP
                                 }, function(error) {
                                     if (error) {
                                         console.error(error);
@@ -87,7 +84,6 @@ app.controller('AuthFirstSettingCtrl', ['$scope', 'Users', 'Auth', function($sco
                                     } else {
                                         contestRef.child('users').child(authData.uid).set({
                                             'createdAt': Firebase.ServerValue.TIMESTAMP,
-                                            'loggedinAt': Firebase.ServerValue.TIMESTAMP,
                                             'username': _username,
                                             'displayname': _displayname
                                         }, function(error) {
@@ -95,8 +91,17 @@ app.controller('AuthFirstSettingCtrl', ['$scope', 'Users', 'Auth', function($sco
                                                 console.error(error);
                                                 Auth.$unauth();
                                             } else {
-                                                console.log('Update successfully: ' + authData.uid + ' (' + _username + ')');
-                                                location.href = '@routes.HomeController.index';
+                                                contestRef.child('usersecrets').child(authData.uid).set({
+                                                    'loggedinAt': Firebase.ServerValue.TIMESTAMP
+                                                }, function(error) {
+                                                    if (error) {
+                                                        console.error(error);
+                                                        Auth.$unauth();
+                                                    } else {
+                                                        console.log('Update successfully: ' + authData.uid + ' (' + _username + ')');
+                                                        location.href = '@routes.HomeController.index';
+                                                    }
+                                                });
                                             }
                                         });
                                     }
@@ -121,6 +126,7 @@ app.controller('AuthFirstSettingCtrl', ['$scope', 'Users', 'Auth', function($sco
             <p ng-if="message">Auth status: <strong>{{ message }}</strong></p>
             <pre>{{ authData | json }}</pre>
             <pre>{{ userData | json }}</pre>
+            <pre>{{ usersecretData | json }}</pre>
         </div>
 
         <div ng-controller="AuthFirstSettingCtrl">
