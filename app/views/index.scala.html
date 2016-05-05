@@ -29,9 +29,9 @@ app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $fi
         <div ng-controller="AuthCtrl">
             <p ng-if="message">Auth status: <strong>{{ message }}</strong></p>
             <p ng-if="isTemporaryPassword" style="color:#f00">Please change pasword!</p>
-            <pre>{{ authData | json }}</pre>
-            <pre>{{ userData | json }}</pre>
-            <pre>{{ usersecretData | json }}</pre>
+            <p>authData:</p><pre>{{ authData | json }}</pre>
+            <p>userData:</p><pre>{{ userData | json }}</pre>
+            <p>usersecretData:</p><pre>{{ usersecretData | json }}</pre>
 
             <ul>
                 <li ng-hide="isLoggingin"><a href="/join">Join</a></li>

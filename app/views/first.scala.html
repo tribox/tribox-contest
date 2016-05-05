@@ -124,9 +124,9 @@ app.controller('AuthFirstSettingCtrl', ['$scope', 'Auth', function($scope, Auth)
 
         <div ng-controller="AuthCtrl">
             <p ng-if="message">Auth status: <strong>{{ message }}</strong></p>
-            <pre>{{ authData | json }}</pre>
-            <pre>{{ userData | json }}</pre>
-            <pre>{{ usersecretData | json }}</pre>
+            <p>authData:</p><pre>{{ authData | json }}</pre>
+            <p>userData:</p><pre>{{ userData | json }}</pre>
+            <p>usersecretData:</p><pre>{{ usersecretData | json }}</pre>
         </div>
 
         <div ng-controller="AuthFirstSettingCtrl">

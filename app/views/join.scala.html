@@ -50,6 +50,14 @@ app.controller('AuthJoinCtrl', ['$scope', 'Auth', function($scope, Auth) {
     <body>
         @bodyheader(title, contestName)
 
+        <div ng-controller="AuthCtrl">
+            <p ng-if="message">Auth status: <strong>{{ message }}</strong></p>
+            <p ng-if="isTemporaryPassword" style="color:#f00">Please change pasword!</p>
+            <p>authData:</p><pre>{{ authData | json }}</pre>
+            <p>userData:</p><pre>{{ userData | json }}</pre>
+            <p>usersecretData:</p><pre>{{ usersecretData | json }}</pre>
+        </div>
+
         <p>
             メールアドレスを入力してください。
             入力されたメールアドレス宛てに初期パスワードが記載されたメールが送信されます
