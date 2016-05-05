@@ -6,7 +6,7 @@
         @header(title, contestName)
 
 @basejs(firebaseappContest)
-@authjs(routes.HomeController.index.toString(), "")
+@authjs(redirectLogin="", redirectLogout="", checkFirst=false)
 <script>
 app.controller('AuthLoginCtrl', ['$scope', 'Auth', function($scope, Auth) {
     $scope.login = function() {
@@ -17,8 +17,6 @@ app.controller('AuthLoginCtrl', ['$scope', 'Auth', function($scope, Auth) {
             email: $scope.email,
             password: $scope.password
         }).then(function(authData) {
-            console.log('Checking: ' + authData.uid);
-
             // Get users list from DB
             contestRef.child('users').child(authData.uid).once('value', function(snapshot) {
                 if (snapshot.exists()) {

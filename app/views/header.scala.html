@@ -1,9 +1,9 @@
 @(title: String, contestName: String)
 
         <meta charset="UTF-8">
-        @if(title.isEmpty) {
+        @if(title.isEmpty){
             <title>@contestName</title>
-        } else {
+        }else{
             <title>@title &mdash; @contestName</title>
         }
         <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">

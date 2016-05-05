@@ -6,13 +6,14 @@
         @header(title, contestName)
 
 @basejs(firebaseappContest)
-@authjs("", "")
+@authjs(redirectLogin="", redirectLogout="", checkFirst=true)
 <script>
 app.controller('AuthForgetCtrl', ['$scope', 'Auth', function($scope, Auth) {
     $scope.resetPassword = function() {
         $scope.message = null;
         $scope.error = null;
 
+        Auth.$unauth();
         Auth.$resetPassword({
             email: $scope.email
         }).then(function() {

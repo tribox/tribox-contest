@@ -18,7 +18,7 @@ var getRandomStr = function(l) {
 };
 </script>
 @basejs(firebaseappContest)
-@authjs(routes.HomeController.index.toString(), "")
+@authjs(redirectLogin=routes.HomeController.index.toString(), redirectLogout="", checkFirst=false)
 <script>
 app.controller('AuthJoinCtrl', ['$scope', 'Auth', function($scope, Auth) {
     $scope.createUser = function() {

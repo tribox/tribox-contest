@@ -6,7 +6,7 @@
         @header(title, contestName)
 
 @basejs(firebaseappContest)
-@authjs("", routes.HomeController.index.toString())
+@authjs(redirectLogin="", redirectLogout=routes.HomeController.index.toString(), checkFirst=true)
 <script>
 app.controller('AuthEmailCtrl', ['$scope', 'Auth', function($scope, Auth) {
     Auth.$onAuth(function(authData) {

@@ -7,7 +7,7 @@
         @header(title, contestName)
 
 @basejs(firebaseappContest)
-@authjs("", "")
+@authjs(redirectLogin="", redirectLogout="", checkFirst=true)
 <script>
 @* /*app.controller('EventListCtrl', function($scope) {
     $scope.events = [

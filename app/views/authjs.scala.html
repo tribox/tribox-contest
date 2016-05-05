@@ -1,4 +1,4 @@
-@(redirectLogin: String, redirectLogout: String)
+@(redirectLogin: String, redirectLogout: String, checkFirst: Boolean)
 
 <script>
 app.factory('Auth', ['$firebaseAuth', function($firebaseAuth) {
@@ -23,6 +23,19 @@ app.controller('AuthCtrl', ['$scope', '$firebaseObject', 'Auth', function($scope
             $scope.isTemporaryPassword = authData.password.isTemporaryPassword;
             @if(!redirectLogin.isEmpty){
                 location.href = '@redirectLogin';
+            }
+            @if(checkFirst){
+                // Get users list from DB
+                contestRef.child('users').child(authData.uid).once('value', function(snapshot) {
+                    if (!(snapshot.exists())) {
+                        // First login because no user data yet
+                        console.log('Logged in as: ' + authData.uid + ' (first login)');
+                        location.href = '@routes.SettingController.first';
+                    }
+                }, function(error) {
+                    Auth.$unauth();
+                    $scope.error = error;
+                });
             }
         } else {
             $scope.message = 'Logged out';
