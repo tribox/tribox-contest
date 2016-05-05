@@ -2,17 +2,18 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-# An example controller showing a sample home page
+# Home
 GET     /                           controllers.HomeController.index
 
-# Join / Login / Logout / Forget password / My page / Change email & password
+# Auth: Join / Login / Logout / Forget password / My page / Change email & password
 GET     /join                       controllers.HomeController.join
 GET     /login                      controllers.HomeController.login
 GET     /logout                     controllers.HomeController.logout
 GET     /forget                     controllers.HomeController.forget
-GET     /first                      controllers.HomeController.first
-GET     /my                         controllers.HomeController.mypage
-GET     /change                     controllers.HomeController.change
+
+# Setting: Setting / First setting
+GET     /setting                    controllers.SettingController.setting
+GET     /setting/first              controllers.SettingController.first
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

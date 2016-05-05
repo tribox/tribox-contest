@@ -37,7 +37,7 @@ app.controller('AuthLoginCtrl', ['$scope', 'Auth', function($scope, Auth) {
                 } else {
                     // First login because no user data yet
                     console.log('Logged in as: ' + authData.uid + ' (first login)');
-                    location.href = '@routes.HomeController.first';
+                    location.href = '@routes.SettingController.first';
                 }
             }, function(error) {
                 Auth.$unauth();

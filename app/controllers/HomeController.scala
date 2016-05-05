@@ -8,16 +8,13 @@ import play.api.Play.current
 
 /**
  * This controller creates an `Action` to handle HTTP requests to the
- * application's home page.
+ * application's home page and auth pages.
  */
 @Singleton
 class HomeController @Inject() extends Controller {
 
   /**
-   * Create an Action to render an HTML page with a welcome message.
-   * The configuration in the `routes` file means that this method
-   * will be called when the application receives a `GET` request with
-   * a path of `/`.
+   * Home
    */
   def index = Action {
     val contestName = Play.application.configuration.getString("contest.name").getOrElse("tribox Contest")
@@ -28,7 +25,7 @@ class HomeController @Inject() extends Controller {
   }
 
   /**
-   * Join / Login / Logout / My page / Change email & password
+   * Auth: Join / Login / Logout / Forget password
    */
   def join = Action {
     val contestName = Play.application.configuration.getString("contest.name").getOrElse("tribox Contest")
@@ -56,27 +53,6 @@ class HomeController @Inject() extends Controller {
     val contestUrl = Play.application.configuration.getString("contest.url").getOrElse("https://contest.tribox.com/")
     val firebaseappContest = Play.application.configuration.getString("firebaseapp.contest").getOrElse("tribox-contest")
     Ok(views.html.forget("Forget Password?", contestName, contestUrl, firebaseappContest))
-  }
-
-  def first = Action {
-    val contestName = Play.application.configuration.getString("contest.name").getOrElse("tribox Contest")
-    val contestUrl = Play.application.configuration.getString("contest.url").getOrElse("https://contest.tribox.com/")
-    val firebaseappContest = Play.application.configuration.getString("firebaseapp.contest").getOrElse("tribox-contest")
-    Ok(views.html.first("First Setting", contestName, contestUrl, firebaseappContest))
-  }
-
-  def mypage = Action {
-    val contestName = Play.application.configuration.getString("contest.name").getOrElse("tribox Contest")
-    val contestUrl = Play.application.configuration.getString("contest.url").getOrElse("https://contest.tribox.com/")
-    val firebaseappContest = Play.application.configuration.getString("firebaseapp.contest").getOrElse("tribox-contest")
-    Ok(views.html.mypage("My Page", contestName, contestUrl, firebaseappContest))
-  }
-
-  def change = Action {
-    val contestName = Play.application.configuration.getString("contest.name").getOrElse("tribox Contest")
-    val contestUrl = Play.application.configuration.getString("contest.url").getOrElse("https://contest.tribox.com/")
-    val firebaseappContest = Play.application.configuration.getString("firebaseapp.contest").getOrElse("tribox-contest")
-    Ok(views.html.change("Change Email &amp; Password", contestName, contestUrl, firebaseappContest))
   }
 
 }
