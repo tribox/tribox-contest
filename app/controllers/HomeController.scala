@@ -25,7 +25,7 @@ class HomeController @Inject() extends Controller {
   }
 
   /**
-   * Auth: Join / Login / Logout / Forget password
+   * Auth: Join / Login / Logout / Forgot password
    */
   def join = Action {
     val contestName = Play.application.configuration.getString("contest.name").getOrElse("tribox Contest")
@@ -48,11 +48,11 @@ class HomeController @Inject() extends Controller {
     Ok(views.html.logout(contestName, contestUrl, firebaseappContest))
   }
 
-  def forget = Action {
+  def forgot = Action {
     val contestName = Play.application.configuration.getString("contest.name").getOrElse("tribox Contest")
     val contestUrl = Play.application.configuration.getString("contest.url").getOrElse("https://contest.tribox.com/")
     val firebaseappContest = Play.application.configuration.getString("firebaseapp.contest").getOrElse("tribox-contest")
-    Ok(views.html.forget(contestName, contestUrl, firebaseappContest))
+    Ok(views.html.forgot(contestName, contestUrl, firebaseappContest))
   }
 
 }

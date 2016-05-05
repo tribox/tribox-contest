@@ -1,6 +1,6 @@
 @(contestName: String, contestUrl: String, firebaseappContest: String)
 
-@defining("Forget Password?") { title =>
+@defining("Forgot Password?") { title =>
 
 <!DOCTYPE html>
 <html lang="ja" ng-app="contestApp">
@@ -10,7 +10,7 @@
 @basejs(firebaseappContest)
 @authjs(redirectLogin="", redirectLogout="", checkFirst=true)
 <script>
-app.controller('AuthForgetCtrl', ['$scope', 'Auth', function($scope, Auth) {
+app.controller('AuthForgotCtrl', ['$scope', 'Auth', function($scope, Auth) {
     $scope.resetPassword = function() {
         $scope.message = null;
         $scope.error = null;
@@ -38,7 +38,7 @@ app.controller('AuthForgetCtrl', ['$scope', 'Auth', function($scope, Auth) {
             <p>usersecretData:</p><pre>{{ usersecretData | json }}</pre>
         </div>
 
-        <div ng-controller="AuthForgetCtrl">
+        <div ng-controller="AuthForgotCtrl">
             Email: <input type="email" ng-model="email"><br>
 
             <button ng-click="resetPassword()">Reset password</button><br>

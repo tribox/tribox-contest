@@ -5,11 +5,11 @@
 # Home
 GET     /                           controllers.HomeController.index
 
-# Auth: Join / Login / Logout / Forget password / My page / Change email & password
+# Auth: Join / Login / Logout / Forgot password / My page / Change email & password
 GET     /join                       controllers.HomeController.join
 GET     /login                      controllers.HomeController.login
 GET     /logout                     controllers.HomeController.logout
-GET     /forget                     controllers.HomeController.forget
+GET     /forgot                     controllers.HomeController.forgot
 
 # Setting: Setting / First setting
 GET     /setting                    controllers.SettingController.setting
