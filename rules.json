@@ -48,7 +48,7 @@
                     ".validate": "newData.isString() && root.child('usernames').hasChild(newData.val())"
                 },
                 "displayname": {
-                    ".validate": "newData.isString() && newData.val().matches(/^.{1,63}$/)"
+                    ".validate": "newData.isString() && newData.val().matches(/^.{1,31}$/)"
                 },
                 "organization": {
                     ".validate": "newData.isString() && newData.val().length < 128"
