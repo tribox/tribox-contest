@@ -1,0 +1,64 @@
+@(id: String, contestName: String, contestUrl: String, firebaseappContest: String)
+
+@defining("Contest: " + id) { title =>
+
+<!DOCTYPE html>
+<html lang="ja" ng-app="contestApp">
+    <head>
+        @header(title, contestName)
+
+@basejs(firebaseappContest)
+@authjs(redirectLogin="", redirectLogout="", checkFirst=true)
+<script>
+app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $firebaseObject) {
+    $scope.contestData = null;
+    $scope.events = null;
+    // Fetch contest data
+    contestRef.child('contests').child('c@id').once('value', function(snapContest) {
+        if (snapContest.exists() && snapContest.val()._dummy == null) {
+            $scope.contestData = snapContest.val();
+            // Fetch events data
+            contestRef.child('events').once('value', function(snapEvents) {
+                if (snapEvents.exists()) {
+                    $scope.events = snapEvents.val();
+                } else {
+                    console.error('Undefined: events');
+                }
+            }, function(error) {
+                console.error(error);
+            });
+        } else {
+            console.error('Invalid: contest (@id)');
+        }
+    }, function(error) {
+        console.error(error);
+    });
+}]);
+</script>
+    </head>
+    <body>
+        @bodyheader(title, contestName)
+
+        <div ng-controller="AuthCtrl">
+            <p ng-if="message">Auth status: <strong>{{ message }}</strong></p>
+            <p ng-if="isTemporaryPassword" style="color:#f00">Please change pasword!</p>
+            <p>authData:</p><pre>{{ authData | json }}</pre>
+            <p>userData:</p><pre>{{ userData | json }}</pre>
+            <p>usersecretData:</p><pre>{{ usersecretData | json }}</pre>
+        </div>
+
+        <hr>
+
+        <div ng-controller="ContestCtrl">
+            <p>@id -> contestData:</p>
+            <pre>{{ contestData | json }}</pre>
+
+            <p>events:</p>
+            <pre>{{ events | json }}</pre>
+        </div>
+
+        @bodyfooter(contestName)
+    </body>
+</html>
+
+}

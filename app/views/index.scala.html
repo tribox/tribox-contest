@@ -38,22 +38,21 @@ app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $fi
     $scope.events = null;
     $scope.inProgress = null;
     $scope.inProgressContest = null;
-    $scope.inProgressContestEvents = null;
     contestRef.child('events').once('value', function(snapEvents) {
         if (snapEvents.exists()) {
             $scope.events = snapEvents.val();
-            contestRef.child('inProgress').child('contest').once('value', function(snapshot) {
-                if (snapshot.exists()) {
-                    $scope.inProgress = snapshot.val();
+            contestRef.child('inProgress').child('contest').once('value', function(snapInProgress) {
+                if (snapInProgress.exists()) {
+                    $scope.inProgress = snapInProgress.val();
                     $scope.inProgressContest = $firebaseObject(contestRef.child('contests').child($scope.inProgress));
                 } else {
-                    console.error('Contest does not defined');
+                    console.error('Undefined: inProgress');
                 }
             }, function(error) {
                 console.error(error);
             });
         } else {
-            console.error('Events does not defined');
+            console.error('Undefined: events');
         }
     }, function(error) {
         console.error(error);

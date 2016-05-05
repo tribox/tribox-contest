@@ -12,11 +12,13 @@
 <script>
 app.controller('UserCtrl', ['$scope', '$firebaseObject', function($scope, $firebaseObject) {
     $scope.userData = null;
-    contestRef.child('usernames').child('@id').once('value', function(snapshot) {
-        if (snapshot.val() != null && snapshot.val().uid != null && snapshot.val()._dummy == null) {
-            $scope.userData = $firebaseObject(contestRef.child('users').child(snapshot.val().uid));
+    // Fetch usernames data
+    contestRef.child('usernames').child('@id').once('value', function(snapUsername) {
+        if (snapUsername.exists() && snapUsername.val().uid != null && snapUsername.val()._dummy == null) {
+            // Fetch user data
+            $scope.userData = $firebaseObject(contestRef.child('users').child(snapUsername.val().uid));
         } else {
-            console.log('Username does not exist: @id');
+            console.error('Invalid: username (@id)');
         }
     }, function(error) {
         console.error(error);
@@ -35,8 +37,11 @@ app.controller('UserCtrl', ['$scope', '$firebaseObject', function($scope, $fireb
             <p>usersecretData:</p><pre>{{ usersecretData | json }}</pre>
         </div>
 
+        <hr>
+
         <div ng-controller="UserCtrl">
-            <p>@id -> userData:</p><pre>{{ userData | json }}</pre>
+            <p>@id -> userData:</p>
+            <pre>{{ userData | json }}</pre>
         </div>
 
         @bodyfooter(contestName)
