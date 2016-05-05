@@ -13,7 +13,7 @@ GET     /forget                     controllers.HomeController.forget
 
 # Setting: Setting / First setting
 GET     /setting                    controllers.SettingController.setting
-GET     /setting/first              controllers.SettingController.first
+GET     /setting/first              controllers.SettingController.settingfirst
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
