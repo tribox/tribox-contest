@@ -1,6 +1,6 @@
 @(id: String, contestName: String, contestUrl: String, firebaseappContest: String)
 
-@defining("Contest: " + id) { title =>
+@defining("Contest") { title =>
 
 <!DOCTYPE html>
 <html lang="ja" ng-app="contestApp">
@@ -21,6 +21,7 @@ app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $fi
             contestRef.child('events').once('value', function(snapEvents) {
                 if (snapEvents.exists()) {
                     $scope.events = snapEvents.val();
+                    $scope.$apply();
                 } else {
                     console.error('Undefined: events');
                 }
@@ -50,6 +51,8 @@ app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $fi
         <hr>
 
         <div ng-controller="ContestCtrl">
+            <h2>{{ contestData.contestName }}</h2>
+
             <p>@id -> contestData:</p>
             <pre>{{ contestData | json }}</pre>
 
