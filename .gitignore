@@ -12,3 +12,5 @@ target
 
 /conf/dev.conf
 /conf/prod.conf
+
+node_modules
