@@ -4,8 +4,8 @@
 
 <!DOCTYPE html>
 <html lang="ja" ng-app="contestApp">
-    <head>
-        @header(title, contestName)
+<head>
+    @header(title, contestName)
 
 @basejs(firebaseappContest)
 <script>
@@ -120,37 +120,37 @@ app.controller('AuthFirstSettingCtrl', ['$scope', 'Auth', function($scope, Auth)
     };
 }]);
 </script>
-    </head>
-    <body>
-        @bodyheader(title, contestName)
+</head>
+<body>
+    @bodyheader(title, contestName)
 
-        <div ng-controller="AuthCtrl">
-            <p ng-if="message">Auth status: <strong>{{ message }}</strong></p>
-            <p>authData:</p><pre>{{ authData | json }}</pre>
-            <p>userData:</p><pre>{{ userData | json }}</pre>
-            <p>usersecretData:</p><pre>{{ usersecretData | json }}</pre>
-        </div>
+    <div ng-controller="AuthCtrl">
+        <p ng-if="message">Auth status: <strong>{{ message }}</strong></p>
+        <p>authData:</p><pre>{{ authData | json }}</pre>
+        <p>userData:</p><pre>{{ userData | json }}</pre>
+        <p>usersecretData:</p><pre>{{ usersecretData | json }}</pre>
+    </div>
 
-        <div ng-controller="AuthFirstSettingCtrl">
-            <p>初期設定が必要です。</p>
-            <form name="firstSettingForm" ng-submit="updateFirstSetting()">
-                ユーザ名: <input type="text" ng-model="username">
-                  アルファベットと数字で1文字以上16文字以内。
-                  他のアカウントのユーザ名と重複できません。
-                  個人ページのURLは @{contestUrl}/user/{{ username }} になります。
-                  あとで変更できます。<br>
-                名前: <input type="text" ng-model="displayname">
-                  ランキング等で表示される名前。日本語OK。ハンドルネームOK。
-                  あとで変更できます。<br>
-                <input type="submit" value="Update">
-            </form>
+    <div ng-controller="AuthFirstSettingCtrl">
+        <p>初期設定が必要です。</p>
+        <form name="firstSettingForm" ng-submit="updateFirstSetting()">
+            ユーザ名: <input type="text" ng-model="username">
+              アルファベットと数字で1文字以上16文字以内。
+              他のアカウントのユーザ名と重複できません。
+              個人ページのURLは @{contestUrl}/user/{{ username }} になります。
+              あとで変更できます。<br>
+            名前: <input type="text" ng-model="displayname">
+              ランキング等で表示される名前。日本語OK。ハンドルネームOK。
+              あとで変更できます。<br>
+            <input type="submit" value="Update">
+        </form>
 
-            <p ng-if="message">Message: <strong>{{ message }}</strong></p>
-            <p ng-if="error">Error: <strong style="color:#f00;">{{ error }}</strong></p>
-        </div>
+        <p ng-if="message">Message: <strong>{{ message }}</strong></p>
+        <p ng-if="error">Error: <strong style="color:#f00;">{{ error }}</strong></p>
+    </div>
 
-        @bodyfooter(contestName)
-    </body>
+    @bodyfooter(contestName)
+</body>
 </html>
 
 }

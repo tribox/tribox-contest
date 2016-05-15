@@ -4,8 +4,8 @@
 
 <!DOCTYPE html>
 <html lang="ja" ng-app="contestApp">
-    <head>
-        @header(title, contestName)
+<head>
+    @header(title, contestName)
 
 @basejs(firebaseappContest)
 @authjs(redirectLogin="", redirectLogout="", checkFirst=true)
@@ -36,32 +36,32 @@ app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $fi
     });
 }]);
 </script>
-    </head>
-    <body>
-        @bodyheader(title, contestName)
+</head>
+<body>
+    @bodyheader(title, contestName)
 
-        <div ng-controller="AuthCtrl">
-            <p ng-if="message">Auth status: <strong>{{ message }}</strong></p>
-            <p ng-if="isTemporaryPassword" style="color:#f00">Please change pasword!</p>
-            <p>authData:</p><pre>{{ authData | json }}</pre>
-            <p>userData:</p><pre>{{ userData | json }}</pre>
-            <p>usersecretData:</p><pre>{{ usersecretData | json }}</pre>
-        </div>
+    <div ng-controller="AuthCtrl">
+        <p ng-if="message">Auth status: <strong>{{ message }}</strong></p>
+        <p ng-if="isTemporaryPassword" style="color:#f00">Please change pasword!</p>
+        <p>authData:</p><pre>{{ authData | json }}</pre>
+        <p>userData:</p><pre>{{ userData | json }}</pre>
+        <p>usersecretData:</p><pre>{{ usersecretData | json }}</pre>
+    </div>
 
-        <hr>
+    <hr>
 
-        <div ng-controller="ContestCtrl">
-            <h2>{{ contestData.contestName }}</h2>
+    <div ng-controller="ContestCtrl">
+        <h2>{{ contestData.contestName }}</h2>
 
-            <p>@id -> contestData:</p>
-            <pre>{{ contestData | json }}</pre>
+        <p>@id -> contestData:</p>
+        <pre>{{ contestData | json }}</pre>
 
-            <p>events:</p>
-            <pre>{{ events | json }}</pre>
-        </div>
+        <p>events:</p>
+        <pre>{{ events | json }}</pre>
+    </div>
 
-        @bodyfooter(contestName)
-    </body>
+    @bodyfooter(contestName)
+</body>
 </html>
 
 }

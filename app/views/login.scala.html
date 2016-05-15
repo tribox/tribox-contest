@@ -4,8 +4,8 @@
 
 <!DOCTYPE html>
 <html lang="ja" ng-app="contestApp">
-    <head>
-        @header(title, contestName)
+<head>
+    @header(title, contestName)
 
 @basejs(firebaseappContest)
 @authjs(redirectLogin="", redirectLogout="", checkFirst=false)
@@ -49,31 +49,31 @@ app.controller('AuthLoginCtrl', ['$scope', 'Auth', function($scope, Auth) {
     };
 }]);
 </script>
-    </head>
-    <body>
-        @bodyheader(title, contestName)
+</head>
+<body>
+    @bodyheader(title, contestName)
 
-        <div ng-controller="AuthCtrl">
-            <p ng-if="message">Auth status: <strong>{{ message }}</strong></p>
-            <p ng-if="isTemporaryPassword" style="color:#f00">Please change pasword!</p>
-            <p>authData:</p><pre>{{ authData | json }}</pre>
-            <p>userData:</p><pre>{{ userData | json }}</pre>
-            <p>usersecretData:</p><pre>{{ usersecretData | json }}</pre>
-        </div>
+    <div ng-controller="AuthCtrl">
+        <p ng-if="message">Auth status: <strong>{{ message }}</strong></p>
+        <p ng-if="isTemporaryPassword" style="color:#f00">Please change pasword!</p>
+        <p>authData:</p><pre>{{ authData | json }}</pre>
+        <p>userData:</p><pre>{{ userData | json }}</pre>
+        <p>usersecretData:</p><pre>{{ usersecretData | json }}</pre>
+    </div>
 
-        <div ng-controller="AuthLoginCtrl">
-            <form name="loginForm" ng-submit="login()">
-                Email: <input type="email" ng-model="email"><br>
-                Password: <input type="password" ng-model="password"><br>
-                <input type="submit" value="Login">
-            </form>
+    <div ng-controller="AuthLoginCtrl">
+        <form name="loginForm" ng-submit="login()">
+            Email: <input type="email" ng-model="email"><br>
+            Password: <input type="password" ng-model="password"><br>
+            <input type="submit" value="Login">
+        </form>
 
-            <p ng-if="message">Message: <strong>{{ message }}</strong></p>
-            <p ng-if="error">Error: <strong style="color:#f00;">{{ error }}</strong></p>
-        </div>
+        <p ng-if="message">Message: <strong>{{ message }}</strong></p>
+        <p ng-if="error">Error: <strong style="color:#f00;">{{ error }}</strong></p>
+    </div>
 
-        @bodyfooter(contestName)
-    </body>
+    @bodyfooter(contestName)
+</body>
 </html>
 
 }

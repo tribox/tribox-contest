@@ -5,8 +5,8 @@
 
 <!DOCTYPE html>
 <html lang="ja" ng-app="contestApp">
-    <head>
-        @header(title, contestName)
+<head>
+    @header(title, contestName)
 
 @basejs(firebaseappContest)
 @authjs(redirectLogin="", redirectLogout="", checkFirst=true)
@@ -59,78 +59,78 @@ app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $fi
     });
 }]);
 </script>
-    </head>
-    <body>
-        @bodyheader(title, contestName)
+</head>
+<body>
+    @bodyheader(title, contestName)
 
-        <div ng-controller="AuthCtrl">
-            <p ng-if="message">Auth status: <strong>{{ message }}</strong></p>
-            <p ng-if="isTemporaryPassword" style="color:#f00">Please change pasword!</p>
-            <p>authData:</p><pre>{{ authData | json }}</pre>
-            <p>userData:</p><pre>{{ userData | json }}</pre>
-            <p>usersecretData:</p><pre>{{ usersecretData | json }}</pre>
+    <div ng-controller="AuthCtrl">
+        <p ng-if="message">Auth status: <strong>{{ message }}</strong></p>
+        <p ng-if="isTemporaryPassword" style="color:#f00">Please change pasword!</p>
+        <p>authData:</p><pre>{{ authData | json }}</pre>
+        <p>userData:</p><pre>{{ userData | json }}</pre>
+        <p>usersecretData:</p><pre>{{ usersecretData | json }}</pre>
 
-            <ul>
-                <li ng-hide="isLoggingin"><a href="/join">Join</a></li>
-                <li ng-hide="isLoggingin"><a href="/login">Login</a></li>
-                <li ng-hide="isLoggingin"><a href="/forgot">Forgot password?</a></li>
-                <li ng-show="isLoggingin"><a href="/setting">Setting</a></li>
-                <li ng-show="isLoggingin"><a href="/logout">Logout</a></li>
-            </ul>
-        </div>
+        <ul>
+            <li ng-hide="isLoggingin"><a href="/join">Join</a></li>
+            <li ng-hide="isLoggingin"><a href="/login">Login</a></li>
+            <li ng-hide="isLoggingin"><a href="/forgot">Forgot password?</a></li>
+            <li ng-show="isLoggingin"><a href="/setting">Setting</a></li>
+            <li ng-show="isLoggingin"><a href="/logout">Logout</a></li>
+        </ul>
+    </div>
 
-        <hr>
+    <hr>
 
-        @* <!--<div>
-            <p>開催中のコンテスト (MySQL):<br>@{events.length} events.</p>
-            <ul>
-                @for(event:Event <- events){
-                    <li><a href="#@event.tag">@event.name</a></li>
-                }
-            </ul>
-        </div>--> *@
+    @* <!--<div>
+        <p>開催中のコンテスト (MySQL):<br>@{events.length} events.</p>
+        <ul>
+            @for(event:Event <- events){
+                <li><a href="#@event.tag">@event.name</a></li>
+            }
+        </ul>
+    </div>--> *@
 
-        @* <!--<div ng-controller="EventListCtrl">
-            <p>開催中のコンテスト (MySQL + AngularJS):<br>{{events.length}} events.</p>
-            <ul>
-                <li ng-repeat="event in events">
-                    <a href="#{{event.tag}}">{{event.name}}</a>
-                </li>
-            </ul>
-        </div>--> *@
+    @* <!--<div ng-controller="EventListCtrl">
+        <p>開催中のコンテスト (MySQL + AngularJS):<br>{{events.length}} events.</p>
+        <ul>
+            <li ng-repeat="event in events">
+                <a href="#{{event.tag}}">{{event.name}}</a>
+            </li>
+        </ul>
+    </div>--> *@
 
-        <div ng-controller="ContestCtrl">
-            <p>
-                開催中のコンテスト:
-                <a href="/contest/{{ inProgressContest.contestId }}">{{ inProgressContest.contestName }} ({{ inProgress }})</a>
-            </p>
-            <p>
-                開始: {{ inProgressContest.beginAt | toDate }}<br>
-                終了: {{ inProgressContest.endAt | toDate }}
-            </p>
-            <p>
-                競技一覧:
-            </p>
-            <ul>
-                <li ng-repeat="e in inProgressContest.events">
-                    <a href="/contest/{{ inProgressContest.contestId }}#{{ e }}">{{ events[e].name }} ({{ events[e].method }} of {{ events[e].attempts }})</a>
-                </li>
-            </ul>
+    <div ng-controller="ContestCtrl">
+        <p>
+            開催中のコンテスト:
+            <a href="/contest/{{ inProgressContest.contestId }}">{{ inProgressContest.contestName }} ({{ inProgress }})</a>
+        </p>
+        <p>
+            開始: {{ inProgressContest.beginAt | toDate }}<br>
+            終了: {{ inProgressContest.endAt | toDate }}
+        </p>
+        <p>
+            競技一覧:
+        </p>
+        <ul>
+            <li ng-repeat="e in inProgressContest.events">
+                <a href="/contest/{{ inProgressContest.contestId }}#{{ e }}">{{ events[e].name }} ({{ events[e].method }} of {{ events[e].attempts }})</a>
+            </li>
+        </ul>
 
-            <p>inProgressContest:</p>
-            <pre>{{ inProgressContest | json }}</pre>
+        <p>inProgressContest:</p>
+        <pre>{{ inProgressContest | json }}</pre>
 
-            <p>全競技リスト:</p>
-            <ul>
-                <li ng-repeat="(eid, e) in events">
-                    {{ e.name }} ({{ eid }}: {{ e.method }} of {{ e.attempts }}, format={{ e.format }})
-                </li>
-            </ul>
-            <pre>{{ events | json }}</pre>
-        </div>
+        <p>全競技リスト:</p>
+        <ul>
+            <li ng-repeat="(eid, e) in events">
+                {{ e.name }} ({{ eid }}: {{ e.method }} of {{ e.attempts }}, format={{ e.format }})
+            </li>
+        </ul>
+        <pre>{{ events | json }}</pre>
+    </div>
 
-        @bodyfooter(contestName)
-    </body>
+    @bodyfooter(contestName)
+</body>
 </html>
 
 }

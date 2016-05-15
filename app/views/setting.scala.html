@@ -4,8 +4,8 @@
 
 <!DOCTYPE html>
 <html lang="ja" ng-app="contestApp">
-    <head>
-        @header(title, contestName)
+<head>
+    @header(title, contestName)
 
 @basejs(firebaseappContest)
 @authjs(redirectLogin="", redirectLogout=routes.HomeController.index.toString(), checkFirst=true)
@@ -104,89 +104,89 @@ app.controller('AuthPasswordCtrl', ['$scope', 'Auth', function($scope, Auth) {
     };
 }]);
 </script>
-    </head>
-    <body>
-        @bodyheader(title, contestName)
+</head>
+<body>
+    @bodyheader(title, contestName)
 
-        <div ng-controller="AuthCtrl">
-            <p ng-if="message">Auth status: <strong>{{ message }}</strong></p>
-            <p ng-if="isTemporaryPassword" style="color:#f00">Please change pasword!</p>
-            <p>authData:</p><pre>{{ authData | json }}</pre>
-            <p>userData:</p><pre>{{ userData | json }}</pre>
-            <p>usersecretData:</p><pre>{{ usersecretData | json }}</pre>
-        </div>
+    <div ng-controller="AuthCtrl">
+        <p ng-if="message">Auth status: <strong>{{ message }}</strong></p>
+        <p ng-if="isTemporaryPassword" style="color:#f00">Please change pasword!</p>
+        <p>authData:</p><pre>{{ authData | json }}</pre>
+        <p>userData:</p><pre>{{ userData | json }}</pre>
+        <p>usersecretData:</p><pre>{{ usersecretData | json }}</pre>
+    </div>
 
-        <div ng-controller="AuthSettingCtrl">
-            <table>
-                <tr>
-                    <th>メールアドレス</th>
-                    <td>{{ authData.password.email }} <a href="#">変更する</a></td>
-                </tr>
-                <tr>
-                    <th>パスワード</th>
-                    <td>******** <a href="#">変更する</a></td>
-                </tr>
-                <tr>
-                    <th>ユーザ名</th>
-                    <td>{{ userData.username }} <a href="#">変更する</a></td>
-                </tr>
-                <tr>
-                    <th>表示名</th>
-                    <td><input type="text" ng-model="userData.displayname"></td>
-                </tr>
-                <tr>
-                    <th>所属</th>
-                    <td><input type="text" ng-model="userData.organization"></td>
-                </tr>
-                <tr>
-                    <th>WCA ID</th>
-                    <td><input type="text" ng-model="userData.wcaId"></td>
-                </tr>
-                <tr>
-                    <th>Twitter ID</th>
-                    <td><input type="text" ng-model="userData.twitterId"></td>
-                </tr>
-                <tr>
-                    <th>自己紹介</th>
-                    <td><textarea ng-model="userData.bio"></textarea></td>
-                </tr>
-                <tr>
-                    <th>スポンサーアカウント</th>
-                    <td>{{ userData.isTriboxTeam }}</td>
-                </tr>
-                <tr>
-                    <th>認証アカウント</th>
-                    <td>{{ userData.isTriboxCustomer }} <a href="#">変更する</a></td>
-                </tr>
-            </table>
-        </div>
+    <div ng-controller="AuthSettingCtrl">
+        <table>
+            <tr>
+                <th>メールアドレス</th>
+                <td>{{ authData.password.email }} <a href="#">変更する</a></td>
+            </tr>
+            <tr>
+                <th>パスワード</th>
+                <td>******** <a href="#">変更する</a></td>
+            </tr>
+            <tr>
+                <th>ユーザ名</th>
+                <td>{{ userData.username }} <a href="#">変更する</a></td>
+            </tr>
+            <tr>
+                <th>表示名</th>
+                <td><input type="text" ng-model="userData.displayname"></td>
+            </tr>
+            <tr>
+                <th>所属</th>
+                <td><input type="text" ng-model="userData.organization"></td>
+            </tr>
+            <tr>
+                <th>WCA ID</th>
+                <td><input type="text" ng-model="userData.wcaId"></td>
+            </tr>
+            <tr>
+                <th>Twitter ID</th>
+                <td><input type="text" ng-model="userData.twitterId"></td>
+            </tr>
+            <tr>
+                <th>自己紹介</th>
+                <td><textarea ng-model="userData.bio"></textarea></td>
+            </tr>
+            <tr>
+                <th>スポンサーアカウント</th>
+                <td>{{ userData.isTriboxTeam }}</td>
+            </tr>
+            <tr>
+                <th>認証アカウント</th>
+                <td>{{ userData.isTriboxCustomer }} <a href="#">変更する</a></td>
+            </tr>
+        </table>
+    </div>
 
-        <div ng-controller="AuthEmailCtrl">
-            Old email: <input type="email" ng-model="oldEmail" readonly="readonly"><br>
-            New email: <input type="email" ng-model="newEmail"><br>
-            Password: <input type="password" ng-model="password"><br>
+    <div ng-controller="AuthEmailCtrl">
+        Old email: <input type="email" ng-model="oldEmail" readonly="readonly"><br>
+        New email: <input type="email" ng-model="newEmail"><br>
+        Password: <input type="password" ng-model="password"><br>
 
-            <button ng-click="changeEmail()">Change email</button><br>
+        <button ng-click="changeEmail()">Change email</button><br>
 
-            <p ng-if="message">Message: <strong>{{ message }}</strong></p>
-            <p ng-if="error">Error: <strong style="color:#f00;">{{ error }}</strong></p>
-        </div>
+        <p ng-if="message">Message: <strong>{{ message }}</strong></p>
+        <p ng-if="error">Error: <strong style="color:#f00;">{{ error }}</strong></p>
+    </div>
 
-        <div ng-controller="AuthPasswordCtrl">
-            <p ng-if="status">Auth status: <strong>{{ status }}</strong></p>
+    <div ng-controller="AuthPasswordCtrl">
+        <p ng-if="status">Auth status: <strong>{{ status }}</strong></p>
 
-            Email: <input type="email" ng-model="email" readonly="readonly"><br>
-            Old Password: <input type="password" ng-model="oldPassword"><br>
-            New Password: <input type="password" ng-model="newPassword"><br>
+        Email: <input type="email" ng-model="email" readonly="readonly"><br>
+        Old Password: <input type="password" ng-model="oldPassword"><br>
+        New Password: <input type="password" ng-model="newPassword"><br>
 
-            <button ng-click="changePassword()">Change password</button><br>
+        <button ng-click="changePassword()">Change password</button><br>
 
-            <p ng-if="message">Message: <strong>{{ message }}</strong></p>
-            <p ng-if="error">Error: <strong style="color:#f00;">{{ error }}</strong></p>
-        </div>
+        <p ng-if="message">Message: <strong>{{ message }}</strong></p>
+        <p ng-if="error">Error: <strong style="color:#f00;">{{ error }}</strong></p>
+    </div>
 
-        @bodyfooter(contestName)
-    </body>
+    @bodyfooter(contestName)
+</body>
 </html>
 
 }

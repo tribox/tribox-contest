@@ -4,8 +4,8 @@
 
 <!DOCTYPE html>
 <html lang="ja" ng-app="contestApp">
-    <head>
-        @header(title, contestName)
+<head>
+    @header(title, contestName)
 
 <script>
 // Random string for initial password
@@ -48,39 +48,39 @@ app.controller('AuthJoinCtrl', ['$scope', 'Auth', function($scope, Auth) {
     };
 }]);
 </script>
-    </head>
-    <body>
-        @bodyheader(title, contestName)
+</head>
+<body>
+    @bodyheader(title, contestName)
 
-        <div ng-controller="AuthCtrl">
-            <p ng-if="message">Auth status: <strong>{{ message }}</strong></p>
-            <p ng-if="isTemporaryPassword" style="color:#f00">Please change pasword!</p>
-            <p>authData:</p><pre>{{ authData | json }}</pre>
-            <p>userData:</p><pre>{{ userData | json }}</pre>
-            <p>usersecretData:</p><pre>{{ usersecretData | json }}</pre>
-        </div>
+    <div ng-controller="AuthCtrl">
+        <p ng-if="message">Auth status: <strong>{{ message }}</strong></p>
+        <p ng-if="isTemporaryPassword" style="color:#f00">Please change pasword!</p>
+        <p>authData:</p><pre>{{ authData | json }}</pre>
+        <p>userData:</p><pre>{{ userData | json }}</pre>
+        <p>usersecretData:</p><pre>{{ usersecretData | json }}</pre>
+    </div>
 
-        <p>
-            メールアドレスを入力してください。
-            入力されたメールアドレス宛てに初期パスワードが記載されたメールが送信されます
-            (送信元: noreply@@@{firebaseappContest}.firebaseapp.com)。
-            初期パスワードでログインしてパスワードを変更してください。
-        </p>
+    <p>
+        メールアドレスを入力してください。
+        入力されたメールアドレス宛てに初期パスワードが記載されたメールが送信されます
+        (送信元: noreply@@@{firebaseappContest}.firebaseapp.com)。
+        初期パスワードでログインしてパスワードを変更してください。
+    </p>
 
-        <div ng-controller="AuthJoinCtrl">
-            <form novalidate name="joinForm" ng-submit="createUser()">
-                Email: <input type="email" name="email" ng-model="email" required>
-                <span ng-show="joinForm.email.$error.email">Not valid email!</span>
-                <span ng-show="joinForm.email.$error.required">Required!</span><br>
-                <input type="submit" value="Create User">
-            </form>
+    <div ng-controller="AuthJoinCtrl">
+        <form novalidate name="joinForm" ng-submit="createUser()">
+            Email: <input type="email" name="email" ng-model="email" required>
+            <span ng-show="joinForm.email.$error.email">Not valid email!</span>
+            <span ng-show="joinForm.email.$error.required">Required!</span><br>
+            <input type="submit" value="Create User">
+        </form>
 
-            <p ng-if="message">Message: <strong>{{ message }}</strong></p>
-            <p ng-if="error">Error: <strong style="color:#f00;">{{ error }}</strong></p>
-        </div>
+        <p ng-if="message">Message: <strong>{{ message }}</strong></p>
+        <p ng-if="error">Error: <strong style="color:#f00;">{{ error }}</strong></p>
+    </div>
 
-        @bodyfooter(contestName)
-    </body>
+    @bodyfooter(contestName)
+</body>
 </html>
 
 }
