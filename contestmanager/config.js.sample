@@ -1,0 +1,12 @@
+/**
+ * config.js
+ */
+
+exports.CONTESTAPP        = 'xxxxxxxx'
+exports.CONTESTAPP_SECRET = 'xxxxxxxx'
+exports.TRIBOXAPP         = 'xxxxxxxx'
+exports.TRIBOXAPP_SECRET  = 'xxxxxxxx'
+exports.WCAAPP            = 'xxxxxxxx'
+exports.WCAAPP_SECRET     = 'xxxxxxxx'
+
+exports.SEED = 'xxxxxxxx'

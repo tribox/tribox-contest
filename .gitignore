@@ -13,4 +13,5 @@ target
 /conf/dev.conf
 /conf/prod.conf
 
-node_modules
+/contestmanager/node_modules
+/contestmanager/config.js
