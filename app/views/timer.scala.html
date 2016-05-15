@@ -29,9 +29,167 @@
         </ul>
     </div>-->
 
-    <hr>
+<style>
+body {
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+}
+#timerArea {
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+#timerText {
+    color: #0af;
+    font-size: 128px;
+    margin: 80px auto;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+.wait {
+    color: #f00 !important;
+}
+.ready {
+    color: #0f0 !important;
+}
+</style>
 
-    タイマー
+    <div id="timerArea">
+        <div id="timerText">0.000</div>
+
+        <button id="start">START</button>
+        <button id="stop">STOP</button>
+        <button id="reset">RESET</button>
+
+        <div id="keydown"></div>
+        <div id="keyup"></div>
+        <div id="info"></div>
+    </div>
+
+<script>
+(function() {
+    'use strict';
+
+    document.onselectstart = function() { return false; };
+
+    var startTime, stopTime;
+    var timerId, dispTimerId;
+
+    var isIdling = true;        @* 待機中 *@
+    var isRunning = false;      @* タイマー動作中 *@
+    var isTouching = false;     @* センサにタッチ中 (スタート時) *@
+    var isTouchingStop = false; @* センサにタッチ中 (ストップ時) *@
+    var startTouch = Infinity;
+    var TOUCHING_TH = 500;
+
+    var startButton = document.getElementById('start');
+    var stopButton = document.getElementById('stop');
+    var resetButton = document.getElementById('reset');
+    var timerText = document.getElementById('timerText');
+
+    var setButtonState = function(start, stop, reset) {
+        startButton.disabled = !start;
+        stopButton.disabled = !stop;
+        resetButton.disabled = !reset;
+    };
+
+    setButtonState(true, false, false);
+
+    var startTimer = function() {
+        if (isRunning) return;
+        isRunning = true;
+        startTime = Date.now();
+        updateTimerText();
+        setButtonState(false, true, false);
+    };
+    startButton.addEventListener('click', startTimer);
+
+    var stopTimer = function() {
+        if (!isRunning) return;
+        stopTime = Date.now();
+        isRunning = false;
+        clearTimeout(timerId);
+        timerText.innerHTML = ((stopTime - startTime) / 1000).toFixed(3);
+        setButtonState(true, false, true);
+    };
+    stopButton.addEventListener('click', stopTimer);
+
+    var resetTimer = function() {
+        if (isRunning) return;
+        timerText.innerHTML = '0.000';
+        setButtonState(true, false, false);
+    };
+    resetButton.addEventListener('click', resetTimer);
+
+    var updateTimerText = function() {
+        timerId = setTimeout(function() {
+            timerText.innerHTML = ((Date.now() - startTime) / 1000).toFixed(3);
+            updateTimerText();
+        }, 29);
+    };
+
+    document.addEventListener('keydown', function(e) {
+        //document.getElementById('keydown').innerHTML = e.keyCode + ':' + e.code + ' (' + Date.now() + ')';
+        if (isRunning) {
+            stopTimer();
+            isTouchingStop = true;
+        } else if (!isTouching && !isTouchingStop && e.code == 'Space') {
+            startTouch = Date.now();
+            isTouching = true;
+            angular.element(document.getElementById('timerText')).addClass('wait');
+            dispTimerId = setTimeout(function() {
+                angular.element(document.getElementById('timerText')).removeClass('wait');
+                angular.element(document.getElementById('timerText')).addClass('ready');
+            }, TOUCHING_TH);
+        }
+    });
+    document.addEventListener('keyup', function(e) {
+        //document.getElementById('keyup').innerHTML = e.keyCode + ':' + e.code + ' (' + Date.now() + ')';
+        if (isTouchingStop) {
+            isTouchingStop = false;
+        } else if (!isRunning && e.code == 'Space') {
+            isTouching = false;
+            clearTimeout(dispTimerId);
+            angular.element(document.getElementById('timerText')).removeClass('wait');
+            angular.element(document.getElementById('timerText')).removeClass('ready');
+            if (TOUCHING_TH <= (Date.now() - startTouch)) {
+                startTimer();
+                startTouch = Infinity;
+            }
+        }
+    });
+    document.addEventListener('touchstart', function(e) {
+        //document.getElementById('keydown').innerHTML = 'touchstart (' + Date.now() + ')';
+        if (isRunning) {
+            stopTimer();
+            isTouchingStop = true;
+        } else if (!isTouching && !isTouchingStop) {
+            startTouch = Date.now();
+            isTouching = true;
+            angular.element(document.getElementById('timerText')).addClass('wait');
+            dispTimerId = setTimeout(function() {
+                angular.element(document.getElementById('timerText')).removeClass('wait');
+                angular.element(document.getElementById('timerText')).addClass('ready');
+            }, TOUCHING_TH);
+        }
+    });
+    document.addEventListener('touchend', function(e) {
+        //document.getElementById('keyup').innerHTML = 'touchend (' + Date.now() + ')';
+        if (isTouchingStop) {
+            isTouchingStop = false;
+        } else if (!isRunning) {
+            isTouching = false;
+            clearTimeout(dispTimerId);
+            angular.element(document.getElementById('timerText')).removeClass('wait');
+            angular.element(document.getElementById('timerText')).removeClass('ready');
+            if (TOUCHING_TH <= (Date.now() - startTouch)) {
+                startTimer();
+                startTouch = Infinity;
+            }
+        }
+    });
+})();
+</script>
 
     @bodyfooter(contestName)
 </div></body>
