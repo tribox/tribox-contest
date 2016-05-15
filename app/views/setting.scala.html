@@ -162,7 +162,7 @@ app.controller('AuthPasswordCtrl', ['$scope', 'Auth', function($scope, Auth) {
     </div>
 
     <div ng-controller="AuthEmailCtrl">
-        Old email: <input type="email" ng-model="oldEmail" readonly="readonly"><br>
+        Current email: <input type="email" ng-model="oldEmail" readonly="readonly"><br>
         New email: <input type="email" ng-model="newEmail"><br>
         Password: <input type="password" ng-model="password"><br>
 
@@ -176,8 +176,9 @@ app.controller('AuthPasswordCtrl', ['$scope', 'Auth', function($scope, Auth) {
         <p ng-if="status">Auth status: <strong>{{ status }}</strong></p>
 
         Email: <input type="email" ng-model="email" readonly="readonly"><br>
-        Old Password: <input type="password" ng-model="oldPassword"><br>
+        Current Password: <input type="password" ng-model="oldPassword"><br>
         New Password: <input type="password" ng-model="newPassword"><br>
+        Retype New Password: <input type="password" ng-model="newPasswordRe"><br>
 
         <button ng-click="changePassword()">Change password</button><br>
 
