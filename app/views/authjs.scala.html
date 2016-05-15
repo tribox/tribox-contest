@@ -1,6 +1,10 @@
 @(redirectLogin: String, redirectLogout: String, checkFirst: Boolean)
 
 <script>
+// A process is in progress or not
+// When in progress, redirection is not disable
+var processing = false;
+
 app.factory('Auth', ['$firebaseAuth', function($firebaseAuth) {
     return $firebaseAuth(contestRef);
 }]);
@@ -22,7 +26,9 @@ app.controller('AuthCtrl', ['$scope', '$firebaseObject', 'Auth', function($scope
             $scope.isLoggingin = true;
             $scope.isTemporaryPassword = authData.password.isTemporaryPassword;
             @if(!redirectLogin.isEmpty){
-                location.href = '@redirectLogin';
+                if (!processing) {
+                    location.href = '@redirectLogin';
+                }
             }
             @if(checkFirst){
                 // Get users list from DB
@@ -44,7 +50,9 @@ app.controller('AuthCtrl', ['$scope', '$firebaseObject', 'Auth', function($scope
             $scope.usersecretData = null;
             $scope.isLoggingin = false;
             @if(!redirectLogout.isEmpty){
-                location.href = '@redirectLogout';
+                if (!processing) {
+                    location.href = '@redirectLogout';
+                }
             }
         }
     });

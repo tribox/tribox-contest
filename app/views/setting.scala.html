@@ -30,10 +30,12 @@ app.controller('AuthSettingCtrl', ['$scope', '$firebaseObject', 'Auth', function
 
 app.controller('AuthEmailCtrl', ['$scope', 'Auth', function($scope, Auth) {
     Auth.$onAuth(function(authData) {
-        if (authData) {
-            $scope.oldEmail = authData.password.email;
-        } else {
-            location.href = '@routes.HomeController.index';
+        if (!processing) {
+            if (authData) {
+                $scope.oldEmail = authData.password.email;
+            } else {
+                location.href = '@routes.HomeController.index';
+            }
         }
     });
 
@@ -50,6 +52,7 @@ app.controller('AuthEmailCtrl', ['$scope', 'Auth', function($scope, Auth) {
             password: _password
         }).then(function() {
             $scope.message = 'Email changed successfully!';
+            processing = true;
             Auth.$unauth();
             Auth.$authWithPassword({
                 email: _newEmail,
@@ -68,10 +71,12 @@ app.controller('AuthEmailCtrl', ['$scope', 'Auth', function($scope, Auth) {
 
 app.controller('AuthPasswordCtrl', ['$scope', 'Auth', function($scope, Auth) {
     Auth.$onAuth(function(authData) {
-        if (authData) {
-            $scope.email = authData.password.email;
-        } else {
-            location.href = '@routes.HomeController.index';
+        if (!processing) {
+            if (authData) {
+                $scope.email = authData.password.email;
+            } else {
+                location.href = '@routes.HomeController.index';
+            }
         }
     });
 
@@ -88,6 +93,7 @@ app.controller('AuthPasswordCtrl', ['$scope', 'Auth', function($scope, Auth) {
             newPassword: _newPassword
         }).then(function() {
             $scope.message = 'Password changed successfully!';
+            processing = true;
             Auth.$unauth();
             Auth.$authWithPassword({
                 email: _email,
