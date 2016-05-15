@@ -18,7 +18,7 @@ app.controller('AuthLogoutCtrl', ['$scope', 'Auth', function($scope, Auth) {
 }]);
 </script>
 </head>
-<body>
+<body><div class="container">
     @bodyheader(title, contestName)
 
     <div ng-controller="AuthCtrl">
@@ -34,7 +34,7 @@ app.controller('AuthLogoutCtrl', ['$scope', 'Auth', function($scope, Auth) {
     </div>
 
     @bodyfooter(contestName)
-</body>
+</div></body>
 </html>
 
 }

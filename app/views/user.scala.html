@@ -26,7 +26,7 @@ app.controller('UserCtrl', ['$scope', '$firebaseObject', function($scope, $fireb
 }]);
 </script>
 </head>
-<body>
+<body><div class="container">
     @bodyheader(title, contestName)
 
     <div ng-controller="AuthCtrl">
@@ -45,7 +45,7 @@ app.controller('UserCtrl', ['$scope', '$firebaseObject', function($scope, $fireb
     </div>
 
     @bodyfooter(contestName)
-</body>
+</div></body>
 </html>
 
 }
