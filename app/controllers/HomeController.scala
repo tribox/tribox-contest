@@ -55,4 +55,13 @@ class HomeController @Inject() extends Controller {
     Ok(views.html.forgot(contestName, contestUrl, firebaseappContest))
   }
 
+  /**
+   * Timer for practice
+   */
+  def timer = Action {
+    val contestName = Play.application.configuration.getString("contest.name").getOrElse("tribox Contest")
+    val contestUrl = Play.application.configuration.getString("contest.url").getOrElse("https://contest.tribox.com/")
+    val firebaseappContest = Play.application.configuration.getString("firebaseapp.contest").getOrElse("tribox-contest")
+    Ok(views.html.timer(contestName, contestUrl, firebaseappContest))
+  }
 }
