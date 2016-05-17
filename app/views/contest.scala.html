@@ -9,6 +9,7 @@
 
 @basejs(firebaseappContest)
 @authjs(redirectLogin="", redirectLogout="", checkFirst=true)
+@filterjs()
 <script>
 app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $firebaseObject) {
     $scope.contestData = null;
@@ -16,14 +17,31 @@ app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $fi
     $scope.resultsData = null;
     $scope.events = null;
 
-    // Fetch contest data
-    contestRef.child('contests').child('c@id').once('value', function(snapContest) {
-        if (snapContest.exists() && snapContest.val()._dummy == null) {
-            $scope.$apply(function() {
-                $scope.contestData = snapContest.val();
+    @* コンテストが、進行中 (0) か、終了済み (負) か、これからやるやつ (正) か *@
+    $scope.inProgress = null;
+    $scope.countdown = null;
+
+    // Fetch event data followed by contest data
+    contestRef.child('events').once('value', function(snapEvents) {
+        if (snapEvents.exists()) {
+            contestRef.child('contests').child('c@id').once('value', function(snapContest) {
+                if (snapContest.exists() && snapContest.val()._dummy == null) {
+                    contestRef.child('inProgress').once('value', function(snapInProgress) {
+                        $scope.$apply(function() {
+                            $scope.events = snapEvents.val();
+                            $scope.contestData = snapContest.val();
+                            $scope.inProgress = snapInProgress.val();
+                            $scope.countdown = @id - parseInt(snapInProgress.val().contest.substr(1));
+                        });
+                    });
+                } else {
+                    console.error('Invalid: contest (@id)');
+                }
+            }, function(error) {
+                console.error(error);
             });
         } else {
-            console.error('Invalid: contest (@id)');
+            console.error('Undefined: events');
         }
     }, function(error) {
         console.error(error);
@@ -56,40 +74,64 @@ app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $fi
         //console.error(error);
         console.error('Cannot access results (@id)');
     });
-
-    // Fetch events data
-    contestRef.child('events').once('value', function(snapEvents) {
-        if (snapEvents.exists()) {
-            $scope.$apply(function() {
-                $scope.events = snapEvents.val();
-            });
-        } else {
-            console.error('Undefined: events');
-        }
-    }, function(error) {
-        console.error(error);
-    });
 }]);
 </script>
 </head>
 <body><div class="container">
     @bodyheader(title, contestName)
 
-    <div ng-controller="AuthCtrl">
+    <div ng-controller="AuthCtrl"><div ng-controller="ContestCtrl">
         <p ng-if="message">Auth status: <strong>{{ message }}</strong></p>
         <p ng-if="isTemporaryPassword" style="color:#f00">Please change pasword!</p>
         <p>authData:</p><pre>{{ authData | json }}</pre>
         <p>userData:</p><pre>{{ userData | json }}</pre>
         <p>usersecretData:</p><pre>{{ usersecretData | json }}</pre>
-    </div>
 
-    <hr>
+        <hr>
 
-    <div ng-controller="ContestCtrl">
         <h2>{{ contestData.contestName }}</h2>
+
+        <p>
+            開始: {{ contestData.beginAt | toDate }}<br>
+            終了: {{ contestData.endAt | toDate }}
+        </p>
+        <p>
+            
+        </p>
+
+        <p>
+            競技一覧:
+        </p>
+        <ul>
+            <li ng-repeat="e in contestData.events">
+                @*<a href="/contest/{{ contestData.contestId }}#{{ e }}">*@
+                    {{ events[e].name }} ({{ events[e].method }} of {{ events[e].attempts }})
+                @*</a>*@
+                <a href="#" ng-if="countdown == 0 && authData != null">参加する</a>
+            </li>
+        </ul>
+        <table>
+            <tr>
+                <th>競技</th>
+                <th>計測フォーマット</th>
+                <th></th>
+            </tr>
+            <tr ng-repeat="e in contestData.events">
+                <td>{{ events[e].name }}</td>
+                <td>{{ events[e].method }} of {{ events[e].attempts }}</td>
+                <td>
+                    <a href="#" ng-if="countdown == 0 && authData != null">参加する</a>
+                    <span ng-if="!(countdown == 0 && authData != null)">参加するにはログインしてださい</span>
+                </td>
+            </tr>
+        </table>
 
         <p>@id -> contestData:</p>
         <pre>{{ contestData | json }}</pre>
+
+        <p>inProgress / countdown:</p>
+        <pre>{{ inProgress | json }}</pre>
+        <pre>{{ countdown | json }}</pre>
 
         <p>@id -> scramblesData:</p>
         <pre>{{ scramblesData | json }}</pre>
@@ -99,7 +141,8 @@ app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $fi
 
         <p>events:</p>
         <pre>{{ events | json }}</pre>
-    </div>
+
+        </div></div>
 
     @bodyfooter(contestName)
 </div></body>
