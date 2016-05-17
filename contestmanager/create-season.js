@@ -27,7 +27,7 @@ var usage = function() {
 }
 
 // イベントのデータを取得 (認証不要)
-contestRef.child('events').on('value', function(snap) {
+contestRef.child('events').once('value', function(snap) {
     var Events = snap.val();
     //console.dir(Events);
 
