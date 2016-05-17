@@ -186,7 +186,7 @@
             ".write": false,
             "$contest_id": {
                 ".read": "root.child('contests').child($contest_id).child('beginAt').val() <= now",
-                ".validate": "$contest_id.matches(/^c[0-9]{4}(1|2)[0-9]{2}$/)",
+                ".validate": "root.child('contests').hasChild($contest_id)",
                 "$event_id": {
                     ".validate": "root.child('events').hasChild($event_id)",
                     "$scramble_seq": {
@@ -198,8 +198,12 @@
 
         // Data for contest results
         "results": {
-            ".read": true,
-            ".write": false
+            ".read": false,
+            ".write": false,
+            "$contest_id": {
+                ".read": "root.child('contests').child($contest_id).child('endAt').val() < now",
+                ".validate": "root.child('contests').hasChild($contest_id)"
+            }
         },
 
         "$other": {

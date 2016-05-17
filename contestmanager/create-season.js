@@ -149,8 +149,11 @@ contestRef.child('events').once('value', function(snap) {
                 //console.dir(contests);
                 console.log('Generated all scrambles');
                 saveScrambles(scrambles, scramblesIndexes, function() {
-                    console.log('Completed');
-                    process.exit(0);
+                    // ダミー結果を生成
+                    saveResults(contests, contestsIndexes, function() {
+                        console.log('Completed');
+                        process.exit(0);
+                    });
                 });
             } else {
                 console.error(err);
@@ -228,6 +231,52 @@ var saveScrambles = function(scrambles, scramblesIndexes, callback) {
                         next();
                     } else {
                         contestRef.child('scrambles').child(contestId).set(scrambles[contestId], function(error) {
+                            if (error) {
+                                console.error('Set failed');
+                                process.exit(1);
+                            } else {
+                                console.log('Set succeeded');
+                                next();
+                            }
+                        });
+                    }
+                }, function(err) {
+                    if (!err) {
+                        callback();
+                    } else {
+                        console.error(err);
+                        process.exit(1);
+                    }
+                });
+            });
+        }
+    });
+};
+
+// Save dummy results to DB
+var saveResults = function(contests, contestsIndexes, callback) {
+    // admin 権限でログインしてから操作する
+    contestRef.authWithCustomToken(token, function(error, authData) {
+        if (error) {
+            console.error('Authentication Failed!', error);
+        } else {
+            console.log('Authenticated successfully with payload:', authData);
+
+            // read current data
+            contestRef.child('results').once('value', function(snap) {
+                var current = snap.val();
+                //console.dir(current);
+
+                // write
+                async.each(contestsIndexes, function(contestId, next) {
+                    // 上書きはしない
+                    if (current[contestId] !== undefined) {
+                        console.error('Already exists:', contestId);
+                        next();
+                    } else {
+                        contestRef.child('results').child(contestId).set({
+                            '_dummy' : true
+                        }, function(error) {
                             if (error) {
                                 console.error('Set failed');
                                 process.exit(1);
