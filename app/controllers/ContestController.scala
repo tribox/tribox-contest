@@ -16,11 +16,31 @@ class ContestController @Inject() extends Controller {
   /**
    * Contest pages
    */
-  def contest(id: String) = Action {
+  def contest(cid: String) = Action {
     val contestName = Play.application.configuration.getString("contest.name").getOrElse("tribox Contest")
     val contestUrl = Play.application.configuration.getString("contest.url").getOrElse("https://contest.tribox.com/")
     val firebaseappContest = Play.application.configuration.getString("firebaseapp.contest").getOrElse("tribox-contest")
-    Ok(views.html.contest(id, contestName, contestUrl, firebaseappContest))
+    Ok(views.html.contest(cid, contestName, contestUrl, firebaseappContest))
   }
 
+  def choose(cid: String, eid: String) = Action {
+    val contestName = Play.application.configuration.getString("contest.name").getOrElse("tribox Contest")
+    val contestUrl = Play.application.configuration.getString("contest.url").getOrElse("https://contest.tribox.com/")
+    val firebaseappContest = Play.application.configuration.getString("firebaseapp.contest").getOrElse("tribox-contest")
+    Ok(views.html.contestchoose(cid, eid, contestName, contestUrl, firebaseappContest))
+  }
+
+  def form(cid: String, eid: String) = Action {
+    val contestName = Play.application.configuration.getString("contest.name").getOrElse("tribox Contest")
+    val contestUrl = Play.application.configuration.getString("contest.url").getOrElse("https://contest.tribox.com/")
+    val firebaseappContest = Play.application.configuration.getString("firebaseapp.contest").getOrElse("tribox-contest")
+    Ok(views.html.contestform(cid, eid, contestName, contestUrl, firebaseappContest))
+  }
+
+  def timer(cid: String, eid: String) = Action {
+    val contestName = Play.application.configuration.getString("contest.name").getOrElse("tribox Contest")
+    val contestUrl = Play.application.configuration.getString("contest.url").getOrElse("https://contest.tribox.com/")
+    val firebaseappContest = Play.application.configuration.getString("firebaseapp.contest").getOrElse("tribox-contest")
+    Ok(views.html.timer(cid, eid, contestName, contestUrl, firebaseappContest))
+  }
 }

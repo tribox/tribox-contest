@@ -1,6 +1,6 @@
-@(cid: String, contestName: String, contestUrl: String, firebaseappContest: String)
+@(cid: String, eid: String, contestName: String, contestUrl: String, firebaseappContest: String)
 
-@defining("Contest") { title =>
+@defining("Contest Choose") { title =>
 
 <!DOCTYPE html>
 <html lang="ja" ng-app="contestApp">
@@ -41,36 +41,12 @@
         </p>
 
         <p>
-            競技一覧:
+            選択してください。
         </p>
-        @*<ul>
-            <li ng-repeat="e in contestData.events">
-                <a href="/contest/{{ contestData.contestId }}#{{ e }}">
-                    {{ events[e].name }} ({{ events[e].method }} of {{ events[e].attempts }})
-                </a>
-                <a href="#" ng-if="countdown == 0 && authData != null">参加する</a>
-            </li>
-        </ul>*@
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>競技</th>
-                    <th>計測フォーマット</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr ng-repeat="e in contestData.events">
-                    <td>{{ events[e].name }}</td>
-                    <td>{{ events[e].method }} of {{ events[e].attempts }}</td>
-                    <td>
-                        <a href="/contest/@cid/{{ e }}" ng-if="countdown == 0 && authData != null">参加する</a>
-                        <span ng-if="countdown == 0 && authData == null">参加するにはログインしてださい</span>
-                        <span ng-if="countdown != 0">現在このコンテストには参加できません</span>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <ul>
+            <li><a href="/contest/@cid/@eid/timer">コンテストタイマーを使用して計測する</a></li>
+            <li><a href="/contest/@cid/@eid/form">タイムを手入力する</a></li>
+        </ul>
 
         <p>@cid -> contestData:</p>
         <pre>{{ contestData | json }}</pre>

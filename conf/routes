@@ -22,7 +22,10 @@ GET     /setting/first              controllers.SettingController.settingfirst
 GET     /user/$id<[a-zA-Z0-9_]{1,15}> controllers.UserController.user(id: String)
 
 # Contests
-GET     /contest/$id<[0-9]{4}(1|2)[0-9]{2}> controllers.ContestController.contest(id: String)
+GET     /contest/$cid<[0-9]{4}(1|2)[0-9]{2}>                               controllers.ContestController.contest(cid: String)
+GET     /contest/$cid<[0-9]{4}(1|2)[0-9]{2}>/$eid<[a-zA-Z0-9]{1,15}>       controllers.ContestController.choose(cid: String, eid: String)
+GET     /contest/$cid<[0-9]{4}(1|2)[0-9]{2}>/$eid<[a-zA-Z0-9]{1,15}>/form  controllers.ContestController.form(cid: String, eid: String)
+GET     /contest/$cid<[0-9]{4}(1|2)[0-9]{2}>/$eid<[a-zA-Z0-9]{1,15}>/timer controllers.ContestController.timer(cid: String, eid: String)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

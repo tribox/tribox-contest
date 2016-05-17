@@ -1,0 +1,68 @@
+@(cid: String)
+
+<script>
+app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $firebaseObject) {
+    $scope.contestData = null;
+    $scope.scramblesData = null;
+    $scope.resultsData = null;
+    $scope.events = null;
+
+    @* コンテストが、進行中 (0) か、終了済み (負) か、これからやるやつ (正) か *@
+    $scope.inProgress = null;
+    $scope.countdown = null;
+
+    // Fetch event data followed by contest data
+    contestRef.child('events').once('value', function(snapEvents) {
+        if (snapEvents.exists()) {
+            contestRef.child('contests').child('c@cid').once('value', function(snapContest) {
+                if (snapContest.exists() && snapContest.val()._dummy == null) {
+                    contestRef.child('inProgress').once('value', function(snapInProgress) {
+                        $scope.$apply(function() {
+                            $scope.events = snapEvents.val();
+                            $scope.contestData = snapContest.val();
+                            $scope.inProgress = snapInProgress.val();
+                            $scope.countdown = @cid - parseInt(snapInProgress.val().contest.substr(1));
+                        });
+                    });
+                } else {
+                    console.error('Invalid: contest (@cid)');
+                }
+            }, function(error) {
+                console.error(error);
+            });
+        } else {
+            console.error('Undefined: events');
+        }
+    }, function(error) {
+        console.error(error);
+    });
+
+    // Fetch scrambles data
+    contestRef.child('scrambles').child('c@cid').once('value', function(snapScrambles) {
+        if (snapScrambles.exists() && snapScrambles.val()._dummy == null) {
+            $scope.$apply(function() {
+                $scope.scramblesData = snapScrambles.val();
+            });
+        } else {
+            console.error('Invalid: contest (@cid)');
+        }
+    }, function(error) {
+        //console.error(error);
+        console.error('Cannot access scrambles (@cid)');
+    });
+
+    // Fetch results data
+    contestRef.child('results').child('c@cid').once('value', function(snapResults) {
+        if (snapResults.exists() && snapResults.val()._dummy == null) {
+            $scope.$apply(function() {
+                $scope.resultsData = snapResults.val();
+            });
+        } else {
+            console.error('Invalid: contest (@cid)');
+        }
+    }, function(error) {
+        //console.error(error);
+        console.error('Cannot access results (@cid)');
+    });
+}]);
+</script>
