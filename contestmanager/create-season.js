@@ -1,5 +1,9 @@
 /**
  * create-season.js
+ *
+ * 指定シーズンのデータを作成する。
+ * データベースの contests, scrambles を生成し、該当する results を初期化する。
+ * すでにデータが存在するときは上書きしない。
  */
 
 var async = require('async');
@@ -197,7 +201,16 @@ var saveContests = function(contests, contestsIndexes, callback) {
                     }
                 }, function(err) {
                     if (!err) {
-                        callback();
+                        // ダミーデータを削除する
+                        //contestRef.child('contests').child('cxxxxxxx').set(null, function(error) {
+                        //    if (error) {
+                        //        console.error('Remove failed');
+                        //        process.exit(1);
+                        //    } else {
+                        //        console.log('Remove succeeded');
+                                callback();
+                        //    }
+                        //});
                     } else {
                         console.error(err);
                         process.exit(1);
@@ -242,7 +255,16 @@ var saveScrambles = function(scrambles, scramblesIndexes, callback) {
                     }
                 }, function(err) {
                     if (!err) {
-                        callback();
+                        // ダミーデータを削除する
+                        //contestRef.child('scrambles').child('cxxxxxxx').set(null, function(error) {
+                        //    if (error) {
+                        //        console.error('Remove failed');
+                        //        process.exit(1);
+                        //    } else {
+                        //        console.log('Remove succeeded');
+                                callback();
+                        //    }
+                        //});
                     } else {
                         console.error(err);
                         process.exit(1);
@@ -275,7 +297,9 @@ var saveResults = function(contests, contestsIndexes, callback) {
                         next();
                     } else {
                         contestRef.child('results').child(contestId).set({
-                            '_dummy' : true
+                            'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx': {
+                                '_dummy' : true
+                            }
                         }, function(error) {
                             if (error) {
                                 console.error('Set failed');
@@ -288,7 +312,16 @@ var saveResults = function(contests, contestsIndexes, callback) {
                     }
                 }, function(err) {
                     if (!err) {
-                        callback();
+                        // ダミーデータを削除する
+                        //contestRef.child('results').child('cxxxxxxx').set(null, function(error) {
+                        //    if (error) {
+                        //        console.error('Remove failed');
+                        //        process.exit(1);
+                        //    } else {
+                        //        console.log('Remove succeeded');
+                                callback();
+                        //    }
+                        //});
                     } else {
                         console.error(err);
                         process.exit(1);

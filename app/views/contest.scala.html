@@ -13,6 +13,7 @@
 app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $firebaseObject) {
     $scope.contestData = null;
     $scope.scramblesData = null;
+    $scope.resultsData = null;
     $scope.events = null;
 
     // Fetch contest data
@@ -33,13 +34,27 @@ app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $fi
         if (snapScrambles.exists() && snapScrambles.val()._dummy == null) {
             $scope.$apply(function() {
                 $scope.scramblesData = snapScrambles.val();
-            });;
+            });
         } else {
             console.error('Invalid: contest (@id)');
         }
     }, function(error) {
         //console.error(error);
-        console.error('Cannot access scrambles');
+        console.error('Cannot access scrambles (@id)');
+    });
+
+    // Fetch results data
+    contestRef.child('results').child('c@id').once('value', function(snapResults) {
+        if (snapResults.exists() && snapResults.val()._dummy == null) {
+            $scope.$apply(function() {
+                $scope.resultsData = snapResults.val();
+            });
+        } else {
+            console.error('Invalid: contest (@id)');
+        }
+    }, function(error) {
+        //console.error(error);
+        console.error('Cannot access results (@id)');
     });
 
     // Fetch events data
@@ -78,6 +93,9 @@ app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $fi
 
         <p>@id -> scramblesData:</p>
         <pre>{{ scramblesData | json }}</pre>
+
+        <p>@id -> resultsData:</p>
+        <pre>{{ resultsData | json }}</pre>
 
         <p>events:</p>
         <pre>{{ events | json }}</pre>
