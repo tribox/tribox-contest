@@ -64,7 +64,7 @@
                     <td>{{ events[e].name }}</td>
                     <td>{{ events[e].method }} of {{ events[e].attempts }}</td>
                     <td>
-                        <a href="/contest/@cid/{{ e }}" ng-if="countdown == 0 && authData != null">参加する</a>
+                        <a href="/contest/@cid/{{ e | removeHead }}" ng-if="countdown == 0 && authData != null">参加する</a>
                         <span ng-if="countdown == 0 && authData == null">参加するにはログインしてださい</span>
                         <span ng-if="countdown != 0">現在このコンテストには参加できません</span>
                     </td>

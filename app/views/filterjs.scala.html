@@ -1,7 +1,9 @@
 <script>
-var weedDays = ['Sun.', 'Mon.', 'Tue.', 'Wed.', 'Thu.', 'Fri.', 'Sat.'];
-
+/**
+ * Filter: toDate
+ */
 var timestampToDate = function(timestamp) {
+    var weedDays = ['Sun.', 'Mon.', 'Tue.', 'Wed.', 'Thu.', 'Fri.', 'Sat.'];
     var d = new Date(timestamp);
     var year = d.getFullYear();
     var month = ('0' + (d.getMonth() + 1)).slice(-2);
@@ -11,8 +13,17 @@ var timestampToDate = function(timestamp) {
     var sec = ('0' + d.getSeconds()).slice(-2);
     return year + '-' + month + '-' + day + ' (' + weedDays[d.getDay()] + ') ' + hour + ':' + min + ':' + sec;
 };
-
 app.filter('toDate', [function() {
     return timestampToDate;
 }]);
+
+/**
+ * Filter: removeHead
+ */
+app.filter('removeHead', [function() {
+    return function(str) {
+        return str.substr(1);
+    };
+}]);
+
 </script>

@@ -22,7 +22,7 @@ var token = tokenGenerator.createToken(
 );
 
 // デフォルトの競技
-var EventsDefault = ['wca333', 'wca444', 'wca555', 'wca222', 'wca333bf', 'wca333oh', 'wca333fm'];
+var EventsDefault = ['e333', 'e444', 'e555', 'e222', 'e333bf', 'e333oh', 'e333fm'];
 
 
 var usage = function() {
