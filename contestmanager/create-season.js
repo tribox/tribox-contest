@@ -104,54 +104,65 @@ contestRef.child('events').once('value', function(snap) {
         beginTimestamp = nextTimestamp;
     }
 
-    // スクランブルを生成する
-    async.each(contestsIndexes, function(contestId, next) {
-        var contest = contests[contestId];
+    // コンテストデータを保存する
+    saveContests(contests, contestsIndexes, function() {
 
-        var url = 'http://localhost:2014/scramble/.json?seed=' + contestId + Config.SEED;
-        contest.events.forEach(function(eventId) {
-            url += '&' + eventId + '=' + Events[eventId].scramblePuzzle + '*' + Events[eventId].attempts;
-        });
-        //console.log(url);
+        // スクランブルを生成する
+        var scrambles = {};
+        var scramblesIndexes = contestsIndexes;
 
-        var options = {
-            'url': url,
-            'method': 'GET',
-            'headers': { 'Content-Type': 'application/json' },
-            'json': true
-        };
+        async.each(contestsIndexes, function(contestId, next) {
+            var contest = contests[contestId];
 
-        // TNoodle でスクランブルを生成して取得
-        request(options, function(error, response, body) {
-            if (!error && response.statusCode == 200) {
-                contests[contestId]['scrambles'] = {}
-                body.forEach(function(result) {
-                    var title = result.title;
-                    var scrambles = result.scrambles;
-                    contests[contestId]['scrambles'][title] = scrambles;
+            var url = 'http://localhost:2014/scramble/.json?seed=' + contestId + Config.SEED;
+            contest.events.forEach(function(eventId) {
+                url += '&' + eventId + '=' + Events[eventId].scramblePuzzle + '*' + Events[eventId].attempts;
+            });
+            //console.log(url);
+
+            var options = {
+                'url': url,
+                'method': 'GET',
+                'headers': { 'Content-Type': 'application/json' },
+                'json': true
+            };
+
+            // TNoodle でスクランブルを生成して取得
+            request(options, function(error, response, body) {
+                if (!error && response.statusCode == 200) {
+                    scrambles[contestId] = {};
+                    scramblesIndexes.push(contestId);
+                    body.forEach(function(result) {
+                        var _title = result.title;
+                        var _scrambles = result.scrambles;
+                        scrambles[contestId][_title] = _scrambles;
+                    });
+                    next();
+                } else {
+                    console.error(error);
+                    process.exit(1);
+                }
+            });
+
+        }, function(err) {
+            if (!err) {
+                //console.dir(contests);
+                console.log('Generated all scrambles');
+                saveScrambles(scrambles, scramblesIndexes, function() {
+                    console.log('Completed');
+                    process.exit(0);
                 });
-                next();
             } else {
-                console.error(error);
+                console.error(err);
                 process.exit(1);
             }
         });
-
-    }, function(err) {
-        if (!err) {
-            //console.dir(contests);
-            console.log('Generated all scrambles');
-            saveToDB(contests, contestsIndexes);
-        } else {
-            console.error(err);
-            process.exit(1);
-        }
+        //console.dir(contests);
     });
-    //console.dir(contests);
 });
 
-// Save to DB
-var saveToDB = function(contests, contestsIndexes) {
+// Save contests to DB
+var saveContests = function(contests, contestsIndexes, callback) {
     // admin 権限でログインしてから操作する
     contestRef.authWithCustomToken(token, function(error, authData) {
         if (error) {
@@ -162,10 +173,7 @@ var saveToDB = function(contests, contestsIndexes) {
             // read current data
             contestRef.child('contests').once('value', function(snap) {
                 var current = snap.val();
-
                 //console.dir(current);
-                //console.dir(contestsIndexes);
-                //console.dir(contests);
 
                 // write
                 async.each(contestsIndexes, function(contestId, next) {
@@ -186,8 +194,52 @@ var saveToDB = function(contests, contestsIndexes) {
                     }
                 }, function(err) {
                     if (!err) {
-                        console.log('Completed');
-                        process.exit(0);
+                        callback();
+                    } else {
+                        console.error(err);
+                        process.exit(1);
+                    }
+                });
+            });
+        }
+    });
+
+};
+
+// Save scrambles to DB
+var saveScrambles = function(scrambles, scramblesIndexes, callback) {
+    // admin 権限でログインしてから操作する
+    contestRef.authWithCustomToken(token, function(error, authData) {
+        if (error) {
+            console.error('Authentication Failed!', error);
+        } else {
+            console.log('Authenticated successfully with payload:', authData);
+
+            // read current data
+            contestRef.child('scrambles').once('value', function(snap) {
+                var current = snap.val();
+                //console.dir(current);
+
+                // write
+                async.each(scramblesIndexes, function(contestId, next) {
+                    // 上書きはしない
+                    if (current[contestId] !== undefined) {
+                        console.error('Already exists:', contestId);
+                        next();
+                    } else {
+                        contestRef.child('scrambles').child(contestId).set(scrambles[contestId], function(error) {
+                            if (error) {
+                                console.error('Set failed');
+                                process.exit(1);
+                            } else {
+                                console.log('Set succeeded');
+                                next();
+                            }
+                        });
+                    }
+                }, function(err) {
+                    if (!err) {
+                        callback();
                     } else {
                         console.error(err);
                         process.exit(1);
