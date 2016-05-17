@@ -1,7 +1,17 @@
 @(title: String, contestName: String)
 
+<div id="header">
+    <div id="header-logo">
+        <a href="/">
+            <img src="/assets/images/triboxContest_H60px.png" height="30" title="triboxContest" alt="triboxContest" />
+            <span>@contestName</span>
+        </a>
+    </div>
+</div>
+<hr id="header-line">
+
 @if(title.isEmpty){
-    <h1>@contestName</h1>
+    <!--<h1>@contestName</h1>-->
 }else{
-    <h1>@title &mdash; @contestName</h1>
+    <!--<h1>@title &mdash; @contestName</h1>-->
 }

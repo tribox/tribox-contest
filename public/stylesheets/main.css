@@ -1,0 +1,24 @@
+/**
+ * main.css
+ */
+
+body {
+    background-color: #fff;
+}
+
+#header {
+    margin-top: 22px;
+}
+
+#header-logo {
+    height: 30px;
+    margin-left: 30px;
+}
+
+#header-logo span {
+    display: none;
+}
+
+hr#header-line {
+    margin-top: 22px;
+}
