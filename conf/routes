@@ -17,6 +17,8 @@ GET     /timer                      controllers.HomeController.timer
 # Setting: Setting / First setting
 GET     /setting                    controllers.SettingController.setting
 GET     /setting/first              controllers.SettingController.settingfirst
+GET     /setting/email              controllers.SettingController.settingemail
+GET     /setting/password           controllers.SettingController.settingpassword
 
 # Users
 GET     /user/$id<[a-zA-Z0-9_]{1,15}> controllers.UserController.user(id: String)

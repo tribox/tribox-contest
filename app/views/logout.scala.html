@@ -21,17 +21,14 @@ app.controller('AuthLogoutCtrl', ['$scope', 'Auth', function($scope, Auth) {
 <body><div class="container">
     @bodyheader(title, contestName)
 
-    <div ng-controller="AuthCtrl">
-        <p ng-if="message">Auth status: <strong>{{ message }}</strong></p>
-        <p ng-if="isTemporaryPassword" style="color:#f00">Please change pasword!</p>
-        <p>authData:</p><pre>{{ authData | json }}</pre>
-        <p>userData:</p><pre>{{ userData | json }}</pre>
-        <p>usersecretData:</p><pre>{{ usersecretData | json }}</pre>
-    </div>
+    <div ng-controller="AuthCtrl"><div ng-controller="AuthLogoutCtrl">
+        @authinfo()
 
-    <div ng-controller="AuthLogoutCtrl">
-        <button ng-click="logout()">Logout</button><br>
-    </div>
+        <form name="logoutForm" ng-submit="logout()">
+            <input class="btn" type="submit" value="ログアウト">
+        </form>
+
+    </div></div>
 
     @bodyfooter(contestName)
 </div></body>

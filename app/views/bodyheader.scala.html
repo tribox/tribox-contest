@@ -7,8 +7,32 @@
             <span>@contestName</span>
         </a>
     </div>
+    <div id="header-menu" ng-controller="AuthCtrl">
+        <span ng-hide="isLoggingin">
+            <a href="/login" ng-hide="isLoggingin">ログイン</a> / <a href="/join" ng-hide="isLoggingin">会員登録</a>
+        </span>
+        <span ng-show="isLoggingin">
+            <a href="/setting" ng-show="isLoggingin">マイページ</a> / <a href="/logout" ng-show="isLoggingin">ログアウト</a>
+        </span>
+    </div>
 </div>
-<hr id="header-line">
+
+@* <!--<hr id="header-line">--> *@
+
+<div id="main-menu" class="row">
+    <div class="col sm-3">
+        <a href="#">トライボックスコンテストとは</a>
+    </div>
+    <div class="col sm-3">
+        <a href="#">最新のコンテストの結果</a>
+    </div>
+    <div class="col sm-3">
+        <a href="#">シーズンランキング</a>
+    </div>
+    <div class="col sm-3">
+        <a href="#">キューブ使用率ランキング</a>
+    </div>
+</div>
 
 @if(title.isEmpty){
     <!--<h1>@contestName</h1>-->

@@ -50,21 +50,7 @@ app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $fi
     @bodyheader(title, contestName)
 
     <div ng-controller="AuthCtrl"><div ng-controller="ContestCtrl">
-        <p ng-if="message">Auth status: <strong>{{ message }}</strong></p>
-        <p ng-if="isTemporaryPassword" style="color:#f00">Please change pasword!</p>
-        <p>authData:</p><pre>{{ authData | json }}</pre>
-        <p>userData:</p><pre>{{ userData | json }}</pre>
-        <p>usersecretData:</p><pre>{{ usersecretData | json }}</pre>
-
-        <ul>
-            <li ng-hide="isLoggingin"><a href="/join">Join</a></li>
-            <li ng-hide="isLoggingin"><a href="/login">Login</a></li>
-            <li ng-hide="isLoggingin"><a href="/forgot">Forgot password?</a></li>
-            <li ng-show="isLoggingin"><a href="/setting">Setting</a></li>
-            <li ng-show="isLoggingin"><a href="/logout">Logout</a></li>
-        </ul>
-
-        <hr>
+        @authinfo()
 
         @* <!--<div>
             <p>開催中のコンテスト (MySQL):<br>@{events.length} events.</p>
@@ -86,7 +72,7 @@ app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $fi
 
         <p>
             開催中のコンテスト:
-            <a href="/contest/{{ inProgressContest.contestId }}">{{ inProgressContest.contestName }} ({{ inProgress }})</a>
+            <a href="/contest/{{ inProgressContest.contestId }}">{{ inProgressContest.contestName }}</a> @* ({{ inProgress }}) *@
         </p>
         <p>
             開始: {{ inProgressContest.beginAt | toDate }}<br>
@@ -97,9 +83,9 @@ app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $fi
         </p>
         <ul>
             <li ng-repeat="e in inProgressContest.events">
-                @*<a href="/contest/{{ inProgressContest.contestId }}#{{ e }}">*@
+                @* <!--<a href="/contest/{{ inProgressContest.contestId }}#{{ e }}">--> *@
                     {{ events[e].name }} ({{ events[e].method }} of {{ events[e].attempts }})
-                @*</a>*@
+                @* <!--</a>--> *@
             </li>
         </ul>
 

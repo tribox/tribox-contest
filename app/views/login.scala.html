@@ -53,24 +53,35 @@ app.controller('AuthLoginCtrl', ['$scope', 'Auth', function($scope, Auth) {
 <body><div class="container">
     @bodyheader(title, contestName)
 
-    <div ng-controller="AuthCtrl">
-        <p ng-if="message">Auth status: <strong>{{ message }}</strong></p>
+    <div ng-controller="AuthCtrl"><div ng-controller="AuthLoginCtrl">
+        @* <!--<p ng-if="message">Auth status: <strong>{{ message }}</strong></p>
         <p ng-if="isTemporaryPassword" style="color:#f00">Please change pasword!</p>
         <p>authData:</p><pre>{{ authData | json }}</pre>
         <p>userData:</p><pre>{{ userData | json }}</pre>
-        <p>usersecretData:</p><pre>{{ usersecretData | json }}</pre>
-    </div>
+        <p>usersecretData:</p><pre>{{ usersecretData | json }}</pre>--> *@
 
-    <div ng-controller="AuthLoginCtrl">
+        @* <!--<div class="color-dark margin-bottom-20"ng-if="message">
+            Message: {{ message }}
+        </div>--> *@
+        <div class="color-error margin-bottom-20" ng-if="error">
+            入力エラー: {{ error }}
+        </div>
+
         <form name="loginForm" ng-submit="login()">
-            Email: <input type="email" ng-model="email"><br>
-            Password: <input type="password" ng-model="password"><br>
-            <input type="submit" value="Login">
+            <div>
+                <label>Email</label>
+                <input class="form-control" type="email" ng-model="email">
+            </div>
+            <div>
+                <label>Password</label>
+                <input class="form-control" type="password" ng-model="password">
+            </div>
+            <input class="btn" type="submit" value="ログイン">
         </form>
 
-        <p ng-if="message">Message: <strong>{{ message }}</strong></p>
-        <p ng-if="error">Error: <strong style="color:#f00;">{{ error }}</strong></p>
-    </div>
+        <p><a href="/forgot">パスワードを忘れましたか？</a></p>
+
+    </div></div>
 
     @bodyfooter(contestName)
 </div></body>

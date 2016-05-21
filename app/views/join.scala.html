@@ -52,32 +52,38 @@ app.controller('AuthJoinCtrl', ['$scope', 'Auth', function($scope, Auth) {
 <body><div class="container">
     @bodyheader(title, contestName)
 
-    <div ng-controller="AuthCtrl">
-        <p ng-if="message">Auth status: <strong>{{ message }}</strong></p>
+    <div ng-controller="AuthCtrl"><div ng-controller="AuthJoinCtrl">
+        @* <!--<p ng-if="message">Auth status: <strong>{{ message }}</strong></p>
         <p ng-if="isTemporaryPassword" style="color:#f00">Please change pasword!</p>
         <p>authData:</p><pre>{{ authData | json }}</pre>
         <p>userData:</p><pre>{{ userData | json }}</pre>
-        <p>usersecretData:</p><pre>{{ usersecretData | json }}</pre>
-    </div>
+        <p>usersecretData:</p><pre>{{ usersecretData | json }}</pre>--> *@
 
-    <p>
-        メールアドレスを入力してください。
-        入力されたメールアドレス宛てに初期パスワードが記載されたメールが送信されます
-        (送信元: noreply@@@{firebaseappContest}.firebaseapp.com)。
-        初期パスワードでログインしてパスワードを変更してください。
-    </p>
+        @* <!--<div class="color-dark margin-bottom-20"ng-if="message">
+            Message: {{ message }}
+        </div>--> *@
+        <div class="color-error margin-bottom-20" ng-if="error">
+            入力エラー: {{ error }}
+        </div>
 
-    <div ng-controller="AuthJoinCtrl">
-        <form novalidate name="joinForm" ng-submit="createUser()">
-            Email: <input type="email" name="email" ng-model="email" required>
-            <span ng-show="joinForm.email.$error.email">Not valid email!</span>
-            <span ng-show="joinForm.email.$error.required">Required!</span><br>
-            <input type="submit" value="Create User">
+        <p>
+            メールアドレスを入力してください。
+            入力されたメールアドレス宛てに初期パスワードが記載されたメールが送信されます
+            (送信元: noreply@@@{firebaseappContest}.firebaseapp.com)。
+            初期パスワードでログインしてパスワードを変更してください。
+        </p>
+
+        <form name="joinForm" ng-submit="createUser()">
+            <div>
+                <label>Email</label>
+                <input class="form-control" type="email" name="email" ng-model="email" required>
+            </div>
+            @* <!--<span ng-show="joinForm.email.$error.email">Not valid email!</span>
+            <span ng-show="joinForm.email.$error.required">Required!</span><br>--> *@
+            <input class="btn" type="submit" value="登録">
         </form>
 
-        <p ng-if="message">Message: <strong>{{ message }}</strong></p>
-        <p ng-if="error">Error: <strong style="color:#f00;">{{ error }}</strong></p>
-    </div>
+    </div></div>
 
     @bodyfooter(contestName)
 </div></body>

@@ -2,23 +2,119 @@
  * main.css
  */
 
-body {
-    background-color: #fff;
+@media screen and (max-width: 480px) {
+    .container {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
 }
 
+body {
+    background-color: #fff;
+    font-family: 'ヒラギノ角ゴ Pro W3','Hiragino Kaku Gothic Pro','メイリオ',Meiryo,'ＭＳ Ｐゴシック',"Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'ヒラギノ角ゴ Pro W3','Hiragino Kaku Gothic Pro','メイリオ',Meiryo,'ＭＳ Ｐゴシック',"Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+/**
+ * Header
+ */
 #header {
     margin-top: 22px;
 }
 
 #header-logo {
+    display: inline-block;
     height: 30px;
-    margin-left: 30px;
 }
-
 #header-logo span {
     display: none;
 }
 
+@media screen and (max-width: 768px) {
+    #header-logo {
+        margin-left: 0;
+    }
+}
+@media screen and (min-width: 768px) {
+    #header-logo {
+        margin-left: 30px;
+    }
+}
+
+#header-menu {
+    display: inline-block;
+    height: 30px;
+    margin-top: 10px;
+    float: right;
+}
+
 hr#header-line {
     margin-top: 22px;
+}
+
+#main-menu {
+    clear: both;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+@media screen and (max-width: 480px) {
+    #main-menu {
+        margin-left: -5px;
+        margin-right: -5px;
+    }
+}
+#main-menu div {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    color: rgb(246, 246, 246);
+    background-color: rgb(117, 117, 117);
+    text-align: center;
+}
+#main-menu div a {
+    color: rgb(246, 246, 246);
+}
+@media screen and (max-width: 768px) {
+    #main-menu div {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+}
+
+/**
+ * Alert
+ */
+/* .alert-error {
+    padding: 10px;
+    background: none;
+    color: #E74C3C;
+    border: 2px solid #E74C3C;
+    -webkit-border-radius: 5px;
+       -moz-border-radius: 5px;
+            border-radius: 5px;
+} */
+
+
+/**
+ * Setting
+ */
+table.settings {
+    margin-bottom: 20px;
+}
+table.settings th {
+    vertical-align: middle;
+}
+@media screen and (max-width: 480px) {
+    table.settings th,
+    table.settings td {
+        padding: 0;
+    }
+}
+@media screen and (min-width: 480px) {
+    table.settings th,
+    table.settings td {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
 }

@@ -1,0 +1,93 @@
+@(contestName: String, contestUrl: String, firebaseappContest: String)
+
+@defining("Email Setting") { title =>
+
+<!DOCTYPE html>
+<html lang="ja" ng-app="contestApp">
+<head>
+    @header(title, contestName)
+
+@basejs(firebaseappContest)
+@authjs(redirectLogin="", redirectLogout=routes.HomeController.index.toString(), checkFirst=true)
+<script>
+app.controller('AuthEmailCtrl', ['$scope', 'Auth', function($scope, Auth) {
+    Auth.$onAuth(function(authData) {
+        if (!processing) {
+            if (authData) {
+                $scope.oldEmail = authData.password.email;
+            } else {
+                location.href = '@routes.HomeController.index';
+            }
+        }
+    });
+
+    $scope.changeEmail = function() {
+        $scope.message = null;
+        $scope.error = null;
+
+        var _oldEmail = $scope.oldEmail;
+        var _newEmail = $scope.newEmail;
+        var _password = $scope.password;
+        Auth.$changeEmail({
+            oldEmail: _oldEmail,
+            newEmail: _newEmail,
+            password: _password
+        }).then(function() {
+            $scope.message = 'Email changed successfully!';
+            processing = true;
+            Auth.$unauth();
+            Auth.$authWithPassword({
+                email: _newEmail,
+                password: _password
+            }).then(function(authData) {
+                $scope.message = 'Logged in as: ' + authData.uid;
+                location.href = '@routes.HomeController.index';
+            }).catch(function(error) {
+                $scope.error = error;
+            });
+        }).catch(function(error) {
+            $scope.error = error;
+        });
+    };
+}]);
+</script>
+</head>
+<body><div class="container">
+    @bodyheader(title, contestName)
+
+    <div ng-controller="AuthCtrl"><div ng-controller="AuthEmailCtrl">
+        @authinfo()
+
+        <h2>メールアドレス設定</h2>
+
+        <form name="emailForm" ng-submit="changeEmail()">
+            @* <!--<div class="color-dark margin-bottom-20"ng-if="message">
+                Message: {{ message }}
+            </div>--> *@
+            <div class="color-error margin-bottom-20" ng-if="error">
+                入力エラー: {{ error }}
+            </div>
+
+            <div>
+                <label>現在のメールアドレス</label>
+                <input class="form-control" type="email" ng-model="oldEmail" readonly="readonly">
+            </div>
+            <div>
+                <label>新しいメールアドレス</label>
+                <input class="form-control" type="email" ng-model="newEmail">
+            </div>
+            <div>
+                <label>パスワード</label>
+                <input class="form-control" type="password" ng-model="password">
+            </div>
+
+            <input class="btn" type="submit" value="メールアドレスを変更する">
+
+        </form>
+    </div></div>
+
+    @bodyfooter(contestName)
+</div></body>
+</html>
+
+}

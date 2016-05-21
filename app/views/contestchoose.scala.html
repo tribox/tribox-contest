@@ -16,13 +16,7 @@
     @bodyheader(title, contestName)
 
     <div ng-controller="AuthCtrl"><div ng-controller="ContestCtrl">
-        <p ng-if="message">Auth status: <strong>{{ message }}</strong></p>
-        <p ng-if="isTemporaryPassword" style="color:#f00">Please change pasword!</p>
-        <p>authData:</p><pre>{{ authData | json }}</pre>
-        <p>userData:</p><pre>{{ userData | json }}</pre>
-        <p>usersecretData:</p><pre>{{ usersecretData | json }}</pre>
-
-        <hr>
+        @authinfo()
 
         <h2>{{ contestData.contestName }}</h2>
 
