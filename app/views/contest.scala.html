@@ -36,8 +36,8 @@
         <h2>{{ contestData.contestName }}</h2>
 
         <p>
-            開始: {{ contestData.beginAt | toDate }}<br>
-            終了: {{ contestData.endAt | toDate }}
+            開始 <i class="fa fa-calendar"></i>: {{ contestData.beginAt | toDate }}<br>
+            終了 <i class="fa fa-calendar"></i>: {{ contestData.endAt | toDate }}
         </p>
         <p ng-if="countdown == 0">
             現在開催中のコンテストです。
@@ -78,21 +78,21 @@
             </tbody>
         </table>
 
-        <p>@cid -> contestData:</p>
-        <pre>{{ contestData | json }}</pre>
+        @* <!--<p>@cid -> contestData:</p>
+        <pre>{{ contestData | json }}</pre>--> *@
 
-        <p>inProgress / countdown:</p>
+        @* <!--<p>inProgress / countdown:</p>
         <pre>{{ inProgress | json }}</pre>
-        <pre>{{ countdown | json }}</pre>
+        <pre>{{ countdown | json }}</pre>--> *@
 
-        <p>@cid -> scramblesData:</p>
-        <pre>{{ scramblesData | json }}</pre>
+        @* <!--<p>@cid -> scramblesData:</p>
+        <pre>{{ scramblesData | json }}</pre>--> *@
 
-        <p>@cid -> resultsData:</p>
-        <pre>{{ resultsData | json }}</pre>
+        @* <!--<p>@cid -> resultsData:</p>
+        <pre>{{ resultsData | json }}</pre>--> *@
 
-        <p>events:</p>
-        <pre>{{ events | json }}</pre>
+        @* <!--<p>events:</p>
+        <pre>{{ events | json }}</pre>--> *@
 
     </div></div></div></div>
 

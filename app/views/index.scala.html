@@ -101,16 +101,16 @@ app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $fi
             </li>
         </ul>
 
-        <p>inProgressContest:</p>
-        <pre>{{ inProgressContest | json }}</pre>
+        @* <!--<p>inProgressContest:</p>
+        <pre>{{ inProgressContest | json }}</pre>--> *@
 
-        <p>全競技リスト:</p>
+        @* <!--<p>全競技リスト:</p>
         <ul>
             <li ng-repeat="(eid, e) in events">
                 {{ e.name }} ({{ eid }}: {{ e.method }} of {{ e.attempts }}, format={{ e.format }})
             </li>
         </ul>
-        <pre>{{ events | json }}</pre>
+        <pre>{{ events | json }}</pre>--> *@
 
     </div></div></div>
 
