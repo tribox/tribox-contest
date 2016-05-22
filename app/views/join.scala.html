@@ -59,6 +59,12 @@ app.controller('AuthJoinCtrl', ['$scope', 'Auth', function($scope, Auth) {
     @bodyheader(title, contestName)
 
     <div ng-controller="AuthCtrl"><div ng-controller="AuthJoinCtrl">
+    <div ng-hide="authLoaded">
+        <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+        <span class="sr-only">Loading...</span>
+        Loading...
+    </div>
+    <div ng-show="authLoaded">
 
         @* <!--<div class="color-dark margin-bottom-20" ng-if="message">
             Message: {{ message }}
@@ -84,7 +90,7 @@ app.controller('AuthJoinCtrl', ['$scope', 'Auth', function($scope, Auth) {
             <input class="btn" type="submit" value="登録">
         </form>
 
-    </div></div>
+    </div></div></div>
 
     @bodyfooter(contestName)
 </div></body>

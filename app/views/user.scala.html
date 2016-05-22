@@ -1,6 +1,6 @@
 @(id: String, contestName: String, contestUrl: String, firebaseappContest: String)
 
-@defining("User: " + id) { title =>
+@defining(id) { title =>
 
 <!DOCTYPE html>
 <html lang="ja" ng-app="contestApp">
@@ -12,14 +12,19 @@
 <script>
 app.controller('UserCtrl', ['$scope', '$firebaseObject', function($scope, $firebaseObject) {
     $scope.userData = null;
+    $scope.userLoaded = false;
+    $scope.existsUser = false;
+
     // Fetch usernames data
     contestRef.child('usernames').child('@id').once('value', function(snapUsername) {
         if (snapUsername.exists() && snapUsername.val().uid != null && snapUsername.val()._dummy == null) {
             // Fetch user data
             $scope.userData = $firebaseObject(contestRef.child('users').child(snapUsername.val().uid));
+            $scope.existsUser = true;
         } else {
-            console.error('Invalid: username (@id)');
+            console.error('Invalid username: @id');
         }
+        $scope.userLoaded = true;
     }, function(error) {
         console.error(error);
     });
@@ -29,20 +34,30 @@ app.controller('UserCtrl', ['$scope', '$firebaseObject', function($scope, $fireb
 <body><div class="container">
     @bodyheader(title, contestName)
 
-    <div ng-controller="AuthCtrl">
-        <p ng-if="message">Auth status: <strong>{{ message }}</strong></p>
-        <p ng-if="isTemporaryPassword" style="color:#f00">Please change pasword!</p>
-        <p>authData:</p><pre>{{ authData | json }}</pre>
-        <p>userData:</p><pre>{{ userData | json }}</pre>
-        <p>usersecretData:</p><pre>{{ usersecretData | json }}</pre>
+    <div ng-controller="AuthCtrl"><div ng-controller="UserCtrl">
+    <div ng-hide="authLoaded && userLoaded">
+        <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+        <span class="sr-only">Loading...</span>
+        Loading...
+    </div>
+    <div ng-show="authLoaded && userLoaded">
+
+    <div ng-hide="existsUser">
+        <p class="color-error">
+            存在しないユーザ名です。
+        </p>
     </div>
 
-    <hr>
+    <div ng-show="existsUser">
 
-    <div ng-controller="UserCtrl">
+        @authinfo()
+
+        <h2>ユーザページ: @id</h2>
+
         <p>@id -> userData:</p>
         <pre>{{ userData | json }}</pre>
-    </div>
+
+    </div></div></div></div>
 
     @bodyfooter(contestName)
 </div></body>

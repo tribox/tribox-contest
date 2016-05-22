@@ -16,6 +16,13 @@
     @bodyheader(title, contestName)
 
     <div ng-controller="AuthCtrl"><div ng-controller="ContestCtrl">
+    <div ng-hide="authLoaded && contestLoaded">
+        <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+        <span class="sr-only">Loading...</span>
+        Loading...
+    </div>
+    <div ng-show="authLoaded && contestLoaded">
+
         @authinfo()
 
         <h2>{{ contestData.contestName }}</h2>
@@ -58,7 +65,7 @@
         <p>events:</p>
         <pre>{{ events | json }}</pre>
 
-        </div></div>
+    </div></div></div>
 
     @bodyfooter(contestName)
 </div></body>

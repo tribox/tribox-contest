@@ -19,6 +19,7 @@ app.controller('AuthCtrl', ['$scope', '$firebaseObject', 'Auth', function($scope
     $scope.userData = null;
     $scope.usersecretData = null;
     $scope.isLoggingin = false;
+    $scope.authLoading = false;
 
     Auth.$onAuth(function(authData) {
         if (authData) {
@@ -42,6 +43,7 @@ app.controller('AuthCtrl', ['$scope', '$firebaseObject', 'Auth', function($scope
             $scope.isLoggingin = false;
             location.href = '@routes.HomeController.index';
         }
+        $scope.authLoaded = true;
     });
 }]);
 
@@ -149,6 +151,13 @@ app.controller('AuthFirstSettingCtrl', ['$scope', 'Auth', function($scope, Auth)
     @bodyheader(title, contestName)
 
     <div ng-controller="AuthCtrl"><div ng-controller="AuthFirstSettingCtrl">
+    <div ng-hide="authLoaded">
+        <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+        <span class="sr-only">Loading...</span>
+        Loading...
+    </div>
+    <div ng-show="authLoaded">
+
         @authinfo()
 
         <h2>初期設定</h2>
@@ -190,7 +199,7 @@ app.controller('AuthFirstSettingCtrl', ['$scope', 'Auth', function($scope, Auth)
                 <label>所属</label>
                 <input class="form-control" type="text" ng-model="organization">
                 <p>
-                    ご所属を公開した場合は入力してください。
+                    ご所属を公開したい場合は入力してください。
                     31文字以内で設定してください。
                     日本語使用可能です。
                     あとで変更できます。
@@ -200,7 +209,7 @@ app.controller('AuthFirstSettingCtrl', ['$scope', 'Auth', function($scope, Auth)
             <input class="btn" type="submit" value="Update">
         </form>
 
-    </div></div>
+    </div></div></div>
 
     @bodyfooter(contestName)
 </div></body>

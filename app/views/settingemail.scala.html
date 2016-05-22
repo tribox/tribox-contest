@@ -11,10 +11,13 @@
 @authjs(redirectLogin="", redirectLogout=routes.HomeController.index.toString(), checkFirst=true)
 <script>
 app.controller('AuthEmailCtrl', ['$scope', 'Auth', function($scope, Auth) {
+    $scope.settingLoaded = false;
+
     Auth.$onAuth(function(authData) {
-        if (!processing) {
+        if (!authProcessing) {
             if (authData) {
                 $scope.oldEmail = authData.password.email;
+                $scope.settingLoaded = true;
             } else {
                 location.href = '@routes.HomeController.index';
             }
@@ -34,7 +37,7 @@ app.controller('AuthEmailCtrl', ['$scope', 'Auth', function($scope, Auth) {
             password: _password
         }).then(function() {
             $scope.message = 'Email changed successfully!';
-            processing = true;
+            authProcessing = true;
             Auth.$unauth();
             Auth.$authWithPassword({
                 email: _newEmail,
@@ -56,6 +59,13 @@ app.controller('AuthEmailCtrl', ['$scope', 'Auth', function($scope, Auth) {
     @bodyheader(title, contestName)
 
     <div ng-controller="AuthCtrl"><div ng-controller="AuthEmailCtrl">
+    <div ng-hide="authLoaded && settingLoaded">
+        <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+        <span class="sr-only">Loading...</span>
+        Loading...
+    </div>
+    <div ng-show="authLoaded && settingLoaded">
+
         @authinfo()
 
         <h2>メールアドレス設定</h2>
@@ -84,7 +94,8 @@ app.controller('AuthEmailCtrl', ['$scope', 'Auth', function($scope, Auth) {
             <input class="btn" type="submit" value="メールアドレスを変更する">
 
         </form>
-    </div></div>
+
+    </div></div></div>
 
     @bodyfooter(contestName)
 </div></body>

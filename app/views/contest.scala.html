@@ -16,6 +16,21 @@
     @bodyheader(title, contestName)
 
     <div ng-controller="AuthCtrl"><div ng-controller="ContestCtrl">
+    <div ng-hide="authLoaded && contestLoaded">
+        <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+        <span class="sr-only">Loading...</span>
+        Loading...
+    </div>
+    <div ng-show="authLoaded && contestLoaded">
+
+    <div ng-hide="existsContest">
+        <p class="color-error">
+            存在しないコンテストです。
+        </p>
+    </div>
+
+    <div ng-show="existsContest">
+
         @authinfo()
 
         <h2>{{ contestData.contestName }}</h2>
@@ -47,7 +62,7 @@
                 <tr>
                     <th>競技種目</th>
                     <th>計測フォーマット</th>
-                    <th></th>
+                    <th>参加</th>
                 </tr>
             </thead>
             <tbody>
@@ -79,7 +94,7 @@
         <p>events:</p>
         <pre>{{ events | json }}</pre>
 
-    </div></div>
+    </div></div></div></div>
 
     @bodyfooter(contestName)
 </div></body>

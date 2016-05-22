@@ -6,6 +6,8 @@ app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $fi
     $scope.scramblesData = null;
     $scope.resultsData = null;
     $scope.events = null;
+    $scope.contestLoaded = false;
+    $scope.existsContest = false;
 
     @* コンテストが、進行中 (0) か、終了済み (負) か、これからやるやつ (正) か *@
     $scope.inProgress = null;
@@ -22,10 +24,15 @@ app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $fi
                             $scope.contestData = snapContest.val();
                             $scope.inProgress = snapInProgress.val();
                             $scope.countdown = @cid - parseInt(snapInProgress.val().contest.substr(1));
+                            $scope.existsContest = true;
+                            $scope.contestLoaded = true;
                         });
                     });
                 } else {
-                    console.error('Invalid: contest (@cid)');
+                    console.error('Invalid contest: @cid');
+                    $scope.$apply(function() {
+                        $scope.contestLoaded = true;
+                    });
                 }
             }, function(error) {
                 console.error(error);

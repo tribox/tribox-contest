@@ -24,6 +24,8 @@ app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $fi
     $scope.events = null;
     $scope.inProgress = null;
     $scope.inProgressContest = null;
+    $scope.contestLoaded = false;
+
     contestRef.child('events').once('value', function(snapEvents) {
         if (snapEvents.exists()) {
             $scope.events = snapEvents.val();
@@ -31,6 +33,7 @@ app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $fi
                 if (snapInProgress.exists()) {
                     $scope.inProgress = snapInProgress.val();
                     $scope.inProgressContest = $firebaseObject(contestRef.child('contests').child($scope.inProgress));
+                    $scope.contestLoaded = true;
                 } else {
                     console.error('Undefined: inProgress');
                 }
@@ -50,7 +53,16 @@ app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $fi
     @bodyheader(title, contestName)
 
     <div ng-controller="AuthCtrl"><div ng-controller="ContestCtrl">
+    <div ng-hide="authLoaded && contestLoaded">
+        <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+        <span class="sr-only">Loading...</span>
+        Loading...
+    </div>
+    <div ng-show="authLoaded && contestLoaded">
+
         @authinfo()
+
+        <h2>開催中のコンテスト</h2>
 
         @* <!--<div>
             <p>開催中のコンテスト (MySQL):<br>@{events.length} events.</p>
@@ -100,7 +112,7 @@ app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $fi
         </ul>
         <pre>{{ events | json }}</pre>
 
-    </div></div>
+    </div></div></div>
 
     @bodyfooter(contestName)
 </div></body>
