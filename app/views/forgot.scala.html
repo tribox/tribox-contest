@@ -12,14 +12,14 @@
 <script>
 app.controller('AuthForgotCtrl', ['$scope', 'Auth', function($scope, Auth) {
     $scope.resetPassword = function() {
-        $scope.message = null;
+        $scope.resetMessage = null;
         $scope.error = null;
 
         Auth.$unauth();
         Auth.$resetPassword({
             email: $scope.email
         }).then(function() {
-            $scope.message = 'Password reset email sent successfully!';
+            $scope.resetMessage = '新しいパスワードを電子メールで送信しました。';
         }).catch(function(error) {
             $scope.error = error;
         });
@@ -30,22 +30,32 @@ app.controller('AuthForgotCtrl', ['$scope', 'Auth', function($scope, Auth) {
 <body><div class="container">
     @bodyheader(title, contestName)
 
-    <div ng-controller="AuthCtrl">
-        <p ng-if="message">Auth status: <strong>{{ message }}</strong></p>
-        <p ng-if="isTemporaryPassword" style="color:#f00">Please change pasword!</p>
-        <p>authData:</p><pre>{{ authData | json }}</pre>
-        <p>userData:</p><pre>{{ userData | json }}</pre>
-        <p>usersecretData:</p><pre>{{ usersecretData | json }}</pre>
-    </div>
+    <div ng-controller="AuthCtrl"><div ng-controller="AuthForgotCtrl">
 
-    <div ng-controller="AuthForgotCtrl">
-        Email: <input type="email" ng-model="email"><br>
+        <h2>パスワードリセット</h2>
 
-        <button ng-click="resetPassword()">Reset password</button><br>
+        @* <!--<div class="color-success margin-bottom-20" ng-if="message">
+            メッセージ: {{ message }}
+        </div>--> *@
+        <div class="color-error margin-bottom-20" ng-if="error">
+            エラー: {{ error }}
+        </div>
 
-        <p ng-if="message">Message: <strong>{{ message }}</strong></p>
-        <p ng-if="error">Error: <strong style="color:#f00;">{{ error }}</strong></p>
-    </div>
+        <form name="resetPasswordForm" ng-submit="resetPassword()">
+            <div>
+                <label>メールアドレス</label>
+                <input class="form-control" type="email" ng-model="email">
+            </div>
+
+            <input class="btn" type="submit" value="パスワードをリセットする">
+
+        </form>
+
+        <div class="color-success margin-bottom-20" ng-if="resetMessage">
+            メッセージ: {{ resetMessage }}
+        </div>
+
+    </div></div>
 
     @bodyfooter(contestName)
 </div></body>

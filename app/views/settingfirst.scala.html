@@ -51,13 +51,35 @@ app.controller('AuthFirstSettingCtrl', ['$scope', 'Auth', function($scope, Auth)
         $scope.error = null;
         var _username = $scope.username ? $scope.username : '';
         var _displayname = $scope.displayname ? $scope.displayname : '';
+        var _organization = $scope.organization ? $scope.organization : null;
 
+        // ユーザ名、使用文字と長さチェック
         if (!(_username.match(/^[a-zA-Z0-9_]{1,15}$/))) {
-            console.error('Invalid username');
+            //console.error('Invalid username');
+            $scope.error = 'ユーザ名が正しくありません。';
             return;
         }
+        // 表示名、長さチェック
         if (!(_displayname.match(/^.{1,31}$/))) {
-            console.error('Invalid displayname');
+            //console.error('Invalid displayname');
+            $scope.error = '表示名が正しくありません。';
+            return;
+        }
+        // 表示名、使用文字チェック
+        for (var i = 0, l = _displayname.length; i < l; i++) {
+            var ch = _displayname.charAt(i);
+            var ucode = ch.charCodeAt(0);
+            @* /* http://www.asahi-net.or.jp/~ax2s-kmtn/ref/unicode/index.html */ *@
+            if (!( (0x0000 <= ucode && ucode <= 0x007f) || (0x0080 <= ucode && ucode <= 0x1dbf) )) {
+                //console.error('Invalid displayname');
+                $scope.error = '表示名が正しくありません。文字「' + String.fromCharCode(ucode) + '」は使用できません。';
+                return;
+            }
+        }
+        // 所属、長さチェック
+        if (!(_organization == null || _organization.length() < 32)) {
+            //console.error('Invalid organization');
+            $scope.error = '所属が正しくありません。';
             return;
         }
 
@@ -73,7 +95,8 @@ app.controller('AuthFirstSettingCtrl', ['$scope', 'Auth', function($scope, Auth)
                         contestRef.child('usernames').child(_username).once('value', function(usernameSnap) {
                             if (usernameSnap.exists()) {
                                 // Username already used
-                                console.error('Username already exists: ' + _username);
+                                //console.error('Username already exists: ' + _username);
+                                $scope.error = 'すでに存在するユーザ名です: ' + _username;
                             } else {
                                 // Set new data to usernames DB and users DB
                                 contestRef.child('usernames').child(_username).set({
@@ -87,7 +110,8 @@ app.controller('AuthFirstSettingCtrl', ['$scope', 'Auth', function($scope, Auth)
                                         contestRef.child('users').child(authData.uid).set({
                                             'createdAt': Firebase.ServerValue.TIMESTAMP,
                                             'username': _username,
-                                            'displayname': _displayname
+                                            'displayname': _displayname,
+                                            'organization': _organization
                                         }, function(error) {
                                             if (error) {
                                                 console.error(error);
@@ -124,30 +148,59 @@ app.controller('AuthFirstSettingCtrl', ['$scope', 'Auth', function($scope, Auth)
 <body><div class="container">
     @bodyheader(title, contestName)
 
-    <div ng-controller="AuthCtrl">
-        <p ng-if="message">Auth status: <strong>{{ message }}</strong></p>
-        <p>authData:</p><pre>{{ authData | json }}</pre>
-        <p>userData:</p><pre>{{ userData | json }}</pre>
-        <p>usersecretData:</p><pre>{{ usersecretData | json }}</pre>
-    </div>
+    <div ng-controller="AuthCtrl"><div ng-controller="AuthFirstSettingCtrl">
+        @authinfo()
 
-    <div ng-controller="AuthFirstSettingCtrl">
+        <h2>初期設定</h2>
+
         <p>初期設定が必要です。</p>
+
         <form name="firstSettingForm" ng-submit="updateFirstSetting()">
-            ユーザ名: <input type="text" ng-model="username">
-              アルファベットと数字で1文字以上16文字以内。
-              他のアカウントのユーザ名と重複できません。
-              個人ページのURLは @{contestUrl}/user/{{ username }} になります。
-              あとで変更できます。<br>
-            名前: <input type="text" ng-model="displayname">
-              ランキング等で表示される名前。日本語OK。ハンドルネームOK。
-              あとで変更できます。<br>
-            <input type="submit" value="Update">
+            @* <!--<div class="color-dark margin-bottom-20" ng-if="message">
+                Message: {{ message }}
+            </div>--> *@
+            <div class="color-error margin-bottom-20" ng-if="error">
+                エラー: {{ error }}
+            </div>
+
+            <div class="margin-top-30">
+                <label>ユーザ名 <span class="color-error">(必須)</span></label>
+                <input class="form-control" type="text" ng-model="username">
+                <p>
+                    1文字以上15文字以内で設定してください。
+                    <a href="https://ja.wikipedia.org/wiki/ISO%E5%9F%BA%E6%9C%AC%E3%83%A9%E3%83%86%E3%83%B3%E3%82%A2%E3%83%AB%E3%83%95%E3%82%A1%E3%83%99%E3%83%83%E3%83%88">ISO基本ラテンアルファベット</a>、
+                    数字、記号（アンダーバー）のみ使用できます。
+                    他のアカウントのユーザ名と重複できません。
+                    個人ページのURLは @{contestUrl}/user/{{ username }} になります。
+                    あとで変更できます。
+                </p>
+            </div>
+            <div class="margin-top-30">
+                <label>名前 <span class="color-error">(必須)</span></label>
+                <input class="form-control" type="text" ng-model="displayname">
+                <p>
+                    ランキング等で表示される名前です。
+                    1文字以上31文字以内で設定してください。
+                    <a href="https://ja.wikipedia.org/wiki/%E3%83%A9%E3%83%86%E3%83%B3%E6%96%87%E5%AD%97">ラテン文字</a>、
+                    数字、記号、スペースのみ使用できます。
+                    あとで変更できます。
+                </p>
+            </div>
+            <div class="margin-top-30">
+                <label>所属</label>
+                <input class="form-control" type="text" ng-model="organization">
+                <p>
+                    ご所属を公開した場合は入力してください。
+                    31文字以内で設定してください。
+                    日本語使用可能です。
+                    あとで変更できます。
+                </p>
+            </div>
+
+            <input class="btn" type="submit" value="Update">
         </form>
 
-        <p ng-if="message">Message: <strong>{{ message }}</strong></p>
-        <p ng-if="error">Error: <strong style="color:#f00;">{{ error }}</strong></p>
-    </div>
+    </div></div>
 
     @bodyfooter(contestName)
 </div></body>

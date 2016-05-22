@@ -1,5 +1,15 @@
+<style>
+a.underlined {
+    color: #E74C3C;
+    text-decoration: underline;
+}
+</style>
+
         <p class="margin-bottom-30" ng-if="isLoggingin">
             {{ userData.displayname }}<span ng-show="userData.organization">, {{ userData.organization }}</span>
+            <span class="color-error" ng-if="isTemporaryPassword">
+                初期パスワードが変更されていません。<a href="/setting/password" class="underlined">パスワードを変更</a>してください。
+            </span>
         </p>
 
         @* <!--<p ng-if="message">Auth status: <strong>{{ message }}</strong></p>

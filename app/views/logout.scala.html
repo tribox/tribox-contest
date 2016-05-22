@@ -24,6 +24,8 @@ app.controller('AuthLogoutCtrl', ['$scope', 'Auth', function($scope, Auth) {
     <div ng-controller="AuthCtrl"><div ng-controller="AuthLogoutCtrl">
         @authinfo()
 
+        <h2>ログアウト</h2>
+
         <form name="logoutForm" ng-submit="logout()">
             <input class="btn" type="submit" value="ログアウト">
         </form>

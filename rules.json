@@ -45,7 +45,7 @@
                     ".validate": "newData.isString() && newData.val().matches(/^.{1,31}$/)"
                 },
                 "organization": {
-                    ".validate": "newData.isString() && newData.val().length < 128"
+                    ".validate": "newData.isString() && newData.val().length < 32"
                 },
                 "wcaId": {
                     ".validate": "newData.isString() && newData.val().matches(/^[0-9]{4}[A-Z]{4}[0-9]{2}$/)"

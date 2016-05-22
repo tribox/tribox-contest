@@ -17,6 +17,7 @@ h1, h2, h3, h4, h5, h6 {
     font-family: 'ヒラギノ角ゴ Pro W3','Hiragino Kaku Gothic Pro','メイリオ',Meiryo,'ＭＳ Ｐゴシック',"Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
+
 /**
  * Header
  */
@@ -82,6 +83,7 @@ hr#header-line {
     }
 }
 
+
 /**
  * Alert
  */
@@ -97,23 +99,39 @@ hr#header-line {
 
 
 /**
+ * Form
+ */
+input.form-control[type="text"],
+input.form-control[type="password"],
+input.form-control[type="email"] {
+    max-width: 480px;
+}
+input.form-control[readonly="readonly"] {
+    background-color: #eee;
+}
+
+
+/**
  * Setting
  */
-table.settings {
+table.setting {
     margin-bottom: 20px;
 }
-table.settings th {
+table.setting tr {
+    line-height: 3em;
+}
+table.setting th {
     vertical-align: middle;
 }
 @media screen and (max-width: 480px) {
-    table.settings th,
-    table.settings td {
+    table.setting th,
+    table.setting td {
         padding: 0;
     }
 }
 @media screen and (min-width: 480px) {
-    table.settings th,
-    table.settings td {
+    table.setting th,
+    table.setting td {
         padding-left: 20px;
         padding-right: 20px;
     }

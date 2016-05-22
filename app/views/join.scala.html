@@ -29,6 +29,12 @@ app.controller('AuthJoinCtrl', ['$scope', 'Auth', function($scope, Auth) {
 
         var _email = $scope.email;
         var _password = 'tmp-' + getRandomStr(12);
+
+        if (!_email) {
+            $scope.error = 'メールアドレスを入力してください。';
+            return;
+        }
+
         Auth.$createUser({
             email: _email,
             password: _password
@@ -53,17 +59,12 @@ app.controller('AuthJoinCtrl', ['$scope', 'Auth', function($scope, Auth) {
     @bodyheader(title, contestName)
 
     <div ng-controller="AuthCtrl"><div ng-controller="AuthJoinCtrl">
-        @* <!--<p ng-if="message">Auth status: <strong>{{ message }}</strong></p>
-        <p ng-if="isTemporaryPassword" style="color:#f00">Please change pasword!</p>
-        <p>authData:</p><pre>{{ authData | json }}</pre>
-        <p>userData:</p><pre>{{ userData | json }}</pre>
-        <p>usersecretData:</p><pre>{{ usersecretData | json }}</pre>--> *@
 
-        @* <!--<div class="color-dark margin-bottom-20"ng-if="message">
+        @* <!--<div class="color-dark margin-bottom-20" ng-if="message">
             Message: {{ message }}
         </div>--> *@
         <div class="color-error margin-bottom-20" ng-if="error">
-            入力エラー: {{ error }}
+            エラー: {{ error }}
         </div>
 
         <p>
@@ -76,7 +77,7 @@ app.controller('AuthJoinCtrl', ['$scope', 'Auth', function($scope, Auth) {
         <form name="joinForm" ng-submit="createUser()">
             <div>
                 <label>Email</label>
-                <input class="form-control" type="email" name="email" ng-model="email" required>
+                <input class="form-control" type="email" name="email" ng-model="email">
             </div>
             @* <!--<span ng-show="joinForm.email.$error.email">Not valid email!</span>
             <span ng-show="joinForm.email.$error.required">Required!</span><br>--> *@

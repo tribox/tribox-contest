@@ -65,12 +65,12 @@ app.controller('AuthEmailCtrl', ['$scope', 'Auth', function($scope, Auth) {
                 Message: {{ message }}
             </div>--> *@
             <div class="color-error margin-bottom-20" ng-if="error">
-                入力エラー: {{ error }}
+                エラー: {{ error }}
             </div>
 
             <div>
                 <label>現在のメールアドレス</label>
-                <input class="form-control" type="email" ng-model="oldEmail" readonly="readonly">
+                <input class="form-control" type="email" ng-model="oldEmail" readonly="readonly" disabled="disabled">
             </div>
             <div>
                 <label>新しいメールアドレス</label>
