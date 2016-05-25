@@ -203,8 +203,12 @@
             "$contest_id": {
                 ".read": "root.child('contests').child($contest_id).child('endAt').val() < now",
                 ".validate": "root.child('contests').hasChild($contest_id)",
-                "$user_id": {
-                    ".write": "auth.uid === $user_id"
+                "$event_id": {
+                    ".validate": "root.child('events').hasChild($event_id)",
+                    "$user_id": {
+                        ".write": "auth.uid === $user_id",
+                        ".validate": "root.child('users').hasChild($user_id)"
+                    }
                 }
             }
         },
