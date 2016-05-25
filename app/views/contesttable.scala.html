@@ -1,32 +1,37 @@
 @(eid: String)
 
+        @* 試技数が5の場合 (例えば、average of 5) *@
         <div class="row" ng-if="events.e@{eid}.attempts == 5">
             <div class="col md-1"></div>
             <div class="col md-2 timeform-wrap" ng-repeat="s in scramblesData.e@{eid}">
                 <div class="timeform">
                     <div class="timeform-time">
-                        <input id="result-{{ $index }}" ng-model="results[$index]" type="text" placeholder="-:--.---" required>
+                        <input id="result-{{ $index }}" ng-model="resultsForm[$index]" ng-change="change($index)" type="text" placeholder="-:--.---" required>
+                        <span class="hide color-error"></span>
                     </div>
-                    <div class="timeform-penalty">
-                        <div class="timeform-penalty-btn" ng-click="applyOK($index)">OK</div>
-                        <div class="timeform-penalty-btn" ng-click="applyPenalty($index)">+2</div>
-                        <div class="timeform-penalty-btn" ng-click="applyDNF($index)">DNF</div>
+                    <div class="timeform-cond">
+                        <div id="timeform-cond-ok-{{ $index }}" class="timeform-cond-btn" ng-click="applyOK($index)">OK</div>
+                        <div id="timeform-cond-penalty-{{ $index }}" class="timeform-cond-btn" ng-click="applyPenalty($index)">+2</div>
+                        <div id="timeform-cond-dnf-{{ $index }}" class="timeform-cond-btn" ng-click="applyDNF($index)">DNF</div>
                     </div>
                 </div>
             </div>
             <div class="col md-1"></div>
         </div>
+
+        @* 試技数が3の場合 (例えば、best of 5) *@
         <div class="row" ng-if="events.e@{eid}.attempts == 3">
             <div class="col md-1"></div>
             <div class="col md-3 timeform-wrap" ng-repeat="s in scramblesData.e@{eid}">
                 <div class="timeform">
                     <div class="timeform-time">
-                        <input id="result-{{ $index }}" ng-model="results[$index]" type="text" placeholder="-:--.---" required>
+                        <input id="result-{{ $index }}" ng-model="resultsForm[$index]" ng-change="change()" type="text" placeholder="-:--.---" required>
+                        <span class="hide color-error"></span>
                     </div>
-                    <div class="timeform-penalty">
-                        <div class="timeform-penalty-btn" ng-click="applyOK($index)">OK</div>
-                        <div class="timeform-penalty-btn" ng-click="applyPenalty($index)">+2</div>
-                        <div class="timeform-penalty-btn" ng-click="applyDNF($index)">DNF</div>
+                    <div class="timeform-cond">
+                        <div id="timeform-cond-ok-{{ $index }}" class="timeform-cond-btn" ng-click="applyOK($index)">OK</div>
+                        <div id="timeform-cond-penalty-{{ $index }}" class="timeform-cond-btn" ng-click="applyPenalty($index)">+2</div>
+                        <div id="timeform-cond-dnf-{{ $index }}" class="timeform-cond-btn" ng-click="applyDNF($index)">DNF</div>
                     </div>
                 </div>
             </div>

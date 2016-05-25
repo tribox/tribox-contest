@@ -1,4 +1,4 @@
-@(title: String, contestName: String, isTimer: Boolean = false)
+@(title: String, contestName: String, cid: String = "")
 
 <div id="header">
     <div id="header-logo">
@@ -7,7 +7,7 @@
             <span>@contestName</span>
         </a>
     </div>
-    @if(!isTimer) {
+    @if(cid == "") {
         <div id="header-menu" ng-controller="AuthCtrl">
             <span ng-hide="isLoggingin">
                 <a href="/login" ng-hide="isLoggingin">ログイン</a> / <a href="/join" ng-hide="isLoggingin">会員登録</a>
@@ -18,12 +18,12 @@
         </div>
     } else {
         <div id="header-menu">
-            <a href="#">中断</a>
+            <a href="/contest/@{cid}">中断</a>
         </div>
     }
 </div>
 
-@if(!isTimer) {
+@if(cid == "") {
     <div id="main-menu" class="row">
         <div class="col sm-3">
             <a href="#">トライボックスコンテストとは</a>

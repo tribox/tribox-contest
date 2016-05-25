@@ -217,15 +217,21 @@ table.scrambles th:first-child {
     border: 2px solid #3498DB;
     outline: none;
 }
+.timeform-time input.format-error {
+    border: 2px solid #E74C3C;
+}
+.timeform-time span {
+    font-size: 12px;
+}
 
-.timeform-penalty {
+.timeform-cond {
     padding-left: 10px;
     padding-right: 10px;
     margin-top: 10px;
     margin-bottom: 10px;
 }
 
-.timeform-penalty-btn {
+.timeform-cond-btn {
     display: inline-block;
     border: 1px solid rgb(236, 236, 236);
     width: 40px;
@@ -236,4 +242,15 @@ table.scrambles th:first-child {
     line-height: 40px;
     text-align: center;
     margin-right: 5px;
+    cursor: default;
+}
+
+.cond-ok-on {
+    background-color: #1BBC9B;
+}
+.cond-penalty-on {
+    background-color: #F1C000;
+}
+.cond-dnf-on {
+    background-color: #E74C3C;
 }

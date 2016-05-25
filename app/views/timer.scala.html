@@ -13,7 +13,7 @@
 @contestjs(cid)
 </head>
 <body><div class="container">
-    @bodyheader(title, contestName, isTimer=true)
+    @bodyheader(title, contestName, cid=cid)
 
     <div ng-controller="AuthCtrl"><div ng-controller="ContestCtrl">
     <div ng-hide="authLoaded && contestLoaded">

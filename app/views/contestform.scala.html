@@ -10,10 +10,10 @@
 @basejs(firebaseappContest)
 @authjs(redirectLogin="", redirectLogout="", checkFirst=true)
 @filterjs()
-@contestjs(cid)
+@contestjs(cid=cid, eid=eid, setBegin=true)
 </head>
 <body><div class="container">
-    @bodyheader(title, contestName, isTimer=true)
+    @bodyheader(title, contestName, cid=cid)
 
     <div ng-controller="AuthCtrl"><div ng-controller="ContestCtrl">
     <div ng-hide="authLoaded && contestLoaded">
@@ -63,6 +63,7 @@
         <pre>{{ events | json }}</pre>--> *@
 
         <p>results:</p>
+        <pre>{{ resultsForm | json }}</pre>
         <pre>{{ results | json }}</pre>
 
     </div></div></div>
