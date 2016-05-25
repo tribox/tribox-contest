@@ -85,6 +85,15 @@ hr#header-line {
 
 
 /**
+ * Auth Info
+ */
+a.underlined {
+    color: #E74C3C;
+    text-decoration: underline;
+}
+
+
+/**
  * Alert
  */
 /* .alert-error {
@@ -135,4 +144,96 @@ table.setting th {
         padding-left: 20px;
         padding-right: 20px;
     }
+}
+
+
+/**
+ * Scrambles
+ */
+table.scrambles {
+    font-size: 18px;
+}
+table.scrambles td,
+table.scrambles th {
+    padding-bottom: 10px;
+}
+table.scrambles td:first-child,
+table.scrambles th:first-child {
+    padding-right: 10px;
+}
+@media screen and (min-width: 480px) {
+    table.scrambles td:first-child,
+    table.scrambles th:first-child {
+        padding-left: 20px;
+    }
+}
+
+
+/**
+ * Result Form
+ */
+@media screen and (max-width: 768px) {
+    .timeform-wrap {
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+}
+@media screen and (min-width: 768px) {
+    .timeform-wrap {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+}
+
+.timeform {
+    border: 1px solid rgb(236, 236, 236);
+    -webkit-border-radius: 10px;
+       -moz-border-radius: 10;
+            border-radius: 10px;
+    margin-bottom : 10px;
+}
+
+.timeform-time {
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid rgb(236, 236, 236);
+}
+
+.timeform-time input {
+    width: 100%;
+    font-size: 18px;
+    border: 2px solid #DDD;
+    -webkit-border-radius: 3px;
+       -moz-border-radius: 3px;
+            border-radius: 3px;
+    transition: border-color 0.25s, color 0.25s;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+.timeform-time input:focus {
+    border: 2px solid #3498DB;
+    outline: none;
+}
+
+.timeform-penalty {
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.timeform-penalty-btn {
+    display: inline-block;
+    border: 1px solid rgb(236, 236, 236);
+    width: 40px;
+    height: 40px;
+    -webkit-border-radius: 20px;
+       -moz-border-radius: 20px;
+            border-radius: 20px;
+    line-height: 40px;
+    text-align: center;
+    margin-right: 5px;
 }

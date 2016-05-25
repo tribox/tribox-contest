@@ -1,9 +1,10 @@
-<style>
-a.underlined {
-    color: #E74C3C;
-    text-decoration: underline;
+@(eid: String = "")
+
+@if(eid != "") {
+        <p class="margin-bottom-0">
+            {{ events.e@{eid}.name }}
+        </p>
 }
-</style>
 
         <p class="margin-bottom-30" ng-if="isLoggingin">
             {{ userData.displayname }}<span ng-show="userData.organization">, {{ userData.organization }}</span>

@@ -9,7 +9,7 @@ app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $fi
     $scope.contestLoaded = false;
     $scope.existsContest = false;
 
-    @* コンテストが、進行中 (0) か、終了済み (負) か、これからやるやつ (正) か *@
+    @* /* コンテストが、進行中 (0) か、終了済み (負) か、これからやるやつ (正) か */ *@
     $scope.inProgress = null;
     $scope.countdown = null;
 
@@ -71,5 +71,19 @@ app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $fi
         //console.error(error);
         console.error('Cannot access results (@cid)');
     });
+
+    // Results
+    $scope.results = [];
+
+    // Penalty buttons
+    $scope.applyOK = function(index) {
+        alert('OK' + index);
+    };
+    $scope.applyPenalty = function(index) {
+        alert('Penalty' + index);
+    };
+    $scope.applyDNF = function(index) {
+        alert('DNF' + index);
+    };
 }]);
 </script>

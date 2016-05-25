@@ -1,0 +1,13 @@
+@(eid: String)
+
+        <table class="scrambles">
+            <thead>
+                <th colspan="2">Scrambles:</th>
+            </thead>
+            <tbody>
+                <tr ng-repeat="s in scramblesData.e@{eid}">
+                    <td>{{ $index + 1 | ordinal }}:</td>
+                    <td>{{ s }}</td>
+                </tr>
+            </tbody>
+        </table>

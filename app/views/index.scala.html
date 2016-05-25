@@ -87,8 +87,8 @@ app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $fi
             <a href="/contest/{{ inProgressContest.contestId }}">{{ inProgressContest.contestName }}</a> @* ({{ inProgress }}) *@
         </p>
         <p>
-            開始: {{ inProgressContest.beginAt | toDate }}<br>
-            終了: {{ inProgressContest.endAt | toDate }}
+            開始 <i class="fa fa-calendar"></i>: {{ inProgressContest.beginAt | toDate }}<br>
+            終了 <i class="fa fa-calendar"></i>: {{ inProgressContest.endAt | toDate }}
         </p>
         <p>
             競技一覧:

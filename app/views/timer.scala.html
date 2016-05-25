@@ -9,25 +9,21 @@
 
 @basejs(firebaseappContest)
 @authjs(redirectLogin="", redirectLogout="", checkFirst=true)
+@filterjs()
+@contestjs(cid)
 </head>
 <body><div class="container">
-    @bodyheader(title, contestName)
+    @bodyheader(title, contestName, isTimer=true)
 
-    <!--<div ng-controller="AuthCtrl">
-        <p ng-if="message">Auth status: <strong>{{ message }}</strong></p>
-        <p ng-if="isTemporaryPassword" style="color:#f00">Please change pasword!</p>
-        <p>authData:</p><pre>{{ authData | json }}</pre>
-        <p>userData:</p><pre>{{ userData | json }}</pre>
-        <p>usersecretData:</p><pre>{{ usersecretData | json }}</pre>
+    <div ng-controller="AuthCtrl"><div ng-controller="ContestCtrl">
+    <div ng-hide="authLoaded && contestLoaded">
+        <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+        <span class="sr-only">Loading...</span>
+        Loading...
+    </div>
+    <div ng-show="authLoaded && contestLoaded">
 
-        <ul>
-            <li ng-hide="isLoggingin"><a href="/join">Join</a></li>
-            <li ng-hide="isLoggingin"><a href="/login">Login</a></li>
-            <li ng-hide="isLoggingin"><a href="/forgot">Forgot password?</a></li>
-            <li ng-show="isLoggingin"><a href="/setting">Setting</a></li>
-            <li ng-show="isLoggingin"><a href="/logout">Logout</a></li>
-        </ul>
-    </div>-->
+        @authinfo(eid=eid)
 
 <style>
 body {
@@ -41,30 +37,35 @@ body {
     text-align: center;
 }
 #timerText {
-    color: #0af;
     font-size: 128px;
     margin: 80px auto;
     text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 .wait {
-    color: #f00 !important;
+    color: #E74C3C !important;
 }
 .ready {
-    color: #0f0 !important;
+    color: #1BBC9B !important;
 }
 </style>
 
-    <div id="timerArea">
-        <div id="timerText">0.000</div>
+        @contestscrambles(eid=eid)
 
-        <button id="start">START</button>
-        <button id="stop">STOP</button>
-        <button id="reset">RESET</button>
+        <div id="timerArea">
+            <div id="timerText">0.000</div>
 
-        <div id="keydown"></div>
-        <div id="keyup"></div>
-        <div id="info"></div>
-    </div>
+            <button id="start">START</button>
+            <button id="stop">STOP</button>
+            <button id="reset">RESET</button>
+
+            <div id="keydown"></div>
+            <div id="keyup"></div>
+            <div id="info"></div>
+        </div>
+
+        @contesttable(eid=eid)
+
+    </div></div></div>
 
 <script>
 (function() {

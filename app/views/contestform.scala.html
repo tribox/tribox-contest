@@ -13,7 +13,7 @@
 @contestjs(cid)
 </head>
 <body><div class="container">
-    @bodyheader(title, contestName)
+    @bodyheader(title, contestName, isTimer=true)
 
     <div ng-controller="AuthCtrl"><div ng-controller="ContestCtrl">
     <div ng-hide="authLoaded && contestLoaded">
@@ -23,11 +23,11 @@
     </div>
     <div ng-show="authLoaded && contestLoaded">
 
-        @authinfo()
+        @authinfo(eid=eid)
 
-        <h2>{{ contestData.contestName }}</h2>
+        @* <!--<h2>{{ contestData.contestName }}</h2>--> *@
 
-        <p>
+        @* <!--<p>
             開始 <i class="fa fa-calendar"></i>: {{ contestData.beginAt | toDate }}<br>
             終了 <i class="fa fa-calendar"></i>: {{ contestData.endAt | toDate }}
         </p>
@@ -39,14 +39,12 @@
         </p>
         <p ng-if="countdown > 0">
             このコンテストはまだ開始されていません。
-        </p>
+        </p>--> *@
 
-        <h3>{{ events.e@{eid}.name }}</h3>
+        @* <!--<h3>{{ events.e@{eid}.name }}</h3>--> *@
 
-        <p>
-            ここにスクランブルと入力フォーム。
-            送信ボタン。
-        </p>
+        @contestscrambles(eid=eid)
+        @contesttable(eid=eid)
 
         @* <!--<p>@cid -> contestData:</p>
         <pre>{{ contestData | json }}</pre>--> *@
@@ -61,8 +59,11 @@
         @* <!--<p>@cid -> resultsData:</p>
         <pre>{{ resultsData | json }}</pre>--> *@
 
-        <p>events:</p>
-        <pre>{{ events | json }}</pre>
+        @* <!--<p>events:</p>
+        <pre>{{ events | json }}</pre>--> *@
+
+        <p>results:</p>
+        <pre>{{ results | json }}</pre>
 
     </div></div></div>
 
