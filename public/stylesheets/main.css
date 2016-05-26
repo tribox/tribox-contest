@@ -29,11 +29,7 @@ h1, h2, h3, h4, h5, h6 {
     display: inline-block;
     height: 30px;
 }
-#header-logo span {
-    display: none;
-}
-
-@media screen and (max-width: 768px) {
+/*@media screen and (max-width: 768px) {
     #header-logo {
         margin-left: 0;
     }
@@ -42,6 +38,9 @@ h1, h2, h3, h4, h5, h6 {
     #header-logo {
         margin-left: 30px;
     }
+}*/
+#header-logo span {
+    display: none;
 }
 
 #header-menu {
@@ -49,6 +48,19 @@ h1, h2, h3, h4, h5, h6 {
     height: 30px;
     margin-top: 10px;
     float: right;
+}
+/*@media screen and (max-width: 768px) {
+    #header-menu {
+        margin-right: 0;
+    }
+}
+@media screen and (min-width: 768px) {
+    #header-menu {
+        margin-right: 30px;
+    }
+}*/
+#header-menu a {
+    color: #555;
 }
 
 hr#header-line {
