@@ -43,4 +43,11 @@ class ContestController @Inject() extends Controller {
     val firebaseappContest = Play.application.configuration.getString("firebaseapp.contest").getOrElse("tribox-contest")
     Ok(views.html.timer(cid, eid, contestName, contestUrl, firebaseappContest))
   }
+
+  def confirm(cid: String, eid: String) = Action {
+    val contestName = Play.application.configuration.getString("contest.name").getOrElse("tribox Contest")
+    val contestUrl = Play.application.configuration.getString("contest.url").getOrElse("https://contest.tribox.com/")
+    val firebaseappContest = Play.application.configuration.getString("firebaseapp.contest").getOrElse("tribox-contest")
+    Ok(views.html.contestconfirm(cid, eid, contestName, contestUrl, firebaseappContest))
+  }
 }

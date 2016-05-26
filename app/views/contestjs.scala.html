@@ -220,11 +220,13 @@ app.controller('ContestCtrl', ['$scope', 'Auth', function($scope, Auth) {
             var btnOK = angular.element(document.getElementById('timeform-cond-ok-' + index));
             var btnPenalty = angular.element(document.getElementById('timeform-cond-penalty-' + index));
             var btnDNF = angular.element(document.getElementById('timeform-cond-dnf-' + index));
+            var scrambleLine = angular.element(document.getElementById('scramble-' + index));
             $scope.results[index].condition = 'OK';
             $scope.resultsForm[index] = formatTime($scope.results[index].result);
             btnOK.addClass('cond-ok-on');
             btnPenalty.removeClass('cond-penalty-on');
             btnDNF.removeClass('cond-dnf-on');
+            scrambleLine.addClass('scramble-done');
             saveAndPrepare();
         }
     };
@@ -234,11 +236,13 @@ app.controller('ContestCtrl', ['$scope', 'Auth', function($scope, Auth) {
             var btnOK = angular.element(document.getElementById('timeform-cond-ok-' + index));
             var btnPenalty = angular.element(document.getElementById('timeform-cond-penalty-' + index));
             var btnDNF = angular.element(document.getElementById('timeform-cond-dnf-' + index));
+            var scrambleLine = angular.element(document.getElementById('scramble-' + index));
             $scope.results[index].condition = '+2';
             $scope.resultsForm[index] = formatTime($scope.results[index].result + 2);
             btnOK.removeClass('cond-ok-on');
             btnPenalty.addClass('cond-penalty-on');
             btnDNF.removeClass('cond-dnf-on');
+            scrambleLine.addClass('scramble-done');
             saveAndPrepare();
         }
     };
@@ -248,11 +252,13 @@ app.controller('ContestCtrl', ['$scope', 'Auth', function($scope, Auth) {
             var btnOK = angular.element(document.getElementById('timeform-cond-ok-' + index));
             var btnPenalty = angular.element(document.getElementById('timeform-cond-penalty-' + index));
             var btnDNF = angular.element(document.getElementById('timeform-cond-dnf-' + index));
+            var scrambleLine = angular.element(document.getElementById('scramble-' + index));
             $scope.results[index].condition = 'DNF';
             $scope.resultsForm[index] = 'DNF';
             btnOK.removeClass('cond-ok-on');
             btnPenalty.removeClass('cond-penalty-on');
             btnDNF.addClass('cond-dnf-on');
+            scrambleLine.addClass('scramble-done');
             saveAndPrepare();
         }
     };

@@ -1,6 +1,6 @@
 @(cid: String, eid: String, contestName: String, contestUrl: String, firebaseappContest: String)
 
-@defining("Contest Form") { title =>
+@defining("Contest Confirm") { title =>
 
 <!DOCTYPE html>
 <html lang="ja" ng-app="contestApp">
@@ -10,7 +10,7 @@
 @basejs(firebaseappContest)
 @authjs(redirectLogin="", redirectLogout="", checkFirst=true)
 @filterjs()
-@contestjs(cid=cid, setBegin=true, eid=eid, inputType="form")
+@contestjs(cid=cid)
 </head>
 <body><div class="container">
     @bodyheader(title, contestName, cid=cid)
@@ -43,13 +43,48 @@
 
         @* <!--<h3>{{ events.e@{eid}.name }}</h3>--> *@
 
-        @contestscrambles(eid=eid)
-        @contesttable(eid=eid)
+        <div class="row">
+            <div class="col md-6">
+                <label class="fancy-radio">
+                    <input name="puzzle-type" type="radio">
+                    <span>使用キューブをデータベースから選択</span>
+                </label>
+                <label>ブランド</label>
+                <select class="form-control">
+                    <option>AAA</option>
+                    <option>BBB</option>
+                    <option>CCC</option>
+                </select>
+                <label>キューブ</label>
+                <select class="form-control">
+                    <option>XXX</option>
+                    <option>YYY</option>
+                    <option>ZZZ</option>
+                </select>
+                <label class="fancy-radio">
+                    <input name="puzzle-type" type="radio">
+                    <span>データベースに無いキューブを入力</span>
+                </label>
+                <input class="form-control" type="text">
+                <label class="fancy-radio">
+                    <input name="puzzle-type" type="radio">
+                    <span>不明</span>
+                </label>
+            </div>
+            <div class="col md-6">
+                <p>
+                    Result: XXX
+                </p>
+                <p>
+                    <a href="#" class="btn">この内容で送信する</a>
+                </p>
+                <p>
+                    ビデオへのリンクはマイページから追加できます。
+                </p>
+            </div>
+        </div>
 
-        <p id="input-completed" class="margin-top-20 text-center hide">
-            入力が完了しました。間違いがなければ確認ページへ進んでください。<br>
-            <a href="/contest/@{cid}/@{eid}/confirm" class="btn">確認ページへ</a>
-        </p>
+        @contesttable(eid=eid)
 
         @* <!--<p>@cid -> contestData:</p>
         <pre>{{ contestData | json }}</pre>--> *@

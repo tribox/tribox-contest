@@ -260,3 +260,26 @@ table.scrambles th:first-child {
 .cond-dnf-on {
     background-color: #E74C3C;
 }
+
+
+/**
+ * SkyBlue CSS: Override
+ */
+.btn {
+    background-color: #3498DB;
+}
+input[type="text"].form-control:focus,
+input[type="password"].form-control:focus,
+input[type="email"].form-control:focus,
+input[type="search"].form-control:focus,
+input[type="url"].form-control:focus,
+select.form-control:focus,
+textarea.form-control:focus {
+    border: 2px solid #3498DB;
+}
+.fancy-radio input:checked + span:before {
+    background: #3498DB
+}
+.fancy-radio input:focus + span:before {
+    border: 1px solid #3498DB;
+}
