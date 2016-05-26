@@ -10,18 +10,235 @@
 @basejs(firebaseappContest)
 @authjs(redirectLogin="", redirectLogout="", checkFirst=true)
 @filterjs()
-@contestjs(cid=cid, setBegin=true, eid=eid, inputType="form")
+@contestjs(cid)
+<script>
+app.controller('ContestFormCtrl', ['$scope', 'Auth', function($scope, Auth) {
+    $scope.contestFormLoaded = false;
+
+    // Results
+    $scope.resultsForm = [];
+    $scope.results = [];
+
+    // Set begin time
+    var authData = contestRef.getAuth();
+    if (authData) {
+        // do not overwrite
+        contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).once('value', function(snapResult) {
+            if (!(snapResult.exists())) {
+                contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).set({
+                    'beginAt': Firebase.ServerValue.TIMESTAMP,
+                    'type': 'form'
+                }, function(error) {
+                    if (!error) {
+                        $scope.$apply(function() {
+                            $scope.contestFormLoaded = true;
+                        });
+                    } else {
+                        console.error(error);
+                    }
+                });
+            } else {
+                // Read current data
+                contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).child('data').once('value', function(snapData) {
+                    if (snapData.exists()) {
+                        $scope.$apply(function() {
+                            $scope.results = snapData.val();
+                            $scope.results.forEach(function(result, index) {
+                                $scope.resultsForm[index] = formatTime($scope.results[index].result);
+                                if ($scope.results[index].condition == 'OK') {
+                                    $scope.applyOK(index);
+                                } else if ($scope.results[index].condition == '+2') {
+                                    $scope.applyPenalty(index);
+                                } else if ($scope.results[index].condition == 'DNF') {
+                                    $scope.applyDNF(index);
+                                }
+                            });
+                            $scope.contestFormLoaded = true;
+                        });
+                    }
+                }, function(error) {
+                    console.error(error);
+                });
+            }
+        }, function(error) {
+            console.error(error);
+        });
+    } else {
+        location.href = '@routes.HomeController.index';
+    }
+
+    // On Reuslts change
+    $scope.change = function(index) {
+        var resultForm = $scope.resultsForm[index];
+        if (resultForm) {
+            var result = angular.element(document.getElementById('result-' + index));
+            var btnOK = angular.element(document.getElementById('timeform-cond-ok-' + index));
+            var btnPenalty = angular.element(document.getElementById('timeform-cond-penalty-' + index));
+            var btnDNF = angular.element(document.getElementById('timeform-cond-dnf-' + index));
+            var scrambleLine = angular.element(document.getElementById('scramble-' + index));
+            var inputCompleted = angular.element(document.getElementById('input-completed'));
+
+            // Prepare results data
+            $scope.results[index] = {'result': null, 'condition': null};
+
+            // Check the format
+            if (!(resultForm.match(/^([0-9]:)?[0-9]{1,3}(\.[0-9]{0,3})?$/))) {
+                result.addClass('format-error');
+                result.next().text('不正なフォーマットです。');
+                result.next().removeClass('hide');
+                btnOK.removeClass('cond-ok-on');
+                btnPenalty.removeClass('cond-penalty-on');
+                btnDNF.removeClass('cond-dnf-on');
+                scrambleLine.removeClass('scramble-done');
+                inputCompleted.addClass('hide');
+                return;
+            }
+
+            // Convert to seconds
+            if (resultForm.indexOf(':') != -1) {
+                var t = resultForm.split(':');
+                $scope.results[index].result = Number(t[0]) * 60 + Number(t[1]);
+            } else {
+                $scope.results[index].result = Number(resultForm);
+            }
+
+            // Check bounds
+            if ($scope.results[index].result <= 0) {
+                result.addClass('format-error');
+                result.next().text('0秒以上のタイムを入力してください。');
+                result.next().removeClass('hide');
+                btnOK.removeClass('cond-ok-on');
+                btnPenalty.removeClass('cond-penalty-on');
+                btnDNF.removeClass('cond-dnf-on');
+                scrambleLine.removeClass('scramble-done');
+                inputCompleted.addClass('hide');
+                return;
+            } else if (600 <= $scope.results[index].result) {
+                result.addClass('format-error');
+                result.next().text('10分未満のタイムを入力してください。');
+                result.next().removeClass('hide');
+                btnOK.removeClass('cond-ok-on');
+                btnPenalty.removeClass('cond-penalty-on');
+                btnDNF.removeClass('cond-dnf-on');
+                scrambleLine.removeClass('scramble-done');
+                inputCompleted.addClass('hide');
+                return;
+            }
+
+            // Data is OK
+            $scope.results[index].condition = 'OK';
+            result.removeClass('format-error');
+            result.next().addClass('hide');
+            btnOK.addClass('cond-ok-on');
+            btnPenalty.removeClass('cond-penalty-on');
+            btnDNF.removeClass('cond-dnf-on');
+            scrambleLine.addClass('scramble-done');
+
+            saveAndPrepare();
+        }
+    };
+
+    // Penalty buttons
+    $scope.applyOK = function(index) {
+        var resultElem = $scope.results[index];
+        if (resultElem) {
+            var btnOK = angular.element(document.getElementById('timeform-cond-ok-' + index));
+            var btnPenalty = angular.element(document.getElementById('timeform-cond-penalty-' + index));
+            var btnDNF = angular.element(document.getElementById('timeform-cond-dnf-' + index));
+            var scrambleLine = angular.element(document.getElementById('scramble-' + index));
+            $scope.results[index].condition = 'OK';
+            $scope.resultsForm[index] = formatTime($scope.results[index].result);
+            btnOK.addClass('cond-ok-on');
+            btnPenalty.removeClass('cond-penalty-on');
+            btnDNF.removeClass('cond-dnf-on');
+            scrambleLine.addClass('scramble-done');
+            saveAndPrepare();
+        }
+    };
+    $scope.applyPenalty = function(index) {
+        var resultElem = $scope.results[index];
+        if (resultElem) {
+            var btnOK = angular.element(document.getElementById('timeform-cond-ok-' + index));
+            var btnPenalty = angular.element(document.getElementById('timeform-cond-penalty-' + index));
+            var btnDNF = angular.element(document.getElementById('timeform-cond-dnf-' + index));
+            var scrambleLine = angular.element(document.getElementById('scramble-' + index));
+            $scope.results[index].condition = '+2';
+            $scope.resultsForm[index] = formatTime($scope.results[index].result + 2);
+            btnOK.removeClass('cond-ok-on');
+            btnPenalty.addClass('cond-penalty-on');
+            btnDNF.removeClass('cond-dnf-on');
+            scrambleLine.addClass('scramble-done');
+            saveAndPrepare();
+        }
+    };
+    $scope.applyDNF = function(index) {
+        var resultElem = $scope.results[index];
+        if (resultElem) {
+            var btnOK = angular.element(document.getElementById('timeform-cond-ok-' + index));
+            var btnPenalty = angular.element(document.getElementById('timeform-cond-penalty-' + index));
+            var btnDNF = angular.element(document.getElementById('timeform-cond-dnf-' + index));
+            var scrambleLine = angular.element(document.getElementById('scramble-' + index));
+            $scope.results[index].condition = 'DNF';
+            $scope.resultsForm[index] = 'DNF';
+            btnOK.removeClass('cond-ok-on');
+            btnPenalty.removeClass('cond-penalty-on');
+            btnDNF.addClass('cond-dnf-on');
+            scrambleLine.addClass('scramble-done');
+            saveAndPrepare();
+        }
+    };
+
+    // Save & Fetch data
+    // Prepare button for the next page
+    var saveAndPrepare = function() {
+        var authData = contestRef.getAuth();
+        if (authData) {
+            contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).child('data').set($scope.results, function(error) {
+                if (!error) {
+                    contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).child('data').once('value', function(snapData) {
+                        var _results = snapData.val();
+
+                        // Prepare next button
+                        contestRef.child('events').child('e@{eid}').child('attempts').once('value', function(snapAttempts) {
+                            var inputCompleted = angular.element(document.getElementById('input-completed'));
+                            var attempts = snapAttempts.val(), count = 0;
+                            for (var i = 0; i < attempts; i++) {
+                                if (_results[i] != null) {
+                                    count++;
+                                }
+                            }
+                            if (count == attempts) {
+                                inputCompleted.removeClass('hide');
+                            } else {
+                                inputCompleted.addClass('hide');
+                            }
+                        }, function(error) {
+                            console.error(error);
+                        });
+                    }, function(error) {
+                        console.error(error);
+                    });
+                } else {
+                    console.error(error);
+                }
+            });
+        } else {
+            location.href = '@routes.HomeController.index';
+        }
+    };
+}]);
+</script>
 </head>
 <body><div class="container">
     @bodyheader(title, contestName, cid=cid)
 
-    <div ng-controller="AuthCtrl"><div ng-controller="ContestCtrl">
-    <div ng-hide="authLoaded && contestLoaded">
+    <div ng-controller="AuthCtrl"><div ng-controller="ContestCtrl"><div ng-controller="ContestFormCtrl">
+    <div ng-hide="authLoaded && contestLoaded && contestFormLoaded">
         <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
         <span class="sr-only">Loading...</span>
         Loading...
     </div>
-    <div ng-show="authLoaded && contestLoaded">
+    <div ng-show="authLoaded && contestLoaded && contestFormLoaded">
 
         @authinfo(eid=eid)
 
@@ -71,7 +288,7 @@
         <pre>{{ resultsForm | json }}</pre>
         <pre>{{ results | json }}</pre>--> *@
 
-    </div></div></div>
+    </div></div></div></div>
 
     @bodyfooter(contestName)
 </div></body>
