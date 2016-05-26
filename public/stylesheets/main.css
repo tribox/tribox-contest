@@ -83,6 +83,14 @@ hr#header-line {
     }
 }
 
+/**
+ * Footer
+ */
+#footer {
+    font-size: 14px;
+    text-align: center;
+}
+
 
 /**
  * Auth Info
