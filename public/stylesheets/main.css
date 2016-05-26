@@ -132,7 +132,11 @@ a.underlined {
  */
 input.form-control[type="text"],
 input.form-control[type="password"],
-input.form-control[type="email"] {
+input.form-control[type="email"],
+input.form-control[type="search"],
+input.form-control[type="url"],
+select.form-control,
+textarea.form-control {
     max-width: 480px;
 }
 input.form-control[readonly="readonly"] {

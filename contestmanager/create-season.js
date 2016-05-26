@@ -296,15 +296,11 @@ var saveResults = function(contests, contestsIndexes, callback) {
                         console.error('Already exists:', contestId);
                         next();
                     } else {
-                        var dummyResults = {};
-                        contests[contestId].events.forEach(function(e) {
-                            dummyResults[e] = {
-                                'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx': {
-                                    '_dummy' : true
-                                }
-                            };
-                        });
-                        contestRef.child('results').child(contestId).set(dummyResults, function(error) {
+                        contestRef.child('results').child(contestId).set({
+                            'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx': {
+                                '_dummy' : true
+                            }
+                        }, function(error) {
                             if (error) {
                                 console.error('Set failed');
                                 process.exit(1);

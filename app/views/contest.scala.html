@@ -11,17 +11,64 @@
 @authjs(redirectLogin="", redirectLogout="", checkFirst=true)
 @filterjs()
 @contestjs(cid)
+<script>
+app.controller('ContestIndexCtrl', ['$scope', 'Auth', function($scope, Auth) {
+    $scope.eventsDone = {};
+    $scope.contestIndexLoaded = false;
+
+    // Read personal results
+    var authData = contestRef.getAuth();
+    if (authData) {
+        contestRef.child('contests').child('c@{cid}').once('value', function(snapContest) {
+            if (snapContest.exists()) {
+                var contestData = snapContest.val();
+                contestRef.child('results').child('c@{cid}').child(authData.uid).once('value', function(snapResult) {
+                    var resultData = snapResult.val();
+                    contestData.events.forEach(function(e) {
+                        if (!resultData || !(resultData[e])) {
+                            $scope.$apply(function() {
+                                $scope.eventsDone[e] = false;
+                            });
+                        } else {
+                            if (resultData[e].endAt) {
+                                $scope.$apply(function() {
+                                    $scope.eventsDone[e] = true;
+                                });
+                            } else {
+                                $scope.$apply(function() {
+                                    $scope.eventsDone[e] = resultData[e].type;
+                                });
+                            }
+                        }
+                    });
+                    $scope.$apply(function() {
+                        $scope.contestIndexLoaded = true;
+                    });
+                }, function(error) {
+                    console.error(error);
+                });
+            } else {
+                console.error('Undefined contest: @{cid}');
+            }
+        });
+    } else {
+        $scope.$apply(function() {
+            $scope.contestIndexLoaded = true;
+        });
+    }
+}]);
+</script>
 </head>
 <body><div class="container">
     @bodyheader(title, contestName)
 
-    <div ng-controller="AuthCtrl"><div ng-controller="ContestCtrl">
-    <div ng-hide="authLoaded && contestLoaded">
+    <div ng-controller="AuthCtrl"><div ng-controller="ContestCtrl"><div ng-controller="ContestIndexCtrl">
+    <div ng-hide="authLoaded && contestLoaded && contestIndexLoaded">
         <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
         <span class="sr-only">Loading...</span>
         Loading...
     </div>
-    <div ng-show="authLoaded && contestLoaded">
+    <div ng-show="authLoaded && contestLoaded && contestIndexLoaded">
 
     <div ng-hide="existsContest">
         <p class="color-error">
@@ -49,14 +96,6 @@
             このコンテストはまだ開始されていません。
         </p>
 
-        @* <!--<ul>
-            <li ng-repeat="e in contestData.events">
-                <a href="/contest/{{ contestData.contestId }}#{{ e }}">
-                    {{ events[e].name }} ({{ events[e].method }} of {{ events[e].attempts }})
-                </a>
-                <a href="#" ng-if="countdown == 0 && authData != null">参加する</a>
-            </li>
-        </ul>--> *@
         <table class="table">
             <thead>
                 <tr>
@@ -70,7 +109,10 @@
                     <td>{{ events[e].name }}</td>
                     <td>{{ events[e].method }} of {{ events[e].attempts }}</td>
                     <td>
-                        <a href="/contest/@cid/{{ e | removeHead }}" ng-if="countdown == 0 && authData != null">参加する</a>
+                        <a href="/contest/@cid/{{ e | removeHead }}" ng-if="countdown == 0 && authData != null && eventsDone[e] == false">参加する</a>
+                        <a href="/contest/@cid/{{ e | removeHead }}/timer" ng-if="countdown == 0 && authData != null && eventsDone[e] == 'timer'">再開する</a>
+                        <a href="/contest/@cid/{{ e | removeHead }}/form" ng-if="countdown == 0 && authData != null && eventsDone[e] == 'form'">再開する</a>
+                        <span ng-if="countdown == 0 && authData == null && authData != null && eventsDone[e] == true">参加済みです</span>
                         <span ng-if="countdown == 0 && authData == null">参加するにはログインしてださい</span>
                         <span ng-if="countdown != 0">現在このコンテストには参加できません</span>
                     </td>
@@ -94,7 +136,7 @@
         @* <!--<p>events:</p>
         <pre>{{ events | json }}</pre>--> *@
 
-    </div></div></div></div>
+    </div></div></div></div></div>
 
     @bodyfooter(contestName)
 </div></body>

@@ -23,9 +23,9 @@ app.controller('ContestFormCtrl', ['$scope', 'Auth', function($scope, Auth) {
     var authData = contestRef.getAuth();
     if (authData) {
         // do not overwrite
-        contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).once('value', function(snapResult) {
+        contestRef.child('results').child('c@{cid}').child(authData.uid).child('e@{eid}').once('value', function(snapResult) {
             if (!(snapResult.exists())) {
-                contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).set({
+                contestRef.child('results').child('c@{cid}').child(authData.uid).child('e@{eid}').set({
                     'beginAt': Firebase.ServerValue.TIMESTAMP,
                     'type': 'form'
                 }, function(error) {
@@ -39,7 +39,7 @@ app.controller('ContestFormCtrl', ['$scope', 'Auth', function($scope, Auth) {
                 });
             } else {
                 // Read current data
-                contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).child('data').once('value', function(snapData) {
+                contestRef.child('results').child('c@{cid}').child(authData.uid).child('e@{eid}').child('data').once('value', function(snapData) {
                     if (snapData.exists()) {
                         $scope.$apply(function() {
                             $scope.results = snapData.val();
@@ -53,6 +53,10 @@ app.controller('ContestFormCtrl', ['$scope', 'Auth', function($scope, Auth) {
                                     $scope.applyDNF(index);
                                 }
                             });
+                            $scope.contestFormLoaded = true;
+                        });
+                    } else {
+                        $scope.$apply(function() {
                             $scope.contestFormLoaded = true;
                         });
                     }
@@ -193,9 +197,9 @@ app.controller('ContestFormCtrl', ['$scope', 'Auth', function($scope, Auth) {
     var saveAndPrepare = function() {
         var authData = contestRef.getAuth();
         if (authData) {
-            contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).child('data').set($scope.results, function(error) {
+            contestRef.child('results').child('c@{cid}').child(authData.uid).child('e@{eid}').child('data').set($scope.results, function(error) {
                 if (!error) {
-                    contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).child('data').once('value', function(snapData) {
+                    contestRef.child('results').child('c@{cid}').child(authData.uid).child('e@{eid}').child('data').once('value', function(snapData) {
                         var _results = snapData.val();
 
                         // Prepare next button
@@ -242,30 +246,12 @@ app.controller('ContestFormCtrl', ['$scope', 'Auth', function($scope, Auth) {
 
         @authinfo(eid=eid)
 
-        @* <!--<h2>{{ contestData.contestName }}</h2>--> *@
-
-        @* <!--<p>
-            開始 <i class="fa fa-calendar"></i>: {{ contestData.beginAt | toDate }}<br>
-            終了 <i class="fa fa-calendar"></i>: {{ contestData.endAt | toDate }}
-        </p>
-        <p ng-if="countdown == 0">
-            現在開催中のコンテストです。
-        </p>
-        <p ng-if="countdown < 0">
-            すでに終了したコンテストです。
-        </p>
-        <p ng-if="countdown > 0">
-            このコンテストはまだ開始されていません。
-        </p>--> *@
-
-        @* <!--<h3>{{ events.e@{eid}.name }}</h3>--> *@
-
         @contestscrambles(eid=eid)
         @contesttimeform(eid=eid)
 
         <p id="input-completed" class="margin-top-20 text-center hide">
             入力が完了しました。間違いがなければ確認ページへ進んでください。<br>
-            <a href="/contest/@{cid}/@{eid}/confirm" class="btn">確認ページへ</a>
+            <a href="/contest/@{cid}/@{eid}/confirm" class="btn margin-top-10">確認ページへ</a>
         </p>
 
         @* <!--<p>@cid -> contestData:</p>
