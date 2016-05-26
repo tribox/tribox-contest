@@ -10,7 +10,7 @@
 @basejs(firebaseappContest)
 @authjs(redirectLogin="", redirectLogout="", checkFirst=true)
 @filterjs()
-@contestjs(cid=cid, eid=eid, setBegin=true)
+@contestjs(cid=cid, setBegin=true, eid=eid, inputType="form")
 </head>
 <body><div class="container">
     @bodyheader(title, contestName, cid=cid)
@@ -45,6 +45,11 @@
 
         @contestscrambles(eid=eid)
         @contesttable(eid=eid)
+
+        <p id="input-completed" class="margin-top-20 text-center hide">
+            入力が完了しました。間違いがなければ確認ページへ進んでください。<br>
+            <a href="/contest/@{cid}/@{eid}/confirm" class="btn">確認ページへ</a>
+        </p>
 
         @* <!--<p>@cid -> contestData:</p>
         <pre>{{ contestData | json }}</pre>--> *@

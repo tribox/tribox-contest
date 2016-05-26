@@ -206,6 +206,7 @@
                 "$event_id": {
                     ".validate": "root.child('events').hasChild($event_id)",
                     "$user_id": {
+                        ".read": "auth.uid === $user_id",
                         ".write": "auth.uid === $user_id",
                         ".validate": "root.child('users').hasChild($user_id)"
                     }
