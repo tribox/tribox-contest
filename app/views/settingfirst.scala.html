@@ -55,16 +55,16 @@ app.controller('AuthFirstSettingCtrl', ['$scope', 'Auth', function($scope, Auth)
         var _displayname = $scope.displayname ? $scope.displayname : '';
         var _organization = $scope.organization ? $scope.organization : null;
 
-        // ユーザ名、使用文字と長さチェック
+        // ユーザID、使用文字と長さチェック
         if (!(_username.match(/^[a-zA-Z0-9_]{1,15}$/))) {
             //console.error('Invalid username');
-            $scope.error = 'ユーザ名が正しくありません。';
+            $scope.error = 'ユーザIDが不正なフォーマットです。';
             return;
         }
         // 表示名、長さチェック
         if (!(_displayname.match(/^.{1,31}$/))) {
             //console.error('Invalid displayname');
-            $scope.error = '表示名が正しくありません。';
+            $scope.error = '表示名が不正なフォーマットです。';
             return;
         }
         // 表示名、使用文字チェック
@@ -98,7 +98,7 @@ app.controller('AuthFirstSettingCtrl', ['$scope', 'Auth', function($scope, Auth)
                             if (usernameSnap.exists()) {
                                 // Username already used
                                 //console.error('Username already exists: ' + _username);
-                                $scope.error = 'すでに存在するユーザ名です: ' + _username;
+                                $scope.error = 'すでに存在するユーザIDです: ' + _username;
                             } else {
                                 // Set new data to usernames DB and users DB
                                 contestRef.child('usernames').child(_username).set({
@@ -173,13 +173,13 @@ app.controller('AuthFirstSettingCtrl', ['$scope', 'Auth', function($scope, Auth)
             </div>
 
             <div class="margin-top-30">
-                <label>ユーザ名 <span class="color-error">(必須)</span></label>
+                <label>ユーザID <span class="color-error">(必須)</span></label>
                 <input class="form-control" type="text" ng-model="username">
                 <p>
                     1文字以上15文字以内で設定してください。
                     <a href="https://ja.wikipedia.org/wiki/ISO%E5%9F%BA%E6%9C%AC%E3%83%A9%E3%83%86%E3%83%B3%E3%82%A2%E3%83%AB%E3%83%95%E3%82%A1%E3%83%99%E3%83%83%E3%83%88">ISO基本ラテンアルファベット</a>、
                     数字、記号（アンダーバー）のみ使用できます。
-                    他のアカウントのユーザ名と重複できません。
+                    他のアカウントのユーザIDと重複できません。
                     個人ページのURLは @{contestUrl}/user/{{ username }} になります。
                     あとで変更できます。
                 </p>
