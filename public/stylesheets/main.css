@@ -152,6 +152,9 @@ table.setting th {
  */
 table.scrambles {
     font-size: 18px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 20px;
 }
 table.scrambles td,
 table.scrambles th {
@@ -161,12 +164,12 @@ table.scrambles td:first-child,
 table.scrambles th:first-child {
     padding-right: 10px;
 }
-@media screen and (min-width: 480px) {
+/*@media screen and (min-width: 480px) {
     table.scrambles td:first-child,
     table.scrambles th:first-child {
         padding-left: 20px;
     }
-}
+}*/
 
 
 /**
