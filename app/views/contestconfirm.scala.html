@@ -11,17 +11,126 @@
 @authjs(redirectLogin="", redirectLogout="", checkFirst=true)
 @filterjs()
 @contestjs(cid)
+<script>
+app.controller('ContestConfirmCtrl', ['$scope', 'Auth', function($scope, Auth) {
+    $scope.resultValue = null;
+    $scope.contestConfirmLoaded = false;
+
+    contestRef.child('events').child('e@{eid}').once('value', function(snapEvent) {
+        var e = snapEvent.val();
+        $scope.$apply(function() {
+            $scope.resultTitle = e.method + ' of ' + e.attempts;
+        });
+
+        // Read personal results
+        var authData = contestRef.getAuth();
+        if (authData) {
+            contestRef.child('contests').child('c@{cid}').once('value', function(snapContest) {
+                if (snapContest.exists()) {
+                    var contestData = snapContest.val();
+                    contestRef.child('results').child('c@{cid}').child(authData.uid).child('e@{eid}').once('value', function(snapResult) {
+                        var resultData = snapResult.val();
+                        $scope.$apply(function() {
+                            var res = calcResult(e.method, e.format, resultData.data);
+                            if (res.condition == 'DNF') {
+                                $scope.resultValue = 'DNF';
+                            } else if (e.format == 'time') {
+                                $scope.resultValue = formatTime(res.value);
+                            } else if (e.format == 'number') {
+                                $scope.resultValue = res.value;
+                            }
+                            $scope.resultDetail = turnOnButtons(e.format, resultData.data);
+                            $scope.contestConfirmLoaded = true;
+                        });
+                    }, function(error) {
+                        console.error(error);
+                    });
+                } else {
+                    console.error('Undefined contest: @{cid}');
+                }
+            }, function(error) {
+                console.error(error);
+            });
+        } else {
+            $scope.$apply(function() {
+                $scope.contestConfirmLoaded = true;
+            });
+        }
+    }, function(error) {
+        console.error(error);
+    });
+
+    var turnOnButtons = function(format, data) {
+        var res = [];
+        data.forEach(function(d, index) {
+            if (format == 'time') {
+                if (d.condition == 'OK') {
+                    res[index] = formatTime(d.value);
+                    turnOnOK(index);
+                } else if (d.condition == '+2') {
+                    res[index] = formatTime(d.value + 2.000);
+                    turnOnPenalty(index);
+                } else if (d.condition == 'DNF') {
+                    res[index] = 'DNF';
+                    turnOnDNF(index);
+                } else {
+                    return null;
+                }
+            } else if (format == 'number') {
+                if (d.condition == 'OK') {
+                    res[index] = d.value;
+                    turnOnOK(index);
+                } else if (d.condition == 'DNF') {
+                    res[index] = 'DNF';
+                    turnOnDNF(index);
+                } else {
+                    return null;
+                }
+            } else {
+                return null;
+            }
+        });
+        return res;
+    };
+
+    // Condition buttons
+    var turnOnOK = function(index) {
+        var btnOK = angular.element(document.getElementById('timeform-cond-ok-' + index));
+        var btnPenalty = angular.element(document.getElementById('timeform-cond-penalty-' + index));
+        var btnDNF = angular.element(document.getElementById('timeform-cond-dnf-' + index));
+        btnOK.addClass('cond-ok-on');
+        btnPenalty.removeClass('cond-penalty-on');
+        btnDNF.removeClass('cond-dnf-on');
+    };
+    var turnOnPenalty = function(index) {
+        var btnOK = angular.element(document.getElementById('timeform-cond-ok-' + index));
+        var btnPenalty = angular.element(document.getElementById('timeform-cond-penalty-' + index));
+        var btnDNF = angular.element(document.getElementById('timeform-cond-dnf-' + index));
+        btnOK.removeClass('cond-ok-on');
+        btnPenalty.addClass('cond-penalty-on');
+        btnDNF.removeClass('cond-dnf-on');
+    };
+    var turnOnDNF = function(index) {
+        var btnOK = angular.element(document.getElementById('timeform-cond-ok-' + index));
+        var btnPenalty = angular.element(document.getElementById('timeform-cond-penalty-' + index));
+        var btnDNF = angular.element(document.getElementById('timeform-cond-dnf-' + index));
+        btnOK.removeClass('cond-ok-on');
+        btnPenalty.removeClass('cond-penalty-on');
+        btnDNF.addClass('cond-dnf-on');
+    };
+}]);
+</script>
 </head>
 <body><div class="container">
     @bodyheader(title, contestName, cid=cid)
 
-    <div ng-controller="AuthCtrl"><div ng-controller="ContestCtrl">
-    <div ng-hide="authLoaded && contestLoaded">
+    <div ng-controller="AuthCtrl"><div ng-controller="ContestCtrl"><div ng-controller="ContestConfirmCtrl">
+    <div ng-hide="authLoaded && contestLoaded && contestConfirmLoaded">
         <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
         <span class="sr-only">Loading...</span>
         Loading...
     </div>
-    <div ng-show="authLoaded && contestLoaded">
+    <div ng-show="authLoaded && contestLoaded && contestConfirmLoaded">
 
         @authinfo(eid=eid)
 
@@ -72,8 +181,8 @@
                 </label>
             </div>
             <div class="col md-6">
-                <p>
-                    Result: XXX
+                <p style="font-size:24px;">
+                    {{ resultTitle | uppercaseHead }}: {{ resultValue }}
                 </p>
                 <p>
                     <a href="#" class="btn">この内容で送信する</a>
@@ -84,7 +193,7 @@
             </div>
         </div>
 
-        @contesttimeform(eid=eid)
+        @contesttimeform(eid=eid, useInput=false)
 
         @* <!--<p>@cid -> contestData:</p>
         <pre>{{ contestData | json }}</pre>--> *@
@@ -106,7 +215,7 @@
         <pre>{{ resultsForm | json }}</pre>
         <pre>{{ results | json }}</pre>--> *@
 
-    </div></div></div>
+    </div></div></div></div>
 
     @bodyfooter(contestName)
 </div></body>

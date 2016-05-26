@@ -45,4 +45,18 @@ var toOrdinal = function(n) {
 app.filter('ordinal', [function() {
     return toOrdinal;
 }]);
+
+
+/**
+ * Filter: Uppercase the top letter
+ */
+app.filter('uppercaseHead', [function() {
+    return function(str) {
+        if (str) {
+            return str.substr(0, 1).toUpperCase() + str.substr(1);
+        } else {
+            return '';
+        }
+    };
+}]);
 </script>

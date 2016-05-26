@@ -23,6 +23,73 @@ var formatTime = function(input) {
     }
 };
 
+var calcResult = function(method, format, data) {
+    method = method.toLowerCase();
+    format = format.toLowerCase();
+
+    if (method == 'average') {
+        if (format == 'time') {
+            var sum = 0.000;
+            var count = 0, countDNF = 0;
+            data.forEach(function(d) {
+                if (d.condition == 'DNF') {
+                    countDNF++;
+                } else {
+                    if (d.condition == 'OK') {
+                        sum += d.value;
+                    } else if (d.condition == '+2') {
+                        sum += d.value + 2.000;
+                    } else {
+                        return null;
+                    }
+                    count++;
+                }
+            });
+            if (1 < countDNF) {
+                return {'value': 9999.999, 'condition': 'DNF'};
+            } else {
+                return {'value': (Math.round((sum / count) * 1000)) / 1000, 'condition': 'OK'};
+            }
+        } else {
+            return null;
+        }
+    } else if (method == 'mean') {
+        return null;
+    } else if (method == 'best') {
+        if (format == 'time') {
+            var best = {'value': 9999.999, 'condition': 'DNF'};
+            data.forEach(function(d) {
+                if (d.condition != 'DNF') {
+                    var t;
+                    if (d.condition == 'OK') {
+                        t = d.value;
+                    } else if (d.condition == '+2') {
+                        t = d.value + 2.000;
+                    } else {
+                        return null;
+                    }
+                    if (t < best.value) {
+                        best = d;
+                    }
+                }
+            });
+            return best;
+        } else if (format == 'number') {
+            var best = {'value': 9999, 'condition': 'DNF'};
+            data.forEach(function(d) {
+                if (d.condition != 'DNF' && d.value < best.value) {
+                    best = d;
+                }
+            });
+            return best;
+        } else {
+            return null;
+        }
+    } else {
+        return null;
+    }
+};
+
 app.controller('ContestCtrl', ['$scope', 'Auth', function($scope, Auth) {
     $scope.contestData = null;
     $scope.scramblesData = null;

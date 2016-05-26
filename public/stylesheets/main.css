@@ -230,6 +230,7 @@ table.scrambles th:first-child {
     margin-top: 10px;
     margin-bottom: 10px;
     border-bottom: 1px solid rgb(236, 236, 236);
+    text-align: center;
 }
 
 .timeform-time input {
@@ -250,7 +251,10 @@ table.scrambles th:first-child {
 .timeform-time input.format-error {
     border: 2px solid #E74C3C;
 }
-.timeform-time span {
+.timeform-time span.result-detail {
+    font-size: 24px;
+}
+.timeform-time span.result-note {
     font-size: 12px;
 }
 

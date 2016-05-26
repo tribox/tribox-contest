@@ -1,4 +1,4 @@
-@(eid: String)
+@(eid: String, useInput: Boolean = true)
 
         @* 試技数が5の場合 (例えば、average of 5) *@
         <div class="row" ng-if="events.e@{eid}.attempts == 5">
@@ -6,8 +6,12 @@
             <div class="col md-2 timeform-wrap" ng-repeat="s in scramblesData.e@{eid}">
                 <div class="timeform">
                     <div class="timeform-time">
+                    @if(useInput) {
                         <input id="result-{{ $index }}" ng-model="resultsForm[$index]" ng-change="change($index)" type="text" placeholder="-:--.---" required>
-                        <span class="hide color-error"></span>
+                        <span class="hide color-error result-note"></span>
+                    } else {
+                        <span id="result-{{ $index }}" class="result-detail">{{ resultDetail[$index] }}</span>
+                    }
                     </div>
                     <div class="timeform-cond">
                         <div id="timeform-cond-ok-{{ $index }}" class="timeform-cond-btn" ng-click="applyOK($index)">OK</div>
@@ -25,8 +29,12 @@
             <div class="col md-3 timeform-wrap" ng-repeat="s in scramblesData.e@{eid}">
                 <div class="timeform">
                     <div class="timeform-time">
+                    @if(useInput) {
                         <input id="result-{{ $index }}" ng-model="resultsForm[$index]" ng-change="change()" type="text" placeholder="-:--.---" required>
-                        <span class="hide color-error"></span>
+                        <span class="hide color-error result-note"></span>
+                    } else {
+                        <span id="result-{{ $index }}" class="result-detail">{{ resultDetail[$index] }}</span>
+                    }
                     </div>
                     <div class="timeform-cond">
                         <div id="timeform-cond-ok-{{ $index }}" class="timeform-cond-btn" ng-click="applyOK($index)">OK</div>

@@ -44,7 +44,7 @@ app.controller('ContestFormCtrl', ['$scope', 'Auth', function($scope, Auth) {
                         $scope.$apply(function() {
                             $scope.results = snapData.val();
                             $scope.results.forEach(function(result, index) {
-                                $scope.resultsForm[index] = formatTime($scope.results[index].result);
+                                $scope.resultsForm[index] = formatTime($scope.results[index].value);
                                 if ($scope.results[index].condition == 'OK') {
                                     $scope.applyOK(index);
                                 } else if ($scope.results[index].condition == '+2') {
@@ -83,7 +83,7 @@ app.controller('ContestFormCtrl', ['$scope', 'Auth', function($scope, Auth) {
             var inputCompleted = angular.element(document.getElementById('input-completed'));
 
             // Prepare results data
-            $scope.results[index] = {'result': null, 'condition': null};
+            $scope.results[index] = {'value': null, 'condition': null};
 
             // Check the format
             if (!(resultForm.match(/^([0-9]:)?[0-9]{1,3}(\.[0-9]{0,3})?$/))) {
@@ -101,13 +101,13 @@ app.controller('ContestFormCtrl', ['$scope', 'Auth', function($scope, Auth) {
             // Convert to seconds
             if (resultForm.indexOf(':') != -1) {
                 var t = resultForm.split(':');
-                $scope.results[index].result = Number(t[0]) * 60 + Number(t[1]);
+                $scope.results[index].value = Number(t[0]) * 60 + Number(t[1]);
             } else {
-                $scope.results[index].result = Number(resultForm);
+                $scope.results[index].value = Number(resultForm);
             }
 
             // Check bounds
-            if ($scope.results[index].result <= 0) {
+            if ($scope.results[index].value <= 0) {
                 result.addClass('format-error');
                 result.next().text('0秒以上のタイムを入力してください。');
                 result.next().removeClass('hide');
@@ -117,7 +117,7 @@ app.controller('ContestFormCtrl', ['$scope', 'Auth', function($scope, Auth) {
                 scrambleLine.removeClass('scramble-done');
                 inputCompleted.addClass('hide');
                 return;
-            } else if (600 <= $scope.results[index].result) {
+            } else if (600 <= $scope.results[index].value) {
                 result.addClass('format-error');
                 result.next().text('10分未満のタイムを入力してください。');
                 result.next().removeClass('hide');
@@ -142,7 +142,7 @@ app.controller('ContestFormCtrl', ['$scope', 'Auth', function($scope, Auth) {
         }
     };
 
-    // Penalty buttons
+    // Condition buttons
     $scope.applyOK = function(index) {
         var resultElem = $scope.results[index];
         if (resultElem) {
@@ -151,7 +151,7 @@ app.controller('ContestFormCtrl', ['$scope', 'Auth', function($scope, Auth) {
             var btnDNF = angular.element(document.getElementById('timeform-cond-dnf-' + index));
             var scrambleLine = angular.element(document.getElementById('scramble-' + index));
             $scope.results[index].condition = 'OK';
-            $scope.resultsForm[index] = formatTime($scope.results[index].result);
+            $scope.resultsForm[index] = formatTime($scope.results[index].value);
             btnOK.addClass('cond-ok-on');
             btnPenalty.removeClass('cond-penalty-on');
             btnDNF.removeClass('cond-dnf-on');
@@ -167,7 +167,7 @@ app.controller('ContestFormCtrl', ['$scope', 'Auth', function($scope, Auth) {
             var btnDNF = angular.element(document.getElementById('timeform-cond-dnf-' + index));
             var scrambleLine = angular.element(document.getElementById('scramble-' + index));
             $scope.results[index].condition = '+2';
-            $scope.resultsForm[index] = formatTime($scope.results[index].result + 2);
+            $scope.resultsForm[index] = formatTime($scope.results[index].value + 2);
             btnOK.removeClass('cond-ok-on');
             btnPenalty.addClass('cond-penalty-on');
             btnDNF.removeClass('cond-dnf-on');
