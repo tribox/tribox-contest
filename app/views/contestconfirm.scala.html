@@ -13,7 +13,8 @@
 @contestjs(cid)
 <script>
 app.controller('ContestConfirmCtrl', ['$scope', 'Auth', function($scope, Auth) {
-    $scope.resultValue = null;
+    $scope.result = null;
+    $scope.resultResult = null;
     $scope.contestConfirmLoaded = false;
 
     contestRef.child('events').child('e@{eid}').once('value', function(snapEvent) {
@@ -31,13 +32,13 @@ app.controller('ContestConfirmCtrl', ['$scope', 'Auth', function($scope, Auth) {
                     contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).once('value', function(snapResult) {
                         var resultData = snapResult.val();
                         $scope.$apply(function() {
-                            var res = calcResult(e.method, e.format, resultData.details);
-                            if (res.condition == 'DNF') {
-                                $scope.resultValue = 'DNF';
+                            $scope.result = calcResult(e.method, e.format, resultData.details);
+                            if ($scope.result.condition == 'DNF') {
+                                $scope.resultResult = 'DNF';
                             } else if (e.format == 'time') {
-                                $scope.resultValue = formatTime(res.record);
+                                $scope.resultResult = formatTime($scope.result.record);
                             } else if (e.format == 'number') {
-                                $scope.resultValue = res.record;
+                                $scope.resultResult = $scope.result.record;
                             }
                             $scope.resultDetail = turnOnButtons(e.format, resultData.details);
                             $scope.contestConfirmLoaded = true;
@@ -59,6 +60,24 @@ app.controller('ContestConfirmCtrl', ['$scope', 'Auth', function($scope, Auth) {
     }, function(error) {
         console.error(error);
     });
+
+    var toFixedForPriority = function(n) {
+        nstr = String(n);
+        if (nstr.indexOf('.') != -1) {
+            var p0 = nstr.split('.')[0];
+            var p1 = nstr.split('.')[1];
+            return ('000' + p0).slice(-3) + (p1 + '000').slice(0, 3);
+        } else {
+            return ('000' + nstr).slice(-3) + '000';
+        }
+    };
+
+    $scope.submitResult = function() {
+        // Calc priority: (record as string) + (best as string)
+        var priority = toFixedForPriority($scope.result.record) + toFixedForPriority($scope.result.best)
+        console.dir($scope.result);
+        console.log(priority);
+    };
 
     var turnOnButtons = function(format, data) {
         var res = [];
@@ -182,10 +201,10 @@ app.controller('ContestConfirmCtrl', ['$scope', 'Auth', function($scope, Auth) {
             </div>
             <div class="col md-6">
                 <p style="font-size:24px;">
-                    {{ resultTitle | uppercaseHead }}: {{ resultValue }}
+                    {{ resultTitle | uppercaseHead }}: {{ resultResult }}
                 </p>
                 <p>
-                    <a href="#" class="btn">この内容で送信する</a>
+                    <button class="btn" ng-click="submitResult()">この内容で送信する</button>
                 </p>
                 <p>
                     ビデオへのリンクはマイページから追加できます。
