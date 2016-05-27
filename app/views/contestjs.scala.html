@@ -36,9 +36,9 @@ var calcResult = function(method, format, data) {
                     countDNF++;
                 } else {
                     if (d.condition == 'OK') {
-                        sum += d.value;
+                        sum += d.record;
                     } else if (d.condition == '+2') {
-                        sum += d.value + 2.000;
+                        sum += d.record + 2.000;
                     } else {
                         return null;
                     }
@@ -46,9 +46,9 @@ var calcResult = function(method, format, data) {
                 }
             });
             if (1 < countDNF) {
-                return {'value': 9999.999, 'condition': 'DNF'};
+                return {'record': 9999.999, 'condition': 'DNF'};
             } else {
-                return {'value': (Math.round((sum / count) * 1000)) / 1000, 'condition': 'OK'};
+                return {'record': (Math.round((sum / count) * 1000)) / 1000, 'condition': 'OK'};
             }
         } else {
             return null;
@@ -57,27 +57,27 @@ var calcResult = function(method, format, data) {
         return null;
     } else if (method == 'best') {
         if (format == 'time') {
-            var best = {'value': 9999.999, 'condition': 'DNF'};
+            var best = {'record': 9999.999, 'condition': 'DNF'};
             data.forEach(function(d) {
                 if (d.condition != 'DNF') {
                     var t;
                     if (d.condition == 'OK') {
-                        t = d.value;
+                        t = d.record;
                     } else if (d.condition == '+2') {
-                        t = d.value + 2.000;
+                        t = d.record + 2.000;
                     } else {
                         return null;
                     }
-                    if (t < best.value) {
+                    if (t < best.record) {
                         best = d;
                     }
                 }
             });
             return best;
         } else if (format == 'number') {
-            var best = {'value': 9999, 'condition': 'DNF'};
+            var best = {'record': 9999, 'condition': 'DNF'};
             data.forEach(function(d) {
-                if (d.condition != 'DNF' && d.value < best.value) {
+                if (d.condition != 'DNF' && d.record < best.record) {
                     best = d;
                 }
             });

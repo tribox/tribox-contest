@@ -28,18 +28,18 @@ app.controller('ContestConfirmCtrl', ['$scope', 'Auth', function($scope, Auth) {
             contestRef.child('contests').child('c@{cid}').once('value', function(snapContest) {
                 if (snapContest.exists()) {
                     var contestData = snapContest.val();
-                    contestRef.child('results').child('c@{cid}').child(authData.uid).child('e@{eid}').once('value', function(snapResult) {
+                    contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).once('value', function(snapResult) {
                         var resultData = snapResult.val();
                         $scope.$apply(function() {
-                            var res = calcResult(e.method, e.format, resultData.data);
+                            var res = calcResult(e.method, e.format, resultData.details);
                             if (res.condition == 'DNF') {
                                 $scope.resultValue = 'DNF';
                             } else if (e.format == 'time') {
-                                $scope.resultValue = formatTime(res.value);
+                                $scope.resultValue = formatTime(res.record);
                             } else if (e.format == 'number') {
-                                $scope.resultValue = res.value;
+                                $scope.resultValue = res.record;
                             }
-                            $scope.resultDetail = turnOnButtons(e.format, resultData.data);
+                            $scope.resultDetail = turnOnButtons(e.format, resultData.details);
                             $scope.contestConfirmLoaded = true;
                         });
                     }, function(error) {
@@ -65,10 +65,10 @@ app.controller('ContestConfirmCtrl', ['$scope', 'Auth', function($scope, Auth) {
         data.forEach(function(d, index) {
             if (format == 'time') {
                 if (d.condition == 'OK') {
-                    res[index] = formatTime(d.value);
+                    res[index] = formatTime(d.record);
                     turnOnOK(index);
                 } else if (d.condition == '+2') {
-                    res[index] = formatTime(d.value + 2.000);
+                    res[index] = formatTime(d.record + 2.000);
                     turnOnPenalty(index);
                 } else if (d.condition == 'DNF') {
                     res[index] = 'DNF';
@@ -78,7 +78,7 @@ app.controller('ContestConfirmCtrl', ['$scope', 'Auth', function($scope, Auth) {
                 }
             } else if (format == 'number') {
                 if (d.condition == 'OK') {
-                    res[index] = d.value;
+                    res[index] = d.record;
                     turnOnOK(index);
                 } else if (d.condition == 'DNF') {
                     res[index] = 'DNF';

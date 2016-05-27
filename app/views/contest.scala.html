@@ -14,7 +14,7 @@
 <script>
 app.controller('ContestIndexCtrl', ['$scope', 'Auth', function($scope, Auth) {
     $scope.eventsDone = {};
-    $scope.contestIndexLoaded = false;
+    $scope.contestIndexLoaded = true;
 
     // Read personal results
     var authData = contestRef.getAuth();
@@ -22,30 +22,23 @@ app.controller('ContestIndexCtrl', ['$scope', 'Auth', function($scope, Auth) {
         contestRef.child('contests').child('c@{cid}').once('value', function(snapContest) {
             if (snapContest.exists()) {
                 var contestData = snapContest.val();
-                contestRef.child('results').child('c@{cid}').child(authData.uid).once('value', function(snapResult) {
-                    var resultData = snapResult.val();
-                    contestData.events.forEach(function(e) {
-                        if (!resultData || !(resultData[e])) {
-                            $scope.$apply(function() {
+                contestData.events.forEach(function(e) {
+                    contestRef.child('results').child('c@{cid}').child(e).child(authData.uid).once('value', function(snapResult) {
+                        var resultData = snapResult.val();
+                        $scope.$apply(function() {
+                            if (!resultData) {
                                 $scope.eventsDone[e] = false;
-                            });
-                        } else {
-                            if (resultData[e].endAt) {
-                                $scope.$apply(function() {
-                                    $scope.eventsDone[e] = true;
-                                });
                             } else {
-                                $scope.$apply(function() {
-                                    $scope.eventsDone[e] = resultData[e].type;
-                                });
+                                if (resultData.endAt) {
+                                    $scope.eventsDone[e] = true;
+                                } else {
+                                    $scope.eventsDone[e] = resultData.type;
+                                }
                             }
-                        }
+                        });
+                    }, function(error) {
+                        console.error(error);
                     });
-                    $scope.$apply(function() {
-                        $scope.contestIndexLoaded = true;
-                    });
-                }, function(error) {
-                    console.error(error);
                 });
             } else {
                 console.error('Undefined contest: @{cid}');
@@ -107,7 +100,7 @@ app.controller('ContestIndexCtrl', ['$scope', 'Auth', function($scope, Auth) {
             <tbody>
                 <tr ng-repeat="e in contestData.events">
                     <td>{{ events[e].name }}</td>
-                    <td>{{ events[e].method }} of {{ events[e].attempts }}</td>
+                    <td>{{ events[e].method | uppercaseHead }} of {{ events[e].attempts }}</td>
                     <td>
                         <a href="/contest/@cid/{{ e | removeHead }}" ng-if="countdown == 0 && authData != null && eventsDone[e] == false">参加する</a>
                         <a href="/contest/@cid/{{ e | removeHead }}/timer" ng-if="countdown == 0 && authData != null && eventsDone[e] == 'timer'">再開する</a>
