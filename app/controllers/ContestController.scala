@@ -34,10 +34,10 @@ class ContestController @Inject() extends HomeController {
 
     def confirm(cid: String, eid: String) = Action {
         val cubes = Cube.getAll
-        val puzzleCategories = PuzzleCategory.getAll
+        //val puzzleCategories = PuzzleCategory.getAll
         val puzzleBrands = PuzzleBrand.getAll
 
-        // TODO: Scalaぽい書き方に直したい
+        // TODO: 以下の処理をScalaぽい書き方に直したい
         var puzzles = List[Puzzle]();
         var prevId = -1;
         var name = "";
@@ -75,7 +75,34 @@ class ContestController @Inject() extends HomeController {
         val p = Puzzle(prevId, name, categoryId, brandId);
         puzzles :+= p;
 
-        Ok(views.html.contestconfirm(cid, eid, getContestName, getContestUrl, getFirebaseappContest, puzzles, puzzleCategories, puzzleBrands))
+        // ここで無理やりだがイベントごとにキューブを分類する
+        var targetCategory = 103;
+        if (eid == "333" || eid == "333bf" || eid == "333oh" || eid == "333fm") {
+            targetCategory = 103;
+        } else if (eid == "444") {
+            targetCategory = 107;
+        } else if (eid == "555") {
+            targetCategory = 108;
+        } else if (eid == "222") {
+            targetCategory = 101;
+        }
+        var brandsPuzzles = Map.empty[Int, List[Puzzle]];
+        for (puzzle:Puzzle <- puzzles) {
+            if (puzzle.categoryId == targetCategory) {
+                var l = brandsPuzzles.getOrElse(puzzle.brandId, List[Puzzle]());
+                l :+= puzzle;
+                brandsPuzzles += puzzle.brandId -> l;
+            }
+        }
+
+        // ブランドの List を Map へ変換
+        var puzzleBrandsMap = Map.empty[Int, String];
+        for (puzzleBrand:PuzzleBrand <- puzzleBrands) {
+            puzzleBrandsMap += puzzleBrand.category_id -> puzzleBrand.category_name;
+        }
+
+        Ok(views.html.contestconfirm(cid, eid, getContestName, getContestUrl, getFirebaseappContest, brandsPuzzles, puzzleBrands, puzzleBrandsMap))
+        //Ok(views.html.contestconfirm(cid, eid, getContestName, getContestUrl, getFirebaseappContest, puzzles, puzzleCategories, puzzleBrands))
         //Ok(views.html.contestconfirm(cid, eid, getContestName, getContestUrl, getFirebaseappContest, cubes, puzzles, puzzleCategories, puzzleBrands))
     }
 }

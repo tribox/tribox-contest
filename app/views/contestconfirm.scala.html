@@ -1,4 +1,5 @@
-@(cid: String, eid: String, contestName: String, contestUrl: String, firebaseappContest: String, puzzles: List[Puzzle], puzzleCategories: List[PuzzleCategory], puzzleBrands: List[PuzzleBrand])
+@(cid: String, eid: String, contestName: String, contestUrl: String, firebaseappContest: String, brandsPuzzles: Map[Int, List[Puzzle]], puzzleBrands: List[PuzzleBrand], puzzleBrandsMap: Map[Int, String])
+@* @(cid: String, eid: String, contestName: String, contestUrl: String, firebaseappContest: String, puzzles: List[Puzzle], puzzleCategories: List[PuzzleCategory], puzzleBrands: List[PuzzleBrand]) *@
 @* @(cid: String, eid: String, contestName: String, contestUrl: String, firebaseappContest: String, cubes: List[Cube], puzzles: List[Puzzle], puzzleCategories: List[PuzzleCategory], puzzleBrands: List[PuzzleBrand]) *@
 
 @defining("Contest Confirm") { title =>
@@ -99,13 +100,18 @@ app.controller('ContestConfirmCtrl', ['$scope', 'Auth', function($scope, Auth) {
                 return;
             }
 
+            @* /*
+            各項目で、指定IDがDOM上に存在するかチェックしている。
+            これは $scope の値と実際に選択されている項目のずれを検出する意味を持つ。
+            ng-if が成り立たない <option> はDOM上から消されるからこれがうまくいく。
+            */ *@
             var puzzle = { 'type': $scope.puzzle.type };
             if ($scope.puzzle.type == 'database') {
-                if (!($scope.puzzle.brand)) {
+                if (!($scope.puzzle.brand) || document.getElementById('brand-' + $scope.puzzle.brand) == null || parseInt($scope.puzzle.brand) < 0) {
                     $scope.error = 'ブランドを選択してください。';
                     return;
                 }
-                if (!($scope.puzzle.product)) {
+                if (!($scope.puzzle.product) || document.getElementById('product-' + $scope.puzzle.product) == null || parseInt($scope.puzzle.product) < 0) {
                     $scope.error = 'キューブを選択してください。';
                     return;
                 }
@@ -243,6 +249,19 @@ app.controller('ContestConfirmCtrl', ['$scope', 'Auth', function($scope, Auth) {
         </div>
 
         @* <!--<div>
+            <p>brandsPuzzles:</p>
+            <ul>
+                @for((brandId, puzzles) <- brandsPuzzles){
+                    <li>@brandId : @puzzleBrandsMap(brandId)</li>
+                    <ul>
+                        @for(puzzle <- puzzles){
+                            <li>@puzzle.productId : @puzzle.name</li>
+                        }
+                    </ul>
+                }
+            </ul>
+        </div>--> *@
+        @* <!--<div>
             <p>cubes: @{cubes.length}</p>
             <ul>
                 @for(cube:Cube <- cubes){
@@ -250,30 +269,30 @@ app.controller('ContestConfirmCtrl', ['$scope', 'Auth', function($scope, Auth) {
                 }
             </ul>
         </div>--> *@
-        <div>
+        @* <!--<div>
             <p>puzzles: @{puzzles.length}</p>
             <ul>
                 @for(puzzle:Puzzle <- puzzles){
                     <li>@puzzle.productId : @puzzle.name : @puzzle.categoryId : @puzzle.brandId</li>
                 }
             </ul>
-        </div>
-        <div>
+        </div>--> *@
+        @* <!--<div>
             <p>puzzleCategories: @{puzzleCategories.length}</p>
             <ul>
                 @for(puzzleCategory:PuzzleCategory <- puzzleCategories){
                     <li>@puzzleCategory.category_id : @puzzleCategory.category_name</li>
                 }
             </ul>
-        </div>
-        <div>
+        </div>--> *@
+        @* <!--<div>
             <p>puzzleBrands: @{puzzleBrands.length}</p>
             <ul>
                 @for(puzzleBrand:PuzzleBrand <- puzzleBrands){
                     <li>@puzzleBrand.category_id : @puzzleBrand.category_name</li>
                 }
             </ul>
-        </div>
+        </div>--> *@
 
         <form name="submitForm" ng-submit="submitResult()">
         <div class="row">
@@ -285,15 +304,19 @@ app.controller('ContestConfirmCtrl', ['$scope', 'Auth', function($scope, Auth) {
                 <div ng-show="puzzle.type == 'database'">
                     <label>ブランド</label>
                     <select class="form-control" ng-model="puzzle.brand">
-                        <option value="1">AAA</option>
-                        <option value="2">BBB</option>
-                        <option value="3">CCC</option>
+                        @for(puzzleBrand:PuzzleBrand <- puzzleBrands){
+                            @if(brandsPuzzles.get(puzzleBrand.category_id) != None) {
+                                <option id="brand-@{puzzleBrand.category_id}" value="@{puzzleBrand.category_id}">@{puzzleBrand.category_name}</option>
+                            }
+                        }
                     </select>
                     <label>キューブ</label>
                     <select class="form-control" ng-model="puzzle.product">
-                        <option value="1">XXX</option>
-                        <option value="2">YYY</option>
-                        <option value="3">ZZZ</option>
+                        @for((brandId, puzzles) <- brandsPuzzles){
+                            @for(puzzle <- puzzles){
+                                <option id="product-@puzzle.productId" value="@puzzle.productId" ng-if="puzzle.brand == @brandId">@puzzle.name</option>
+                            }
+                        }
                     </select>
                 </div>
 
@@ -349,8 +372,8 @@ app.controller('ContestConfirmCtrl', ['$scope', 'Auth', function($scope, Auth) {
         <pre>{{ resultsForm | json }}</pre>
         <pre>{{ results | json }}</pre>--> *@
 
-        <p>puzzle:</p>
-        <pre>{{ puzzle | json }}</pre>
+        @* <!--<p>puzzle:</p>
+        <pre>{{ puzzle | json }}</pre>--> *@
 
     </div></div></div></div></div>
 
