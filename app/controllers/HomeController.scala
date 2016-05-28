@@ -20,7 +20,6 @@ class HomeController @Inject() extends Controller {
     val contestName = Play.application.configuration.getString("contest.name").getOrElse("tribox Contest")
     val contestUrl = Play.application.configuration.getString("contest.url").getOrElse("https://contest.tribox.com/")
     val firebaseappContest = Play.application.configuration.getString("firebaseapp.contest").getOrElse("tribox-contest")
-    //val events = Event.getAll
     Ok(views.html.index(contestName, contestUrl, firebaseappContest))
   }
 
