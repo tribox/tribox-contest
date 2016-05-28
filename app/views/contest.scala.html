@@ -14,6 +14,8 @@
 <script>
 app.controller('ContestIndexCtrl', ['$scope', function($scope) {
     $scope.eventsDone = {};
+    $scope.justSuspended = null;
+    $scope.justDone = null;
     $scope.contestIndexLoaded = true;
 
     // Read personal results
@@ -44,6 +46,31 @@ app.controller('ContestIndexCtrl', ['$scope', function($scope) {
                 console.error('Undefined contest: @{cid}');
             }
         });
+
+        var vars = getUrlVars();
+        if (vars.suspended) {
+            var qe = 'e' + vars.suspended;
+            contestRef.child('events').once('value', function(snapEvents) {
+                if (snapEvents.exists() && (snapEvents.val())[qe]) {
+                    $scope.$apply(function() {
+                        $scope.justSuspended = (snapEvents.val())[qe].name;
+                    });
+                }
+            }, function(error) {
+                console.error(error);
+            });
+        } else if (vars.done) {
+            var qe = 'e' + vars.done;
+            contestRef.child('events').once('value', function(snapEvents) {
+                if (snapEvents.exists() && (snapEvents.val())[qe]) {
+                    $scope.$apply(function() {
+                        $scope.justDone = (snapEvents.val())[qe].name;
+                    });
+                }
+            }, function(error) {
+                console.error(error);
+            });
+        }
     }
 }]);
 </script>
@@ -83,6 +110,15 @@ app.controller('ContestIndexCtrl', ['$scope', function($scope) {
         </p>
         <p class="color-error" ng-if="countdown > 0">
             このコンテストはまだ開始されていません。
+        </p>
+
+        <p class="notice-success" ng-if="justSuspended">
+            <i class="fa fa-check"></i>
+            "{{ justSuspended }}" が一時中断されました。
+        </p>
+        <p class="notice-success" ng-if="justDone">
+            <i class="fa fa-check"></i>
+            "{{ justDone }}" の結果送信が完了しました。
         </p>
 
         <table class="table" ng-if="0 <= countdown">

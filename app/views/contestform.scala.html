@@ -234,7 +234,7 @@ app.controller('ContestFormCtrl', ['$scope', 'Auth', function($scope, Auth) {
 </script>
 </head>
 <body><div class="container">
-    @bodyheader(title, contestName, cid=cid)
+    @bodyheader(title, contestName, cid=cid, eid=eid)
 
     <div ng-controller="AuthCtrl"><div ng-controller="ContestCtrl"><div ng-controller="ContestFormCtrl">
     <div ng-hide="authLoaded && contestLoaded && contestFormLoaded">

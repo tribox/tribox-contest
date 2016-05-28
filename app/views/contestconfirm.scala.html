@@ -14,13 +14,21 @@
 <script>
 app.controller('ContestConfirmCtrl', ['$scope', 'Auth', function($scope, Auth) {
     $scope.result = null;
-    $scope.resultResult = null;
     $scope.contestConfirmLoaded = false;
+
+    // 結果表示
+    $scope.resultTitle = null;
+    $scope.resultResult = null;
+    $scope.resultTitleAlt = null;
+    $scope.resultResultAlt = null;
 
     contestRef.child('events').child('e@{eid}').once('value', function(snapEvent) {
         var e = snapEvent.val();
         $scope.$apply(function() {
             $scope.resultTitle = e.method + ' of ' + e.attempts;
+            if (e.method == 'average') {
+                $scope.resultTitleAlt = 'best';
+            }
         });
 
         // Read personal results
@@ -39,6 +47,16 @@ app.controller('ContestConfirmCtrl', ['$scope', 'Auth', function($scope, Auth) {
                                 $scope.resultResult = formatTime($scope.result.record);
                             } else if (e.format == 'number') {
                                 $scope.resultResult = $scope.result.record;
+                            }
+                            if (e.method == 'average') {
+                                var best = (resultData.details)[$scope.result.best];
+                                if (best.condition == 'DNF') {
+                                    $scope.resultResultAlt = 'DNF';
+                                } else if (e.format == 'time') {
+                                    $scope.resultResultAlt = formatTime(best.record);
+                                } else if (e.format == 'number') {
+                                    $scope.resultResultAlt = best.record;
+                                }
                             }
                             $scope.resultDetail = turnOnButtons(e.format, resultData.details);
                             $scope.contestConfirmLoaded = true;
@@ -89,6 +107,7 @@ app.controller('ContestConfirmCtrl', ['$scope', 'Auth', function($scope, Auth) {
                     contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).setPriority(priority, function(error) {
                         if (!error) {
                             console.log('Complete!');
+                            location.href = "/contest/@{cid}?done=@{eid}";
                         } else {
                             console.error(error);
                         }
@@ -223,8 +242,11 @@ app.controller('ContestConfirmCtrl', ['$scope', 'Auth', function($scope, Auth) {
                 </label>
             </div>
             <div class="col md-6">
-                <p style="font-size:24px;">
+                <p class="margin-bottom-0" style="font-size: 24px;">
                     {{ resultTitle | uppercaseHead }}: {{ resultResult }}
+                </p>
+                <p class="margin-bottom-20" ng-show="resultResultAlt">
+                    {{ resultTitleAlt | uppercaseHead }}: {{ resultResultAlt }}
                 </p>
                 <p>
                     <button class="btn" ng-click="submitResult()">この内容で送信する</button>

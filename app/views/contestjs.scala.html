@@ -29,11 +29,12 @@ var calcResult = function(method, format, data) {
 
     // Average of X
     if (method == 'average') {
+        var lowerIndex = -1;
         if (format == 'time') {
             var sum = 0.000;
             var count = 0, countDNF = 0;
             var lower = 9999.999, upper = 0.000;
-            data.forEach(function(d) {
+            data.forEach(function(d, index) {
                 if (d.condition == 'DNF') {
                     countDNF++;
                 } else {
@@ -45,20 +46,26 @@ var calcResult = function(method, format, data) {
                     } else {
                         return null;
                     }
+
                     sum += t;
                     count++;
-                    lower = (t < lower) ? (t) : (lower);
-                    upper = (upper < t) ? (t) : (upper);
+                    if (t < lower) {
+                        lower = t;
+                        lowerIndex = index;
+                    }
+                    if (upper < t) {
+                        upper = t;
+                    }
                 }
             });
             if (countDNF == 0) {
                 return {'record': (Math.round(((sum - lower - upper) / (count - 2)) * 1000)) / 1000,
-                        'best': lower, 'condition': 'OK' };
+                        'best': lowerIndex, 'condition': 'OK' };
             } else if (countDNF == 1) {
                 return {'record': (Math.round(((sum - lower) / (count - 1)) * 1000)) / 1000,
-                        'best': lower, 'condition': 'OK' };
+                        'best': lowerIndex, 'condition': 'OK' };
             } else {
-                return {'record': 9999.999, 'best': 9999.999, 'condition': 'DNF'};
+                return {'record': 9999.999, 'best': lowerIndex, 'condition': 'DNF'};
             }
         } else {
             return null;
@@ -72,9 +79,10 @@ var calcResult = function(method, format, data) {
 
     // Best of X
     else if (method == 'best') {
+        var bestIndex = -1;
         if (format == 'time') {
             var best = {'record': 9999.999, 'condition': 'DNF'};
-            data.forEach(function(d) {
+            data.forEach(function(d, index) {
                 if (d.condition != 'DNF') {
                     var t;
                     if (d.condition == 'OK') {
@@ -84,18 +92,24 @@ var calcResult = function(method, format, data) {
                     } else {
                         return null;
                     }
-                    best = (t < best.record) ? (d) : (best);
+                    if (t < best.record) {
+                        best = d;
+                        bestIndex = index;
+                    }
                 }
             });
-            return {'record': best.record, 'best': best.record, 'condition': best.condition};
+            return {'record': best.record, 'best': bestIndex, 'condition': best.condition};
         } else if (format == 'number') {
             var best = {'record': 9999, 'condition': 'DNF'};
-            data.forEach(function(d) {
+            data.forEach(function(d, index) {
                 if (d.condition != 'DNF') {
-                    best = (d.record < best.record) ? (d) : (best);
+                    if (d.record < best.record) {
+                        best = d;
+                        bestIndex = index;
+                    }
                 }
             });
-            return {'record': best.record, 'best': best.record, 'condition': best.condition};
+            return {'record': best.record, 'best': bestIndex, 'condition': best.condition};
         } else {
             return null;
         }

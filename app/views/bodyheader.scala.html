@@ -1,4 +1,4 @@
-@(title: String, contestName: String, cid: String = "")
+@(title: String, contestName: String, cid: String = "", eid: String = "")
 
 <div id="header">
     <div id="header-logo">
@@ -7,7 +7,7 @@
             <span>@contestName</span>
         </a>
     </div>
-    @if(cid == "") {
+    @if(cid == "" || eid == "") {
         <div id="header-menu" ng-controller="AuthCtrl">
             <span ng-hide="isLoggingin">
                 <a href="@routes.HomeController.login" ng-hide="isLoggingin">ログイン</a> /
@@ -21,7 +21,7 @@
         </div>
     } else {
         <div id="header-menu">
-            <a href="/contest/@{cid}">中断</a>
+            <a href="/contest/@{cid}?suspended=@{eid}">中断</a>
         </div>
     }
 </div>

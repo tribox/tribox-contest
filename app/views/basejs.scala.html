@@ -1,6 +1,22 @@
 @(firebaseappContest: String)
 
 <script>
+/**
+ * URL解析して、クエリ文字列を返す
+ * http://qiita.com/ma_me/items/03aaebb5dc440b380244
+ */
+function getUrlVars() {
+    var vars = {};
+    var url = window.location.search;
+    var hash  = url.slice(1).split('&');
+    var max = hash.length;
+    for (var i = 0; i < max; i++) {
+        var array = hash[i].split('=');
+        vars[array[0]] = array[1];
+    }
+    return vars;
+}
+
 var app = angular.module('contestApp', ['firebase']);
 var contestRef = new Firebase('https://@{firebaseappContest}.firebaseio.com');
 </script>
