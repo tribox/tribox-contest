@@ -6,5 +6,5 @@ import play.api.db._
 import play.api.Play.current
 
 case class Puzzle(productId: Int, name: String, categoryId: Int, brandId: Int) {
-  def addPuzzle { }
+    def addPuzzle { }
 }
