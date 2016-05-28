@@ -5,13 +5,13 @@ import anorm.SqlParser._
 import play.api.db._
 import play.api.Play.current
 
-case class PuzzleBrand(category_id: Pk[Long] = NotAssigned, category_name: String) {
+case class PuzzleBrand(category_id: Int, category_name: String) {
   def addPuzzleBrand { }
 }
 
 object PuzzleBrand {
   val data = {
-    get[anorm.Pk[Long]]("category_id") ~ get[String]("category_name") map {
+    get[Int]("category_id") ~ get[String]("category_name") map {
       case category_id ~ category_name => PuzzleBrand(category_id, category_name)
     }
   }
