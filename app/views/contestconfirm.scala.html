@@ -1,4 +1,5 @@
-@(cid: String, eid: String, contestName: String, contestUrl: String, firebaseappContest: String)
+@(cid: String, eid: String, contestName: String, contestUrl: String, firebaseappContest: String, puzzles: List[Puzzle], puzzleCategories: List[PuzzleCategory], puzzleBrands: List[PuzzleBrand])
+@* @(cid: String, eid: String, contestName: String, contestUrl: String, firebaseappContest: String, cubes: List[Cube], puzzles: List[Puzzle], puzzleCategories: List[PuzzleCategory], puzzleBrands: List[PuzzleBrand]) *@
 
 @defining("Contest Confirm") { title =>
 
@@ -239,6 +240,39 @@ app.controller('ContestConfirmCtrl', ['$scope', 'Auth', function($scope, Auth) {
 
         <div class="color-error margin-bottom-20" ng-if="error">
             エラー: {{ error }}
+        </div>
+
+        @* <!--<div>
+            <p>cubes: @{cubes.length}</p>
+            <ul>
+                @for(cube:Cube <- cubes){
+                    <li>@cube.product_id : @cube.name : @cube.category_id : @cube.parent_category_id</li>
+                }
+            </ul>
+        </div>--> *@
+        <div>
+            <p>puzzles: @{puzzles.length}</p>
+            <ul>
+                @for(puzzle:Puzzle <- puzzles){
+                    <li>@puzzle.productId : @puzzle.name : @puzzle.categoryId : @puzzle.brandId</li>
+                }
+            </ul>
+        </div>
+        <div>
+            <p>puzzleCategories: @{puzzleCategories.length}</p>
+            <ul>
+                @for(puzzleCategory:PuzzleCategory <- puzzleCategories){
+                    <li>@puzzleCategory.category_id : @puzzleCategory.category_name</li>
+                }
+            </ul>
+        </div>
+        <div>
+            <p>puzzleBrands: @{puzzleBrands.length}</p>
+            <ul>
+                @for(puzzleBrand:PuzzleBrand <- puzzleBrands){
+                    <li>@puzzleBrand.category_id : @puzzleBrand.category_name</li>
+                }
+            </ul>
         </div>
 
         <form name="submitForm" ng-submit="submitResult()">
