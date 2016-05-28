@@ -10,10 +10,13 @@
     @if(cid == "") {
         <div id="header-menu" ng-controller="AuthCtrl">
             <span ng-hide="isLoggingin">
-                <a href="/login" ng-hide="isLoggingin">ログイン</a> / <a href="/join" ng-hide="isLoggingin">会員登録</a>
+                <a href="@routes.HomeController.login" ng-hide="isLoggingin">ログイン</a> /
+                <a href="@routes.HomeController.join" ng-hide="isLoggingin">会員登録</a>
             </span>
             <span ng-show="isLoggingin">
-                <a href="/user/{{ userData.username }}" ng-show="isLoggingin">マイページ</a> / <a href="/setting" ng-show="isLoggingin">設定</a> / <a href="/logout" ng-show="isLoggingin">ログアウト</a>
+                <a href="/user/{{ userData.username }}" ng-show="isLoggingin">マイページ</a> /
+                <a href="@routes.SettingController.setting" ng-show="isLoggingin">設定</a> /
+                <a href="@routes.HomeController.logout" ng-show="isLoggingin">ログアウト</a>
             </span>
         </div>
     } else {

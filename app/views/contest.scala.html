@@ -12,7 +12,7 @@
 @filterjs()
 @contestjs(cid)
 <script>
-app.controller('ContestIndexCtrl', ['$scope', 'Auth', function($scope, Auth) {
+app.controller('ContestIndexCtrl', ['$scope', function($scope) {
     $scope.eventsDone = {};
     $scope.contestIndexLoaded = true;
 
@@ -43,10 +43,6 @@ app.controller('ContestIndexCtrl', ['$scope', 'Auth', function($scope, Auth) {
             } else {
                 console.error('Undefined contest: @{cid}');
             }
-        });
-    } else {
-        $scope.$apply(function() {
-            $scope.contestIndexLoaded = true;
         });
     }
 }]);
@@ -85,11 +81,11 @@ app.controller('ContestIndexCtrl', ['$scope', 'Auth', function($scope, Auth) {
         <p ng-if="countdown < 0">
             すでに終了したコンテストです。
         </p>
-        <p ng-if="countdown > 0">
+        <p class="color-error" ng-if="countdown > 0">
             このコンテストはまだ開始されていません。
         </p>
 
-        <table class="table">
+        <table class="table" ng-if="0 <= countdown">
             <thead>
                 <tr>
                     <th>競技種目</th>
@@ -106,12 +102,16 @@ app.controller('ContestIndexCtrl', ['$scope', 'Auth', function($scope, Auth) {
                         <a href="/contest/@cid/{{ e | removeHead }}/timer" ng-if="countdown == 0 && authData != null && eventsDone[e] == 'timer'">再開する</a>
                         <a href="/contest/@cid/{{ e | removeHead }}/form" ng-if="countdown == 0 && authData != null && eventsDone[e] == 'form'">再開する</a>
                         <span ng-if="countdown == 0 && authData != null && eventsDone[e] == true">参加済みです</span>
-                        <span ng-if="countdown == 0 && authData == null">参加するにはログインしてださい</span>
+                        <a href="@routes.HomeController.login" ng-if="countdown == 0 && authData == null">ログインして参加してください</a>
                         <span ng-if="countdown != 0">現在このコンテストには参加できません</span>
                     </td>
                 </tr>
             </tbody>
         </table>
+
+        <div ng-if="countdown < 0">
+            ここに結果を表示。
+        </div>
 
         @* <!--<p>@cid -> contestData:</p>
         <pre>{{ contestData | json }}</pre>--> *@

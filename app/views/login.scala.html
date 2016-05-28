@@ -70,6 +70,10 @@ app.controller('AuthLoginCtrl', ['$scope', 'Auth', function($scope, Auth) {
             エラー: {{ error }}
         </div>
 
+        <p>
+            <a href="@routes.HomeController.join">アカウントを新規作成する</a>
+        </p>
+
         <form name="loginForm" ng-submit="login()">
             <div>
                 <label>メールアドレス</label>

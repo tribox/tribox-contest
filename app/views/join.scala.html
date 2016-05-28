@@ -74,15 +74,16 @@ app.controller('AuthJoinCtrl', ['$scope', 'Auth', function($scope, Auth) {
         </div>
 
         <p>
-            メールアドレスを入力してください。
+            メールアドレスを入力してください。<br>
             入力されたメールアドレス宛てに初期パスワードが記載されたメールが送信されます
-            (送信元: noreply@@@{firebaseappContest}.firebaseapp.com)。
-            初期パスワードでログインしてパスワードを変更してください。
+            (送信元: noreply@@@{firebaseappContest}.firebaseapp.com)。<br>
+            初期パスワードでログインしてパスワードを変更してください。<br>
+            すでにアカウントを作成済みの場合は、<a href="@routes.HomeController.login">ログインページ</a>からログインしてください。
         </p>
 
         <form name="joinForm" ng-submit="createUser()">
             <div>
-                <label>Email</label>
+                <label>メールアドレス</label>
                 <input class="form-control" type="email" name="email" ng-model="email">
             </div>
             @* <!--<span ng-show="joinForm.email.$error.email">Not valid email!</span>
