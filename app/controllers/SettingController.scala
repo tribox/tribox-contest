@@ -11,36 +11,24 @@ import play.api.Play.current
  * application's setting pages.
  */
 @Singleton
-class SettingController @Inject() extends Controller {
+class SettingController @Inject() extends HomeController {
 
     /**
      * Setting: Setting / First setting / Other settings
      */
     def setting = Action {
-        val contestName = Play.application.configuration.getString("contest.name").getOrElse("tribox Contest")
-        val contestUrl = Play.application.configuration.getString("contest.url").getOrElse("https://contest.tribox.com/")
-        val firebaseappContest = Play.application.configuration.getString("firebaseapp.contest").getOrElse("tribox-contest")
-        Ok(views.html.setting(contestName, contestUrl, firebaseappContest))
+        Ok(views.html.setting(getContestName, getContestUrl, getFirebaseappContest))
     }
 
     def settingfirst = Action {
-        val contestName = Play.application.configuration.getString("contest.name").getOrElse("tribox Contest")
-        val contestUrl = Play.application.configuration.getString("contest.url").getOrElse("https://contest.tribox.com/")
-        val firebaseappContest = Play.application.configuration.getString("firebaseapp.contest").getOrElse("tribox-contest")
-        Ok(views.html.settingfirst(contestName, contestUrl, firebaseappContest))
+        Ok(views.html.settingfirst(getContestName, getContestUrl, getFirebaseappContest))
     }
 
     def settingemail = Action {
-        val contestName = Play.application.configuration.getString("contest.name").getOrElse("tribox Contest")
-        val contestUrl = Play.application.configuration.getString("contest.url").getOrElse("https://contest.tribox.com/")
-        val firebaseappContest = Play.application.configuration.getString("firebaseapp.contest").getOrElse("tribox-contest")
-        Ok(views.html.settingemail(contestName, contestUrl, firebaseappContest))
+        Ok(views.html.settingemail(getContestName, getContestUrl, getFirebaseappContest))
     }
 
     def settingpassword = Action {
-        val contestName = Play.application.configuration.getString("contest.name").getOrElse("tribox Contest")
-        val contestUrl = Play.application.configuration.getString("contest.url").getOrElse("https://contest.tribox.com/")
-        val firebaseappContest = Play.application.configuration.getString("firebaseapp.contest").getOrElse("tribox-contest")
-        Ok(views.html.settingpassword(contestName, contestUrl, firebaseappContest))
+        Ok(views.html.settingpassword(getContestName, getContestUrl, getFirebaseappContest))
     }
 }

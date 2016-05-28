@@ -11,43 +11,28 @@ import play.api.Play.current
  * application's contest pages.
  */
 @Singleton
-class ContestController @Inject() extends Controller {
+class ContestController @Inject() extends HomeController {
 
     /**
      * Contest pages
      */
     def contest(cid: String) = Action {
-        val contestName = Play.application.configuration.getString("contest.name").getOrElse("tribox Contest")
-        val contestUrl = Play.application.configuration.getString("contest.url").getOrElse("https://contest.tribox.com/")
-        val firebaseappContest = Play.application.configuration.getString("firebaseapp.contest").getOrElse("tribox-contest")
-        Ok(views.html.contest(cid, contestName, contestUrl, firebaseappContest))
+        Ok(views.html.contest(cid, getContestName, getContestUrl, getFirebaseappContest))
     }
 
     def choose(cid: String, eid: String) = Action {
-        val contestName = Play.application.configuration.getString("contest.name").getOrElse("tribox Contest")
-        val contestUrl = Play.application.configuration.getString("contest.url").getOrElse("https://contest.tribox.com/")
-        val firebaseappContest = Play.application.configuration.getString("firebaseapp.contest").getOrElse("tribox-contest")
-        Ok(views.html.contestchoose(cid, eid, contestName, contestUrl, firebaseappContest))
+        Ok(views.html.contestchoose(cid, eid, getContestName, getContestUrl, getFirebaseappContest))
     }
 
     def form(cid: String, eid: String) = Action {
-        val contestName = Play.application.configuration.getString("contest.name").getOrElse("tribox Contest")
-        val contestUrl = Play.application.configuration.getString("contest.url").getOrElse("https://contest.tribox.com/")
-        val firebaseappContest = Play.application.configuration.getString("firebaseapp.contest").getOrElse("tribox-contest")
-        Ok(views.html.contestform(cid, eid, contestName, contestUrl, firebaseappContest))
+        Ok(views.html.contestform(cid, eid, getContestName, getContestUrl, getFirebaseappContest))
     }
 
     def timer(cid: String, eid: String) = Action {
-        val contestName = Play.application.configuration.getString("contest.name").getOrElse("tribox Contest")
-        val contestUrl = Play.application.configuration.getString("contest.url").getOrElse("https://contest.tribox.com/")
-        val firebaseappContest = Play.application.configuration.getString("firebaseapp.contest").getOrElse("tribox-contest")
-        Ok(views.html.timer(cid, eid, contestName, contestUrl, firebaseappContest))
+        Ok(views.html.timer(cid, eid, getContestName, getContestUrl, getFirebaseappContest))
     }
 
     def confirm(cid: String, eid: String) = Action {
-        val contestName = Play.application.configuration.getString("contest.name").getOrElse("tribox Contest")
-        val contestUrl = Play.application.configuration.getString("contest.url").getOrElse("https://contest.tribox.com/")
-        val firebaseappContest = Play.application.configuration.getString("firebaseapp.contest").getOrElse("tribox-contest")
         val cubes = Cube.getAll
         val puzzleCategories = PuzzleCategory.getAll
         val puzzleBrands = PuzzleBrand.getAll
@@ -90,7 +75,7 @@ class ContestController @Inject() extends Controller {
         val p = Puzzle(prevId, name, categoryId, brandId);
         puzzles :+= p;
 
-        Ok(views.html.contestconfirm(cid, eid, contestName, contestUrl, firebaseappContest, puzzles, puzzleCategories, puzzleBrands))
-        //Ok(views.html.contestconfirm(cid, eid, contestName, contestUrl, firebaseappContest, cubes, puzzles, puzzleCategories, puzzleBrands))
+        Ok(views.html.contestconfirm(cid, eid, getContestName, getContestUrl, getFirebaseappContest, puzzles, puzzleCategories, puzzleBrands))
+        //Ok(views.html.contestconfirm(cid, eid, getContestName, getContestUrl, getFirebaseappContest, cubes, puzzles, puzzleCategories, puzzleBrands))
     }
 }

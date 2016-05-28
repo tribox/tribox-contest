@@ -11,16 +11,13 @@ import play.api.Play.current
  * application's user pages.
  */
 @Singleton
-class UserController @Inject() extends Controller {
+class UserController @Inject() extends HomeController {
 
     /**
      * User pages
      */
     def user(id: String) = Action {
-        val contestName = Play.application.configuration.getString("contest.name").getOrElse("tribox Contest")
-        val contestUrl = Play.application.configuration.getString("contest.url").getOrElse("https://contest.tribox.com/")
-        val firebaseappContest = Play.application.configuration.getString("firebaseapp.contest").getOrElse("tribox-contest")
-        Ok(views.html.user(id, contestName, contestUrl, firebaseappContest))
+        Ok(views.html.user(id, getContestName, getContestUrl, getFirebaseappContest))
     }
 
 }

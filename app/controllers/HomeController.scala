@@ -12,55 +12,46 @@ import play.api.Play.current
  */
 @Singleton
 class HomeController @Inject() extends Controller {
+    def getContestName(): String = {
+        return Play.application.configuration.getString("contest.name").getOrElse("tribox Contest")
+    }
+    def getContestUrl(): String = {
+        return Play.application.configuration.getString("contest.url").getOrElse("https://contest.tribox.com/")
+    }
+    def getFirebaseappContest(): String = {
+        return Play.application.configuration.getString("firebaseapp.contest").getOrElse("tribox-contest")
+    }
 
     /**
      * Home
      */
     def index = Action {
-        val contestName = Play.application.configuration.getString("contest.name").getOrElse("tribox Contest")
-        val contestUrl = Play.application.configuration.getString("contest.url").getOrElse("https://contest.tribox.com/")
-        val firebaseappContest = Play.application.configuration.getString("firebaseapp.contest").getOrElse("tribox-contest")
-        Ok(views.html.index(contestName, contestUrl, firebaseappContest))
+        Ok(views.html.index(getContestName, getContestUrl, getFirebaseappContest))
     }
 
     /**
      * Auth: Join / Login / Logout / Forgot password
      */
     def join = Action {
-        val contestName = Play.application.configuration.getString("contest.name").getOrElse("tribox Contest")
-        val contestUrl = Play.application.configuration.getString("contest.url").getOrElse("https://contest.tribox.com/")
-        val firebaseappContest = Play.application.configuration.getString("firebaseapp.contest").getOrElse("tribox-contest")
-        Ok(views.html.join(contestName, contestUrl, firebaseappContest))
+        Ok(views.html.join(getContestName, getContestUrl, getFirebaseappContest))
     }
 
     def login = Action {
-        val contestName = Play.application.configuration.getString("contest.name").getOrElse("tribox Contest")
-        val contestUrl = Play.application.configuration.getString("contest.url").getOrElse("https://contest.tribox.com/")
-        val firebaseappContest = Play.application.configuration.getString("firebaseapp.contest").getOrElse("tribox-contest")
-        Ok(views.html.login(contestName, contestUrl, firebaseappContest))
+        Ok(views.html.login(getContestName, getContestUrl, getFirebaseappContest))
     }
 
     def logout = Action {
-        val contestName = Play.application.configuration.getString("contest.name").getOrElse("tribox Contest")
-        val contestUrl = Play.application.configuration.getString("contest.url").getOrElse("https://contest.tribox.com/")
-        val firebaseappContest = Play.application.configuration.getString("firebaseapp.contest").getOrElse("tribox-contest")
-        Ok(views.html.logout(contestName, contestUrl, firebaseappContest))
+        Ok(views.html.logout(getContestName, getContestUrl, getFirebaseappContest))
     }
 
     def forgot = Action {
-        val contestName = Play.application.configuration.getString("contest.name").getOrElse("tribox Contest")
-        val contestUrl = Play.application.configuration.getString("contest.url").getOrElse("https://contest.tribox.com/")
-        val firebaseappContest = Play.application.configuration.getString("firebaseapp.contest").getOrElse("tribox-contest")
-        Ok(views.html.forgot(contestName, contestUrl, firebaseappContest))
+        Ok(views.html.forgot(getContestName, getContestUrl, getFirebaseappContest))
     }
 
     /**
      * Timer for practice
      */
     def timer = Action {
-        val contestName = Play.application.configuration.getString("contest.name").getOrElse("tribox Contest")
-        val contestUrl = Play.application.configuration.getString("contest.url").getOrElse("https://contest.tribox.com/")
-        val firebaseappContest = Play.application.configuration.getString("firebaseapp.contest").getOrElse("tribox-contest")
-        Ok(views.html.timer("", "", contestName, contestUrl, firebaseappContest))
+        Ok(views.html.timer("", "", getContestName, getContestUrl, getFirebaseappContest))
     }
 }
