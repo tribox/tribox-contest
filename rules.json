@@ -208,12 +208,12 @@
                     "$user_id": {
                         ".read": "auth.uid === $user_id || root.child('contests').child($contest_id).child('endAt').val() < now",
                         ".write": "auth.uid === $user_id && root.child('contests').child($contest_id).child('beginAt').val() <= now && now <= root.child('contests').child($contest_id).child('endAt').val()",
-                        ".validate": "root.child('users').hasChild($user_id)",
+                        ".validate": "root.child('users').hasChild($user_id) && newData.hasChildren(['beginAt'])",
                         "beginAt": {
                             ".validate": "newData.isNumber() && 0 <= newData.val()"
                         },
                         "endAt": {
-                            ".validate": "newData.isNumber() && 0 <= newData.val()"
+                            ".validate": "newData.isNumber() && newData.parent().child('beginAt').val() <= newData.val()"
                         },
                         "type": {
                             ".validate": "newData.isString() && (newData.val() == 'timer' || newData.val() == 'form')"

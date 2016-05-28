@@ -105,7 +105,7 @@ app.controller('ContestIndexCtrl', ['$scope', 'Auth', function($scope, Auth) {
                         <a href="/contest/@cid/{{ e | removeHead }}" ng-if="countdown == 0 && authData != null && eventsDone[e] == false">参加する</a>
                         <a href="/contest/@cid/{{ e | removeHead }}/timer" ng-if="countdown == 0 && authData != null && eventsDone[e] == 'timer'">再開する</a>
                         <a href="/contest/@cid/{{ e | removeHead }}/form" ng-if="countdown == 0 && authData != null && eventsDone[e] == 'form'">再開する</a>
-                        <span ng-if="countdown == 0 && authData == null && authData != null && eventsDone[e] == true">参加済みです</span>
+                        <span ng-if="countdown == 0 && authData != null && eventsDone[e] == true">参加済みです</span>
                         <span ng-if="countdown == 0 && authData == null">参加するにはログインしてださい</span>
                         <span ng-if="countdown != 0">現在このコンテストには参加できません</span>
                     </td>

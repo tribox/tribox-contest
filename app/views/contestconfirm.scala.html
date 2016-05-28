@@ -73,10 +73,33 @@ app.controller('ContestConfirmCtrl', ['$scope', 'Auth', function($scope, Auth) {
     };
 
     $scope.submitResult = function() {
-        // Calc priority: (record as string) + (best as string)
-        var priority = toFixedForPriority($scope.result.record) + toFixedForPriority($scope.result.best)
-        console.dir($scope.result);
-        console.log(priority);
+        var authData = contestRef.getAuth();
+        if (authData) {
+            // Calc priority: (record as string) + (best as string)
+            // The letter '+' forces it to be string
+            var priority = toFixedForPriority($scope.result.record) + '+' + toFixedForPriority($scope.result.best);
+
+            // Save
+            contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).update({
+                'endAt': Firebase.ServerValue.TIMESTAMP,
+                'result': $scope.result
+            }, function(error) {
+                if (!error) {
+                    // And set priority
+                    contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).setPriority(priority, function(error) {
+                        if (!error) {
+                            console.log('Complete!');
+                        } else {
+                            console.error(error);
+                        }
+                    });
+                } else {
+                    console.error(error);
+                }
+            });
+        } else {
+            location.href = '@routes.HomeController.index';
+        }
     };
 
     var turnOnButtons = function(format, data) {
