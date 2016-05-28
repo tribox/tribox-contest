@@ -220,6 +220,7 @@
                         },
                         "details": {
                             "$details_seq": {
+                                ".validate": "newData.hasChildren(['record', 'condition'])",
                                 "record": {
                                     ".validate": "newData.isNumber() && 0 <= newData.val() && newData.val() < 10000"
                                 },
@@ -232,6 +233,7 @@
                             }
                         },
                         "result": {
+                            ".validate": "newData.hasChildren(['record', 'best', 'condition'])",
                             "record": {
                                 ".validate": "newData.isNumber() && 0 <= newData.val() && newData.val() < 10000"
                             },
@@ -243,6 +245,21 @@
                             },
                             "$other": {
                                 ".validate": false
+                            }
+                        },
+                        "puzzle": {
+                            ".validate": "newData.hasChildren(['type'])",
+                            "type": {
+                                ".validate": "newData.isString() && (newData.val() == 'database' || newData.val() == 'nodatabase' || newData.val() == 'unknown')"
+                            },
+                            "brand": {
+                                ".validate": "newData.isNumber() && 0 < newData.val()"
+                            },
+                            "product": {
+                                ".validate": "newData.isNumber() && 0 < newData.val()"
+                            },
+                            "input": {
+                                ".validate": "newData.isString() && newData.val().length < 64"
                             }
                         },
                         "$other": {

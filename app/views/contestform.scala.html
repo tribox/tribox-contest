@@ -244,7 +244,15 @@ app.controller('ContestFormCtrl', ['$scope', 'Auth', function($scope, Auth) {
     </div>
     <div ng-show="authLoaded && contestLoaded && contestFormLoaded">
 
-        @authinfo(eid=eid)
+    @authinfo(eid=eid)
+
+    <div ng-hide="existsContest">
+        <p class="color-error">
+            存在しないコンテストです。
+        </p>
+    </div>
+
+    <div ng-show="existsContest">
 
         @contestscrambles(eid=eid)
         @contesttimeform(eid=eid)
@@ -274,7 +282,7 @@ app.controller('ContestFormCtrl', ['$scope', 'Auth', function($scope, Auth) {
         <pre>{{ resultsForm | json }}</pre>
         <pre>{{ results | json }}</pre>--> *@
 
-    </div></div></div></div>
+    </div></div></div></div></div>
 
     @bodyfooter(contestName)
 </div></body>

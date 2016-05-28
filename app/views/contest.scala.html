@@ -86,6 +86,8 @@ app.controller('ContestIndexCtrl', ['$scope', function($scope) {
     </div>
     <div ng-show="authLoaded && contestLoaded && contestIndexLoaded">
 
+    @authinfo()
+
     <div ng-hide="existsContest">
         <p class="color-error">
             存在しないコンテストです。
@@ -93,8 +95,6 @@ app.controller('ContestIndexCtrl', ['$scope', function($scope) {
     </div>
 
     <div ng-show="existsContest">
-
-        @authinfo()
 
         <h2>{{ contestData.contestName }}</h2>
 
@@ -134,12 +134,12 @@ app.controller('ContestIndexCtrl', ['$scope', function($scope) {
                     <td>{{ events[e].name }}</td>
                     <td>{{ events[e].method | uppercaseHead }} of {{ events[e].attempts }}</td>
                     <td>
-                        <a href="/contest/@cid/{{ e | removeHead }}" ng-if="countdown == 0 && authData != null && eventsDone[e] == false">参加する</a>
-                        <a href="/contest/@cid/{{ e | removeHead }}/timer" ng-if="countdown == 0 && authData != null && eventsDone[e] == 'timer'">再開する</a>
-                        <a href="/contest/@cid/{{ e | removeHead }}/form" ng-if="countdown == 0 && authData != null && eventsDone[e] == 'form'">再開する</a>
-                        <span ng-if="countdown == 0 && authData != null && eventsDone[e] == true">参加済みです</span>
-                        <a href="@routes.HomeController.login" ng-if="countdown == 0 && authData == null">ログインして参加してください</a>
-                        <span ng-if="countdown != 0">現在このコンテストには参加できません</span>
+                        <a href="/contest/@cid/{{ e | removeHead }}" ng-if="countdown == 0 && authData != null && eventsDone[e] == false"><i class="fa fa-play-circle"></i> 参加する</a>
+                        <a href="/contest/@cid/{{ e | removeHead }}/timer" ng-if="countdown == 0 && authData != null && eventsDone[e] == 'timer'"><i class="fa fa-play-circle"></i> 再開する</a>
+                        <a href="/contest/@cid/{{ e | removeHead }}/form" ng-if="countdown == 0 && authData != null && eventsDone[e] == 'form'"><i class="fa fa-play-circle"></i> 再開する</a>
+                        <span ng-if="countdown == 0 && authData != null && eventsDone[e] == true"><i class="fa fa-check-circle"></i> 参加済みです</span>
+                        <a href="@routes.HomeController.login" ng-if="countdown == 0 && authData == null"><i class="fa fa-sign-in"></i> ログインして参加してください</a>
+                        <span ng-if="countdown != 0"><i class="fa fa-ban"></i> 現在このコンテストには参加できません</span>
                     </td>
                 </tr>
             </tbody>

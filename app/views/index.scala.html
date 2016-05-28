@@ -90,16 +90,21 @@ app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $fi
             開始 <i class="fa fa-calendar"></i>: {{ inProgressContest.beginAt | toDate }}<br>
             終了 <i class="fa fa-calendar"></i>: {{ inProgressContest.endAt | toDate }}
         </p>
+
         <p>
-            競技一覧:
+            開催中の競技一覧:
         </p>
         <ul>
             <li ng-repeat="e in inProgressContest.events">
                 @* <!--<a href="/contest/{{ inProgressContest.contestId }}#{{ e }}">--> *@
-                    {{ events[e].name }} ({{ events[e].method }} of {{ events[e].attempts }})
+                    {{ events[e].name }} ({{ events[e].method | uppercaseHead }} of {{ events[e].attempts }})
                 @* <!--</a>--> *@
             </li>
         </ul>
+
+        <p>
+            <a href="/contest/{{ inProgressContest.contestId }}" class="btn">コンテストに参加する</a>
+        </p>
 
         @* <!--<p>inProgressContest:</p>
         <pre>{{ inProgressContest | json }}</pre>--> *@

@@ -93,6 +93,39 @@ app.controller('ContestConfirmCtrl', ['$scope', 'Auth', function($scope, Auth) {
     $scope.submitResult = function() {
         var authData = contestRef.getAuth();
         if (authData) {
+            if (!($scope.puzzle) || !($scope.puzzle.type)) {
+                $scope.error = '使用キューブを選択してください。';
+                return;
+            }
+
+            var puzzle = { 'type': $scope.puzzle.type };
+            if ($scope.puzzle.type == 'database') {
+                if (!($scope.puzzle.brand)) {
+                    $scope.error = 'ブランドを選択してください。';
+                    return;
+                }
+                if (!($scope.puzzle.product)) {
+                    $scope.error = 'キューブを選択してください。';
+                    return;
+                }
+                puzzle.brand = parseInt($scope.puzzle.brand);
+                puzzle.product = parseInt($scope.puzzle.product);
+            } else if ($scope.puzzle.type == 'nodatabase') {
+                if (!($scope.puzzle.input) || $scope.puzzle.input.length <= 0) {
+                    $scope.error = 'キューブ名を入力してください。';
+                    return;
+                }
+                if (64 <= $scope.puzzle.input.length) {
+                    $scope.error = 'キューブ名は63文字以下で入力してください。';
+                    return;
+                }
+                puzzle.input = $scope.puzzle.input;
+            } else if ($scope.puzzle.type == 'unknown') {
+                ;
+            } else {
+                return;
+            }
+
             // Calc priority: (record as string) + (best as string)
             // The letter '+' forces it to be string
             var priority = toFixedForPriority($scope.result.record) + '+' + toFixedForPriority($scope.result.best);
@@ -100,7 +133,8 @@ app.controller('ContestConfirmCtrl', ['$scope', 'Auth', function($scope, Auth) {
             // Save
             contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).update({
                 'endAt': Firebase.ServerValue.TIMESTAMP,
-                'result': $scope.result
+                'result': $scope.result,
+                'puzzle': puzzle
             }, function(error) {
                 if (!error) {
                     // And set priority
@@ -193,51 +227,52 @@ app.controller('ContestConfirmCtrl', ['$scope', 'Auth', function($scope, Auth) {
     </div>
     <div ng-show="authLoaded && contestLoaded && contestConfirmLoaded">
 
-        @authinfo(eid=eid)
+    @authinfo(eid=eid)
 
-        @* <!--<h2>{{ contestData.contestName }}</h2>--> *@
-
-        @* <!--<p>
-            開始 <i class="fa fa-calendar"></i>: {{ contestData.beginAt | toDate }}<br>
-            終了 <i class="fa fa-calendar"></i>: {{ contestData.endAt | toDate }}
+    <div ng-hide="existsContest">
+        <p class="color-error">
+            存在しないコンテストです。
         </p>
-        <p ng-if="countdown == 0">
-            現在開催中のコンテストです。
-        </p>
-        <p ng-if="countdown < 0">
-            すでに終了したコンテストです。
-        </p>
-        <p ng-if="countdown > 0">
-            このコンテストはまだ開始されていません。
-        </p>--> *@
+    </div>
 
-        @* <!--<h3>{{ events.e@{eid}.name }}</h3>--> *@
+    <div ng-show="existsContest">
 
+        <div class="color-error margin-bottom-20" ng-if="error">
+            エラー: {{ error }}
+        </div>
+
+        <form name="submitForm" ng-submit="submitResult()">
         <div class="row">
             <div class="col md-6">
                 <label class="fancy-radio">
-                    <input name="puzzle-type" type="radio">
+                    <input name="puzzle-type" type="radio" value="database" ng-model="puzzle.type">
                     <span>使用キューブをデータベースから選択</span>
                 </label>
-                <label>ブランド</label>
-                <select class="form-control">
-                    <option>AAA</option>
-                    <option>BBB</option>
-                    <option>CCC</option>
-                </select>
-                <label>キューブ</label>
-                <select class="form-control">
-                    <option>XXX</option>
-                    <option>YYY</option>
-                    <option>ZZZ</option>
-                </select>
+                <div ng-show="puzzle.type == 'database'">
+                    <label>ブランド</label>
+                    <select class="form-control" ng-model="puzzle.brand">
+                        <option value="1">AAA</option>
+                        <option value="2">BBB</option>
+                        <option value="3">CCC</option>
+                    </select>
+                    <label>キューブ</label>
+                    <select class="form-control" ng-model="puzzle.product">
+                        <option value="1">XXX</option>
+                        <option value="2">YYY</option>
+                        <option value="3">ZZZ</option>
+                    </select>
+                </div>
+
                 <label class="fancy-radio">
-                    <input name="puzzle-type" type="radio">
+                    <input name="puzzle-type" type="radio" value="nodatabase" ng-model="puzzle.type">
                     <span>データベースに無いキューブを入力</span>
                 </label>
-                <input class="form-control" type="text">
+                <div ng-show="puzzle.type == 'nodatabase'">
+                    <input class="form-control" type="text" ng-model="puzzle.input">
+                </div>
+
                 <label class="fancy-radio">
-                    <input name="puzzle-type" type="radio">
+                    <input name="puzzle-type" type="radio" value="unknown" ng-model="puzzle.type">
                     <span>不明</span>
                 </label>
             </div>
@@ -249,13 +284,14 @@ app.controller('ContestConfirmCtrl', ['$scope', 'Auth', function($scope, Auth) {
                     {{ resultTitleAlt | uppercaseHead }}: {{ resultResultAlt }}
                 </p>
                 <p>
-                    <button class="btn" ng-click="submitResult()">この内容で送信する</button>
+                    <input type="submit" value="この内容で送信する" class="btn">
                 </p>
                 <p>
                     ビデオへのリンクはマイページから追加できます。
                 </p>
             </div>
         </div>
+        </form>
 
         @contesttimeform(eid=eid, useInput=false)
 
@@ -279,7 +315,10 @@ app.controller('ContestConfirmCtrl', ['$scope', 'Auth', function($scope, Auth) {
         <pre>{{ resultsForm | json }}</pre>
         <pre>{{ results | json }}</pre>--> *@
 
-    </div></div></div></div>
+        <p>puzzle:</p>
+        <pre>{{ puzzle | json }}</pre>
+
+    </div></div></div></div></div>
 
     @bodyfooter(contestName)
 </div></body>
