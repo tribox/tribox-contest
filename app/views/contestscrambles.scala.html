@@ -1,12 +1,20 @@
-@(eid: String)
+@(eid: String, showIndividual: Boolean = false)
 
         <table class="scrambles">
             <thead>
-                <th colspan="2">Scrambles:</th>
+                <tr>
+                    @if(showIndividual) {
+                        <th>{{ scrambleIndexText }} Scramble:</th>
+                    } else {
+                        <th colspan="2">Scrambles:</th>
+                    }
+                </tr>
             </thead>
             <tbody>
                 <tr ng-repeat="s in scramblesData.e@{eid}" id="scramble-{{ $index }}">
-                    <td>{{ $index + 1 | ordinal }}:</td>
+                    @if(!showIndividual) {
+                        <td>{{ $index + 1 | ordinal }}:</td>
+                    }
                     <td>{{ s }}</td>
                 </tr>
             </tbody>

@@ -29,18 +29,14 @@ app.controller('ContestFormCtrl', ['$scope', 'Auth', function($scope, Auth) {
                     'beginAt': Firebase.ServerValue.TIMESTAMP,
                     'type': 'form'
                 }, function(error) {
-                    if (!error) {
-                        $scope.$apply(function() {
-                            $scope.contestFormLoaded = true;
-                        });
-                    } else {
+                    if (error) {
                         // 不正なコンテストまたは不正な競技イベントでスタート記録が書き込めない場合
                         // ここでエラーになる。
                         console.error(error);
-                        $scope.$apply(function() {
-                            $scope.contestFormLoaded = true;
-                        });
                     }
+                    $scope.$apply(function() {
+                        $scope.contestFormLoaded = true;
+                    });
                 });
             } else {
                 // Read current data
@@ -58,13 +54,11 @@ app.controller('ContestFormCtrl', ['$scope', 'Auth', function($scope, Auth) {
                                     $scope.applyDNF(index);
                                 }
                             });
-                            $scope.contestFormLoaded = true;
-                        });
-                    } else {
-                        $scope.$apply(function() {
-                            $scope.contestFormLoaded = true;
                         });
                     }
+                    $scope.$apply(function() {
+                        $scope.contestFormLoaded = true;
+                    });
                 }, function(error) {
                     console.error(error);
                 });

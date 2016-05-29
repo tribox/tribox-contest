@@ -12,7 +12,7 @@ GET     /logout                     controllers.HomeController.logout
 GET     /forgot                     controllers.HomeController.forgot
 
 # Timer (for practice)
-GET     /timer                      controllers.HomeController.timer
+#GET     /timer                      controllers.HomeController.timer
 
 # Setting: Setting / First setting
 GET     /setting                    controllers.SettingController.setting

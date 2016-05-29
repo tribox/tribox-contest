@@ -10,20 +10,118 @@
 @basejs(firebaseappContest)
 @authjs(redirectLogin="", redirectLogout="", checkFirst=true)
 @filterjs()
-@contestjs(cid)
+@contestjs(cid=cid, eid=eid)
+<script>
+app.controller('ContestTimerCtrl', ['$scope', 'Auth', function($scope, Auth) {
+    $scope.contestTimerLoaded = false;
+
+    // Results
+    $scope.results = [];
+
+    // Set begin time
+    var authData = contestRef.getAuth();
+    if (authData) {
+        // do not overwrite
+        contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).once('value', function(snapResult) {
+            if (!(snapResult.exists())) {
+                contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).set({
+                    'beginAt': Firebase.ServerValue.TIMESTAMP,
+                    'type': 'timer'
+                }, function(error) {
+                    if (error) {
+                        // 不正なコンテストまたは不正な競技イベントでスタート記録が書き込めない場合
+                        // ここでエラーになる。
+                        console.error(error);
+                    }
+                    $scope.$apply(function() {
+                        $scope.contestTimerLoaded = true;
+                    });
+                });
+            } else {
+                // Read current data
+                contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).child('details').once('value', function(snapDetails) {
+                    if (snapDetails.exists()) {
+                        $scope.$apply(function() {
+                            $scope.results = snapDetails.val();
+                            $scope.results.forEach(function(result, index) {
+                                if ($scope.results[index].condition == 'OK') {
+                                    ;//$scope.applyOK(index);
+                                } else if ($scope.results[index].condition == '+2') {
+                                    ;//$scope.applyPenalty(index);
+                                } else if ($scope.results[index].condition == 'DNF') {
+                                    ;//$scope.applyDNF(index);
+                                }
+                            });
+                        });
+                    }
+                    $scope.$apply(function() {
+                        $scope.contestTimerLoaded = true;
+                    });
+                }, function(error) {
+                    console.error(error);
+                });
+            }
+        }, function(error) {
+            console.error(error);
+        });
+    } else {
+        location.href = '@routes.HomeController.index';
+    }
+}]);
+</script>
 </head>
 <body><div class="container">
     @bodyheader(title, contestName, cid=cid)
 
-    <div ng-controller="AuthCtrl"><div ng-controller="ContestCtrl">
-    <div ng-hide="authLoaded && contestLoaded">
+    <div ng-controller="AuthCtrl"><div ng-controller="ContestCtrl"><div ng-controller="ContestTimerCtrl">
+    <div ng-hide="authLoaded && contestLoaded && contestTimerLoaded">
         <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
         <span class="sr-only">Loading...</span>
         Loading...
     </div>
-    <div ng-show="authLoaded && contestLoaded">
+    <div ng-show="authLoaded && contestLoaded && contestTimerLoaded">
 
-        @authinfo(eid=eid)
+    @authinfo(eid=eid)
+
+    <div ng-hide="existsContest">
+        <p class="color-error">
+            存在しないコンテストです。
+        </p>
+    </div>
+    <div ng-hide="existsEvent">
+        <p class="color-error">
+            存在しない競技です。
+        </p>
+    </div>
+    <div ng-hide="inProgress.contest == 'c@{cid}'">
+        <p class="color-error">
+            開催中のコンテストではありません。
+        </p>
+    </div>
+
+    <div ng-show="existsContest && existsEvent && inProgress.contest == 'c@{cid}'">
+
+        @contestscrambles(eid=eid, showIndividual=true)
+
+        <div id="timerArea">
+            <div id="timerText">0.000</div>
+
+            <div id="timerNote">スペースキーを押してインスペクションタイムをスタート</div>
+
+            <div class="hide">
+                <button id="start">START</button>
+                <button id="stop">STOP</button>
+                <button id="reset">RESET</button>
+            </div>
+
+            <div id="keydown"></div>
+            <div id="keyup"></div>
+            <div id="info"></div>
+        </div>
+
+        @contesttimeform(eid=eid, useInput=false)
+
+    </div></div></div></div></div>
 
 <style>
 body {
@@ -33,13 +131,16 @@ body {
             user-select: none;
 }
 #timerArea {
-    font-family: Arial, sans-serif;
+    font-family: Arial, sans-serif !important;
     text-align: center;
 }
 #timerText {
     font-size: 128px;
-    margin: 80px auto;
+    margin: 60px auto;
     text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+#timerNote {
+    margin-bottom: 40px;
 }
 .wait {
     color: #E74C3C !important;
@@ -48,25 +149,6 @@ body {
     color: #1BBC9B !important;
 }
 </style>
-
-        @contestscrambles(eid=eid)
-
-        <div id="timerArea">
-            <div id="timerText">0.000</div>
-
-            <button id="start">START</button>
-            <button id="stop">STOP</button>
-            <button id="reset">RESET</button>
-
-            <div id="keydown"></div>
-            <div id="keyup"></div>
-            <div id="info"></div>
-        </div>
-
-        @contesttimeform(eid=eid)
-
-    </div></div></div>
-
 <script>
 (function() {
     'use strict';
