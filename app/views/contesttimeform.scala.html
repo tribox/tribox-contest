@@ -10,7 +10,8 @@
                         <input id="result-{{ $index }}" ng-model="resultsForm[$index]" ng-change="change($index)" type="text" placeholder="-:--.---" required>
                         <span class="hide color-error result-note"></span>
                     } else {
-                        <span id="result-{{ $index }}" class="result-detail">{{ resultDetail[$index] }}</span>
+                        <span id="result-{{ $index }}" class="result-detail" ng-if="resultDetail[$index]">{{ resultDetail[$index] }}</span>
+                        <span id="result-{{ $index }}" class="result-detail yet" ng-if="!(resultDetail[$index])">-:--.----</span>
                     }
                     </div>
                     <div class="timeform-cond">
@@ -33,7 +34,8 @@
                         <input id="result-{{ $index }}" ng-model="resultsForm[$index]" ng-change="change()" type="text" placeholder="-:--.---" required>
                         <span class="hide color-error result-note"></span>
                     } else {
-                        <span id="result-{{ $index }}" class="result-detail">{{ resultDetail[$index] }}</span>
+                        <span id="result-{{ $index }}" class="result-detail" ng-if="resultDetail[$index]">{{ resultDetail[$index] }}</span>
+                        <span id="result-{{ $index }}" class="result-detail yet" ng-if="!(resultDetail[$index])">-:--.----</span>
                     }
                     </div>
                     <div class="timeform-cond">

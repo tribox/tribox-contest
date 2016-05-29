@@ -263,6 +263,9 @@ table.scrambles th:first-child {
 .timeform-time span.result-detail {
     font-size: 24px;
 }
+.timeform-time span.yet {
+    color: #DDD;
+}
 .timeform-time span.result-note {
     font-size: 12px;
 }
