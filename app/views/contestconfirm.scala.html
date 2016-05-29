@@ -12,7 +12,7 @@
 @basejs(firebaseappContest)
 @authjs(redirectLogin="", redirectLogout="", checkFirst=true)
 @filterjs()
-@contestjs(cid)
+@contestjs(cid=cid, eid=eid)
 <script>
 app.controller('ContestConfirmCtrl', ['$scope', 'Auth', function($scope, Auth) {
     $scope.result = null;
@@ -25,21 +25,25 @@ app.controller('ContestConfirmCtrl', ['$scope', 'Auth', function($scope, Auth) {
     $scope.resultResultAlt = null;
 
     contestRef.child('events').child('e@{eid}').once('value', function(snapEvent) {
-        var e = snapEvent.val();
-        $scope.$apply(function() {
-            $scope.resultTitle = e.method + ' of ' + e.attempts;
-            if (e.method == 'average') {
-                $scope.resultTitleAlt = 'best';
-            }
-        });
+        if (!(snapEvent.exists())) {
+            $scope.$apply(function() {
+                $scope.contestConfirmLoaded = true;
+            });
+        } else {
+            var e = snapEvent.val();
+            $scope.$apply(function() {
+                $scope.resultTitle = e.method + ' of ' + e.attempts;
+                if (e.method == 'average') {
+                    $scope.resultTitleAlt = 'best';
+                }
+            });
 
-        // Read personal results
-        var authData = contestRef.getAuth();
-        if (authData) {
-            contestRef.child('contests').child('c@{cid}').once('value', function(snapContest) {
-                if (snapContest.exists()) {
-                    var contestData = snapContest.val();
-                    contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).once('value', function(snapResult) {
+            // Read personal results
+            var authData = contestRef.getAuth();
+            if (authData) {
+                //var contestData = snapContest.val();
+                contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).once('value', function(snapResult) {
+                    if (snapResult.exists()) {
                         var resultData = snapResult.val();
                         $scope.$apply(function() {
                             $scope.result = calcResult(e.method, e.format, resultData.details);
@@ -63,19 +67,19 @@ app.controller('ContestConfirmCtrl', ['$scope', 'Auth', function($scope, Auth) {
                             $scope.resultDetail = turnOnButtons(e.format, resultData.details);
                             $scope.contestConfirmLoaded = true;
                         });
-                    }, function(error) {
-                        console.error(error);
-                    });
-                } else {
-                    console.error('Undefined contest: @{cid}');
-                }
-            }, function(error) {
-                console.error(error);
-            });
-        } else {
-            $scope.$apply(function() {
-                $scope.contestConfirmLoaded = true;
-            });
+                    } else {
+                        $scope.$apply(function() {
+                            $scope.contestConfirmLoaded = true;
+                        });
+                    }
+                }, function(error) {
+                    console.error(error);
+                });
+            } else {
+                $scope.$apply(function() {
+                    $scope.contestConfirmLoaded = true;
+                });
+            }
         }
     }, function(error) {
         console.error(error);
@@ -241,8 +245,18 @@ app.controller('ContestConfirmCtrl', ['$scope', 'Auth', function($scope, Auth) {
             存在しないコンテストです。
         </p>
     </div>
+    <div ng-hide="existsEvent">
+        <p class="color-error">
+            存在しない競技です。
+        </p>
+    </div>
+    <div ng-hide="inProgress.contest == 'c@{cid}'">
+        <p class="color-error">
+            開催中のコンテストではありません。
+        </p>
+    </div>
 
-    <div ng-show="existsContest">
+    <div ng-show="existsContest && existsEvent && inProgress.contest == 'c@{cid}'">
 
         <div class="color-error margin-bottom-20" ng-if="error">
             エラー: {{ error }}

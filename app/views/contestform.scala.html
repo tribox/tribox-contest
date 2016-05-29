@@ -10,7 +10,7 @@
 @basejs(firebaseappContest)
 @authjs(redirectLogin="", redirectLogout="", checkFirst=true)
 @filterjs()
-@contestjs(cid)
+@contestjs(cid=cid, eid=eid)
 <script>
 app.controller('ContestFormCtrl', ['$scope', 'Auth', function($scope, Auth) {
     $scope.contestFormLoaded = false;
@@ -34,7 +34,12 @@ app.controller('ContestFormCtrl', ['$scope', 'Auth', function($scope, Auth) {
                             $scope.contestFormLoaded = true;
                         });
                     } else {
+                        // 不正なコンテストまたは不正な競技イベントでスタート記録が書き込めない場合
+                        // ここでエラーになる。
                         console.error(error);
+                        $scope.$apply(function() {
+                            $scope.contestFormLoaded = true;
+                        });
                     }
                 });
             } else {
@@ -251,8 +256,18 @@ app.controller('ContestFormCtrl', ['$scope', 'Auth', function($scope, Auth) {
             存在しないコンテストです。
         </p>
     </div>
+    <div ng-hide="existsEvent">
+        <p class="color-error">
+            存在しない競技です。
+        </p>
+    </div>
+    <div ng-hide="inProgress.contest == 'c@{cid}'">
+        <p class="color-error">
+            開催中のコンテストではありません。
+        </p>
+    </div>
 
-    <div ng-show="existsContest">
+    <div ng-show="existsContest && existsEvent && inProgress.contest == 'c@{cid}'">
 
         @contestscrambles(eid=eid)
         @contesttimeform(eid=eid)

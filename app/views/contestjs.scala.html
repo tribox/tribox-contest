@@ -1,4 +1,4 @@
-@(cid: String)
+@(cid: String, eid: String = "")
 
 <script>
 var formatTime = function(input) {
@@ -123,7 +123,9 @@ app.controller('ContestCtrl', ['$scope', 'Auth', function($scope, Auth) {
     $scope.scramblesData = null;
     $scope.resultsData = null;
     $scope.events = null;
+
     $scope.existsContest = false;
+    $scope.existsEvent = false;
 
     $scope.contestLoaded = false;
     $scope.loadedMain = false;
@@ -145,7 +147,14 @@ app.controller('ContestCtrl', ['$scope', 'Auth', function($scope, Auth) {
                             $scope.contestData = snapContest.val();
                             $scope.inProgress = snapInProgress.val();
                             $scope.countdown = @cid - parseInt(snapInProgress.val().contest.substr(1));
+
                             $scope.existsContest = true;
+                            @if(eid != "") {
+                                if ((snapEvents.val())['e@{eid}']) {
+                                    $scope.existsEvent = true;
+                                }
+                            }
+
                             $scope.loadedMain = true;
                             $scope.contestLoaded = $scope.loadedMain && $scope.loadedScrambles && $scope.loadedResults;
                         });

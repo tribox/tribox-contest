@@ -10,7 +10,7 @@
 @basejs(firebaseappContest)
 @authjs(redirectLogin="", redirectLogout="", checkFirst=true)
 @filterjs()
-@contestjs(cid)
+@contestjs(cid=cid, eid=eid)
 </head>
 <body><div class="container">
     @bodyheader(title, contestName)
@@ -23,7 +23,25 @@
     </div>
     <div ng-show="authLoaded && contestLoaded">
 
-        @authinfo()
+    @authinfo()
+
+    <div ng-hide="existsContest">
+        <p class="color-error">
+            存在しないコンテストです。
+        </p>
+    </div>
+    <div ng-hide="existsEvent">
+        <p class="color-error">
+            存在しない競技です。
+        </p>
+    </div>
+    <div ng-hide="inProgress.contest == 'c@{cid}'">
+        <p class="color-error">
+            開催中のコンテストではありません。
+        </p>
+    </div>
+
+    <div ng-show="existsContest && existsEvent && inProgress.contest == 'c@{cid}'">
 
         <h2>{{ contestData.contestName }}</h2>
 
@@ -64,7 +82,7 @@
         @* <!--<p>events:</p>
         <pre>{{ events | json }}</pre>--> *@
 
-    </div></div></div>
+    </div></div></div></div>
 
     @bodyfooter(contestName)
 </div></body>
