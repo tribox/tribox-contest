@@ -11,11 +11,15 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="s in scramblesData.e@{eid}" id="scramble-{{ $index }}">
-                    @if(!showIndividual) {
+                @if(!showIndividual) {
+                    <tr ng-repeat="s in scramblesData.e@{eid}" id="scramble-{{ $index }}">
                         <td>{{ $index + 1 | ordinal }}:</td>
-                    }
-                    <td>{{ s }}</td>
-                </tr>
+                        <td>{{ s }}</td>
+                    </tr>
+                } else {
+                    <tr ng-repeat="s in scramblesData.e@{eid}" id="scramble-{{ $index }}" class="hide">
+                        <td>{{ s }}</td>
+                    </tr>
+                }
             </tbody>
         </table>

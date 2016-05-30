@@ -139,6 +139,7 @@ app.controller('ContestCtrl', ['$scope', '$timeout', 'Auth', function($scope, $t
     // Fetch event data followed by contest data
     contestRef.child('events').once('value', function(snapEvents) {
         if (snapEvents.exists()) {
+            window.TriboxContest.events = snapEvents.val();
             contestRef.child('contests').child('c@cid').once('value', function(snapContest) {
                 if (snapContest.exists() && snapContest.val()._dummy == null) {
                     contestRef.child('inProgress').once('value', function(snapInProgress) {
@@ -219,5 +220,64 @@ app.controller('ContestCtrl', ['$scope', '$timeout', 'Auth', function($scope, $t
             $scope.contestLoaded = $scope.loadedMain && $scope.loadedScrambles && $scope.loadedResults;
         });
     });
+
+    $scope.turnOnButtons = function(format, data) {
+        var res = [];
+        data.forEach(function(d, index) {
+            if (format == 'time') {
+                if (d.condition == 'OK') {
+                    res[index] = formatTime(d.record);
+                    $scope.turnOnOK(index);
+                } else if (d.condition == '+2') {
+                    res[index] = formatTime(d.record + 2.000);
+                    $scope.turnOnPenalty(index);
+                } else if (d.condition == 'DNF') {
+                    res[index] = 'DNF';
+                    $scope.turnOnDNF(index);
+                } else {
+                    return null;
+                }
+            } else if (format == 'number') {
+                if (d.condition == 'OK') {
+                    res[index] = d.record;
+                    $scope.turnOnOK(index);
+                } else if (d.condition == 'DNF') {
+                    res[index] = 'DNF';
+                    $scope.turnOnDNF(index);
+                } else {
+                    return null;
+                }
+            } else {
+                return null;
+            }
+        });
+        return res;
+    };
+
+    // Condition buttons
+    $scope.turnOnOK = function(index) {
+        var btnOK = angular.element(document.getElementById('timeform-cond-ok-' + index));
+        var btnPenalty = angular.element(document.getElementById('timeform-cond-penalty-' + index));
+        var btnDNF = angular.element(document.getElementById('timeform-cond-dnf-' + index));
+        btnOK.addClass('cond-ok-on');
+        btnPenalty.removeClass('cond-penalty-on');
+        btnDNF.removeClass('cond-dnf-on');
+    };
+    $scope.turnOnPenalty = function(index) {
+        var btnOK = angular.element(document.getElementById('timeform-cond-ok-' + index));
+        var btnPenalty = angular.element(document.getElementById('timeform-cond-penalty-' + index));
+        var btnDNF = angular.element(document.getElementById('timeform-cond-dnf-' + index));
+        btnOK.removeClass('cond-ok-on');
+        btnPenalty.addClass('cond-penalty-on');
+        btnDNF.removeClass('cond-dnf-on');
+    };
+    $scope.turnOnDNF = function(index) {
+        var btnOK = angular.element(document.getElementById('timeform-cond-ok-' + index));
+        var btnPenalty = angular.element(document.getElementById('timeform-cond-penalty-' + index));
+        var btnDNF = angular.element(document.getElementById('timeform-cond-dnf-' + index));
+        btnOK.removeClass('cond-ok-on');
+        btnPenalty.removeClass('cond-penalty-on');
+        btnDNF.addClass('cond-dnf-on');
+    };
 }]);
 </script>

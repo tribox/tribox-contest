@@ -6,6 +6,69 @@
 <html lang="ja" ng-app="contestApp">
 <head>
     @header(title, contestName)
+</head>
+<body><div class="container">
+    @bodyheader(title, contestName, cid=cid, eid=eid)
+
+    <div ng-controller="AuthCtrl"><div ng-controller="ContestCtrl"><div ng-controller="ContestFormCtrl">
+    <div ng-hide="authLoaded && contestLoaded && contestFormLoaded">
+        <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+        <span class="sr-only">Loading...</span>
+        Loading...
+    </div>
+    <div ng-show="authLoaded && contestLoaded && contestFormLoaded">
+
+    @authinfo(eid=eid)
+
+    <div ng-hide="existsContest">
+        <p class="color-error">
+            存在しないコンテストです。
+        </p>
+    </div>
+    <div ng-hide="existsEvent">
+        <p class="color-error">
+            存在しない競技です。
+        </p>
+    </div>
+    <div ng-hide="inProgress.contest == 'c@{cid}'">
+        <p class="color-error">
+            開催中のコンテストではありません。
+        </p>
+    </div>
+
+    <div ng-show="existsContest && existsEvent && inProgress.contest == 'c@{cid}'">
+
+        @contestscrambles(eid=eid)
+        @contesttimeform(eid=eid, useInput=true, clickable=true)
+
+        <p id="input-completed" class="margin-top-20 text-center hide">
+            入力が完了しました。間違いがなければ確認ページへ進んでください。<br>
+            <a href="/contest/@{cid}/@{eid}/confirm" class="btn margin-top-10">確認ページへ</a>
+        </p>
+
+        @* <!--<p>@cid -> contestData:</p>
+        <pre>{{ contestData | json }}</pre>--> *@
+
+        @* <!--<p>inProgress / countdown:</p>
+        <pre>{{ inProgress | json }}</pre>
+        <pre>{{ countdown | json }}</pre>--> *@
+
+        @* <!--<p>@cid -> scramblesData:</p>
+        <pre>{{ scramblesData | json }}</pre>--> *@
+
+        @* <!--<p>@cid -> resultsData:</p>
+        <pre>{{ resultsData | json }}</pre>--> *@
+
+        @* <!--<p>events:</p>
+        <pre>{{ events | json }}</pre>--> *@
+
+        @* <!--<p>results:</p>
+        <pre>{{ resultsForm | json }}</pre>
+        <pre>{{ results | json }}</pre>--> *@
+
+    </div></div></div></div></div>
+
+    @bodyfooter(contestName)
 
 @basejs(firebaseappContest)
 @authjs(redirectLogin="", redirectLogout="", checkFirst=true)
@@ -202,22 +265,18 @@ app.controller('ContestFormCtrl', ['$scope', 'Auth', function($scope, Auth) {
                         var _results = snapData.val();
 
                         // Prepare next button
-                        contestRef.child('events').child('e@{eid}').child('attempts').once('value', function(snapAttempts) {
-                            var inputCompleted = angular.element(document.getElementById('input-completed'));
-                            var attempts = snapAttempts.val(), count = 0;
-                            for (var i = 0; i < attempts; i++) {
-                                if (_results[i] != null) {
-                                    count++;
-                                }
+                        var inputCompleted = angular.element(document.getElementById('input-completed'));
+                        var attempts = window.TriboxContest.events.e@{eid}.attempts, count = 0;
+                        for (var i = 0; i < attempts; i++) {
+                            if (_results[i] != null) {
+                                count++;
                             }
-                            if (count == attempts) {
-                                inputCompleted.removeClass('hide');
-                            } else {
-                                inputCompleted.addClass('hide');
-                            }
-                        }, function(error) {
-                            console.error(error);
-                        });
+                        }
+                        if (count == attempts) {
+                            inputCompleted.removeClass('hide');
+                        } else {
+                            inputCompleted.addClass('hide');
+                        }
                     }, function(error) {
                         console.error(error);
                     });
@@ -231,69 +290,7 @@ app.controller('ContestFormCtrl', ['$scope', 'Auth', function($scope, Auth) {
     };
 }]);
 </script>
-</head>
-<body><div class="container">
-    @bodyheader(title, contestName, cid=cid, eid=eid)
 
-    <div ng-controller="AuthCtrl"><div ng-controller="ContestCtrl"><div ng-controller="ContestFormCtrl">
-    <div ng-hide="authLoaded && contestLoaded && contestFormLoaded">
-        <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
-        <span class="sr-only">Loading...</span>
-        Loading...
-    </div>
-    <div ng-show="authLoaded && contestLoaded && contestFormLoaded">
-
-    @authinfo(eid=eid)
-
-    <div ng-hide="existsContest">
-        <p class="color-error">
-            存在しないコンテストです。
-        </p>
-    </div>
-    <div ng-hide="existsEvent">
-        <p class="color-error">
-            存在しない競技です。
-        </p>
-    </div>
-    <div ng-hide="inProgress.contest == 'c@{cid}'">
-        <p class="color-error">
-            開催中のコンテストではありません。
-        </p>
-    </div>
-
-    <div ng-show="existsContest && existsEvent && inProgress.contest == 'c@{cid}'">
-
-        @contestscrambles(eid=eid)
-        @contesttimeform(eid=eid)
-
-        <p id="input-completed" class="margin-top-20 text-center hide">
-            入力が完了しました。間違いがなければ確認ページへ進んでください。<br>
-            <a href="/contest/@{cid}/@{eid}/confirm" class="btn margin-top-10">確認ページへ</a>
-        </p>
-
-        @* <!--<p>@cid -> contestData:</p>
-        <pre>{{ contestData | json }}</pre>--> *@
-
-        @* <!--<p>inProgress / countdown:</p>
-        <pre>{{ inProgress | json }}</pre>
-        <pre>{{ countdown | json }}</pre>--> *@
-
-        @* <!--<p>@cid -> scramblesData:</p>
-        <pre>{{ scramblesData | json }}</pre>--> *@
-
-        @* <!--<p>@cid -> resultsData:</p>
-        <pre>{{ resultsData | json }}</pre>--> *@
-
-        @* <!--<p>events:</p>
-        <pre>{{ events | json }}</pre>--> *@
-
-        @* <!--<p>results:</p>
-        <pre>{{ resultsForm | json }}</pre>
-        <pre>{{ results | json }}</pre>--> *@
-
-    </div></div></div></div></div>
-
-    @bodyfooter(contestName)
 </div></body>
 </html>
 

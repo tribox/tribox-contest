@@ -1,77 +1,55 @@
 @(cid: String, eid: String, contestName: String, contestUrl: String, firebaseappContest: String)
 
-@defining("Timer") { title =>
+@defining("Contest Timer") { title =>
 
 <!DOCTYPE html>
 <html lang="ja" ng-app="contestApp">
 <head>
     @header(title, contestName)
-
-@basejs(firebaseappContest)
-@authjs(redirectLogin="", redirectLogout="", checkFirst=true)
-@filterjs()
-@contestjs(cid=cid, eid=eid)
-<script>
-app.controller('ContestTimerCtrl', ['$scope', 'Auth', function($scope, Auth) {
-    $scope.contestTimerLoaded = false;
-
-    // Results
-    $scope.results = [];
-
-    // Set begin time
-    var authData = contestRef.getAuth();
-    if (authData) {
-        // do not overwrite
-        contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).once('value', function(snapResult) {
-            if (!(snapResult.exists())) {
-                contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).set({
-                    'beginAt': Firebase.ServerValue.TIMESTAMP,
-                    'type': 'timer'
-                }, function(error) {
-                    if (error) {
-                        // 不正なコンテストまたは不正な競技イベントでスタート記録が書き込めない場合
-                        // ここでエラーになる。
-                        console.error(error);
-                    }
-                    $scope.$apply(function() {
-                        $scope.contestTimerLoaded = true;
-                    });
-                });
-            } else {
-                // Read current data
-                contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).child('details').once('value', function(snapDetails) {
-                    if (snapDetails.exists()) {
-                        $scope.$apply(function() {
-                            $scope.results = snapDetails.val();
-                            $scope.results.forEach(function(result, index) {
-                                if ($scope.results[index].condition == 'OK') {
-                                    ;//$scope.applyOK(index);
-                                } else if ($scope.results[index].condition == '+2') {
-                                    ;//$scope.applyPenalty(index);
-                                } else if ($scope.results[index].condition == 'DNF') {
-                                    ;//$scope.applyDNF(index);
-                                }
-                            });
-                        });
-                    }
-                    $scope.$apply(function() {
-                        $scope.contestTimerLoaded = true;
-                    });
-                }, function(error) {
-                    console.error(error);
-                });
-            }
-        }, function(error) {
-            console.error(error);
-        });
-    } else {
-        location.href = '@routes.HomeController.index';
+<style>
+body {
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+}
+#timerArea {
+    font-family: Arial, sans-serif !important;
+    text-align: center;
+}
+#timerText {
+    margin: 60px auto;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+#timerNote, #timerNoteMb {
+    margin-bottom: 40px;
+}
+@@media screen and (max-width: 480px) {
+    #timerText {
+        font-size: 96px;
     }
-}]);
-</script>
+    #timerNote {
+        display: none;
+    }
+}
+@@media screen and (min-width: 480px) {
+    #timerText {
+        font-size: 128px;
+    }
+    #timerNoteMb {
+        display: none;
+    }
+}
+.wait {
+    color: #E74C3C !important;
+}
+.ready {
+    color: #1BBC9B !important;
+}
+</style>
 </head>
 <body><div class="container">
-    @bodyheader(title, contestName, cid=cid)
+    @bodyheader(title, contestName, cid=cid, eid=eid)
 
     <div ng-controller="AuthCtrl"><div ng-controller="ContestCtrl"><div ng-controller="ContestTimerCtrl">
     <div ng-hide="authLoaded && contestLoaded && contestTimerLoaded">
@@ -106,117 +84,333 @@ app.controller('ContestTimerCtrl', ['$scope', 'Auth', function($scope, Auth) {
         <div id="timerArea">
             <div id="timerText">0.000</div>
 
-            <div id="timerNote">スペースキーを押してインスペクションタイムをスタート</div>
+            <div id="timerNote"></div>
+            <div id="timerNoteMb"></div>
 
-            <div class="hide">
+            <!--
                 <button id="start">START</button>
                 <button id="stop">STOP</button>
                 <button id="reset">RESET</button>
-            </div>
+            -->
 
-            <div id="keydown"></div>
-            <div id="keyup"></div>
-            <div id="info"></div>
+            <!--
+                <div id="keydown"></div>
+                <div id="keyup"></div>
+                <div id="info"></div>
+            -->
         </div>
 
-        @contesttimeform(eid=eid, useInput=false)
+        @contesttimeform(eid=eid, useInput=false, clickable=true)
 
     </div></div></div></div></div>
 
-<style>
-body {
-    -webkit-user-select: none;
-       -moz-user-select: none;
-        -ms-user-select: none;
-            user-select: none;
-}
-#timerArea {
-    font-family: Arial, sans-serif !important;
-    text-align: center;
-}
-#timerText {
-    font-size: 128px;
-    margin: 60px auto;
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
-}
-#timerNote {
-    margin-bottom: 40px;
-}
-.wait {
-    color: #E74C3C !important;
-}
-.ready {
-    color: #1BBC9B !important;
-}
-</style>
+    @bodyfooter(contestName)
+
+@basejs(firebaseappContest)
+@authjs(redirectLogin="", redirectLogout="", checkFirst=true)
+@filterjs()
+@contestjs(cid=cid, eid=eid)
 <script>
-(function() {
-    'use strict';
+window.TriboxContest.timerIdlingText = 'スペースキーを押してインスペクションタイムをスタート';
+window.TriboxContest.timerIdlingTextMb = 'タップしてインスペクションタイムをスタート';
+window.TriboxContest.timerInspectingText = 'スペースキーを長押ししてタイマーをスタート';
+window.TriboxContest.timerInspectingTextMb = 'タップ長押ししてタイマーをスタート';
+window.TriboxContest.timerRunningText = 'キーを押してタイマーをストップ';
+window.TriboxContest.timerRunningTextMb = 'タップしてタイマーをストップ';
+
+app.controller('ContestTimerCtrl', ['$scope', '$timeout', 'Auth', function($scope, $timeout, Auth) {
+    $scope.contestTimerLoaded = false;
+
+    // Results
+    $scope.results = [];
+    $scope.resultsDetail = null;
+
+    $scope.scrambleIndex = 0;
+    $scope.scrambleIndexText = '1st';
+    angular.element(document.getElementById('scramble-0')).removeClass('hide');
+
+    // Set begin time
+    var authData = contestRef.getAuth();
+    if (authData) {
+        contestRef.child('events').child('e@{eid}').child('hasInspection').once('value', function(snapHasInspection) {
+            window.TriboxContest.hasInspection = snapHasInspection.val();
+            if (window.TriboxContest.hasInspection) {
+                document.getElementById('timerNote').innerHTML = window.TriboxContest.timerIdlingText;
+                document.getElementById('timerNoteMb').innerHTML = window.TriboxContest.timerIdlingTextMb;
+            } else {
+                document.getElementById('timerNote').innerHTML = window.TriboxContest.timerInspectingText;
+                document.getElementById('timerNoteMb').innerHTML = window.TriboxContest.timerInspectingTextMb;
+            }
+
+            // do not overwrite
+            contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).once('value', function(snapResult) {
+                if (!(snapResult.exists())) {
+                    contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).set({
+                        'beginAt': Firebase.ServerValue.TIMESTAMP,
+                        'type': 'timer'
+                    }, function(error) {
+                        if (error) {
+                            // 不正なコンテストまたは不正な競技イベントでスタート記録が書き込めない場合
+                            // ここでエラーになる。
+                            console.error(error);
+                        }
+                        $scope.$apply(function() {
+                            $scope.contestTimerLoaded = true;
+                        });
+                    });
+                } else {
+                    // Read current data
+                    contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).child('details').once('value', function(snapDetails) {
+                        if (snapDetails.exists()) {
+                            $scope.$apply(function() {
+                                $scope.results = snapDetails.val();
+                                $scope.results.forEach(function(r, index) {
+                                    $scope.scrambleIndex = index;
+                                });
+                            });
+                            ($scope.scrambleIndex)++;
+                            nextScramble($scope.scrambleIndex);
+                        }
+                        $scope.$apply(function() {
+                            $scope.contestTimerLoaded = true;
+                        });
+                    }, function(error) {
+                        console.error(error);
+                    });
+                }
+            }, function(error) {
+                console.error(error);
+            });
+        }, function(error) {
+            console.error(error);
+            $scope.$apply(function() {
+                $scope.contestTimerLoaded = true;
+            });
+        });
+    } else {
+        location.href = '@routes.HomeController.index';
+    }
+
+    var nextScramble = function(index) {
+        $timeout(function() {
+            $scope.scrambleIndexText = toOrdinal(index + 1);
+            angular.element(document.getElementById('scramble-' + (index - 1))).addClass('hide');
+            angular.element(document.getElementById('scramble-' + index)).removeClass('hide');
+            $scope.resultsDetail = $scope.turnOnButtons(window.TriboxContest.events.e@{eid}.format, $scope.results);
+        });
+    };
+
+    // Condition buttons
+    $scope.applyOK = function(index) {
+        var resultElem = $scope.results[index];
+        if (resultElem) {
+            var btnOK = angular.element(document.getElementById('timeform-cond-ok-' + index));
+            var btnPenalty = angular.element(document.getElementById('timeform-cond-penalty-' + index));
+            var btnDNF = angular.element(document.getElementById('timeform-cond-dnf-' + index));
+            $scope.results[index].condition = 'OK';
+            $scope.resultsDetail[index] = formatTime($scope.results[index].record);
+            btnOK.addClass('cond-ok-on');
+            btnPenalty.removeClass('cond-penalty-on');
+            btnDNF.removeClass('cond-dnf-on');
+            saveAndPrepare();
+        }
+    };
+    $scope.applyPenalty = function(index) {
+        var resultElem = $scope.results[index];
+        if (resultElem) {
+            var btnOK = angular.element(document.getElementById('timeform-cond-ok-' + index));
+            var btnPenalty = angular.element(document.getElementById('timeform-cond-penalty-' + index));
+            var btnDNF = angular.element(document.getElementById('timeform-cond-dnf-' + index));
+            $scope.results[index].condition = '+2';
+            $scope.resultsDetail[index] = formatTime($scope.results[index].record + 2.000);
+            btnOK.removeClass('cond-ok-on');
+            btnPenalty.addClass('cond-penalty-on');
+            btnDNF.removeClass('cond-dnf-on');
+            saveAndPrepare();
+        }
+    };
+    $scope.applyDNF = function(index) {
+        var resultElem = $scope.results[index];
+        if (resultElem) {
+            var btnOK = angular.element(document.getElementById('timeform-cond-ok-' + index));
+            var btnPenalty = angular.element(document.getElementById('timeform-cond-penalty-' + index));
+            var btnDNF = angular.element(document.getElementById('timeform-cond-dnf-' + index));
+            $scope.results[index].condition = 'DNF';
+            $scope.resultsDetail[index] = 'DNF';
+            btnOK.removeClass('cond-ok-on');
+            btnPenalty.removeClass('cond-penalty-on');
+            btnDNF.addClass('cond-dnf-on');
+            saveAndPrepare();
+        }
+    };
+
+    // Save & Fetch data
+    var saveAndPrepare = function() {
+        var authData = contestRef.getAuth();
+        if (authData) {
+            contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).child('details').set($scope.results, function(error) {
+                if (!error) {
+                    contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).child('details').once('value', function(snapData) {
+                        var _results = snapData.val();
+
+                        // Prepare next button
+                        var attempts = window.TriboxContest.events.e@{eid}.attempts, count = 0;
+                        for (var i = 0; i < attempts; i++) {
+                            if (_results[i] != null) {
+                                count++;
+                            }
+                        }
+                        if (count == attempts) {
+                            console.log('Finish!');
+                        }
+                    }, function(error) {
+                        console.error(error);
+                    });
+                } else {
+                    console.error(error);
+                }
+            });
+        } else {
+            location.href = '@routes.HomeController.index?logout=1';
+        }
+    };
+
+    /**
+     * Timer
+     */
 
     document.onselectstart = function() { return false; };
 
     var startTime, stopTime;
     var timerId, dispTimerId;
+    var inspectionTimerId, inspectionPenaltyTimerId, inspectionDNFTimerId;
+
+    var hasInspection = window.TriboxContest.hasInspection;
+    var inspectionCountdown;
 
     var isIdling = true;        @* 待機中 *@
+    var isInspecting = false;   @* インスペクションタイム中 *@
     var isRunning = false;      @* タイマー動作中 *@
-    var isTouching = false;     @* センサにタッチ中 (スタート時) *@
-    var isTouchingStop = false; @* センサにタッチ中 (ストップ時) *@
+    var isTouching = false;     @* タッチ中 (スタート時) *@
+    var isTouchingStop = false; @* タッチ中 (ストップ時) *@
     var startTouch = Infinity;
     var TOUCHING_TH = 500;
 
-    var startButton = document.getElementById('start');
-    var stopButton = document.getElementById('stop');
-    var resetButton = document.getElementById('reset');
+    //var startButton = document.getElementById('start');
+    //var stopButton = document.getElementById('stop');
+    //var resetButton = document.getElementById('reset');
     var timerText = document.getElementById('timerText');
 
-    var setButtonState = function(start, stop, reset) {
+    var touchX, touchY;
+    var TAP_TH = 10; @* タップと認識する移動距離の閾値 *@
+
+    /*var setButtonState = function(start, stop, reset) {
         startButton.disabled = !start;
         stopButton.disabled = !stop;
         resetButton.disabled = !reset;
+    };*/
+    //setButtonState(true, false, false);
+
+    var updateStatus = function(_isIdling, _isInspecting, _isRunning) {
+        isIdling = _isIdling;
+        isInspecting = _isInspecting;
+        isRunning = _isRunning;
     };
 
-    setButtonState(true, false, false);
+    var startInspection = function() {
+        if (hasInspection && isIdling) {
+            document.getElementById('timerNote').innerHTML = window.TriboxContest.timerInspectingText;
+            document.getElementById('timerNoteMb').innerHTML = window.TriboxContest.timerInspectingTextMb;
+            updateStatus(false, true, false);
+            updateInspectionTimerText();
+        }
+    };
+
+    var updateInspectionTimerText = function() {
+        inspectionCountdown = 15;
+        timerText.innerHTML = inspectionCountdown;
+        inspectionTimerId = setInterval(function() {
+            inspectionCountdown--;
+            timerText.innerHTML = inspectionCountdown;
+        }, 1000);
+        inspectionPenaltyTimerId = setTimeout(function() {
+            clearTimeout(inspectionTimerId);
+            timerText.innerHTML = '<span class="color-warning">+2</span>';
+        }, inspectionCountdown * 1000);
+        inspectionDNFTimerId = setTimeout(function() {
+            clearTimeout(inspectionPenaltyTimerId);
+            timerText.innerHTML = '<span class="color-error">DNF</span>';
+            updateStatus(true, false, false);
+            document.getElementById('timerNote').innerHTML = window.TriboxContest.timerIdlingText;
+            document.getElementById('timerNoteMb').innerHTML = window.TriboxContest.timerIdlingTextMb;
+        }, (inspectionCountdown + 2) * 1000);
+     };
 
     var startTimer = function() {
-        if (isRunning) return;
-        isRunning = true;
-        startTime = Date.now();
-        updateTimerText();
-        setButtonState(false, true, false);
+        if ((hasInspection && isInspecting) || (!hasInspection && isIdling)) {
+            startTime = Date.now();
+            document.getElementById('timerNote').innerHTML = window.TriboxContest.timerRunningText;
+            document.getElementById('timerNoteMb').innerHTML = window.TriboxContest.timerRunningTextMb;
+            clearTimeout(inspectionTimerId);
+            clearTimeout(inspectionPenaltyTimerId);
+            clearTimeout(inspectionDNFTimerId);
+            updateStatus(false, false, true);
+            updateTimerText();
+            //setButtonState(false, true, false);
+        }
     };
-    startButton.addEventListener('click', startTimer);
+    //startButton.addEventListener('click', startTimer);
 
     var stopTimer = function() {
-        if (!isRunning) return;
-        stopTime = Date.now();
-        isRunning = false;
-        clearTimeout(timerId);
-        timerText.innerHTML = ((stopTime - startTime) / 1000).toFixed(3);
-        setButtonState(true, false, true);
-    };
-    stopButton.addEventListener('click', stopTimer);
+        if (isRunning) {
+            stopTime = Date.now();
+            if (window.TriboxContest.hasInspection) {
+                document.getElementById('timerNote').innerHTML = window.TriboxContest.timerIdlingText;
+                document.getElementById('timerNoteMb').innerHTML = window.TriboxContest.timerIdlingTextMb;
+            } else {
+                document.getElementById('timerNote').innerHTML = window.TriboxContest.timerInspectingText;
+                document.getElementById('timerNoteMb').innerHTML = window.TriboxContest.timerInspectingTextMb;
+            }
+            clearTimeout(timerId);
+            updateStatus(true, false, false);
+            var resultTime = (stopTime - startTime) / 1000;
+            timerText.innerHTML = resultTime.toFixed(3);
+            //setButtonState(true, false, true);
 
-    var resetTimer = function() {
+            // Prepare results data
+            console.log($scope.scrambleIndex);
+            $timeout(function() {
+                $scope.results[$scope.scrambleIndex] = {'record': null, 'condition': null};
+                $scope.results[$scope.scrambleIndex].record = Number(resultTime);
+                $scope.results[$scope.scrambleIndex].condition = 'OK';
+                ($scope.scrambleIndex)++;
+                saveAndPrepare();
+                nextScramble($scope.scrambleIndex);
+            });
+        }
+    };
+    //stopButton.addEventListener('click', stopTimer);
+
+    /*var resetTimer = function() {
         if (isRunning) return;
         timerText.innerHTML = '0.000';
-        setButtonState(true, false, false);
-    };
-    resetButton.addEventListener('click', resetTimer);
+        //setButtonState(true, false, false);
+    };*/
+    //resetButton.addEventListener('click', resetTimer);
 
     var updateTimerText = function() {
-        timerId = setTimeout(function() {
+        timerId = setInterval(function() {
             timerText.innerHTML = ((Date.now() - startTime) / 1000).toFixed(3);
-            updateTimerText();
         }, 29);
     };
 
     document.addEventListener('keydown', function(e) {
         //document.getElementById('keydown').innerHTML = e.keyCode + ':' + e.code + ' (' + Date.now() + ')';
+        hasInspection = window.TriboxContest.hasInspection;
         if (isRunning) {
             stopTimer();
             isTouchingStop = true;
-        } else if (!isTouching && !isTouchingStop && e.code == 'Space') {
+        } else if ((hasInspection && isInspecting || !hasInspection && isIdling) && !isTouching && !isTouchingStop && e.code == 'Space') {
             startTouch = Date.now();
             isTouching = true;
             angular.element(document.getElementById('timerText')).addClass('wait');
@@ -230,7 +424,7 @@ body {
         //document.getElementById('keyup').innerHTML = e.keyCode + ':' + e.code + ' (' + Date.now() + ')';
         if (isTouchingStop) {
             isTouchingStop = false;
-        } else if (!isRunning && e.code == 'Space') {
+        } else if ((hasInspection && isInspecting || !hasInspection && isIdling) && e.code == 'Space') {
             isTouching = false;
             clearTimeout(dispTimerId);
             angular.element(document.getElementById('timerText')).removeClass('wait');
@@ -239,14 +433,19 @@ body {
                 startTimer();
                 startTouch = Infinity;
             }
+        } else if (hasInspection && isIdling && e.code == 'Space') {
+            startInspection();
         }
     });
     document.addEventListener('touchstart', function(e) {
-        //document.getElementById('keydown').innerHTML = 'touchstart (' + Date.now() + ')';
+        //document.getElementById('keydown').innerHTML = 'touchstart (' + Date.now() + ' ' + e.changedTouches[0].pageX + ' ' + e.changedTouches[0].pageY + ')';
+        touchX = e.changedTouches[0].pageX;
+        touchY = e.changedTouches[0].pageY;
+        hasInspection = window.TriboxContest.hasInspection;
         if (isRunning) {
             stopTimer();
             isTouchingStop = true;
-        } else if (!isTouching && !isTouchingStop) {
+        } else if ((hasInspection && isInspecting || !hasInspection && isIdling) && !isTouching && !isTouchingStop) {
             startTouch = Date.now();
             isTouching = true;
             angular.element(document.getElementById('timerText')).addClass('wait');
@@ -257,24 +456,27 @@ body {
         }
     });
     document.addEventListener('touchend', function(e) {
-        //document.getElementById('keyup').innerHTML = 'touchend (' + Date.now() + ')';
-        if (isTouchingStop) {
-            isTouchingStop = false;
-        } else if (!isRunning) {
-            isTouching = false;
-            clearTimeout(dispTimerId);
-            angular.element(document.getElementById('timerText')).removeClass('wait');
-            angular.element(document.getElementById('timerText')).removeClass('ready');
-            if (TOUCHING_TH <= (Date.now() - startTouch)) {
-                startTimer();
-                startTouch = Infinity;
+        //document.getElementById('keyup').innerHTML = 'touchend (' + Date.now() + ' ' + e.changedTouches[0].pageX + ' ' + e.changedTouches[0].pageY + ')';
+        if (Math.abs(e.changedTouches[0].pageX - touchX) <= TAP_TH && Math.abs(e.changedTouches[0].pageY - touchY) <= TAP_TH) {
+            if (isTouchingStop) {
+                isTouchingStop = false;
+            } else if (hasInspection && isInspecting || !hasInspection && isIdling) {
+                isTouching = false;
+                clearTimeout(dispTimerId);
+                angular.element(document.getElementById('timerText')).removeClass('wait');
+                angular.element(document.getElementById('timerText')).removeClass('ready');
+                if (TOUCHING_TH <= (Date.now() - startTouch)) {
+                    startTimer();
+                    startTouch = Infinity;
+                }
+            } else if (hasInspection && isIdling) {
+                startInspection();
             }
         }
     });
-})();
+}]);
 </script>
 
-    @bodyfooter(contestName)
 </div></body>
 </html>
 

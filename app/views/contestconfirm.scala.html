@@ -8,224 +8,6 @@
 <html lang="ja" ng-app="contestApp">
 <head>
     @header(title, contestName)
-
-@basejs(firebaseappContest)
-@authjs(redirectLogin="", redirectLogout="", checkFirst=true)
-@filterjs()
-@contestjs(cid=cid, eid=eid)
-<script>
-app.controller('ContestConfirmCtrl', ['$scope', 'Auth', function($scope, Auth) {
-    $scope.result = null;
-    $scope.contestConfirmLoaded = false;
-
-    // 結果表示
-    $scope.resultTitle = null;
-    $scope.resultResult = null;
-    $scope.resultTitleAlt = null;
-    $scope.resultResultAlt = null;
-
-    contestRef.child('events').child('e@{eid}').once('value', function(snapEvent) {
-        if (!(snapEvent.exists())) {
-            $scope.$apply(function() {
-                $scope.contestConfirmLoaded = true;
-            });
-        } else {
-            var e = snapEvent.val();
-            $scope.$apply(function() {
-                $scope.resultTitle = e.method + ' of ' + e.attempts;
-                if (e.method == 'average') {
-                    $scope.resultTitleAlt = 'best';
-                }
-            });
-
-            // Read personal results
-            var authData = contestRef.getAuth();
-            if (authData) {
-                //var contestData = snapContest.val();
-                contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).once('value', function(snapResult) {
-                    if (snapResult.exists()) {
-                        var resultData = snapResult.val();
-                        $scope.$apply(function() {
-                            $scope.result = calcResult(e.method, e.format, resultData.details);
-                            if ($scope.result.condition == 'DNF') {
-                                $scope.resultResult = 'DNF';
-                            } else if (e.format == 'time') {
-                                $scope.resultResult = formatTime($scope.result.record);
-                            } else if (e.format == 'number') {
-                                $scope.resultResult = $scope.result.record;
-                            }
-                            if (e.method == 'average') {
-                                var best = (resultData.details)[$scope.result.best];
-                                if (best.condition == 'DNF') {
-                                    $scope.resultResultAlt = 'DNF';
-                                } else if (e.format == 'time') {
-                                    $scope.resultResultAlt = formatTime(best.record);
-                                } else if (e.format == 'number') {
-                                    $scope.resultResultAlt = best.record;
-                                }
-                            }
-                            $scope.resultDetail = turnOnButtons(e.format, resultData.details);
-                            $scope.contestConfirmLoaded = true;
-                        });
-                    } else {
-                        $scope.$apply(function() {
-                            $scope.contestConfirmLoaded = true;
-                        });
-                    }
-                }, function(error) {
-                    console.error(error);
-                });
-            } else {
-                $scope.$apply(function() {
-                    $scope.contestConfirmLoaded = true;
-                });
-            }
-        }
-    }, function(error) {
-        console.error(error);
-    });
-
-    var toFixedForPriority = function(n) {
-        nstr = String(n);
-        if (nstr.indexOf('.') != -1) {
-            var p0 = nstr.split('.')[0];
-            var p1 = nstr.split('.')[1];
-            return ('000' + p0).slice(-3) + (p1 + '000').slice(0, 3);
-        } else {
-            return ('000' + nstr).slice(-3) + '000';
-        }
-    };
-
-    $scope.submitResult = function() {
-        var authData = contestRef.getAuth();
-        if (authData) {
-            if (!($scope.puzzle) || !($scope.puzzle.type)) {
-                $scope.error = '使用キューブを選択してください。';
-                return;
-            }
-
-            @* /*
-            各項目で、指定IDがDOM上に存在するかチェックしている。
-            これは $scope の値と実際に選択されている項目のずれを検出する意味を持つ。
-            ng-if が成り立たない <option> はDOM上から消されるからこれがうまくいく。
-            */ *@
-            var puzzle = { 'type': $scope.puzzle.type };
-            if ($scope.puzzle.type == 'database') {
-                if (!($scope.puzzle.brand) || document.getElementById('brand-' + $scope.puzzle.brand) == null || parseInt($scope.puzzle.brand) < 0) {
-                    $scope.error = 'ブランドを選択してください。';
-                    return;
-                }
-                if (!($scope.puzzle.product) || document.getElementById('product-' + $scope.puzzle.product) == null || parseInt($scope.puzzle.product) < 0) {
-                    $scope.error = 'キューブを選択してください。';
-                    return;
-                }
-                puzzle.brand = parseInt($scope.puzzle.brand);
-                puzzle.product = parseInt($scope.puzzle.product);
-            } else if ($scope.puzzle.type == 'nodatabase') {
-                if (!($scope.puzzle.input) || $scope.puzzle.input.length <= 0) {
-                    $scope.error = 'キューブ名を入力してください。';
-                    return;
-                }
-                if (64 <= $scope.puzzle.input.length) {
-                    $scope.error = 'キューブ名は63文字以下で入力してください。';
-                    return;
-                }
-                puzzle.input = $scope.puzzle.input;
-            } else if ($scope.puzzle.type == 'unknown') {
-                ;
-            } else {
-                return;
-            }
-
-            // Calc priority: (record as string) + (best as string)
-            // The letter '+' forces it to be string
-            var priority = toFixedForPriority($scope.result.record) + '+' + toFixedForPriority($scope.result.best);
-
-            // Save
-            contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).update({
-                'endAt': Firebase.ServerValue.TIMESTAMP,
-                'result': $scope.result,
-                'puzzle': puzzle
-            }, function(error) {
-                if (!error) {
-                    // And set priority
-                    contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).setPriority(priority, function(error) {
-                        if (!error) {
-                            console.log('Complete!');
-                            location.href = "/contest/@{cid}?done=@{eid}";
-                        } else {
-                            console.error(error);
-                        }
-                    });
-                } else {
-                    console.error(error);
-                }
-            });
-        } else {
-            location.href = '@routes.HomeController.index';
-        }
-    };
-
-    var turnOnButtons = function(format, data) {
-        var res = [];
-        data.forEach(function(d, index) {
-            if (format == 'time') {
-                if (d.condition == 'OK') {
-                    res[index] = formatTime(d.record);
-                    turnOnOK(index);
-                } else if (d.condition == '+2') {
-                    res[index] = formatTime(d.record + 2.000);
-                    turnOnPenalty(index);
-                } else if (d.condition == 'DNF') {
-                    res[index] = 'DNF';
-                    turnOnDNF(index);
-                } else {
-                    return null;
-                }
-            } else if (format == 'number') {
-                if (d.condition == 'OK') {
-                    res[index] = d.record;
-                    turnOnOK(index);
-                } else if (d.condition == 'DNF') {
-                    res[index] = 'DNF';
-                    turnOnDNF(index);
-                } else {
-                    return null;
-                }
-            } else {
-                return null;
-            }
-        });
-        return res;
-    };
-
-    // Condition buttons
-    var turnOnOK = function(index) {
-        var btnOK = angular.element(document.getElementById('timeform-cond-ok-' + index));
-        var btnPenalty = angular.element(document.getElementById('timeform-cond-penalty-' + index));
-        var btnDNF = angular.element(document.getElementById('timeform-cond-dnf-' + index));
-        btnOK.addClass('cond-ok-on');
-        btnPenalty.removeClass('cond-penalty-on');
-        btnDNF.removeClass('cond-dnf-on');
-    };
-    var turnOnPenalty = function(index) {
-        var btnOK = angular.element(document.getElementById('timeform-cond-ok-' + index));
-        var btnPenalty = angular.element(document.getElementById('timeform-cond-penalty-' + index));
-        var btnDNF = angular.element(document.getElementById('timeform-cond-dnf-' + index));
-        btnOK.removeClass('cond-ok-on');
-        btnPenalty.addClass('cond-penalty-on');
-        btnDNF.removeClass('cond-dnf-on');
-    };
-    var turnOnDNF = function(index) {
-        var btnOK = angular.element(document.getElementById('timeform-cond-ok-' + index));
-        var btnPenalty = angular.element(document.getElementById('timeform-cond-penalty-' + index));
-        var btnDNF = angular.element(document.getElementById('timeform-cond-dnf-' + index));
-        btnOK.removeClass('cond-ok-on');
-        btnPenalty.removeClass('cond-penalty-on');
-        btnDNF.addClass('cond-dnf-on');
-    };
-}]);
-</script>
 </head>
 <body><div class="container">
     @bodyheader(title, contestName, cid=cid)
@@ -364,7 +146,7 @@ app.controller('ContestConfirmCtrl', ['$scope', 'Auth', function($scope, Auth) {
         </div>
         </form>
 
-        @contesttimeform(eid=eid, useInput=false)
+        @contesttimeform(eid=eid, useInput=false, clickable=false)
 
         @* <!--<p>@cid -> contestData:</p>
         <pre>{{ contestData | json }}</pre>--> *@
@@ -392,6 +174,167 @@ app.controller('ContestConfirmCtrl', ['$scope', 'Auth', function($scope, Auth) {
     </div></div></div></div></div>
 
     @bodyfooter(contestName)
+
+@basejs(firebaseappContest)
+@authjs(redirectLogin="", redirectLogout="", checkFirst=true)
+@filterjs()
+@contestjs(cid=cid, eid=eid)
+<script>
+app.controller('ContestConfirmCtrl', ['$scope', 'Auth', function($scope, Auth) {
+    $scope.result = null;
+    $scope.resultsDetail = null;
+    $scope.contestConfirmLoaded = false;
+
+    // 結果表示
+    $scope.resultTitle = null;
+    $scope.resultResult = null;
+    $scope.resultTitleAlt = null;
+    $scope.resultResultAlt = null;
+
+    contestRef.child('events').child('e@{eid}').once('value', function(snapEvent) {
+        if (!(snapEvent.exists())) {
+            $scope.$apply(function() {
+                $scope.contestConfirmLoaded = true;
+            });
+        } else {
+            var e = snapEvent.val();
+            $scope.$apply(function() {
+                $scope.resultTitle = e.method + ' of ' + e.attempts;
+                if (e.method == 'average') {
+                    $scope.resultTitleAlt = 'best';
+                }
+            });
+
+            // Read personal results
+            var authData = contestRef.getAuth();
+            if (authData) {
+                //var contestData = snapContest.val();
+                contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).once('value', function(snapResult) {
+                    if (snapResult.exists()) {
+                        var resultsData = snapResult.val();
+                        $scope.$apply(function() {
+                            $scope.result = calcResult(e.method, e.format, resultsData.details);
+                            if ($scope.result.condition == 'DNF') {
+                                $scope.resultResult = 'DNF';
+                            } else if (e.format == 'time') {
+                                $scope.resultResult = formatTime($scope.result.record);
+                            } else if (e.format == 'number') {
+                                $scope.resultResult = $scope.result.record;
+                            }
+                            if (e.method == 'average') {
+                                var best = (resultsData.details)[$scope.result.best];
+                                if (best.condition == 'DNF') {
+                                    $scope.resultResultAlt = 'DNF';
+                                } else if (e.format == 'time') {
+                                    $scope.resultResultAlt = formatTime(best.record);
+                                } else if (e.format == 'number') {
+                                    $scope.resultResultAlt = best.record;
+                                }
+                            }
+                            $scope.resultsDetail = $scope.turnOnButtons(e.format, resultsData.details);
+                            $scope.contestConfirmLoaded = true;
+                        });
+                    } else {
+                        $scope.$apply(function() {
+                            $scope.contestConfirmLoaded = true;
+                        });
+                    }
+                }, function(error) {
+                    console.error(error);
+                });
+            } else {
+                $scope.$apply(function() {
+                    $scope.contestConfirmLoaded = true;
+                });
+            }
+        }
+    }, function(error) {
+        console.error(error);
+    });
+
+    var toFixedForPriority = function(n) {
+        nstr = String(n);
+        if (nstr.indexOf('.') != -1) {
+            var p0 = nstr.split('.')[0];
+            var p1 = nstr.split('.')[1];
+            return ('000' + p0).slice(-3) + (p1 + '000').slice(0, 3);
+        } else {
+            return ('000' + nstr).slice(-3) + '000';
+        }
+    };
+
+    $scope.submitResult = function() {
+        var authData = contestRef.getAuth();
+        if (authData) {
+            if (!($scope.puzzle) || !($scope.puzzle.type)) {
+                $scope.error = '使用キューブを選択してください。';
+                return;
+            }
+
+            @* /*
+            各項目で、指定IDがDOM上に存在するかチェックしている。
+            これは $scope の値と実際に選択されている項目のずれを検出する意味を持つ。
+            ng-if が成り立たない <option> はDOM上から消されるからこれがうまくいく。
+            */ *@
+            var puzzle = { 'type': $scope.puzzle.type };
+            if ($scope.puzzle.type == 'database') {
+                if (!($scope.puzzle.brand) || document.getElementById('brand-' + $scope.puzzle.brand) == null || parseInt($scope.puzzle.brand) < 0) {
+                    $scope.error = 'ブランドを選択してください。';
+                    return;
+                }
+                if (!($scope.puzzle.product) || document.getElementById('product-' + $scope.puzzle.product) == null || parseInt($scope.puzzle.product) < 0) {
+                    $scope.error = 'キューブを選択してください。';
+                    return;
+                }
+                puzzle.brand = parseInt($scope.puzzle.brand);
+                puzzle.product = parseInt($scope.puzzle.product);
+            } else if ($scope.puzzle.type == 'nodatabase') {
+                if (!($scope.puzzle.input) || $scope.puzzle.input.length <= 0) {
+                    $scope.error = 'キューブ名を入力してください。';
+                    return;
+                }
+                if (64 <= $scope.puzzle.input.length) {
+                    $scope.error = 'キューブ名は63文字以下で入力してください。';
+                    return;
+                }
+                puzzle.input = $scope.puzzle.input;
+            } else if ($scope.puzzle.type == 'unknown') {
+                ;
+            } else {
+                return;
+            }
+
+            // Calc priority: (record as string) + (best as string)
+            // The letter '+' forces it to be string
+            var priority = toFixedForPriority($scope.result.record) + '+' + toFixedForPriority($scope.result.best);
+
+            // Save
+            contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).update({
+                'endAt': Firebase.ServerValue.TIMESTAMP,
+                'result': $scope.result,
+                'puzzle': puzzle
+            }, function(error) {
+                if (!error) {
+                    // And set priority
+                    contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).setPriority(priority, function(error) {
+                        if (!error) {
+                            console.log('Complete!');
+                            location.href = "/contest/@{cid}?done=@{eid}";
+                        } else {
+                            console.error(error);
+                        }
+                    });
+                } else {
+                    console.error(error);
+                }
+            });
+        } else {
+            location.href = '@routes.HomeController.index';
+        }
+    };
+}]);
+</script>
+
 </div></body>
 </html>
 

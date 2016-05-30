@@ -115,7 +115,7 @@
             ".read": true,
             ".write": false,
             "$event_id": {
-                ".validate": "newData.hasChildren(['name', 'method', 'attempts', 'format'])",
+                ".validate": "newData.hasChildren(['name', 'method', 'attempts', 'format', 'hasInspection'])",
                 "name": {
                     ".validate": "newData.isString() && newData.val().length < 64"
                 },
@@ -127,6 +127,9 @@
                 },
                 "format": {
                     ".validate": "newData.isString() && newData.val().matches(/^(time|number|multi)$/)"
+                },
+                "hasInspection": {
+                    ".validate": "newData.isBoolean()"
                 },
                 "$other": {
                     ".validate": false
