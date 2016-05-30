@@ -18,12 +18,12 @@ object PuzzleBrand {
 
     def getAll: List[PuzzleBrand] = {
         DB.withConnection { implicit c =>
-            val result = SQL(
-                "SELECT `category_id`, `category_name` " + 
-                "FROM `dtb_category` " +
-                "WHERE `parent_category_id` = 3 " +
-                "ORDER BY `category_name` ASC"
-            ).as(PuzzleBrand.data *)
+            val result = SQL("""
+                SELECT `category_id`, `category_name`
+                FROM `dtb_category`
+                WHERE `parent_category_id` = 3
+                ORDER BY `category_name` ASC
+            """).as(PuzzleBrand.data *)
             return result
         }
     }
