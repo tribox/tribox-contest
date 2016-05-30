@@ -51,7 +51,7 @@ class HomeController @Inject() extends Controller {
     /**
      * Timer for practice
      */
-    def timer = Action {
-        Ok(views.html.timer("", "", getContestName, getContestUrl, getFirebaseappContest))
-    }
+    /*def timer = Action {
+        Ok(views.html.contesttimer("", "", getContestName, getContestUrl, getFirebaseappContest))
+    }*/
 }

@@ -29,7 +29,7 @@ class ContestController @Inject() extends HomeController {
     }
 
     def timer(cid: String, eid: String) = Action {
-        Ok(views.html.timer(cid, eid, getContestName, getContestUrl, getFirebaseappContest))
+        Ok(views.html.contesttimer(cid, eid, getContestName, getContestUrl, getFirebaseappContest))
     }
 
     def confirm(cid: String, eid: String) = Action {
