@@ -6,22 +6,17 @@
 <html lang="ja" ng-app="contestApp">
 <head>
     @header(title, contestName)
-
-@basejs(firebaseappContest)
-@authjs(redirectLogin="", redirectLogout="", checkFirst=true)
-@filterjs()
-@contestjs(cid=cid, eid=eid)
 </head>
 <body><div class="container">
     @bodyheader(title, contestName)
 
-    <div ng-controller="AuthCtrl"><div ng-controller="ContestCtrl">
-    <div ng-hide="authLoaded && contestLoaded">
+    <div ng-controller="AuthCtrl"><div ng-controller="ContestCtrl"><div ng-controller="ContestChooseCtrl">
+    <div ng-hide="authLoaded && contestLoaded && contestChooseLoaded">
         <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
         <span class="sr-only">Loading...</span>
         Loading...
     </div>
-    <div ng-show="authLoaded && contestLoaded">
+    <div ng-show="authLoaded && contestLoaded && contestChooseLoaded">
 
     @authinfo()
 
@@ -40,8 +35,13 @@
             開催中のコンテストではありません。
         </p>
     </div>
+    <div ng-hide="!invalidPage">
+        <p class="color-error">
+            不正なページ遷移です。
+        </p>
+    </div>
 
-    <div ng-show="existsContest && existsEvent && inProgress.contest == 'c@{cid}'">
+    <div ng-show="existsContest && existsEvent && inProgress.contest == 'c@{cid}' && !invalidPage">
 
         <h2>{{ contestData.contestName }}</h2>
 
@@ -82,9 +82,38 @@
         @* <!--<p>events:</p>
         <pre>{{ events | json }}</pre>--> *@
 
-    </div></div></div></div>
+    </div></div></div></div></div>
 
     @bodyfooter(contestName)
+
+@basejs(firebaseappContest)
+@authjs(redirectLogin="", redirectLogout="", checkFirst=true)
+@filterjs()
+@contestjs(cid=cid, eid=eid)
+<script>
+app.controller('ContestChooseCtrl', ['$scope', function($scope) {
+    $scope.invalidPage = false;
+    $scope.contestChooseLoaded = false;
+
+    // Read personal results
+    var authData = contestRef.getAuth();
+    if (authData) {
+        contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).once('value', function(snapResult) {
+            $scope.$apply(function() {
+                if (snapResult.exists()) {
+                    $scope.invalidPage = true;
+                }
+                $scope.contestChooseLoaded = true;
+            });
+        }, function(error) {
+            console.error(error);
+        });
+    } else {
+        location.href = '@routes.HomeController.index?logout=1';
+    }
+}]);
+</script>
+
 </div></body>
 </html>
 

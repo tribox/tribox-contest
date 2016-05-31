@@ -180,7 +180,7 @@
 @filterjs()
 @contestjs(cid=cid, eid=eid)
 <script>
-app.controller('ContestConfirmCtrl', ['$scope', 'Auth', function($scope, Auth) {
+app.controller('ContestConfirmCtrl', ['$scope', function($scope) {
     $scope.result = null;
     $scope.resultsDetail = null;
     $scope.contestConfirmLoaded = false;

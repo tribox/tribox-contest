@@ -35,8 +35,13 @@
             開催中のコンテストではありません。
         </p>
     </div>
+    <div ng-hide="!invalidPage">
+        <p class="color-error">
+            不正なページ遷移です。
+        </p>
+    </div>
 
-    <div ng-show="existsContest && existsEvent && inProgress.contest == 'c@{cid}'">
+    <div ng-show="existsContest && existsEvent && inProgress.contest == 'c@{cid}' && !invalidPage">
 
         @contestscrambles(eid=eid)
         @contesttimeform(eid=eid, useInput=true, clickable=true)
@@ -76,6 +81,7 @@
 @contestjs(cid=cid, eid=eid)
 <script>
 app.controller('ContestFormCtrl', ['$scope', function($scope) {
+    $scope.invalidPage = false;
     $scope.contestFormLoaded = false;
 
     // Results
@@ -103,27 +109,24 @@ app.controller('ContestFormCtrl', ['$scope', function($scope) {
                 });
             } else {
                 // Read current data
-                contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).child('details').once('value', function(snapDetails) {
-                    if (snapDetails.exists()) {
-                        $scope.$apply(function() {
-                            $scope.results = snapDetails.val();
-                            $scope.results.forEach(function(result, index) {
-                                $scope.resultsForm[index] = formatTime($scope.results[index].record);
-                                if ($scope.results[index].condition == 'OK') {
-                                    $scope.applyOK(index);
-                                } else if ($scope.results[index].condition == '+2') {
-                                    $scope.applyPenalty(index);
-                                } else if ($scope.results[index].condition == 'DNF') {
-                                    $scope.applyDNF(index);
-                                }
-                            });
+                $scope.$apply(function() {
+                    var result = snapResult.val();
+                    if (result.type != "form") {
+                        $scope.invalidPage = true;
+                    } else if (result.details) {
+                        $scope.results = result.details;
+                        $scope.results.forEach(function(result, index) {
+                            $scope.resultsForm[index] = formatTime($scope.results[index].record);
+                            if ($scope.results[index].condition == 'OK') {
+                                $scope.applyOK(index);
+                            } else if ($scope.results[index].condition == '+2') {
+                                $scope.applyPenalty(index);
+                            } else if ($scope.results[index].condition == 'DNF') {
+                                $scope.applyDNF(index);
+                            }
                         });
                     }
-                    $scope.$apply(function() {
-                        $scope.contestFormLoaded = true;
-                    });
-                }, function(error) {
-                    console.error(error);
+                    $scope.contestFormLoaded = true;
                 });
             }
         }, function(error) {

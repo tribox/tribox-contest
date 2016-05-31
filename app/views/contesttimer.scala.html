@@ -76,8 +76,13 @@ body {
             開催中のコンテストではありません。
         </p>
     </div>
+    <div ng-hide="!invalidPage">
+        <p class="color-error">
+            不正なページ遷移です。
+        </p>
+    </div>
 
-    <div ng-show="existsContest && existsEvent && inProgress.contest == 'c@{cid}'">
+    <div ng-show="existsContest && existsEvent && inProgress.contest == 'c@{cid}' && !invalidPage">
 
         @contestscrambles(eid=eid, showIndividual=true)
 
@@ -125,6 +130,7 @@ window.TriboxContest.timerRunningTextMb = 'タップしてタイマーをスト�
 window.TriboxContest.timerFinishText = '計測が完了しました';
 
 app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $timeout) {
+    $scope.invalidPage = false;
     $scope.contestTimerLoaded = false;
 
     // Results
@@ -168,15 +174,18 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
                     });
                 } else {
                     // Read current data
-                    contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).child('details').once('value', function(snapDetails) {
-                        if (snapDetails.exists()) {
+                    var result = snapResult.val();
+                    if (result.type != "timer") {
+                        $scope.invalidPage = true;
+                    } else {
+                        if (result.details) {
                             $scope.$apply(function() {
-                                $scope.results = snapDetails.val();
+                                $scope.results = result.details;
                                 $scope.results.forEach(function(r, index) {
                                     $scope.scrambleIndex = index;
                                 });
+                                ($scope.scrambleIndex)++;
                             });
-                            ($scope.scrambleIndex)++;
                         }
                         nextScramble($scope.scrambleIndex);
                         if (window.TriboxContest.events.e@{eid}.attempts <= $scope.scrambleIndex) {
@@ -185,11 +194,9 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
                             document.getElementById('timerNoteMb').innerHTML = window.TriboxContest.timerFinishText;
                             updateStatus(false, false, false);
                         }
-                        $scope.$apply(function() {
-                            $scope.contestTimerLoaded = true;
-                        });
-                    }, function(error) {
-                        console.error(error);
+                    }
+                    $scope.$apply(function() {
+                        $scope.contestTimerLoaded = true;
                     });
                 }
             }, function(error) {
