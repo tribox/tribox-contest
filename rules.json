@@ -230,6 +230,9 @@
                                 "condition": {
                                     ".validate": "newData.isString() && (newData.val() == 'OK' || newData.val() == '+2' || newData.val() == 'DNF')"
                                 },
+                                "note": {
+                                    ".validate": "newData.isString() && newData.val().length < 4096"
+                                },
                                 "$other": {
                                     ".validate": false
                                 }

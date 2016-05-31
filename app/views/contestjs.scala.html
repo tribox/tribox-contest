@@ -38,6 +38,9 @@ var calcResult = function(method, format, data) {
                 if (d.condition == 'DNF') {
                     countDNF++;
                     upperIndex = index;
+                    if (lowerIndex == -1) {
+                        lowerIndex = index;
+                    }
                 } else {
                     var t;
                     if (d.condition == 'OK') {
@@ -85,7 +88,11 @@ var calcResult = function(method, format, data) {
         if (format == 'time') {
             var best = {'record': 9999.999, 'condition': 'DNF'};
             data.forEach(function(d, index) {
-                if (d.condition != 'DNF') {
+                if (d.condition == 'DNF') {
+                    if (bestIndex == -1) {
+                        bestIndex = index;
+                    }
+                } else {
                     var t;
                     if (d.condition == 'OK') {
                         t = d.record;
@@ -104,7 +111,11 @@ var calcResult = function(method, format, data) {
         } else if (format == 'number') {
             var best = {'record': 9999, 'condition': 'DNF'};
             data.forEach(function(d, index) {
-                if (d.condition != 'DNF') {
+                if (d.condition == 'DNF') {
+                    if (bestIndex == -1) {
+                        bestIndex = index;
+                    }
+                } else {
                     if (d.record < best.record) {
                         best = d;
                         bestIndex = index;
