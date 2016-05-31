@@ -122,6 +122,7 @@ window.TriboxContest.timerInspectingText = 'スペースキーを長押しして
 window.TriboxContest.timerInspectingTextMb = 'タップ長押ししてタイマーをスタート';
 window.TriboxContest.timerRunningText = 'キーを押してタイマーをストップ';
 window.TriboxContest.timerRunningTextMb = 'タップしてタイマーをストップ';
+window.TriboxContest.timerFinishText = '計測が完了しました';
 
 app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $timeout) {
     $scope.contestTimerLoaded = false;
@@ -178,6 +179,12 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
                             ($scope.scrambleIndex)++;
                         }
                         nextScramble($scope.scrambleIndex);
+                        if (window.TriboxContest.events.e@{eid}.attempts <= $scope.scrambleIndex) {
+                            angular.element(document.getElementById('input-completed')).removeClass('hide');
+                            document.getElementById('timerNote').innerHTML = window.TriboxContest.timerFinishText;
+                            document.getElementById('timerNoteMb').innerHTML = window.TriboxContest.timerFinishText;
+                            updateStatus(false, false, false);
+                        }
                         $scope.$apply(function() {
                             $scope.contestTimerLoaded = true;
                         });
@@ -200,11 +207,12 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
 
     var nextScramble = function(index) {
         $timeout(function() {
-            if (index < window.TriboxContest.events.e@{eid}.attempts) {
-                $scope.scrambleIndexText = toOrdinal(index + 1);
-                angular.element(document.getElementById('scramble-' + (index - 1))).addClass('hide');
-                angular.element(document.getElementById('scramble-' + index)).removeClass('hide');
+            if (window.TriboxContest.events.e@{eid}.attempts <= index) {
+                index = window.TriboxContest.events.e@{eid}.attempts - 1;
             }
+            $scope.scrambleIndexText = toOrdinal(index + 1);
+            angular.element(document.getElementById('scramble-' + (index - 1))).addClass('hide');
+            angular.element(document.getElementById('scramble-' + index)).removeClass('hide');
             $scope.resultsDetail = $scope.turnOnButtons(window.TriboxContest.events.e@{eid}.format, $scope.results);
         });
     };
@@ -272,6 +280,9 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
                         }
                         if (count == attempts) {
                             inputCompleted.removeClass('hide');
+                            document.getElementById('timerNote').innerHTML = window.TriboxContest.timerFinishText;
+                            document.getElementById('timerNoteMb').innerHTML = window.TriboxContest.timerFinishText;
+                            updateStatus(false, false, false);
                         } else {
                             inputCompleted.addClass('hide');
                         }
@@ -420,6 +431,7 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
                 } else {
                     $scope.results[$scope.scrambleIndex].record = resultTime;
                     $scope.results[$scope.scrambleIndex].condition = 'DNF';
+                    timerText.innerHTML = 'DNF';
                 }
                 ($scope.scrambleIndex)++;
                 saveAndPrepare();
