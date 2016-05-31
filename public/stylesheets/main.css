@@ -121,18 +121,20 @@ a.underlined {
     background: none;
     color: #E74C3C;
     border: 2px solid #E74C3C;
-    -webkit-border-radius: 5px;
+    border-top: 5px solid #E74C3C;
+    /*-webkit-border-radius: 5px;
        -moz-border-radius: 5px;
-            border-radius: 5px;
+            border-radius: 5px;*/
 }
 .notice-success {
     padding: 10px;
     background: none;
     color: #1BBC9B;
     border: 2px solid #1BBC9B;
-    -webkit-border-radius: 5px;
+    border-top: 5px solid #1BBC9B;
+    /*-webkit-border-radius: 5px;
        -moz-border-radius: 5px;
-            border-radius: 5px;
+            border-radius: 5px;*/
 }
 
 

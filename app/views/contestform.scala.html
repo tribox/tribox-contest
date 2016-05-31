@@ -75,7 +75,7 @@
 @filterjs()
 @contestjs(cid=cid, eid=eid)
 <script>
-app.controller('ContestFormCtrl', ['$scope', 'Auth', function($scope, Auth) {
+app.controller('ContestFormCtrl', ['$scope', function($scope) {
     $scope.contestFormLoaded = false;
 
     // Results
@@ -130,7 +130,7 @@ app.controller('ContestFormCtrl', ['$scope', 'Auth', function($scope, Auth) {
             console.error(error);
         });
     } else {
-        location.href = '@routes.HomeController.index';
+        location.href = '@routes.HomeController.index?logout=1';
     }
 
     // On Reuslts change
@@ -207,7 +207,7 @@ app.controller('ContestFormCtrl', ['$scope', 'Auth', function($scope, Auth) {
     // Condition buttons
     $scope.applyOK = function(index) {
         var resultElem = $scope.results[index];
-        if (resultElem) {
+        if (resultElem && resultElem.record != 0) {
             var btnOK = angular.element(document.getElementById('timeform-cond-ok-' + index));
             var btnPenalty = angular.element(document.getElementById('timeform-cond-penalty-' + index));
             var btnDNF = angular.element(document.getElementById('timeform-cond-dnf-' + index));
@@ -223,7 +223,7 @@ app.controller('ContestFormCtrl', ['$scope', 'Auth', function($scope, Auth) {
     };
     $scope.applyPenalty = function(index) {
         var resultElem = $scope.results[index];
-        if (resultElem) {
+        if (resultElem && resultElem.record != 0) {
             var btnOK = angular.element(document.getElementById('timeform-cond-ok-' + index));
             var btnPenalty = angular.element(document.getElementById('timeform-cond-penalty-' + index));
             var btnDNF = angular.element(document.getElementById('timeform-cond-dnf-' + index));
@@ -239,19 +239,20 @@ app.controller('ContestFormCtrl', ['$scope', 'Auth', function($scope, Auth) {
     };
     $scope.applyDNF = function(index) {
         var resultElem = $scope.results[index];
-        if (resultElem) {
-            var btnOK = angular.element(document.getElementById('timeform-cond-ok-' + index));
-            var btnPenalty = angular.element(document.getElementById('timeform-cond-penalty-' + index));
-            var btnDNF = angular.element(document.getElementById('timeform-cond-dnf-' + index));
-            var scrambleLine = angular.element(document.getElementById('scramble-' + index));
-            $scope.results[index].condition = 'DNF';
-            $scope.resultsForm[index] = 'DNF';
-            btnOK.removeClass('cond-ok-on');
-            btnPenalty.removeClass('cond-penalty-on');
-            btnDNF.addClass('cond-dnf-on');
-            scrambleLine.addClass('scramble-done');
-            saveAndPrepare();
+        if (!resultElem) {
+            $scope.results[index] = { 'record': 0, 'condition': 'DNF' };
         }
+        var btnOK = angular.element(document.getElementById('timeform-cond-ok-' + index));
+        var btnPenalty = angular.element(document.getElementById('timeform-cond-penalty-' + index));
+        var btnDNF = angular.element(document.getElementById('timeform-cond-dnf-' + index));
+        var scrambleLine = angular.element(document.getElementById('scramble-' + index));
+        $scope.results[index].condition = 'DNF';
+        $scope.resultsForm[index] = 'DNF';
+        btnOK.removeClass('cond-ok-on');
+        btnPenalty.removeClass('cond-penalty-on');
+        btnDNF.addClass('cond-dnf-on');
+        scrambleLine.addClass('scramble-done');
+        saveAndPrepare();
     };
 
     // Save & Fetch data
@@ -285,7 +286,7 @@ app.controller('ContestFormCtrl', ['$scope', 'Auth', function($scope, Auth) {
                 }
             });
         } else {
-            location.href = '@routes.HomeController.index';
+            location.href = '@routes.HomeController.index?logout=1';
         }
     };
 }]);

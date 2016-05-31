@@ -329,7 +329,7 @@ app.controller('ContestConfirmCtrl', ['$scope', 'Auth', function($scope, Auth) {
                 }
             });
         } else {
-            location.href = '@routes.HomeController.index';
+            location.href = '@routes.HomeController.index?logout=1';
         }
     };
 }]);

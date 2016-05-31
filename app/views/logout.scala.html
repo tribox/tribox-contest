@@ -13,7 +13,7 @@
 app.controller('AuthLogoutCtrl', ['$scope', 'Auth', function($scope, Auth) {
     $scope.logout = function() {
         Auth.$unauth();
-        location.href = '@routes.HomeController.index';
+        location.href = '@routes.HomeController.index?logout=1';
     };
 }]);
 </script>

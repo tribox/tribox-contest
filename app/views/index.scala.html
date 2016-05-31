@@ -46,6 +46,15 @@ app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $fi
     }, function(error) {
         console.error(error);
     });
+
+    $scope.justLogout = null;
+    var authData = contestRef.getAuth();
+    if (!authData) {
+        var vars = getUrlVars();
+        if (vars.logout) {
+            $scope.justLogout = true;
+        }
+    }
 }]);
 </script>
 </head>
@@ -59,6 +68,11 @@ app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $fi
         Loading...
     </div>
     <div ng-show="authLoaded && contestLoaded">
+
+        <p class="notice-success" ng-if="justLogout">
+            <i class="fa fa-check"></i>
+            ログアウトしました。
+        </p>
 
         @authinfo()
 
