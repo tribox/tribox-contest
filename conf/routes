@@ -20,6 +20,10 @@ GET     /setting/password           controllers.SettingController.settingpasswor
 # Users
 GET     /user/$id<[a-zA-Z0-9_]{1,15}> controllers.UserController.user(id: String)
 
+# Contests (result)
+GET     /contest/$cid<[0-9]{4}(1|2)[0-9]{2}>/result                         controllers.ContestController.resultindex(cid: String)
+GET     /contest/$cid<[0-9]{4}(1|2)[0-9]{2}>/result/$eid<[a-zA-Z0-9]{1,15}> controllers.ContestController.result(cid: String, eid: String)
+
 # Contests
 GET     /contest/$cid<[0-9]{4}(1|2)[0-9]{2}>                                 controllers.ContestController.contest(cid: String)
 GET     /contest/$cid<[0-9]{4}(1|2)[0-9]{2}>/$eid<[a-zA-Z0-9]{1,15}>         controllers.ContestController.choose(cid: String, eid: String)

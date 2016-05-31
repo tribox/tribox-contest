@@ -24,7 +24,7 @@ var getRandomStr = function(l) {
 <script>
 app.controller('AuthJoinCtrl', ['$scope', 'Auth', function($scope, Auth) {
     $scope.createUser = function() {
-        $scope.message = null;
+        $scope.joinMessage = null;
         $scope.error = null;
 
         var _email = $scope.email;
@@ -39,12 +39,13 @@ app.controller('AuthJoinCtrl', ['$scope', 'Auth', function($scope, Auth) {
             email: _email,
             password: _password
         }).then(function(userData) {
-            $scope.message = 'User created with uid: ' + userData.uid;
+            //$scope.joinMessage = 'User created with uid: ' + userData.uid;
 
             Auth.$resetPassword({
                 email: _email
             }).then(function() {
-                $scope.message = 'Password email sent successfully!';
+                //$scope.message = 'Password email sent successfully!';
+                $scope.joinMessage = 'パスワード通知メールが送信されました。';
             }).catch(function(error) {
                 $scope.error = error;
             });
@@ -66,9 +67,10 @@ app.controller('AuthJoinCtrl', ['$scope', 'Auth', function($scope, Auth) {
     </div>
     <div ng-show="authLoaded">
 
-        @* <!--<div class="color-dark margin-bottom-20" ng-if="message">
-            Message: {{ message }}
-        </div>--> *@
+        <div class="notice-success margin-bottom-20" ng-if="joinMessage">
+            <i class="fa fa-check"></i>
+            {{ joinMessage }}
+        </div>
         <div class="color-error margin-bottom-20" ng-if="error">
             エラー: {{ error }}
         </div>

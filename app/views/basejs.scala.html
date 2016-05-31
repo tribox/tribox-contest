@@ -3,11 +3,82 @@
 <script>
 window.TriboxContest = {};
 
+
+var app = angular.module('contestApp', ['firebase']);
+var contestRef = new Firebase('https://@{firebaseappContest}.firebaseio.com');
+
+
+/**
+ * Filter: toDate
+ */
+var timestampToDate = function(timestamp) {
+    var weedDays = ['Sun.', 'Mon.', 'Tue.', 'Wed.', 'Thu.', 'Fri.', 'Sat.'];
+    var d = new Date(timestamp);
+    var year = d.getFullYear();
+    var month = ('0' + (d.getMonth() + 1)).slice(-2);
+    var day = ('0' + d.getDate()).slice(-2);
+    var hour = ('0' + d.getHours()).slice(-2);
+    var min = ('0' + d.getMinutes()).slice(-2);
+    var sec = ('0' + d.getSeconds()).slice(-2);
+    return year + '-' + month + '-' + day + ' (' + weedDays[d.getDay()] + ') ' + hour + ':' + min + ':' + sec;
+};
+app.filter('toDate', [function() {
+    return timestampToDate;
+}]);
+
+/**
+ * Filter: removeHead
+ */
+app.filter('removeHead', [function() {
+    return function(str) {
+        if (str) {
+            return str.substr(1);
+        } else {
+            return str;
+        }
+    };
+}]);
+
+
+/**
+ * Filter: Number to Ordinal
+ */
+var toOrdinal = function(n) {
+    n = n - 0;
+    if (n == 1) {
+        return '1st';
+    } else if (n == 2) {
+        return '2nd';
+    } else if (n == 3) {
+        return '3rd';
+    } else {
+        return n + 'th';
+    }
+};
+app.filter('ordinal', [function() {
+    return toOrdinal;
+}]);
+
+
+/**
+ * Filter: Uppercase the top letter
+ */
+app.filter('uppercaseHead', [function() {
+    return function(str) {
+        if (str) {
+            return str.substr(0, 1).toUpperCase() + str.substr(1);
+        } else {
+            return '';
+        }
+    };
+}]);
+
+
 /**
  * URL解析して、クエリ文字列を返す
  * http://qiita.com/ma_me/items/03aaebb5dc440b380244
  */
-function getUrlVars() {
+var getUrlVars = function() {
     var vars = {};
     var url = window.location.search;
     var hash  = url.slice(1).split('&');
@@ -17,8 +88,5 @@ function getUrlVars() {
         vars[array[0]] = array[1];
     }
     return vars;
-}
-
-var app = angular.module('contestApp', ['firebase']);
-var contestRef = new Firebase('https://@{firebaseappContest}.firebaseio.com');
+};
 </script>

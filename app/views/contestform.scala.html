@@ -78,7 +78,6 @@
     @bodyfooter(contestName)
 
 @authjs(redirectLogin="", redirectLogout="", checkFirst=true)
-@filterjs()
 @contestjs(cid=cid, eid=eid, fetchScrambles=true, fetchResults=false)
 <script>
 app.controller('ContestFormCtrl', ['$scope', '$timeout', function($scope, $timeout) {

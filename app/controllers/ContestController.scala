@@ -105,4 +105,13 @@ class ContestController @Inject() extends HomeController {
         //Ok(views.html.contestconfirm(cid, eid, getContestName, getContestUrl, getFirebaseappContest, puzzles, puzzleCategories, puzzleBrands))
         //Ok(views.html.contestconfirm(cid, eid, getContestName, getContestUrl, getFirebaseappContest, cubes, puzzles, puzzleCategories, puzzleBrands))
     }
+
+    def resultindex(cid: String) = Action {
+        Found("/contest/" + cid);
+    }
+
+    def result(cid: String, eid: String) = Action {
+        Ok(views.html.contestresult(cid, eid, getContestName, getContestUrl, getFirebaseappContest))
+    }
+
 }

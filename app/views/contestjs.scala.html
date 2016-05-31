@@ -124,6 +124,7 @@ app.controller('ContestCtrl', ['$scope', '$timeout', function($scope, $timeout) 
     $scope.contestData = null;
     $scope.scramblesData = null;
     $scope.resultsData = null;
+    $scope.resultsPersons = null;
     $scope.events = null;
 
     $scope.existsContest = false;
@@ -217,6 +218,15 @@ app.controller('ContestCtrl', ['$scope', '$timeout', function($scope, $timeout) 
             if (snapResults.exists() && snapResults.val()._dummy == null) {
                 $timeout(function() {
                     $scope.resultsData = snapResults.val();
+                    $scope.resultsPersons = {};
+                    Object.keys($scope.resultsData).forEach(function(e) {
+                        $scope.resultsPersons[e] = 0;
+                        Object.keys($scope.resultsData[e]).forEach(function(uid) {
+                            if (!($scope.resultsData[e][uid]._dummy) && $scope.resultsData[e][uid].endAt) {
+                                ($scope.resultsPersons[e])++;
+                            }
+                        });
+                    });
                 });
             } else {
                 console.error('Invalid: contest (@cid)');

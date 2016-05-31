@@ -1,0 +1,69 @@
+@(cid: String, eid: String, contestName: String, contestUrl: String, firebaseappContest: String)
+
+@defining("Contest Result") { title =>
+
+<!DOCTYPE html>
+<html lang="ja" ng-app="contestApp">
+<head>
+    @header(title, contestName)
+
+@basejs(firebaseappContest)
+</head>
+<body><div class="container">
+    @bodyheader(title, contestName)
+
+    <div ng-controller="AuthCtrl"><div ng-controller="ContestCtrl"><div ng-controller="ContestResultCtrl">
+    <div ng-hide="authLoaded && contestLoaded && contestResultLoaded">
+        <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+        <span class="sr-only">Loading...</span>
+        Loading...
+    </div>
+    <div ng-show="authLoaded && contestLoaded && contestResultLoaded">
+
+    @authinfo()
+
+    <div ng-hide="existsContest">
+        <p class="color-error">
+            存在しないコンテストです。
+        </p>
+    </div>
+    <div ng-hide="existsEvent">
+        <p class="color-error">
+            存在しない競技です。
+        </p>
+    </div>
+    <div ng-hide="countdown < 0">
+        <p class="color-error">
+            終了していないコンテストです。結果を表示できません。
+        </p>
+    </div>
+
+    <div ng-show="existsContest && existsEvent && countdown < 0">
+
+        <h2>{{ contestData.contestName }}</h2>
+
+        <p>
+            開始 <i class="fa fa-calendar"></i>: {{ contestData.beginAt | toDate }}<br>
+            終了 <i class="fa fa-calendar"></i>: {{ contestData.endAt | toDate }}
+        </p>
+
+        <div>
+            結果。
+        </div>
+
+    </div></div></div></div></div>
+
+    @bodyfooter(contestName)
+
+@authjs(redirectLogin="", redirectLogout="", checkFirst=true)
+@contestjs(cid=cid, eid=eid, fetchScrambles=false, fetchResults=false)
+<script>
+app.controller('ContestResultCtrl', ['$scope', function($scope) {
+    $scope.contestResultLoaded = true;
+}]);
+</script>
+
+</div></body>
+</html>
+
+}

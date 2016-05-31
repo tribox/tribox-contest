@@ -10,3 +10,7 @@ exports.WCAAPP            = 'xxxxxxxx'
 exports.WCAAPP_SECRET     = 'xxxxxxxx'
 
 exports.SEED = 'xxxxxxxx'
+
+exports.DUMMY_USERS = [
+    'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'
+];

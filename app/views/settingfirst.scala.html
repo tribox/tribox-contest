@@ -79,7 +79,7 @@ app.controller('AuthFirstSettingCtrl', ['$scope', 'Auth', function($scope, Auth)
             }
         }
         // 所属、長さチェック
-        if (!(_organization == null || _organization.length() < 32)) {
+        if (!(_organization == null || _organization.length < 32)) {
             //console.error('Invalid organization');
             $scope.error = '所属が正しくありません。';
             return;
