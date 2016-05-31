@@ -17,7 +17,8 @@ class ContestController @Inject() extends HomeController {
      * Contest pages
      */
     def contest(cid: String) = Action {
-        Ok(views.html.contest(cid, getContestName, getContestUrl, getFirebaseappContest))
+        val products = Product.getAll
+        Ok(views.html.contest(cid, getContestName, getContestUrl, getFirebaseappContest, products))
     }
 
     def choose(cid: String, eid: String) = Action {
@@ -111,7 +112,8 @@ class ContestController @Inject() extends HomeController {
     }
 
     def result(cid: String, eid: String) = Action {
-        Ok(views.html.contestresult(cid, eid, getContestName, getContestUrl, getFirebaseappContest))
+        val products = Product.getAll
+        Ok(views.html.contestresult(cid, eid, getContestName, getContestUrl, getFirebaseappContest, products))
     }
 
 }

@@ -1,4 +1,4 @@
-@(cid: String, contestName: String, contestUrl: String, firebaseappContest: String)
+@(cid: String, contestName: String, contestUrl: String, firebaseappContest: String, products: List[Product])
 
 @defining("Contest") { title =>
 
@@ -92,6 +92,7 @@
                             <th>順位</th>
                             <th>獲得SP</th>
                             <th>名前</th>
+                            <th>所属</th>
                             <th ng-if="events[e].method == 'average'">平均記録</th>
                             <th ng-if="events[e].method == 'best'">最良記録</th>
                             <th>個々の記録</th>
@@ -99,6 +100,20 @@
                         </tr>
                     </thead>
                     <tbody>
+                        <tr ng-repeat="r in resultsTop3[e]">
+                            <td>{{ $index + 1 }}</td>
+                            <td></td>
+                            <td>{{ r.user.displayname }}</td>
+                            <td>{{ r.user.organization }}</td>
+                            <td>{{ r.resultF }}</td>
+                            <td>{{ r.detailsF }}</td>
+                            <td ng-show="r.puzzle.type == 'database'">
+                                <a href="http://store.tribox.com/products/detail.php?product_id={{ r.puzzle.product }}" target="_blank">{{ r.puzzleF }}</a>
+                            </td>
+                            <td ng-show="r.puzzle.type == 'nodatabase' || r.puzzle.type == 'unknown'">
+                                {{ r.puzzleF }}
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
                 <p>
@@ -106,7 +121,8 @@
                         {{ events[e].name }} のすべての結果を見る
                     </a>
                 </p>
-                <pre>{{ resultsData[e] | json }}</pre>
+                @* <!--<pre>{{ resultsData[e] | json }}</pre>--> *@
+                @* <!--<pre>{{ resultsTop3[e] | json }}</pre>--> *@
             </div>
         </div>
 
@@ -133,6 +149,11 @@
 @authjs(redirectLogin="", redirectLogout="", checkFirst=true)
 @contestjs(cid=cid, fetchScrambles=false, fetchResults=true)
 <script>
+TriboxContest.Products = [];
+@for(product:Product <- products) {
+    TriboxContest.Products[@product.product_id] = '@product.product_name';
+}
+
 app.controller('ContestIndexCtrl', ['$scope', function($scope) {
     $scope.eventsDone = {};
     $scope.justSuspended = null;

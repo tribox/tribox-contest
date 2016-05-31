@@ -136,6 +136,8 @@ app.controller('ContestCtrl', ['$scope', '$timeout', function($scope, $timeout) 
     $scope.scramblesData = null;
     $scope.resultsData = null;
     $scope.resultsPersons = null;
+    $scope.resultsTop3 = null;
+    $scope.resultsAll = null;
     $scope.events = null;
 
     $scope.existsContest = false;
@@ -227,15 +229,84 @@ app.controller('ContestCtrl', ['$scope', '$timeout', function($scope, $timeout) 
     @if(fetchResults) {
         contestRef.child('results').child('c@cid').once('value', function(snapResults) {
             if (snapResults.exists() && snapResults.val()._dummy == null) {
-                $timeout(function() {
-                    $scope.resultsData = snapResults.val();
-                    $scope.resultsPersons = {};
-                    Object.keys($scope.resultsData).forEach(function(e) {
-                        $scope.resultsPersons[e] = 0;
-                        Object.keys($scope.resultsData[e]).forEach(function(uid) {
-                            if (!($scope.resultsData[e][uid]._dummy) && $scope.resultsData[e][uid].endAt) {
-                                ($scope.resultsPersons[e])++;
-                            }
+                contestRef.child('events').once('value', function(snapEvents) {
+                    var Events = snapEvents.val();
+                    contestRef.child('users').once('value', function(snapUsers) {
+                        var Users = snapUsers.val();
+                        $timeout(function() {
+                            $scope.resultsData = snapResults.val();
+                            $scope.resultsPersons = {};
+                            $scope.resultsTop3 = {};
+                            $scope.resultsAll = {};
+                            Object.keys($scope.resultsData).forEach(function(e) {
+                                $scope.resultsPersons[e] = 0;
+                                $scope.resultsTop3[e] = [];
+                                $scope.resultsAll[e] = [];
+                                var count = 0;
+                                Object.keys($scope.resultsData[e]).forEach(function(uid) {
+                                    if (!($scope.resultsData[e][uid]._dummy) && $scope.resultsData[e][uid].endAt) {
+                                        ($scope.resultsPersons[e])++;
+
+                                        // 表示用にデータ加工
+                                        var results = $scope.resultsData[e][uid];
+
+                                        // User
+                                        $scope.resultsData[e][uid].user = Users[uid];
+
+                                        // Result
+                                        if (results.result.condition != 'DNF') {
+                                            if (Events[e].format == 'time') {
+                                                $scope.resultsData[e][uid].resultF = formatTime(results.result.record);
+                                            } else {
+                                                $scope.resultsData[e][uid].resultF = results.result.record;
+                                            }
+                                        } else {
+                                            $scope.resultsData[e][uid].resultF = 'DNF';
+                                        }
+
+                                        // Details
+                                        $scope.resultsData[e][uid].detailsA = [];
+                                        results.details.forEach(function(d, index) {
+                                            var t = '';
+                                            if (Events[e].method == 'average' && (results.result.best == index || results.result.worst == index)) {
+                                                t += '(';
+                                            }
+                                            if (d.condition == 'OK') {
+                                                if (Events[e].format == 'time') {
+                                                    t += formatTime(d.record);
+                                                } else if (Events[e].format == 'number') {
+                                                    t += d.record;
+                                                }
+                                            } else if (d.condition == '+2') {
+                                                t += formatTime(d.record + 2.000);
+                                            } else if (d.condition == 'DNF') {
+                                                t += 'DNF';
+                                            }
+                                            if (Events[e].method == 'average' && (results.result.best == index || results.result.worst == index)) {
+                                                t += ')';
+                                            }
+                                            $scope.resultsData[e][uid].detailsA.push(t);
+                                        });
+                                        $scope.resultsData[e][uid].detailsF = $scope.resultsData[e][uid].detailsA.join(' ');
+
+                                        // Puzzle
+                                        if (results.puzzle.type == 'database') {
+                                            $scope.resultsData[e][uid].puzzleF = TriboxContest.Products[results.puzzle.product];
+                                        } else if (results.puzzle.type == 'nodatabase') {
+                                            $scope.resultsData[e][uid].puzzleF = results.puzzle.input;
+                                        } else {
+                                            $scope.resultsData[e][uid].puzzleF = '不明';
+                                        }
+
+                                        if (count < 3) {
+                                            $scope.resultsTop3[e].push($scope.resultsData[e][uid]);
+                                        }
+                                        $scope.resultsAll[e].push($scope.resultsData[e][uid]);
+
+                                        count++
+                                    }
+                                });
+                            });
                         });
                     });
                 });

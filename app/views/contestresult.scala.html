@@ -1,4 +1,4 @@
-@(cid: String, eid: String, contestName: String, contestUrl: String, firebaseappContest: String)
+@(cid: String, eid: String, contestName: String, contestUrl: String, firebaseappContest: String, products: List[Product])
 
 @defining("Contest Result") { title =>
 
@@ -12,13 +12,13 @@
 <body><div class="container">
     @bodyheader(title, contestName)
 
-    <div ng-controller="AuthCtrl"><div ng-controller="ContestCtrl"><div ng-controller="ContestResultCtrl">
-    <div ng-hide="authLoaded && contestLoaded && contestResultLoaded">
+    <div ng-controller="AuthCtrl"><div ng-controller="ContestCtrl">
+    <div ng-hide="authLoaded && contestLoaded">
         <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
         <span class="sr-only">Loading...</span>
         Loading...
     </div>
-    <div ng-show="authLoaded && contestLoaded && contestResultLoaded">
+    <div ng-show="authLoaded && contestLoaded">
 
     @authinfo()
 
@@ -47,20 +47,55 @@
             終了 <i class="fa fa-calendar"></i>: {{ contestData.endAt | toDate }}
         </p>
 
-        <div>
-            結果。
-        </div>
+        <h3>{{ events.e@{eid}.name }}</h3>
+        <p>
+            計測方法: {{ events.e@{eid}.method | uppercaseHead }} of {{ events.e@{eid}.attempts }}<br>
+            参加人数: {{ resultsPersons.e@{eid} }} 人
+        </p>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>順位</th>
+                    <th>獲得SP</th>
+                    <th>名前</th>
+                    <th>所属</th>
+                    <th ng-if="events.e@{eid}.method == 'average'">平均記録</th>
+                    <th ng-if="events.e@{eid}.method == 'best'">最良記録</th>
+                    <th>個々の記録</th>
+                    <th>使用キューブ</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="r in resultsAll.e@{eid}">
+                    <td>{{ $index + 1 }}</td>
+                    <td></td>
+                    <td>{{ r.user.displayname }}</td>
+                    <td>{{ r.user.organization }}</td>
+                    <td>{{ r.resultF }}</td>
+                    <td>{{ r.detailsF }}</td>
+                    <td ng-show="r.puzzle.type == 'database'">
+                        <a href="http://store.tribox.com/products/detail.php?product_id={{ r.puzzle.product }}" target="_blank">{{ r.puzzleF }}</a>
+                    </td>
+                    <td ng-show="r.puzzle.type == 'nodatabase' || r.puzzle.type == 'unknown'">
+                        {{ r.puzzleF }}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        @* <!--<pre>{{ resultsData.e@{eid} | json }}</pre>--> *@
+        @* <!--<pre>{{ resultsTop3.e@{eid} | json }}</pre>--> *@
 
-    </div></div></div></div></div>
+    </div></div></div></div>
 
     @bodyfooter(contestName)
 
 @authjs(redirectLogin="", redirectLogout="", checkFirst=true)
-@contestjs(cid=cid, eid=eid, fetchScrambles=false, fetchResults=false)
+@contestjs(cid=cid, eid=eid, fetchScrambles=false, fetchResults=true)
 <script>
-app.controller('ContestResultCtrl', ['$scope', function($scope) {
-    $scope.contestResultLoaded = true;
-}]);
+TriboxContest.Products = [];
+@for(product:Product <- products) {
+    TriboxContest.Products[@product.product_id] = '@product.product_name';
+}
 </script>
 
 </div></body>
