@@ -1,7 +1,13 @@
 @(eid: String, useInput: Boolean = true, clickable: Boolean = true)
 
-        @* 試技数が5の場合 (例えば、average of 5) *@
-        <div class="row" ng-show="events.e@{eid}.attempts == 5">
+    @* <!--
+        ハードコーディングで無理やり分岐。
+        このまま AngularJS で分岐させると、idが重複する。
+    --> *@
+
+    @* 試技数が5の場合 (例えば、average of 5) *@
+    @if(eid != "333bf") {
+        <div class="row">
             <div class="col md-1"></div>
             <div class="col md-2 timeform-wrap" ng-repeat="i in range(5)">
                 <div class="timeform">
@@ -30,14 +36,15 @@
             <div class="col md-1"></div>
         </div>
 
-        @* 試技数が3の場合 (例えば、best of 5) *@
-        <div class="row" ng-show="events.e@{eid}.attempts == 3">
-            <div class="col md-1"></div>
-            <div class="col md-3 timeform-wrap" ng-repeat="i in range(3)">
+    @* 試技数が3の場合 (例えば、best of 3) *@
+    } else {
+        <div class="row">
+            <div class="col md-3"></div>
+            <div class="col md-2 timeform-wrap" ng-repeat="i in range(3)">
                 <div class="timeform">
                     <div class="timeform-time">
-                    @if(clickable) {
-                        <input id="result-{{ $index }}" ng-model="resultsForm[$index]" ng-change="change()" type="text" placeholder="-:--.---" required>
+                    @if(useInput) {
+                        <input id="result-{{ $index }}" ng-model="resultsForm[$index]" ng-change="change($index)" type="text" placeholder="-:--.---" required>
                         <span class="hide color-error result-note"></span>
                     } else {
                         <span id="result-{{ $index }}" class="result-detail" ng-if="resultsDetail[$index]">{{ resultsDetail[$index] }}</span>
@@ -45,7 +52,7 @@
                     }
                     </div>
                     <div class="timeform-cond">
-                        @if(useInput) {
+                        @if(clickable) {
                             <div id="timeform-cond-ok-{{ $index }}" class="timeform-cond-btn" ng-click="applyOK($index)">OK</div>
                             <div id="timeform-cond-penalty-{{ $index }}" class="timeform-cond-btn" ng-click="applyPenalty($index)">+2</div>
                             <div id="timeform-cond-dnf-{{ $index }}" class="timeform-cond-btn" ng-click="applyDNF($index)">DNF</div>
@@ -57,5 +64,6 @@
                     </div>
                 </div>
             </div>
-            <div class="col md-2"></div>
+            <div class="col md-3"></div>
         </div>
+    }

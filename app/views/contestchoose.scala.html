@@ -6,6 +6,8 @@
 <html lang="ja" ng-app="contestApp">
 <head>
     @header(title, contestName)
+
+@basejs(firebaseappContest)
 </head>
 <body><div class="container">
     @bodyheader(title, contestName)
@@ -86,7 +88,6 @@
 
     @bodyfooter(contestName)
 
-@basejs(firebaseappContest)
 @authjs(redirectLogin="", redirectLogout="", checkFirst=true)
 @filterjs()
 @contestjs(cid=cid, eid=eid, fetchScrambles=false, fetchResults=false)

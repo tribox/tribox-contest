@@ -10,7 +10,7 @@
 @basejs(firebaseappContest)
 @authjs(redirectLogin="", redirectLogout="", checkFirst=true)
 @filterjs()
-@contestjs(cid=cid, fetchScrambles=false, fetchResults=false)
+@contestjs(cid=cid, fetchScrambles=false, fetchResults=true)
 <script>
 app.controller('ContestIndexCtrl', ['$scope', function($scope) {
     $scope.eventsDone = {};
@@ -106,7 +106,7 @@ app.controller('ContestIndexCtrl', ['$scope', function($scope) {
             現在開催中のコンテストです。
         </p>
         <p ng-if="countdown < 0">
-            すでに終了したコンテストです。
+            このコンテストは終了しました。
         </p>
         <p class="color-error" ng-if="countdown > 0">
             このコンテストはまだ開始されていません。
@@ -146,7 +146,33 @@ app.controller('ContestIndexCtrl', ['$scope', function($scope) {
         </table>
 
         <div ng-if="countdown < 0">
-            ここに結果を表示。
+            <div ng-repeat="e in contestData.events">
+                <h3>{{ events[e].name }}</h3>
+                <p>
+                    計測方法: {{ events[e].method | uppercaseHead }} of {{ events[e].attempts }}<br>
+                    参加人数: {{ resultsData[e].length - 1 }} 人
+                </p>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>順位</th>
+                            <th>獲得SP</th>
+                            <th>名前</th>
+                            <th ng-if="events[e].method == 'average'">平均記録</th>
+                            <th ng-if="events[e].method == 'best'">最良記録</th>
+                            <th>個々の記録</th>
+                            <th>使用キューブ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                <p>
+                    <a class="btn" href="/contest/@{cid}/{{ e | removeHead }}">
+                        「{{ events[e].name }}」のすべての結果を見る
+                    </a>
+                </p>
+            </div>
         </div>
 
         @* <!--<p>@cid -> contestData:</p>
@@ -159,8 +185,8 @@ app.controller('ContestIndexCtrl', ['$scope', function($scope) {
         @* <!--<p>@cid -> scramblesData:</p>
         <pre>{{ scramblesData | json }}</pre>--> *@
 
-        @* <!--<p>@cid -> resultsData:</p>
-        <pre>{{ resultsData | json }}</pre>--> *@
+        <p>@cid -> resultsData:</p>
+        <pre>{{ resultsData | json }}</pre>
 
         @* <!--<p>events:</p>
         <pre>{{ events | json }}</pre>--> *@

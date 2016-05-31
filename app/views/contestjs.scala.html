@@ -120,7 +120,7 @@ var calcResult = function(method, format, data) {
     }
 };
 
-app.controller('ContestCtrl', ['$scope', '$timeout', 'Auth', function($scope, $timeout, Auth) {
+app.controller('ContestCtrl', ['$scope', '$timeout', function($scope, $timeout) {
     $scope.contestData = null;
     $scope.scramblesData = null;
     $scope.resultsData = null;

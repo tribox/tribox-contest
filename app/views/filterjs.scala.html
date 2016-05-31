@@ -22,7 +22,11 @@ app.filter('toDate', [function() {
  */
 app.filter('removeHead', [function() {
     return function(str) {
-        return str.substr(1);
+        if (str) {
+            return str.substr(1);
+        } else {
+            return str;
+        }
     };
 }]);
 

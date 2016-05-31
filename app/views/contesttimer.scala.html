@@ -6,6 +6,7 @@
 <html lang="ja" ng-app="contestApp">
 <head>
     @header(title, contestName)
+
 <style>
 body {
     -webkit-user-select: none;
@@ -47,6 +48,9 @@ body {
     color: #1BBC9B !important;
 }
 </style>
+
+@basejs(firebaseappContest)
+
 </head>
 <body><div class="container">
     @bodyheader(title, contestName, cid=cid, eid=eid)
@@ -116,15 +120,14 @@ body {
 
     @bodyfooter(contestName)
 
-@basejs(firebaseappContest)
 @authjs(redirectLogin="", redirectLogout="", checkFirst=true)
 @filterjs()
 @contestjs(cid=cid, eid=eid, fetchScrambles=true, fetchResults=false)
 <script>
 window.TriboxContest.timerIdlingText = 'スペースキーを押してインスペクションタイムをスタート';
 window.TriboxContest.timerIdlingTextMb = 'タップしてインスペクションタイムをスタート';
-window.TriboxContest.timerInspectingText = 'スペースキー再度押し、手を離してタイマースタート';
-window.TriboxContest.timerInspectingTextMb = '再度タップし、手を離してタイマースタート';
+window.TriboxContest.timerInspectingText = 'スペースキーを長押しして、手を離してタイマースタート';
+window.TriboxContest.timerInspectingTextMb = 'タップ長押しして、手を離してタイマースタート';
 window.TriboxContest.timerRunningText = 'キーを押してタイマーをストップ';
 window.TriboxContest.timerRunningTextMb = 'タップしてタイマーをストップ';
 window.TriboxContest.timerFinishText = '計測が完了しました';
@@ -186,7 +189,7 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
                                 });
                                 ($scope.scrambleIndex)++;
                             }
-                            nextScramble($scope.scrambleIndex);
+                            showScramble($scope.scrambleIndex);
                             if (window.TriboxContest.events.e@{eid}.attempts <= $scope.scrambleIndex) {
                                 angular.element(document.getElementById('input-completed')).removeClass('hide');
                                 document.getElementById('timerNote').innerHTML = window.TriboxContest.timerFinishText;
@@ -212,7 +215,7 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
         location.href = '@routes.HomeController.index?logout=1';
     }
 
-    var nextScramble = function(index) {
+    var showScramble = function(index) {
         $timeout(function() {
             if (window.TriboxContest.events.e@{eid}.attempts <= index) {
                 index = window.TriboxContest.events.e@{eid}.attempts - 1;
@@ -385,9 +388,9 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
 
             $timeout(function() {
                 $scope.results[$scope.scrambleIndex] = {'record': 0, 'condition': 'DNF'};
-                ($scope.scrambleIndex)++;
                 saveAndPrepare();
-                nextScramble($scope.scrambleIndex);
+                ($scope.scrambleIndex)++;
+                showScramble($scope.scrambleIndex);
             });
 
             updateStatus(true, false, false);
@@ -442,9 +445,9 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
                     $scope.results[$scope.scrambleIndex].condition = 'DNF';
                     timerText.innerHTML = 'DNF';
                 }
-                ($scope.scrambleIndex)++;
                 saveAndPrepare();
-                nextScramble($scope.scrambleIndex);
+                ($scope.scrambleIndex)++;
+                showScramble($scope.scrambleIndex);
             });
         }
     };
