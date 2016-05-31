@@ -119,12 +119,12 @@ body {
 @basejs(firebaseappContest)
 @authjs(redirectLogin="", redirectLogout="", checkFirst=true)
 @filterjs()
-@contestjs(cid=cid, eid=eid)
+@contestjs(cid=cid, eid=eid, fetchScrambles=true, fetchResults=false)
 <script>
 window.TriboxContest.timerIdlingText = 'スペースキーを押してインスペクションタイムをスタート';
 window.TriboxContest.timerIdlingTextMb = 'タップしてインスペクションタイムをスタート';
-window.TriboxContest.timerInspectingText = 'スペースキーを長押ししてタイマーをスタート';
-window.TriboxContest.timerInspectingTextMb = 'タップ長押ししてタイマーをスタート';
+window.TriboxContest.timerInspectingText = 'スペースキー再度押し、手を離してタイマースタート';
+window.TriboxContest.timerInspectingTextMb = '再度タップし、手を離してタイマースタート';
 window.TriboxContest.timerRunningText = 'キーを押してタイマーをストップ';
 window.TriboxContest.timerRunningTextMb = 'タップしてタイマーをストップ';
 window.TriboxContest.timerFinishText = '計測が完了しました';
@@ -168,7 +168,7 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
                             // ここでエラーになる。
                             console.error(error);
                         }
-                        $scope.$apply(function() {
+                        $timeout(function() {
                             $scope.contestTimerLoaded = true;
                         });
                     });
@@ -178,24 +178,24 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
                     if (result.type != "timer") {
                         $scope.invalidPage = true;
                     } else {
-                        if (result.details) {
-                            $scope.$apply(function() {
+                        $timeout(function() {
+                            if (result.details) {
                                 $scope.results = result.details;
                                 $scope.results.forEach(function(r, index) {
                                     $scope.scrambleIndex = index;
                                 });
                                 ($scope.scrambleIndex)++;
-                            });
-                        }
-                        nextScramble($scope.scrambleIndex);
-                        if (window.TriboxContest.events.e@{eid}.attempts <= $scope.scrambleIndex) {
-                            angular.element(document.getElementById('input-completed')).removeClass('hide');
-                            document.getElementById('timerNote').innerHTML = window.TriboxContest.timerFinishText;
-                            document.getElementById('timerNoteMb').innerHTML = window.TriboxContest.timerFinishText;
-                            updateStatus(false, false, false);
-                        }
+                            }
+                            nextScramble($scope.scrambleIndex);
+                            if (window.TriboxContest.events.e@{eid}.attempts <= $scope.scrambleIndex) {
+                                angular.element(document.getElementById('input-completed')).removeClass('hide');
+                                document.getElementById('timerNote').innerHTML = window.TriboxContest.timerFinishText;
+                                document.getElementById('timerNoteMb').innerHTML = window.TriboxContest.timerFinishText;
+                                updateStatus(false, false, false);
+                            }
+                        });
                     }
-                    $scope.$apply(function() {
+                    $timeout(function() {
                         $scope.contestTimerLoaded = true;
                     });
                 }
@@ -204,7 +204,7 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
             });
         }, function(error) {
             console.error(error);
-            $scope.$apply(function() {
+            $timeout(function() {
                 $scope.contestTimerLoaded = true;
             });
         });
@@ -311,7 +311,7 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
 
     document.onselectstart = function() { return false; };
 
-    var startTime, stopTime;
+    var startTime, stopTime = 0;
     var timerId, dispTimerId;
     var inspectionTimerId, inspectionPenaltyTimerId, inspectionDNFTimerId;
 
@@ -324,9 +324,11 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
     var isTouching = false;     @* タッチ中 (スタート時) *@
     var isTouchingStop = false; @* タッチ中 (ストップ時) *@
     var startTouch = Infinity;
-    var TOUCHING_TH = 500;
 
-    var LIMIT_SECOND = 600; @* /* 10分でDNF */ *@
+    var INSPECTION_SECOND = 15; @* /* インスペクションタイムは15秒 */ *@
+    var TOUCHING_TH = 500;      @* /* 0.5秒長押しでタイマースタート */ *@
+    var LIMIT_SECOND = 600;     @* /* 10分でDNF */ *@
+    var FREEZING_TH = 1000;     @* /* タイマーストップ後1秒はタイマースタートできない */ *@
 
     //var startButton = document.getElementById('start');
     //var stopButton = document.getElementById('stop');
@@ -360,7 +362,7 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
     };
 
     var updateInspectionTimerText = function() {
-        inspectionCountdown = 15;
+        inspectionCountdown = INSPECTION_SECOND;
         timerText.innerHTML = inspectionCountdown;
 
         // インスペクションタイム
@@ -473,13 +475,15 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
             stopTimer();
             isTouchingStop = true;
         } else if ((hasInspection && isInspecting || !hasInspection && isIdling) && !isTouching && !isTouchingStop && e.code == 'Space') {
-            startTouch = Date.now();
-            isTouching = true;
-            angular.element(document.getElementById('timerText')).addClass('wait');
-            dispTimerId = setTimeout(function() {
-                angular.element(document.getElementById('timerText')).removeClass('wait');
-                angular.element(document.getElementById('timerText')).addClass('ready');
-            }, TOUCHING_TH);
+            if (FREEZING_TH < Date.now() - stopTime) {
+                startTouch = Date.now();
+                isTouching = true;
+                angular.element(document.getElementById('timerText')).addClass('wait');
+                dispTimerId = setTimeout(function() {
+                    angular.element(document.getElementById('timerText')).removeClass('wait');
+                    angular.element(document.getElementById('timerText')).addClass('ready');
+                }, TOUCHING_TH);
+            }
         }
     });
     document.addEventListener('keyup', function(e) {
@@ -487,16 +491,20 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
         if (isTouchingStop) {
             isTouchingStop = false;
         } else if ((hasInspection && isInspecting || !hasInspection && isIdling) && e.code == 'Space') {
-            isTouching = false;
-            clearTimeout(dispTimerId);
-            angular.element(document.getElementById('timerText')).removeClass('wait');
-            angular.element(document.getElementById('timerText')).removeClass('ready');
-            if (TOUCHING_TH <= (Date.now() - startTouch)) {
-                startTimer();
-                startTouch = Infinity;
+            if (FREEZING_TH < Date.now() - stopTime) {
+                isTouching = false;
+                clearTimeout(dispTimerId);
+                angular.element(document.getElementById('timerText')).removeClass('wait');
+                angular.element(document.getElementById('timerText')).removeClass('ready');
+                if (TOUCHING_TH <= (Date.now() - startTouch)) {
+                    startTimer();
+                    startTouch = Infinity;
+                }
             }
         } else if (hasInspection && isIdling && e.code == 'Space') {
-            startInspection();
+            if (FREEZING_TH < Date.now() - stopTime) {
+                startInspection();
+            }
         }
     });
     document.addEventListener('touchstart', function(e) {
@@ -508,13 +516,15 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
             stopTimer();
             isTouchingStop = true;
         } else if ((hasInspection && isInspecting || !hasInspection && isIdling) && !isTouching && !isTouchingStop) {
-            startTouch = Date.now();
-            isTouching = true;
-            angular.element(document.getElementById('timerText')).addClass('wait');
-            dispTimerId = setTimeout(function() {
-                angular.element(document.getElementById('timerText')).removeClass('wait');
-                angular.element(document.getElementById('timerText')).addClass('ready');
-            }, TOUCHING_TH);
+            if (FREEZING_TH < Date.now() - stopTime) {
+                startTouch = Date.now();
+                isTouching = true;
+                angular.element(document.getElementById('timerText')).addClass('wait');
+                dispTimerId = setTimeout(function() {
+                    angular.element(document.getElementById('timerText')).removeClass('wait');
+                    angular.element(document.getElementById('timerText')).addClass('ready');
+                }, TOUCHING_TH);
+            }
         }
     });
     document.addEventListener('touchend', function(e) {
@@ -523,16 +533,20 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
             if (isTouchingStop) {
                 isTouchingStop = false;
             } else if (hasInspection && isInspecting || !hasInspection && isIdling) {
-                isTouching = false;
-                clearTimeout(dispTimerId);
-                angular.element(document.getElementById('timerText')).removeClass('wait');
-                angular.element(document.getElementById('timerText')).removeClass('ready');
-                if (TOUCHING_TH <= (Date.now() - startTouch)) {
-                    startTimer();
-                    startTouch = Infinity;
+                if (FREEZING_TH < Date.now() - stopTime) {
+                    isTouching = false;
+                    clearTimeout(dispTimerId);
+                    angular.element(document.getElementById('timerText')).removeClass('wait');
+                    angular.element(document.getElementById('timerText')).removeClass('ready');
+                    if (TOUCHING_TH <= (Date.now() - startTouch)) {
+                        startTimer();
+                        startTouch = Infinity;
+                    }
                 }
             } else if (hasInspection && isIdling) {
-                startInspection();
+                if (FREEZING_TH < Date.now() - stopTime) {
+                    startInspection();
+                }
             }
         }
     });

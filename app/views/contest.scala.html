@@ -10,7 +10,7 @@
 @basejs(firebaseappContest)
 @authjs(redirectLogin="", redirectLogout="", checkFirst=true)
 @filterjs()
-@contestjs(cid)
+@contestjs(cid=cid, fetchScrambles=false, fetchResults=false)
 <script>
 app.controller('ContestIndexCtrl', ['$scope', function($scope) {
     $scope.eventsDone = {};

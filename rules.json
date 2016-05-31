@@ -241,7 +241,10 @@
                                 ".validate": "newData.isNumber() && 0 <= newData.val() && newData.val() < 10000"
                             },
                             "best": {
-                                ".validate": "newData.isNumber() && 0 <= newData.val() && newData.val() < 10000"
+                                ".validate": "newData.isNumber() && 0 <= newData.val() && newData.val() < root.child('events').child($event_id).child('attempts').val()"
+                            },
+                            "worst": {
+                                ".validate": "newData.isNumber() && 0 <= newData.val() && newData.val() < root.child('events').child($event_id).child('attempts').val()"
                             },
                             "condition": {
                                 ".validate": "newData.isString() && (newData.val() == 'OK' || newData.val() == '+2' || newData.val() == 'DNF')"

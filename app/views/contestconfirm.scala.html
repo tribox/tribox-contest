@@ -178,7 +178,7 @@
 @basejs(firebaseappContest)
 @authjs(redirectLogin="", redirectLogout="", checkFirst=true)
 @filterjs()
-@contestjs(cid=cid, eid=eid)
+@contestjs(cid=cid, eid=eid, fetchScrambles=false, fetchResults=false)
 <script>
 app.controller('ContestConfirmCtrl', ['$scope', function($scope) {
     $scope.result = null;

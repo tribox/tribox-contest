@@ -78,9 +78,9 @@
 @basejs(firebaseappContest)
 @authjs(redirectLogin="", redirectLogout="", checkFirst=true)
 @filterjs()
-@contestjs(cid=cid, eid=eid)
+@contestjs(cid=cid, eid=eid, fetchScrambles=true, fetchResults=false)
 <script>
-app.controller('ContestFormCtrl', ['$scope', function($scope) {
+app.controller('ContestFormCtrl', ['$scope', '$timeout', function($scope, $timeout) {
     $scope.invalidPage = false;
     $scope.contestFormLoaded = false;
 
@@ -103,13 +103,13 @@ app.controller('ContestFormCtrl', ['$scope', function($scope) {
                         // ここでエラーになる。
                         console.error(error);
                     }
-                    $scope.$apply(function() {
+                    $timeout(function() {
                         $scope.contestFormLoaded = true;
                     });
                 });
             } else {
                 // Read current data
-                $scope.$apply(function() {
+                $timeout(function() {
                     var result = snapResult.val();
                     if (result.type != "form") {
                         $scope.invalidPage = true;

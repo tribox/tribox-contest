@@ -1,4 +1,4 @@
-@(cid: String, eid: String = "")
+@(cid: String, eid: String = "", fetchScrambles: Boolean = true, fetchResults: Boolean = true)
 
 <script>
 var formatTime = function(input) {
@@ -29,7 +29,7 @@ var calcResult = function(method, format, data) {
 
     // Average of X
     if (method == 'average') {
-        var lowerIndex = -1;
+        var lowerIndex = -1, upperIndex = -1;
         if (format == 'time') {
             var sum = 0.000;
             var count = 0, countDNF = 0;
@@ -37,6 +37,7 @@ var calcResult = function(method, format, data) {
             data.forEach(function(d, index) {
                 if (d.condition == 'DNF') {
                     countDNF++;
+                    upperIndex = index;
                 } else {
                     var t;
                     if (d.condition == 'OK') {
@@ -55,17 +56,18 @@ var calcResult = function(method, format, data) {
                     }
                     if (upper < t) {
                         upper = t;
+                        upperIndex = index;
                     }
                 }
             });
             if (countDNF == 0) {
                 return {'record': (Math.round(((sum - lower - upper) / (count - 2)) * 1000)) / 1000,
-                        'best': lowerIndex, 'condition': 'OK' };
+                        'best': lowerIndex, 'worst': upperIndex, 'condition': 'OK' };
             } else if (countDNF == 1) {
                 return {'record': (Math.round(((sum - lower) / (count - 1)) * 1000)) / 1000,
-                        'best': lowerIndex, 'condition': 'OK' };
+                        'best': lowerIndex, 'worst': upperIndex, 'condition': 'OK' };
             } else {
-                return {'record': 9999.999, 'best': lowerIndex, 'condition': 'DNF'};
+                return {'record': 9999.999, 'best': lowerIndex, 'worst': upperIndex, 'condition': 'DNF'};
             }
         } else {
             return null;
@@ -129,8 +131,16 @@ app.controller('ContestCtrl', ['$scope', '$timeout', 'Auth', function($scope, $t
 
     $scope.contestLoaded = false;
     $scope.loadedMain = false;
-    $scope.loadedScrambles = false;
-    $scope.loadedResults = false;
+    @if(fetchScrambles) {
+        $scope.loadedScrambles = false;
+    } else {
+        $scope.loadedScrambles = true;
+    }
+    @if(fetchResults) {
+        $scope.loadedResults = false;
+    } else {
+        $scope.loadedResults = true;
+    }
 
     @* /* コンテストが、進行中 (0) か、終了済み (負) か、これからやるやつ (正) か */ *@
     $scope.inProgress = null;
@@ -178,48 +188,52 @@ app.controller('ContestCtrl', ['$scope', '$timeout', 'Auth', function($scope, $t
     });
 
     // Fetch scrambles data
-    contestRef.child('scrambles').child('c@cid').once('value', function(snapScrambles) {
-        if (snapScrambles.exists() && snapScrambles.val()._dummy == null) {
+    @if(fetchScrambles) {
+        contestRef.child('scrambles').child('c@cid').once('value', function(snapScrambles) {
+            if (snapScrambles.exists() && snapScrambles.val()._dummy == null) {
+                $timeout(function() {
+                    $scope.scramblesData = snapScrambles.val();
+                });
+            } else {
+                console.error('Invalid: contest (@cid)');
+            }
             $timeout(function() {
-                $scope.scramblesData = snapScrambles.val();
+                $scope.loadedScrambles = true;
+                $scope.contestLoaded = $scope.loadedMain && $scope.loadedScrambles && $scope.loadedResults;
             });
-        } else {
-            console.error('Invalid: contest (@cid)');
-        }
-        $timeout(function() {
-            $scope.loadedScrambles = true;
-            $scope.contestLoaded = $scope.loadedMain && $scope.loadedScrambles && $scope.loadedResults;
+        }, function(error) {
+            //console.error(error);
+            console.error('Cannot access scrambles (@cid)');
+            $timeout(function() {
+                $scope.loadedScrambles = true;
+                $scope.contestLoaded = $scope.loadedMain && $scope.loadedScrambles && $scope.loadedResults;
+            });
         });
-    }, function(error) {
-        //console.error(error);
-        console.error('Cannot access scrambles (@cid)');
-        $timeout(function() {
-            $scope.loadedScrambles = true;
-            $scope.contestLoaded = $scope.loadedMain && $scope.loadedScrambles && $scope.loadedResults;
-        });
-    });
+    }
 
     // Fetch results data
-    contestRef.child('results').child('c@cid').once('value', function(snapResults) {
-        if (snapResults.exists() && snapResults.val()._dummy == null) {
+    @if(fetchResults) {
+        contestRef.child('results').child('c@cid').once('value', function(snapResults) {
+            if (snapResults.exists() && snapResults.val()._dummy == null) {
+                $timeout(function() {
+                    $scope.resultsData = snapResults.val();
+                });
+            } else {
+                console.error('Invalid: contest (@cid)');
+            }
             $timeout(function() {
-                $scope.resultsData = snapResults.val();
+                $scope.loadedResults = true;
+                $scope.contestLoaded = $scope.loadedMain && $scope.loadedScrambles && $scope.loadedResults;
             });
-        } else {
-            console.error('Invalid: contest (@cid)');
-        }
-        $timeout(function() {
-            $scope.loadedResults = true;
-            $scope.contestLoaded = $scope.loadedMain && $scope.loadedScrambles && $scope.loadedResults;
+        }, function(error) {
+            //console.error(error);
+            console.error('Cannot access results (@cid)');
+            $timeout(function() {
+                $scope.loadedResults = true;
+                $scope.contestLoaded = $scope.loadedMain && $scope.loadedScrambles && $scope.loadedResults;
+            });
         });
-    }, function(error) {
-        //console.error(error);
-        console.error('Cannot access results (@cid)');
-        $timeout(function() {
-            $scope.loadedResults = true;
-            $scope.contestLoaded = $scope.loadedMain && $scope.loadedScrambles && $scope.loadedResults;
-        });
-    });
+    }
 
     $scope.turnOnButtons = function(format, data) {
         var res = [];
@@ -278,6 +292,13 @@ app.controller('ContestCtrl', ['$scope', '$timeout', 'Auth', function($scope, $t
         btnOK.removeClass('cond-ok-on');
         btnPenalty.removeClass('cond-penalty-on');
         btnDNF.addClass('cond-dnf-on');
+    };
+
+    $scope.range = function(n) {
+        var arr = [];
+        for (var i = 0; i < n; i++)
+            arr.push(i);
+        return arr;
     };
 }]);
 </script>
