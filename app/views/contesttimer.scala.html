@@ -23,7 +23,7 @@ body {
     text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 #timerNote, #timerNoteMb {
-    margin-bottom: 40px;
+    padding-bottom: 40px;
 }
 @@media screen and (max-width: 480px) {
     #timerText {
@@ -88,6 +88,8 @@ body {
 
     <div ng-show="existsContest && existsEvent && inProgress.contest == 'c@{cid}' && !invalidPage">
 
+        <div id="touchArea">
+
         @contestscrambles(eid=eid, showIndividual=true)
 
         <div id="timerArea">
@@ -108,6 +110,8 @@ body {
                 <div id="info"></div>
             -->
         </div>
+
+        </div><!-- /#touchArea -->
 
         @contesttimeform(eid=eid, useInput=false, clickable=true)
 
@@ -170,6 +174,7 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
                             // ここでエラーになる。
                             console.error(error);
                         }
+                        showScramble($scope.scrambleIndex);
                         $timeout(function() {
                             $scope.contestTimerLoaded = true;
                         });
@@ -509,49 +514,55 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
             }
         }
     });
-    document.addEventListener('touchstart', function(e) {
-        //document.getElementById('keydown').innerHTML = 'touchstart (' + Date.now() + ' ' + e.changedTouches[0].pageX + ' ' + e.changedTouches[0].pageY + ')';
-        touchX = e.changedTouches[0].pageX;
-        touchY = e.changedTouches[0].pageY;
-        hasInspection = window.TriboxContest.hasInspection;
-        if (isRunning) {
-            stopTimer();
-            isTouchingStop = true;
-        } else if ((hasInspection && isInspecting || !hasInspection && isIdling) && !isTouching && !isTouchingStop) {
-            if (FREEZING_TH < Date.now() - stopTime) {
-                startTouch = Date.now();
-                isTouching = true;
-                angular.element(document.getElementById('timerText')).addClass('wait');
-                dispTimerId = setTimeout(function() {
-                    angular.element(document.getElementById('timerText')).removeClass('wait');
-                    angular.element(document.getElementById('timerText')).addClass('ready');
-                }, TOUCHING_TH);
-            }
-        }
-    });
-    document.addEventListener('touchend', function(e) {
-        //document.getElementById('keyup').innerHTML = 'touchend (' + Date.now() + ' ' + e.changedTouches[0].pageX + ' ' + e.changedTouches[0].pageY + ')';
-        if (Math.abs(e.changedTouches[0].pageX - touchX) <= TAP_TH && Math.abs(e.changedTouches[0].pageY - touchY) <= TAP_TH) {
-            if (isTouchingStop) {
-                isTouchingStop = false;
-            } else if (hasInspection && isInspecting || !hasInspection && isIdling) {
+    if(window.TouchEvent) {
+        var touchArea = document.getElementById('touchArea');
+        touchArea.addEventListener('touchstart', function(e) {
+            //document.getElementById('keydown').innerHTML = 'touchstart (' + Date.now() + ' ' + e.changedTouches[0].pageX + ' ' + e.changedTouches[0].pageY + ')';
+            touchX = e.changedTouches[0].pageX;
+            touchY = e.changedTouches[0].pageY;
+            hasInspection = window.TriboxContest.hasInspection;
+            if (isRunning) {
+                stopTimer();
+                isTouchingStop = true;
+            } else if ((hasInspection && isInspecting || !hasInspection && isIdling) && !isTouching && !isTouchingStop) {
                 if (FREEZING_TH < Date.now() - stopTime) {
-                    isTouching = false;
-                    clearTimeout(dispTimerId);
-                    angular.element(document.getElementById('timerText')).removeClass('wait');
-                    angular.element(document.getElementById('timerText')).removeClass('ready');
-                    if (TOUCHING_TH <= (Date.now() - startTouch)) {
-                        startTimer();
-                        startTouch = Infinity;
+                    startTouch = Date.now();
+                    isTouching = true;
+                    angular.element(document.getElementById('timerText')).addClass('wait');
+                    dispTimerId = setTimeout(function() {
+                        angular.element(document.getElementById('timerText')).removeClass('wait');
+                        angular.element(document.getElementById('timerText')).addClass('ready');
+                    }, TOUCHING_TH);
+                }
+            }
+        });
+        document.addEventListener('touchend', function(e) {
+            //document.getElementById('keyup').innerHTML = 'touchend (' + Date.now() + ' ' + e.changedTouches[0].pageX + ' ' + e.changedTouches[0].pageY + ')';
+            if (Math.abs(e.changedTouches[0].pageX - touchX) <= TAP_TH && Math.abs(e.changedTouches[0].pageY - touchY) <= TAP_TH) {
+                if (isTouchingStop) {
+                    isTouchingStop = false;
+                } else if (hasInspection && isInspecting || !hasInspection && isIdling) {
+                    if (FREEZING_TH < Date.now() - stopTime) {
+                        isTouching = false;
+                        clearTimeout(dispTimerId);
+                        angular.element(document.getElementById('timerText')).removeClass('wait');
+                        angular.element(document.getElementById('timerText')).removeClass('ready');
+                        if (TOUCHING_TH <= (Date.now() - startTouch)) {
+                            startTimer();
+                            startTouch = Infinity;
+                        }
+                    }
+                } else if (hasInspection && isIdling) {
+                    if (FREEZING_TH < Date.now() - stopTime) {
+                        startInspection();
                     }
                 }
-            } else if (hasInspection && isIdling) {
-                if (FREEZING_TH < Date.now() - stopTime) {
-                    startInspection();
-                }
+            } else {
+                angular.element(document.getElementById('timerText')).removeClass('wait');
+                angular.element(document.getElementById('timerText')).removeClass('ready');
             }
-        }
-    });
+        });
+    }
 }]);
 </script>
 
