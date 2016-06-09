@@ -196,8 +196,8 @@ var getRandomRecord = function(format) {
 };
 
 var addRandomResults = function(contestData, eid) {
-    Config.DUMMY_USERS.forEach(function(uid) {
-        if (random() < 0.8) {
+    Config.DUMMY_USERS.forEach(function(uid, index) {
+        if (index == 0 || random() < 0.8) {
             var results = {};
             var details = [];
             if (eid == 'e333bf') {
