@@ -75,6 +75,26 @@ app.filter('uppercaseHead', [function() {
 
 
 /**
+ * Filter: Shorten the text
+ */
+var shorten = function(text, n) {
+    if (!text) {
+        return '';
+    } else if (text.length <= n) {
+        return text;
+    } else {
+        return text.substr(0, n) + '...';
+    }
+};
+var _shorten10 = function(text) {
+    return shorten(text, 10);
+};
+app.filter('shorten10', [function() {
+    return _shorten10;
+}]);
+
+
+/**
  * URL解析して、クエリ文字列を返す
  * http://qiita.com/ma_me/items/03aaebb5dc440b380244
  */

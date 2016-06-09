@@ -12,13 +12,13 @@
 <body><div class="container">
     @bodyheader(title, contestName)
 
-    <div ng-controller="AuthCtrl"><div ng-controller="ContestCtrl">
-    <div ng-hide="authLoaded && contestLoaded">
+    <div ng-controller="AuthCtrl"><div ng-controller="ContestCtrl"><div ng-controller="ContestResultCtrl">
+    <div ng-hide="authLoaded && contestLoaded && contestResultLoaded">
         <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
         <span class="sr-only">Loading...</span>
         Loading...
     </div>
-    <div ng-show="authLoaded && contestLoaded">
+    <div ng-show="authLoaded && contestLoaded && contestResultLoaded">
 
     @authinfo()
 
@@ -47,12 +47,22 @@
             終了 <i class="fa fa-calendar"></i>: {{ contestData.endAt | toDate }}
         </p>
 
+        <p class="margin-bottom-0">
+            表示中の競技種目
+        </p>
+        <select class="form-control" ng-model="currentEvent" ng-change="currentEventChange()">
+            <option ng-repeat="e in contestData.events" value="{{ e | removeHead}}">
+                {{ events[e].name }}
+            </option>
+        </select>
+        @* <!--<pre>{{ currentEvent | json }}</pre>--> *@
+
         <h3>{{ events.e@{eid}.name }}</h3>
         <p>
             計測方法: {{ events.e@{eid}.method | uppercaseHead }} of {{ events.e@{eid}.attempts }}<br>
             参加人数: {{ resultsPersons.e@{eid} }} 人
         </p>
-        <table class="table">
+        <table class="table results">
             <thead>
                 <tr>
                     <th>順位</th>
@@ -70,7 +80,7 @@
                     <td>{{ $index + 1 }}</td>
                     <td></td>
                     <td>{{ r.user.displayname }}</td>
-                    <td>{{ r.user.organization }}</td>
+                    <td>{{ r.user.organization | shorten10}}</td>
                     <td>{{ r.resultF }}</td>
                     <td>{{ r.detailsF }}</td>
                     <td ng-show="r.puzzle.type == 'database'">
@@ -85,12 +95,22 @@
         @* <!--<pre>{{ resultsData.e@{eid} | json }}</pre>--> *@
         @* <!--<pre>{{ resultsTop3.e@{eid} | json }}</pre>--> *@
 
-    </div></div></div></div>
+    </div></div></div></div></div>
 
     @bodyfooter(contestName)
 
 @authjs(redirectLogin="", redirectLogout="", checkFirst=true)
 @contestjs(cid=cid, eid=eid, fetchScrambles=false, fetchResults=true)
+<script>
+app.controller('ContestResultCtrl', ['$scope', function($scope) {
+    $scope.contestResultLoaded = true;
+    $scope.currentEvent = '@{eid}';
+
+    $scope.currentEventChange = function() {
+        location.href = '/contest/@{cid}/result/' + $scope.currentEvent;
+    };
+}]);
+</script>
 <script>
 TriboxContest.Products = [];
 @for(product:Product <- products) {

@@ -303,6 +303,10 @@ table.scrambles th:first-child {
     background-color: #E74C3C;
 }
 
+table.results {
+    font-size: 95%;
+}
+
 
 /**
  * SkyBlue CSS: Override
