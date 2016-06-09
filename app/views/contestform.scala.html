@@ -136,17 +136,28 @@ app.controller('ContestFormCtrl', ['$scope', '$timeout', function($scope, $timeo
         location.href = '@routes.HomeController.index?logout=1';
     }
 
-    // On Reuslts change
-    $scope.change = function(index) {
+    // On Reuslts blur
+    $scope.inputblur = function(index) {
         var resultForm = $scope.resultsForm[index];
-        if (resultForm) {
-            var result = angular.element(document.getElementById('result-' + index));
-            var btnOK = angular.element(document.getElementById('timeform-cond-ok-' + index));
-            var btnPenalty = angular.element(document.getElementById('timeform-cond-penalty-' + index));
-            var btnDNF = angular.element(document.getElementById('timeform-cond-dnf-' + index));
-            var scrambleLine = angular.element(document.getElementById('scramble-' + index));
-            var inputCompleted = angular.element(document.getElementById('input-completed'));
 
+        var result = angular.element(document.getElementById('result-' + index));
+        var btnOK = angular.element(document.getElementById('timeform-cond-ok-' + index));
+        var btnPenalty = angular.element(document.getElementById('timeform-cond-penalty-' + index));
+        var btnDNF = angular.element(document.getElementById('timeform-cond-dnf-' + index));
+        var scrambleLine = angular.element(document.getElementById('scramble-' + index));
+        var inputCompleted = angular.element(document.getElementById('input-completed'));
+
+        if (!resultForm) {
+            // テキストが空白の場合
+            btnOK.removeClass('cond-ok-on');
+            btnPenalty.removeClass('cond-penalty-on');
+            btnDNF.removeClass('cond-dnf-on');
+            scrambleLine.removeClass('scramble-done');
+            inputCompleted.addClass('hide');
+            $scope.results[index] = null;
+            saveAndPrepare();
+
+        } else {
             // Prepare results data
             $scope.results[index] = {'record': null, 'condition': null};
 
@@ -160,6 +171,8 @@ app.controller('ContestFormCtrl', ['$scope', '$timeout', function($scope, $timeo
                 btnDNF.removeClass('cond-dnf-on');
                 scrambleLine.removeClass('scramble-done');
                 inputCompleted.addClass('hide');
+                $scope.results[index] = null;
+                saveAndPrepare();
                 return;
             }
 
@@ -181,6 +194,8 @@ app.controller('ContestFormCtrl', ['$scope', '$timeout', function($scope, $timeo
                 btnDNF.removeClass('cond-dnf-on');
                 scrambleLine.removeClass('scramble-done');
                 inputCompleted.addClass('hide');
+                $scope.results[index] = null;
+                saveAndPrepare();
                 return;
             } else if (600 <= $scope.results[index].record) {
                 result.addClass('format-error');
@@ -191,6 +206,8 @@ app.controller('ContestFormCtrl', ['$scope', '$timeout', function($scope, $timeo
                 btnDNF.removeClass('cond-dnf-on');
                 scrambleLine.removeClass('scramble-done');
                 inputCompleted.addClass('hide');
+                $scope.results[index] = null;
+                saveAndPrepare();
                 return;
             }
 
@@ -203,7 +220,8 @@ app.controller('ContestFormCtrl', ['$scope', '$timeout', function($scope, $timeo
             btnDNF.removeClass('cond-dnf-on');
             scrambleLine.addClass('scramble-done');
 
-            saveAndPrepare();
+            $scope.applyOK(index);
+            //saveAndPrepare();
         }
     };
 

@@ -13,7 +13,7 @@
                 <div class="timeform">
                     <div class="timeform-time">
                     @if(useInput) {
-                        <input id="result-{{ $index }}" ng-model="resultsForm[$index]" ng-change="change($index)" type="text" placeholder="-:--.---" required>
+                        <input id="result-{{ $index }}" ng-model="resultsForm[$index]" ng-blur="inputblur($index)" type="text" placeholder="-:--.---" required>
                         <span class="hide color-error result-note"></span>
                     } else {
                         <span id="result-{{ $index }}" class="result-detail" ng-if="resultsDetail[$index]">{{ resultsDetail[$index] }}</span>
@@ -44,7 +44,7 @@
                 <div class="timeform">
                     <div class="timeform-time">
                     @if(useInput) {
-                        <input id="result-{{ $index }}" ng-model="resultsForm[$index]" ng-change="change($index)" type="text" placeholder="-:--.---" required>
+                        <input id="result-{{ $index }}" ng-model="resultsForm[$index]" ng-blur="inputblur($index)" type="text" placeholder="-:--.---" required>
                         <span class="hide color-error result-note"></span>
                     } else {
                         <span id="result-{{ $index }}" class="result-detail" ng-if="resultsDetail[$index]">{{ resultsDetail[$index] }}</span>

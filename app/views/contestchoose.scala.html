@@ -7,7 +7,20 @@
 <head>
     @header(title, contestName)
 
+<style>
+.choosebox {
+    border: 1px solid #659ac9;
+    -webkit-border-radius: 10px;
+       -moz-border-radius: 10;
+            border-radius: 10px;
+    text-align: center;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+</style>
+
 @basejs(firebaseappContest)
+
 </head>
 <body><div class="container">
     @bodyheader(title, contestName)
@@ -63,10 +76,20 @@
 
         <h3>{{ events.e@{eid}.name }}</h3>
 
-        <ul>
-            <li><a href="/contest/@cid/@eid/timer">コンテストタイマーを使用して計測する</a></li>
-            <li><a href="/contest/@cid/@eid/form">タイムを手入力する</a></li>
-        </ul>
+        <div class="row">
+            <div class="col md-6">
+                <a href="/contest/@cid/@eid/timer"><div class="choosebox">
+                    <i class="fa fa-clock-o fa-5x"></i><br>
+                    コンテストタイマーを使用して計測する
+                </div></a>
+            </div>
+            <div class="col md-6">
+                <a href="/contest/@cid/@eid/form"><div class="choosebox">
+                    <i class="fa fa-pencil-square-o fa-5x"></i><br>
+                    タイムを手入力する
+                </div></a>
+            </div>
+        </div>
 
         @* <!--<p>@cid -> contestData:</p>
         <pre>{{ contestData | json }}</pre>--> *@
