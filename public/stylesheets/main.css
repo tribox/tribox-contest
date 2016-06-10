@@ -303,7 +303,11 @@ table.scrambles th:first-child {
     background-color: #E74C3C;
 }
 
-table.results {
+
+/**
+ * Result table
+ */
+table.result {
     font-size: 95%;
 }
 
