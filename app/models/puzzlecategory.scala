@@ -17,7 +17,7 @@ object PuzzleCategory {
     }
 
     def getAll: List[PuzzleCategory] = {
-        DB.withConnection { implicit c =>
+        DB.withConnection("store") { implicit c =>
             val result = SQL("""
                 SELECT `category_id`, `category_name`
                 FROM `dtb_category`

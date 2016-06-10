@@ -17,7 +17,7 @@ object Product {
     }
 
     def getAll: List[Product] = {
-        DB.withConnection { implicit c =>
+        DB.withConnection("store") { implicit c =>
             val result = SQL("""
                 SELECT `product_id`, `name` AS `product_name`
                 FROM `dtb_products`

@@ -1,0 +1,34 @@
+@(token: String, contestName: String, contestUrl: String, firebaseappContest: String)
+
+@defining("Verify Click") { title =>
+
+<!DOCTYPE html>
+<html lang="ja" ng-app="contestApp">
+<head>
+    @header(title, contestName)
+
+@basejs(firebaseappContest)
+@authjs(redirectLogin="", redirectLogout="", checkFirst=true)
+</head>
+<body><div class="container">
+    @bodyheader(title, contestName)
+
+    <div ng-controller="AuthCtrl">
+    <div ng-hide="authLoaded">
+        <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+        <span class="sr-only">Loading...</span>
+        Loading...
+    </div>
+    <div ng-show="authLoaded">
+
+        @authinfo()
+
+        <h2>アカウント認証確認</h2>
+
+    </div></div>
+
+    @bodyfooter(contestName)
+</div></body>
+</html>
+
+}

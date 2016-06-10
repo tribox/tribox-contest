@@ -11,6 +11,16 @@ db {
   default.url = "jdbc:mysql://localhost/playdb?characterEncoding=UTF-8"
   default.username = playdbuser
   default.password = "playdbpassword"
+
+  store.driver = com.mysql.jdbc.Driver
+  store.url = "jdbc:mysql://localhost/storedb?characterEncoding=UTF-8"
+  store.username = storedbuser
+  store.password = "storedbpassword"
+
+  #stickers.driver = com.mysql.jdbc.Driver
+  #stickers.url = "jdbc:mysql://localhost/stickersdb?characterEncoding=UTF-8"
+  #stickers.username = stickersdbuser
+  #stickers.password = "stickersdbpassword"
 }
 
 # 3) Change contest info.

@@ -17,6 +17,12 @@ GET     /setting/first              controllers.SettingController.settingfirst
 GET     /setting/email              controllers.SettingController.settingemail
 GET     /setting/password           controllers.SettingController.settingpassword
 
+GET     /setting/verify                         controllers.SettingController.verify
+POST    /setting/verify                         controllers.SettingController.verify
+GET     /setting/unverify                       controllers.SettingController.unverify
+POST    /setting/unverify                       controllers.SettingController.unverify
+GET     /setting/verify/$token<[a-zA-Z0-9]{32}> controllers.SettingController.verifyclick(token: String)
+
 # Users
 GET     /user/$id<[a-zA-Z0-9_]{1,15}> controllers.UserController.user(id: String)
 

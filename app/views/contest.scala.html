@@ -105,7 +105,7 @@
                             <td>{{ $index + 1 }}</td>
                             <td></td>
                             <td>{{ r.user.displayname }}</td>
-                            <td>{{ r.user.organization }}</td>
+                            <td>{{ r.user.organization | shorten10}}</td>
                             <td>{{ r.resultF }}</td>
                             <td>{{ r.detailsF }}</td>
                             <td ng-show="r.puzzle.type == 'database'">
