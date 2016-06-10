@@ -219,7 +219,7 @@
                             ".validate": "newData.isNumber() && newData.parent().child('beginAt').val() <= newData.val()"
                         },
                         "type": {
-                            ".validate": "newData.isString() && (newData.val() == 'timer' || newData.val() == 'form')"
+                            ".validate": "newData.isString() && (newData.val() == 'timer' || newData.val() == 'form' || newData.val() == 'solution')"
                         },
                         "details": {
                             "$details_seq": {
@@ -230,8 +230,11 @@
                                 "condition": {
                                     ".validate": "newData.isString() && (newData.val() == 'OK' || newData.val() == '+2' || newData.val() == 'DNF')"
                                 },
-                                "note": {
-                                    ".validate": "newData.isString() && newData.val().length < 4096"
+                                "solution": {
+                                    ".validate": "newData.isString() && newData.val().matches(/^.{1,500}$/)"
+                                },
+                                "comment": {
+                                    ".validate": "newData.isString() && newData.val().length <= 2000"
                                 },
                                 "$other": {
                                     ".validate": false
@@ -250,7 +253,7 @@
                                 ".validate": "newData.isNumber() && 0 <= newData.val() && newData.val() < root.child('events').child($event_id).child('attempts').val()"
                             },
                             "condition": {
-                                ".validate": "newData.isString() && (newData.val() == 'OK' || newData.val() == '+2' || newData.val() == 'DNF')"
+                                ".validate": "newData.isString() && (newData.val() == 'OK' || newData.val() == '+2' || newData.val() == 'DNF' || newData.val() == 'NOTYET')"
                             },
                             "$other": {
                                 ".validate": false

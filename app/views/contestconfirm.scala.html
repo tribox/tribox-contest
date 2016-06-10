@@ -1,3 +1,7 @@
+@**
+ * 結果投稿ページ（確認）
+ *@
+
 @(cid: String, eid: String, contestName: String, contestUrl: String, firebaseappContest: String, brandsPuzzles: Map[Int, List[Puzzle]], puzzleBrands: List[PuzzleBrand], puzzleBrandsMap: Map[Int, String])
 @* @(cid: String, eid: String, contestName: String, contestUrl: String, firebaseappContest: String, puzzles: List[Puzzle], puzzleCategories: List[PuzzleCategory], puzzleBrands: List[PuzzleBrand]) *@
 @* @(cid: String, eid: String, contestName: String, contestUrl: String, firebaseappContest: String, cubes: List[Cube], puzzles: List[Puzzle], puzzleCategories: List[PuzzleCategory], puzzleBrands: List[PuzzleBrand]) *@
@@ -132,14 +136,23 @@
                 </label>
             </div>
             <div class="col md-6">
-                <p class="margin-bottom-0" style="font-size: 24px;">
-                    {{ resultTitle | uppercaseHead }}: {{ resultResult }}
-                </p>
-                <p class="margin-bottom-20" ng-show="resultResultAlt">
-                    {{ resultTitleAlt | uppercaseHead }}: {{ resultResultAlt }}
-                </p>
+                <div ng-show="resultsData.type != 'solution'">
+                    <p class="margin-bottom-0" style="font-size: 24px;">
+                        {{ resultTitle | uppercaseHead }}: {{ resultResult }}
+                    </p>
+                    <p class="margin-bottom-20" ng-show="resultResultAlt">
+                        {{ resultTitleAlt | uppercaseHead }}: {{ resultResultAlt }}
+                    </p>
+                </div>
+                <div ng-show="resultsData.type == 'solution'">
+                    <p>
+                        <span style="font-size: 24px">解答:</span><br>
+                        {{ resultsData.details[0].solution }}
+                    </p>
+                </div>
                 <p>
                     <input type="submit" value="この内容で送信する" class="btn">
+                    <a href="/contest/@{cid}/@{eid}/{{ resultsData.type }}" class="btn btn-light btn-empty">戻って修正する</a>
                 </p>
                 <p>
                     ビデオへのリンクはマイページから追加できます。
@@ -148,7 +161,9 @@
         </div>
         </form>
 
-        @contesttimeform(eid=eid, useInput=false, clickable=false)
+        @if(eid != "333fm") {
+            @contesttimeform(eid=eid, useInput=false, clickable=false)
+        }
 
         @* <!--<p>@cid -> contestData:</p>
         <pre>{{ contestData | json }}</pre>--> *@
@@ -167,8 +182,11 @@
         <pre>{{ events | json }}</pre>--> *@
 
         @* <!--<p>results:</p>
-        <pre>{{ resultsForm | json }}</pre>
-        <pre>{{ results | json }}</pre>--> *@
+        <pre>{{ result | json }}</pre>
+        <pre>{{ resultsData | json }}</pre>
+        <pre>{{ resultsDetail | json }}</pre>
+        <pre>{{ resultResult | json }}</pre>
+        <pre>{{ resultResultAlt | json }}</pre>--> *@
 
         @* <!--<p>puzzle:</p>
         <pre>{{ puzzle | json }}</pre>--> *@
@@ -215,6 +233,11 @@ app.controller('ContestConfirmCtrl', ['$scope', function($scope) {
                         var resultsData = snapResult.val();
                         $scope.$apply(function() {
                             $scope.result = calcResult(e.method, e.format, resultsData.details);
+                            // FMC: Calculate later
+                            @if(eid == "333fm") {
+                                $scope.result.condition = 'NOTYET';
+                                $scope.result.best = 0; // validation 回避
+                            }
                             $scope.resultsData = resultsData;
                             if ($scope.result.condition == 'DNF') {
                                 $scope.resultResult = 'DNF';

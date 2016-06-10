@@ -33,6 +33,10 @@ class ContestController @Inject() extends HomeController {
         Ok(views.html.contesttimer(cid, eid, getContestName, getContestUrl, getFirebaseappContest))
     }
 
+    def solution(cid: String, eid: String) = Action {
+        Ok(views.html.contestsolution(cid, eid, getContestName, getContestUrl, getFirebaseappContest))
+    }
+
     def confirm(cid: String, eid: String) = Action {
         val cubes = Cube.getAll
         //val puzzleCategories = PuzzleCategory.getAll

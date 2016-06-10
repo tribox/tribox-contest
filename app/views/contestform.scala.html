@@ -1,3 +1,7 @@
+@**
+ * 結果投稿ページ（タイム手入力）
+ *@
+
 @(cid: String, eid: String, contestName: String, contestUrl: String, firebaseappContest: String)
 
 @defining("Contest Form") { title =>
@@ -39,7 +43,7 @@
     </div>
     <div ng-hide="!invalidPage">
         <p class="color-error">
-            不正なページ遷移です。
+            不正なページ移動です。
         </p>
     </div>
 
@@ -81,6 +85,14 @@
 @contestjs(cid=cid, eid=eid, fetchScrambles=true, fetchResults=false)
 <script>
 app.controller('ContestFormCtrl', ['$scope', '$timeout', function($scope, $timeout) {
+
+@if(eid == "333fm") {
+
+    $scope.invalidPage = true;
+    $scope.contestFormLoaded = true;
+
+} else {
+
     $scope.invalidPage = false;
     $scope.contestFormLoaded = false;
 
@@ -310,6 +322,9 @@ app.controller('ContestFormCtrl', ['$scope', '$timeout', function($scope, $timeo
             location.href = '@routes.HomeController.index?logout=1';
         }
     };
+
+}
+
 }]);
 </script>
 

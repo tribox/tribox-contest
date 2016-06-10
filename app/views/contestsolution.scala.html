@@ -1,0 +1,323 @@
+@**
+ * 結果投稿ページ（FMC用）
+ *@
+
+@(cid: String, eid: String, contestName: String, contestUrl: String, firebaseappContest: String)
+
+@defining("Contest Solution") { title =>
+
+<!DOCTYPE html>
+<html lang="ja" ng-app="contestApp">
+<head>
+    @header(title, contestName)
+
+@basejs(firebaseappContest)
+
+<style>
+textarea.form-control {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+</style>
+
+</head>
+<body><div class="container">
+    @bodyheader(title, contestName, cid=cid, eid=eid)
+
+    <div ng-controller="AuthCtrl"><div ng-controller="ContestCtrl"><div ng-controller="ContestSolutionCtrl">
+    <div ng-hide="authLoaded && contestLoaded && contestSolutionLoaded">
+        <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+        <span class="sr-only">Loading...</span>
+        Loading...
+    </div>
+    <div ng-show="authLoaded && contestLoaded && contestSolutionLoaded">
+
+    @authinfo(eid=eid)
+
+    <div ng-hide="existsContest">
+        <p class="color-error">
+            存在しないコンテストです。
+        </p>
+    </div>
+    <div ng-hide="existsEvent">
+        <p class="color-error">
+            存在しない競技です。
+        </p>
+    </div>
+    <div ng-hide="inProgress.contest == 'c@{cid}'">
+        <p class="color-error">
+            開催中のコンテストではありません。
+        </p>
+    </div>
+    <div ng-hide="!invalidPage">
+        <p class="color-error">
+            不正なページ遷移です。
+        </p>
+    </div>
+
+    <div ng-show="existsContest && existsEvent && inProgress.contest == 'c@{cid}' && !invalidPage">
+
+        <p class="margin-bottom-5">
+            <b>注意事項</b>
+        </p>
+        <ul>
+            <li>
+                制限時間は1時間 (60分) です。
+            </li>
+            <li>
+                WCA規則下で開催される
+                <a href="https://www.worldcubeassociation.org/regulations/#article-12-notation" target="_blank">
+                    3x3x3最少手数競技で使用可能な文字</a>
+                のみ使えます。
+            </li>
+            <li>
+                解答はシステムで自動的に解析されます。
+                <ul>
+                    <li>
+                        <a href="https://www.worldcubeassociation.org/regulations/#12a" target="_blank">
+                            OBTM (Outer Block Turn Metric)</a>
+                        以外の文字は無視されます。
+                    </li>
+                    <li>
+                        OBTM で 80 手以上にカウントされる解答は自動的に DNF になります。
+                    </li>
+                    <li>
+                        スクランブル文字列および逆スクランブル文字列をベースとした解法は DNF になります。
+                        詳細は
+                        <a href="https://www.worldcubeassociation.org/regulations/#E2e" target="_blank">
+                            WCA 規則 E2e</a>、
+                        <a href="https://www.worldcubeassociation.org/regulations/guidelines.html#article-E-fewest-moves" target="_blank">
+                            WCA ガイドライン E2e+, E2e++</a>
+                        に書かれています。
+                    </li>
+                </ul>
+            </li>
+            <li>
+                解説としてどのような考えで解答に至ったのかを文章で記入することが可能です。
+                使用した技術や工夫したポイントを書いてみんなと共有しましょう。
+            </li>
+        </ul>
+
+        <hr>
+
+        <p style="font-size: 150%;">
+            Scramble: {{ scramblesData.e333fm[0] }}
+        </p>
+
+        <div>
+            <label>解答 (DNF にする場合は "DNF" と入力してください)</label>
+            <p class="margin-bottom-0 color-lightdark">文字数: {{ resultSolutionLength }} / 500</p>
+            <p id="form-solution-error" class="color-error margin-bottom-0 hide"></p>
+            <textarea id="form-solution" class="form-control" placeholder="例) U R F D L B" ng-model="resultSolution" ng-change="inputchange()" ng-blur="inputblur()"></textarea>
+        </div>
+        <div>
+            <label>コメント</label>
+            <p class="margin-bottom-0 color-lightdark">文字数: {{ resultCommentLength }} / 2000</p>
+            <p id="form-comment-error" class="color-error margin-bottom-0 hide"></p>
+            <textarea id="form-comment" class="form-control" placeholder="例) ここでNISS。" ng-model="resultComment" ng-change="inputchange()" ng-blur="inputblur()"></textarea>
+        </div>
+
+        <p id="input-completed" class="margin-top-20 text-center hide">
+            入力が完了しました。間違いがなければ確認ページへ進んでください。<br>
+            <a href="/contest/@{cid}/@{eid}/confirm" class="btn margin-top-10">確認ページへ</a>
+        </p>
+
+        @* <!--<p>@cid -> contestData:</p>
+        <pre>{{ contestData | json }}</pre>--> *@
+
+        @* <!--<p>inProgress / countdown:</p>
+        <pre>{{ inProgress | json }}</pre>
+        <pre>{{ countdown | json }}</pre>--> *@
+
+        @* <!--<p>@cid -> scramblesData:</p>
+        <pre>{{ scramblesData | json }}</pre>--> *@
+
+        @* <!--<p>@cid -> resultsData:</p>
+        <pre>{{ resultsData | json }}</pre>--> *@
+
+        @* <!--<p>events:</p>
+        <pre>{{ events | json }}</pre>--> *@
+
+        @* <!--<p>results:</p>
+        <pre>{{ resultSolution | json }}</pre>
+        <pre>{{ resultSolutionLength | json }}</pre>
+        <pre>{{ resultComment | json }}</pre>
+        <pre>{{ resultCommentLength | json }}</pre>
+        <pre>{{ results | json }}</pre>--> *@
+
+    </div></div></div></div></div>
+
+    @bodyfooter(contestName)
+
+@authjs(redirectLogin="", redirectLogout="", checkFirst=true)
+@contestjs(cid=cid, eid=eid, fetchScrambles=true, fetchResults=false)
+<script>
+app.controller('ContestSolutionCtrl', ['$scope', '$timeout', function($scope, $timeout) {
+
+@if(eid != "333fm") {
+
+    $scope.invalidPage = true;
+    $scope.contestSolutionLoaded = true;
+
+} else {
+
+    $scope.invalidPage = false;
+    $scope.contestSolutionLoaded = false;
+
+    // Results
+    $scope.resultSolution = null;
+    $scope.resultComment = null;
+    $scope.resultSolutionLength = 0;
+    $scope.resultCommentLength = 0;
+    $scope.results = [];
+
+    // Set begin time
+    var authData = contestRef.getAuth();
+    if (authData) {
+        // do not overwrite
+        contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).once('value', function(snapResult) {
+            if (!(snapResult.exists())) {
+                contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).set({
+                    'beginAt': Firebase.ServerValue.TIMESTAMP,
+                    'type': 'solution'
+                }, function(error) {
+                    if (error) {
+                        // 不正なコンテストまたは不正な競技イベントでスタート記録が書き込めない場合
+                        // ここでエラーになる。
+                        console.error(error);
+                    }
+                    $timeout(function() {
+                        $scope.contestSolutionLoaded = true;
+                    });
+                });
+            } else {
+                // Read current data
+                $timeout(function() {
+                    var result = snapResult.val();
+                    if (result.type != "solution") {
+                        $scope.invalidPage = true;
+                    } else if (result.details) {
+                        $scope.results = result.details;
+                        $scope.resultSolution = (result.details)[0].solution;
+                        $scope.resultComment = (result.details)[0].comment;
+                        $scope.inputchange();
+                        $scope.inputblur();
+                    }
+                    $scope.contestSolutionLoaded = true;
+                });
+            }
+        }, function(error) {
+            console.error(error);
+        });
+    } else {
+        location.href = '@routes.HomeController.index?logout=1';
+    }
+
+    // On Results change
+    $scope.inputchange = function() {
+        $timeout(function() {
+            if ($scope.resultSolution) {
+                $scope.resultSolutionLength = $scope.resultSolution.length;
+            } else {
+                $scope.resultSolutionLength = 0;
+            }
+            if ($scope.resultComment) {
+                $scope.resultCommentLength = $scope.resultComment.length;
+            } else {
+                $scope.resultCommentLength = 0;
+            }
+        });
+    };
+
+    // On Reuslts blur
+    $scope.inputblur = function() {
+        var isError = false;
+
+        var resultSolution = $scope.resultSolution;
+        var resultComment = $scope.resultComment;
+
+        var formSolution = angular.element(document.getElementById('form-solution'));
+        var formSolutionError = angular.element(document.getElementById('form-solution-error'));
+        var formComment = angular.element(document.getElementById('form-comment'));
+        var formCommentError = angular.element(document.getElementById('form-comment-error'));
+        var inputCompleted = angular.element(document.getElementById('input-completed'));
+
+        // 各テキストのフォーマットチェック
+        if (!resultSolution) {
+            formSolutionError.text('解答を入力してください。');
+            formSolution.addClass('error');
+            formSolutionError.removeClass('hide');
+            inputCompleted.addClass('hide');
+            $scope.results[0] = null;
+            isError = true;
+        } else if (500 < resultSolution.length) {
+            formSolutionError.text('解答は500文字以下で入力してください。');
+            formSolution.addClass('error');
+            formSolutionError.removeClass('hide');
+            inputCompleted.addClass('hide');
+            $scope.results[0] = null;
+            isError = true;
+        } else {
+            formSolution.removeClass('error');
+            formSolutionError.addClass('hide');
+        }
+
+        if (!resultComment) {
+            resultComment = '';
+        }
+        if (2000 <= resultComment.length) {
+            formCommentError.text('コメントは2000文字以下で入力してください。');
+            formComment.addClass('error');
+            formCommentError.removeClass('hide');
+            inputCompleted.addClass('hide');
+            $scope.results[0] = null;
+            isError = true;
+        } else {
+            formComment.removeClass('error');
+            formCommentError.addClass('hide');
+        }
+
+        if (isError) {
+            return;
+        }
+
+        $scope.results[0] = { 'record': 9999, 'condition': 'OK',
+            'solution': resultSolution, 'comment': resultComment };
+        saveAndPrepare();
+    };
+
+    // Save & Fetch data
+    // Prepare button for the next page
+    var saveAndPrepare = function() {
+        var authData = contestRef.getAuth();
+        if (authData) {
+            contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).child('details').set($scope.results, function(error) {
+                if (!error) {
+                    contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).child('details').once('value', function(snapData) {
+                        var _results = snapData.val();
+
+                        // Prepare next button
+                        var inputCompleted = angular.element(document.getElementById('input-completed'));
+                        inputCompleted.removeClass('hide');
+
+                    }, function(error) {
+                        console.error(error);
+                    });
+                } else {
+                    console.error(error);
+                }
+            });
+        } else {
+            location.href = '@routes.HomeController.index?logout=1';
+        }
+    };
+
+}
+
+}]);
+</script>
+
+</div></body>
+</html>
+
+}

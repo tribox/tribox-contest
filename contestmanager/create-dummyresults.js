@@ -220,6 +220,7 @@ var addRandomResults = function(contestData, eid) {
                 details = [{
                     'condition': getRandomCondition('number'),
                     'record': getRandomRecord('number'),
+                    'solution': 'U U U U F F F F R R R R',
                     'note': 'ここでNISS。ここでNISS。\nここでNISS。ここでNISS。'
                 }];
                 results = {

@@ -1,3 +1,7 @@
+@**
+ * 結果投稿ページ（Javascript タイマー使用）
+ *@
+
 @(cid: String, eid: String, contestName: String, contestUrl: String, firebaseappContest: String)
 
 @defining("Contest Timer") { title =>
@@ -82,7 +86,7 @@ body {
     </div>
     <div ng-hide="!invalidPage">
         <p class="color-error">
-            不正なページ遷移です。
+            不正なページ移動です。
         </p>
     </div>
 
@@ -136,6 +140,14 @@ window.TriboxContest.timerRunningTextMb = 'タップしてタイマーをスト�
 window.TriboxContest.timerFinishText = '計測が完了しました';
 
 app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $timeout) {
+
+@if(eid == "333fm") {
+
+    $scope.invalidPage = true;
+    $scope.contestTimerLoaded = true;
+
+} else {
+
     $scope.invalidPage = false;
     $scope.contestTimerLoaded = false;
 
@@ -563,6 +575,9 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
             }
         });
     }
+
+}
+
 }]);
 </script>
 

@@ -77,18 +77,27 @@
         <h3>{{ events.e@{eid}.name }}</h3>
 
         <div class="row">
-            <div class="col md-6">
-                <a href="/contest/@cid/@eid/timer"><div class="choosebox">
-                    <i class="fa fa-clock-o fa-5x"></i><br>
-                    コンテストタイマーを使用して計測する
-                </div></a>
-            </div>
-            <div class="col md-6">
-                <a href="/contest/@cid/@eid/form"><div class="choosebox">
-                    <i class="fa fa-pencil-square-o fa-5x"></i><br>
-                    タイムを手入力する
-                </div></a>
-            </div>
+            @if(eid != "333fm") {
+                <div class="col md-6">
+                    <a href="/contest/@cid/@eid/timer"><div class="choosebox">
+                        <i class="fa fa-clock-o fa-5x"></i><br>
+                        コンテストタイマーを使用して計測する
+                    </div></a>
+                </div>
+                <div class="col md-6">
+                    <a href="/contest/@cid/@eid/form"><div class="choosebox">
+                        <i class="fa fa-pencil-square-o fa-5x"></i><br>
+                        タイムを手入力する
+                    </div></a>
+                </div>
+            } else {
+                <div class="col md-12">
+                    <a href="/contest/@cid/@eid/solution"><div class="choosebox">
+                        <i class="fa fa-pencil-square-o fa-5x"></i><br>
+                        解法を入力する
+                    </div></a>
+                </div>
+            }
         </div>
 
         @* <!--<p>@cid -> contestData:</p>
@@ -114,7 +123,7 @@
 @authjs(redirectLogin="", redirectLogout="", checkFirst=true)
 @contestjs(cid=cid, eid=eid, fetchScrambles=false, fetchResults=false)
 <script>
-app.controller('ContestChooseCtrl', ['$scope', function($scope) {
+app.controller('ContestChooseCtrl', ['$scope', '$timeout', function($scope, $timeout) {
     $scope.invalidPage = false;
     $scope.contestChooseLoaded = false;
 
@@ -122,7 +131,7 @@ app.controller('ContestChooseCtrl', ['$scope', function($scope) {
     var authData = contestRef.getAuth();
     if (authData) {
         contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).once('value', function(snapResult) {
-            $scope.$apply(function() {
+            $timeout(function() {
                 if (snapResult.exists()) {
                     $scope.invalidPage = true;
                 }
