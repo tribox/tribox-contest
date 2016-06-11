@@ -9,6 +9,9 @@ import play.api.Play.current
 import scala.util.Random
 import java.security.SecureRandom
 
+import java.io.File
+import scala.sys.process._
+
 /**
  * This controller creates an `Action` to handle HTTP requests to the
  * application's setting pages.
@@ -37,18 +40,24 @@ class SettingController @Inject() extends HomeController {
 
     // トークンを生成
     def genToken: String = {
-        //val e = "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890"
-        //var res = ""
-        //for (i <- 0 until 32) {
-        //    Random.nextInt(62)
-        //}
         return new Random(new SecureRandom()).alphanumeric.take(32).mkString
     }
 
-    def verify = Action { request =>
-        //val body = request.body
-        //println(body)
+    // メール送信
+    def sendEmail(email: String, token: String) = {
+        // Play mailer pluging が謎で、実行できないので、
+        // PHP を外部コマンドで呼び出してメール送信する。
+        // email はストアの顧客DBに存在するもの、token と domain はユーザ入力に依存しないものなので、
+        // インジェクション攻撃は無いと思うが、一応正規表現で厳密ではないけどチェックする。
+        // http://qiita.com/sakuro/items/1eaa307609ceaaf51123
+        val currentDir = new File(".").getAbsoluteFile().getParent()
+        //println(currentDir)
+        if (email.matches("""^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$""")) {
+            Process("/usr/bin/php " + currentDir + "/contestmanager/send-verifyingemail.php " + email + " " + token + " " + getContestUrl) run
+        }
+    }
 
+    def verify = Action { request =>
         var message = ""
         var errorMessage = ""
 
@@ -79,16 +88,16 @@ class SettingController @Inject() extends HomeController {
 
                     val verifyingCustomerId = Verifying.getOnesByCustomerId(customerId)
                     if (!(verifyingCustomerId.isEmpty)) {
-                        errorMessage = "このアカウントはすでに認証済みです。"
+                        errorMessage = "このストアアカウントはすでに他のアカウントに結びつけられています。"
                     } else {
                         val token = genToken
+                        sendEmail(email, token)
                         Verifying.insertVerifying(token, userId, customerId)
-                        message = email + " 宛にメールを送信しました。メール内に書かれているリンクをクリックして認証を完了させてください。"
+                        message = email + " 宛にメールを送信しました。メール内に書かれているリンクをクリックして認証を完了させてください。しばらく経ってもメールが届かない場合はお問い合わせください。"
                     }
                 } else {
-                    // ストアにメールアドレスが存在しない場合もプライバシー保護のため、
-                    // 実際にメールは送らないが、「メール送りました」を出す
-                    message = email + " 宛にメールを送信しました。メール内に書かれているリンクをクリックして認証を完了させてください。"
+                    // ストアにメールアドレスが存在しない場合
+                    errorMessage = email + " は存在しないアカウントです。"
                 }
             }
         }
@@ -97,15 +106,44 @@ class SettingController @Inject() extends HomeController {
     }
 
     def unverify = Action { request =>
-        //val body = request.body
-        //println(body)
+        val userId = {
+            request.body.asFormUrlEncoded match {
+                case Some(_) => request.body.asFormUrlEncoded.get("userId")(0)
+                case None    => ""
+            }
+        }
+        val customerId = {
+            request.body.asFormUrlEncoded match {
+                case Some(_) => request.body.asFormUrlEncoded.get("customerId")(0).toInt
+                case None    => -1
+            }
+        }
+        Verifying.makeUnverify(userId, customerId)
 
-        val customers = Customer.getAll
-        val verifyings = Verifying.getAll
-        Ok(views.html.unverify(getContestName, getContestUrl, getFirebaseappContest))
+        Ok(views.html.unverify(getContestName, getContestUrl, getFirebaseappContest, userId, customerId))
     }
 
     def verifyclick(token: String) = Action {
-        Ok(views.html.verifyclick(token, getContestName, getContestUrl, getFirebaseappContest))
+        val status = Verifying.getOnesByToken(token)
+        //println(status)
+
+        var message = ""
+        var errorMessage = ""
+        var userId = ""
+        var customerId = -1
+
+        if (status.isEmpty) {
+            errorMessage = "無効なURLです。"
+        } else {
+            val id = status.head.id
+            userId = status.head.user_id
+            customerId = status.head.customer_id
+            //println(id)
+            Verifying.makeVerify(id)
+            message = "認証が完了しました。"
+        }
+
+        Ok(views.html.verifyclick(userId, customerId, getContestName, getContestUrl, getFirebaseappContest, message, errorMessage))
     }
+
 }

@@ -150,11 +150,6 @@
 @authjs(redirectLogin="", redirectLogout="", checkFirst=true)
 @contestjs(cid=cid, fetchScrambles=false, fetchResults=true)
 <script>
-TriboxContest.Products = [];
-@for(product:Product <- products) {
-    TriboxContest.Products[@product.product_id] = '@product.product_name';
-}
-
 app.controller('ContestIndexCtrl', ['$scope', function($scope) {
     $scope.eventsDone = {};
     $scope.justSuspended = null;
@@ -216,6 +211,11 @@ app.controller('ContestIndexCtrl', ['$scope', function($scope) {
         }
     }
 }]);
+
+TriboxContest.Products = [];
+@for(product:Product <- products) {
+    TriboxContest.Products[@product.product_id] = '@product.product_name';
+}
 </script>
 
 </div></body>

@@ -1,6 +1,6 @@
-@(contestName: String, contestUrl: String, firebaseappContest: String)
+@(contestName: String, contestUrl: String, firebaseappContest: String, userId: String = "", customerId: Int = -1)
 
-@defining("UnVerify") { title =>
+@defining("Unverify") { title =>
 
 <!DOCTYPE html>
 <html lang="ja" ng-app="contestApp">
@@ -9,39 +9,111 @@
 
 @basejs(firebaseappContest)
 @authjs(redirectLogin="", redirectLogout=routes.HomeController.index.toString(), checkFirst=true)
+<script>
+app.controller('UnverifyCtrl', ['$scope', '$timeout', function($scope, $timeout) {
+    $scope.error = null;
+    $scope.customerId = -1;
+    $scope.unverifyLoaded = false;
+
+    var authData = contestRef.getAuth();
+
+    @if(userId == "" && customerId == -1) {
+        // Read personal results
+        if (authData) {
+            contestRef.child('users').child(authData.uid).child('isTriboxCustomer').once('value', function(snap) {
+                if (!(snap.exists() && snap.val() == true)) {
+                    $timeout(function() {
+                        $scope.error = 'このアカウントは認証されていないので、認証解除できません。';
+                        $scope.unverifyLoaded = true;
+                    });
+                } else {
+                    contestRef.child('usersecrets').child(authData.uid).child('triboxStoreCustomerId').once('value', function(snapCustomerId) {
+                        $timeout(function() {
+                            $scope.customerId = snapCustomerId.val();
+                            $scope.unverifyLoaded = true;
+                        });
+                    });
+                }
+            });
+        } else {
+            location.href = '@routes.HomeController.index?logout=1';
+        }
+
+    } else {
+        if (authData) {
+            if (authData.uid == '@{userId}') {
+                // 認証アカウントを解除する
+                contestRef.child('users').child(authData.uid).update({
+                    'isTriboxCustomer': null
+                }, function(error) {
+                    if (error) {
+                        console.error(error);
+                    } else {
+                        contestRef.child('usersecrets').child(authData.uid).update({
+                            'triboxStoreCustomerId': null
+                        }, function(error) {
+                            if (error) {
+                                console.error(error);
+                            } else {
+                                $timeout(function() {
+                                    $scope.unverifyMessage = '認証解除完了しました。';
+                                    $scope.unverifyLoaded = true;
+                                });
+                            }
+                        });
+                    }
+                });
+            } else {
+                $timeout(function() {
+                    $scope.error = 'ログインしなおしてください。';
+                    $scope.unverifyLoaded = true;
+                });
+            }
+        } else {
+            location.href = '@routes.HomeController.index?logout=1';
+        }
+    }
+}]);
+</script>
 </head>
 <body><div class="container">
     @bodyheader(title, contestName)
 
-    <div ng-controller="AuthCtrl">
-    <div ng-hide="authLoaded">
+    <div ng-controller="AuthCtrl"><div ng-controller="UnverifyCtrl">
+    <div ng-hide="authLoaded && unverifyLoaded">
         <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
         <span class="sr-only">Loading...</span>
         Loading...
     </div>
-    <div ng-show="authLoaded">
+    <div ng-show="authLoaded && unverifyLoaded">
 
         @authinfo()
 
         <h2>アカウント認証解除</h2>
 
-        <div class="notice-success margin-bottom-20" ng-if="verifyMessage">
+        <div class="notice-success margin-bottom-20" ng-if="unverifyMessage">
             <i class="fa fa-check"></i>
-            {{ verifyMessage }}
+            {{ unverifyMessage }}
         </div>
         <div class="color-error margin-bottom-20" ng-if="error">
             エラー: {{ error }}
         </div>
 
-        <p class="color-error">
-            注意: アカウント認証を解除すると、シーズンポイント・抽選ポイントが一切受け取れなくなります。
-        </p>
+        @if(userId == "" && customerId == -1) {
+            <div ng-if="!error">
+                <p>
+                    注意: アカウント認証を解除すると、抽選ポイント等が一切受け取れなくなります。
+                </p>
 
-        <form name="verifyForm" action="@routes.SettingController.unverify" method="POST">
-            <input class="btn btn-error" type="submit" value="認証解除する">
-        </form>
+                <form name="verifyForm" action="@routes.SettingController.unverify" method="POST">
+                    <input type="hidden" name="userId" value="{{ authData.uid }}">
+                    <input type="hidden" name="customerId" value="{{ customerId }}">
+                    <input class="btn btn-error" type="submit" value="認証解除する">
+                </form>
+            </div>
+        }
 
-    </div></div>
+    </div></div></div>
 
     @bodyfooter(contestName)
 </div></body>

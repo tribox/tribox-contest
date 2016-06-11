@@ -9,17 +9,36 @@
 
 @basejs(firebaseappContest)
 @authjs(redirectLogin="", redirectLogout=routes.HomeController.index.toString(), checkFirst=true)
+<script>
+app.controller('VerifyCtrl', ['$scope', function($scope) {
+    $scope.error = null;
+    $scope.verifyLoaded = false;
+
+    // Read personal results
+    var authData = contestRef.getAuth();
+    if (authData) {
+        contestRef.child('users').child(authData.uid).child('isTriboxCustomer').once('value', function(snap) {
+            $scope.$apply(function() {
+                if (snap.exists() && snap.val() == true) {
+                    $scope.error = 'このアカウントはすでに認証済みです。';
+                }
+                $scope.verifyLoaded = true;
+            });
+        });
+    }
+}]);
+</script>
 </head>
 <body><div class="container">
     @bodyheader(title, contestName)
 
-    <div ng-controller="AuthCtrl">
-    <div ng-hide="authLoaded">
+    <div ng-controller="AuthCtrl"><div ng-controller="VerifyCtrl">
+    <div ng-hide="authLoaded && verifyLoaded">
         <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
         <span class="sr-only">Loading...</span>
         Loading...
     </div>
-    <div ng-show="authLoaded">
+    <div ng-show="authLoaded && verifyLoaded">
 
         @authinfo()
 
@@ -40,23 +59,25 @@
             エラー: {{ error }}
         </div>
 
-        <p>
-            <a href="https://store.tribox.com/" target="_blank">triboxストア</a>
-            に登録済みのメールアドレスを入力してください。<br>
-            入力されたメールアドレスがストアに登録済みであれば、確認メールが送信されます。<br>
-            確認メール内に書かれたリンクをクリックすると認証が完了します。
-        </p>
+        <div ng-if="!error">
+            <p>
+                <a href="https://store.tribox.com/" target="_blank">triboxストア</a>
+                に登録済みのメールアドレスを入力してください。<br>
+                入力されたメールアドレスがストアに登録済みであれば、確認メールが送信されます。<br>
+                確認メール内に書かれたリンクをクリックすると認証が完了します。
+            </p>
 
-        <form name="verifyForm" action="@routes.SettingController.verify" method="POST">
-            <div>
-                <label>メールアドレス</label>
-                <input class="form-control" type="email" name="email">
-            </div>
-            <input type="hidden" name="userId" value="{{ authData.uid }}">
-            <input class="btn" type="submit" value="認証する">
-        </form>
+            <form name="verifyForm" action="@routes.SettingController.verify" method="POST">
+                <div>
+                    <label>メールアドレス</label>
+                    <input class="form-control" type="email" name="email">
+                </div>
+                <input type="hidden" name="userId" value="{{ authData.uid }}">
+                <input class="btn" type="submit" value="認証する">
+            </form>
+        </div>
 
-    </div></div>
+    </div></div></div>
 
     @bodyfooter(contestName)
 </div></body>

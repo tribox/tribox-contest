@@ -1,4 +1,4 @@
-@(token: String, contestName: String, contestUrl: String, firebaseappContest: String)
+@(userId: String, customerId: Int, contestName: String, contestUrl: String, firebaseappContest: String, message: String = "", errorMessage: String = "")
 
 @defining("Verify Click") { title =>
 
@@ -9,23 +9,83 @@
 
 @basejs(firebaseappContest)
 @authjs(redirectLogin="", redirectLogout="", checkFirst=true)
+<script>
+app.controller('VerifyClickCtrl', ['$scope', '$timeout', function($scope, $timeout) {
+    $scope.error = null;
+    $scope.verifyClickLoaded = false;
+
+    @if(message != "") {
+        var authData = contestRef.getAuth();
+        if (authData) {
+            if (authData.uid == '@{userId}') {
+                // 認証アカウントをセットする
+                contestRef.child('users').child(authData.uid).update({
+                    'isTriboxCustomer': true
+                }, function(error) {
+                    if (error) {
+                        console.error(error);
+                    } else {
+                        contestRef.child('usersecrets').child(authData.uid).update({
+                            'triboxStoreCustomerId': @{customerId}
+                        }, function(error) {
+                            if (error) {
+                                console.error(error);
+                            } else {
+                                $timeout(function() {
+                                    $scope.verifyClickLoaded = true;
+                                });
+                            }
+                        });
+                    }
+                });
+            } else {
+                $timeout(function() {
+                    $scope.error = 'ログインしなおしてください。';
+                    $scope.verifyClickLoaded = true;
+                });
+            }
+        } else {
+            location.href = '@routes.HomeController.index?logout=1';
+        }
+    } else {
+        $timeout(function() {
+            $scope.verifyClickLoaded = true;
+        });
+    }
+}]);
+</script>
 </head>
 <body><div class="container">
     @bodyheader(title, contestName)
 
-    <div ng-controller="AuthCtrl">
-    <div ng-hide="authLoaded">
+    <div ng-controller="AuthCtrl"><div ng-controller="VerifyClickCtrl">
+    <div ng-hide="authLoaded && verifyClickLoaded">
         <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
         <span class="sr-only">Loading...</span>
         Loading...
     </div>
-    <div ng-show="authLoaded">
+    <div ng-show="authLoaded && verifyClickLoaded">
 
         @authinfo()
 
         <h2>アカウント認証確認</h2>
 
-    </div></div>
+        @if(message != "") {
+            <div class="notice-success margin-bottom-20" ng-if="!error">
+                <i class="fa fa-check"></i>
+                @message
+            </div>
+        }
+        @if(errorMessage != "") {
+            <div class="color-error margin-bottom-20">
+                エラー: @errorMessage
+            </div>
+        }
+        <div class="color-error margin-bottom-20" ng-if="error">
+            エラー: {{ error }}
+        </div>
+
+    </div></div></div>
 
     @bodyfooter(contestName)
 </div></body>

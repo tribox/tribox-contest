@@ -157,11 +157,11 @@ app.controller('AuthSettingCtrl', ['$scope', '$firebaseObject', 'Auth', function
                     <td ng-if="userData.isTriboxCustomer != true">No <a href="@routes.SettingController.verify">認証する</a></td>
                     <td ng-if="userData.isTriboxCustomer == true">Yes <a href="@routes.SettingController.unverify">解除する</a></td>
                 </tr>
-                <tr>
+                <!--<tr>
                     <th>スポンサーアカウント</th>
                     <td ng-if="userData.isTriboxTeam == true">Yes</td>
                     <td ng-if="userData.isTriboxTeam != true">No</td>
-                </tr>
+                </tr>-->
             </table>
             <input class="btn" type="submit" value="更新">
         </form>
