@@ -9,14 +9,14 @@
     </div>
     @if(cid == "" || eid == "") {
         <div id="header-menu" ng-controller="AuthCtrl">
-            <span ng-hide="isLoggingin">
-                <a href="@routes.HomeController.login" ng-hide="isLoggingin">ログイン</a> /
-                <a href="@routes.HomeController.join" ng-hide="isLoggingin">会員登録</a>
+            <span ng-show="!isLoggingin && authLoaded">
+                <a href="@routes.HomeController.login">ログイン</a> /
+                <a href="@routes.HomeController.join">会員登録</a>
             </span>
-            <span ng-show="isLoggingin">
-                <a href="/user/{{ userData.username }}" ng-show="isLoggingin">マイページ</a> /
-                <a href="@routes.SettingController.setting" ng-show="isLoggingin">設定</a> /
-                <a href="@routes.HomeController.logout" ng-show="isLoggingin">ログアウト</a>
+            <span ng-show="isLoggingin && authLoaded">
+                <a href="/user/{{ userData.username }}">マイページ</a> /
+                <a href="@routes.SettingController.setting">設定</a> /
+                <a href="@routes.HomeController.logout">ログアウト</a>
             </span>
         </div>
     } else {
