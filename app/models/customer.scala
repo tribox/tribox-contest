@@ -16,6 +16,7 @@ object Customer {
         }
     }
 
+    // テーブル全体
     def getAll: List[Customer] = {
         DB.withConnection("store") { implicit c =>
             val result = SQL("""
@@ -24,6 +25,19 @@ object Customer {
                 WHERE del_flg = 0
                 ORDER BY customer_id ASC
             """).as(Customer.data *)
+            return result
+        }
+    }
+
+    // メールアドレスに一致するレコードを検索
+    def getOnesByEmail(email: String): List[Customer] = {
+        DB.withConnection("store") { implicit c =>
+            val result = SQL("""
+                SELECT customer_id, email
+                FROM dtb_customer
+                WHERE email = {email} AND del_flg = 0
+                ORDER BY customer_id ASC
+            """).on('email -> email).as(Customer.data *)
             return result
         }
     }

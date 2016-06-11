@@ -1,4 +1,4 @@
-@(contestName: String, contestUrl: String, firebaseappContest: String)
+@(contestName: String, contestUrl: String, firebaseappContest: String, message: String = "", errorMessage: String = "")
 
 @defining("Verify") { title =>
 
@@ -25,10 +25,17 @@
 
         <h2>アカウント認証</h2>
 
-        <div class="notice-success margin-bottom-20" ng-if="verifyMessage">
-            <i class="fa fa-check"></i>
-            {{ verifyMessage }}
-        </div>
+        @if(message != "") {
+            <div class="notice-success margin-bottom-20">
+                <i class="fa fa-check"></i>
+                @message
+            </div>
+        }
+        @if(errorMessage != "") {
+            <div class="color-error margin-bottom-20">
+                エラー: @errorMessage
+            </div>
+        }
         <div class="color-error margin-bottom-20" ng-if="error">
             エラー: {{ error }}
         </div>
@@ -45,6 +52,7 @@
                 <label>メールアドレス</label>
                 <input class="form-control" type="email" name="email">
             </div>
+            <input type="hidden" name="userId" value="{{ authData.uid }}">
             <input class="btn" type="submit" value="認証する">
         </form>
 
