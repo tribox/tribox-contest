@@ -274,6 +274,9 @@
                                 ".validate": "newData.isString() && newData.val().length < 64"
                             }
                         },
+                        "place": {
+                            ".validate": "newData.isNumber() && 0 < newData.val()"
+                        },
                         "$other": {
                             ".validate": false
                         }
