@@ -44,7 +44,7 @@ app.controller('AuthLoginCtrl', ['$scope', 'Auth', function($scope, Auth) {
                 $scope.error = error;
             });
         }).catch(function(error) {
-            $scope.error = error;
+            $scope.error = TriboxContest.convErrorCodes(error.code);
         });
     };
 }]);

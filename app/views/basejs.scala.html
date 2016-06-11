@@ -3,6 +3,33 @@
 <script>
 window.TriboxContest = {};
 
+TriboxContest.ERROR_CODES = {
+    'EMAIL_TAKEN':      'すでに登録済みのメールアドレスです',
+    'INVALID_EMAIL':    'メールアドレスまたはパスワードが間違っています',
+    'INVALID_PASSWORD': 'メールアドレスまたはパスワードが間違っています',
+    'INVALID_USER':     'メールアドレスまたはパスワードが間違っています'
+};
+TriboxContest.convErrorCodes = function(code) {
+    if (code in TriboxContest.ERROR_CODES) {
+        return TriboxContest.ERROR_CODES[code];
+    } else {
+        return code;
+    }
+};
+
+TriboxContest.ERROR_CODES_ALT = {
+    'EMAIL_TAKEN':      'すでに登録済みのメールアドレスです',
+    'INVALID_EMAIL':    'メールアドレスが間違っています',
+    'INVALID_PASSWORD': 'パスワードが間違っています',
+    'INVALID_USER':     'ユーザが間違っています'
+};
+TriboxContest.convErrorCodesAlt = function(code) {
+    if (code in TriboxContest.ERROR_CODES_ALT) {
+        return TriboxContest.ERROR_CODES_ALT[code];
+    } else {
+        return code;
+    }
+};
 
 var app = angular.module('contestApp', ['firebase']);
 var contestRef = new Firebase('https://@{firebaseappContest}.firebaseio.com');

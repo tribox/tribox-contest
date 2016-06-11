@@ -31,6 +31,12 @@ app.controller('AuthEmailCtrl', ['$scope', 'Auth', function($scope, Auth) {
         var _oldEmail = $scope.oldEmail;
         var _newEmail = $scope.newEmail;
         var _password = $scope.password;
+
+        if (_oldEmail == _newEmail) {
+            $scope.error = '現在のメールアドレスと新しいメールアドレスが同じです。';
+            return;
+        }
+
         Auth.$changeEmail({
             oldEmail: _oldEmail,
             newEmail: _newEmail,
@@ -43,13 +49,21 @@ app.controller('AuthEmailCtrl', ['$scope', 'Auth', function($scope, Auth) {
                 email: _newEmail,
                 password: _password
             }).then(function(authData) {
-                $scope.message = 'Logged in as: ' + authData.uid;
-                location.href = '@routes.HomeController.index';
+                contestRef.child('usersecrets').child(authData.uid).update({
+                    'emailChangedAt': Firebase.ServerValue.TIMESTAMP
+                }, function(error) {
+                    if (error) {
+                        console.error(error);
+                    } else {
+                        $scope.message = 'Logged in as: ' + authData.uid;
+                        location.href = '@routes.SettingController.setting';
+                    }
+                });
             }).catch(function(error) {
-                $scope.error = error;
+                $scope.error = TriboxContest.convErrorCodesAlt(error.code);
             });
         }).catch(function(error) {
-            $scope.error = error;
+            $scope.error = TriboxContest.convErrorCodesAlt(error.code);
         });
     };
 }]);
