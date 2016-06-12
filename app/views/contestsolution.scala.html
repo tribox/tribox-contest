@@ -65,21 +65,27 @@ textarea.form-control {
                 制限時間は1時間 (60分) です。
             </li>
             <li>
-                WCA規則下で開催される
+                WCA規則 (バージョン 2016-04-18) 下で開催される
                 <a href="https://www.worldcubeassociation.org/regulations/#article-12-notation" target="_blank">
                     3x3x3最少手数競技で使用可能な文字</a>
-                のみ使えます。
+                のみ使えます。使用可能な文字は以下のとおりです。
+                <ul>
+                    <li>1面回し: <code>F</code>, <code>B</code>, <code>R</code>, <code>L</code>, <code>U</code>, <code>D</code></li>
+                    <li>全体回転: <code>x</code>, <code>y</code>, <code>z</code></li>
+                    <li>反時計回し/回転: <code>'</code> と 180度回し/回転: <code>2</code> (例: <code>U'</code>, <code>U2</code>)</li>
+                    <li>2層回し: <code>w</code> (例: <code>Uw</code>)</li>
+                    <li>全体回転の別表記: <code>[小文字]</code> (例: <code>[u]</code>)</li>
+                </ul>
             </li>
             <li>
-                解答はシステムで自動的に解析されます。
+                解答はシステムで自動的に解析・チェックされます。
                 <ul>
                     <li>
-                        <a href="https://www.worldcubeassociation.org/regulations/#12a" target="_blank">
-                            OBTM (Outer Block Turn Metric)</a>
-                        以外の文字は無視されます。
+                        上で列挙された文字以外は無視されます。
                     </li>
                     <li>
-                        OBTM で 80 手以上にカウントされる解答は自動的に DNF になります。
+                        <a href="https://www.worldcubeassociation.org/regulations/#12a" target="_blank">OBTM (Outer Block Turn Metric)</a>
+                        で 80 手以上にカウントされる解答は DNF になります。
                     </li>
                     <li>
                         スクランブル文字列および逆スクランブル文字列をベースとした解法は DNF になります。
@@ -93,7 +99,7 @@ textarea.form-control {
                 </ul>
             </li>
             <li>
-                解説としてどのような考えで解答に至ったのかを文章で記入することが可能です。
+                解説コメントとしてどのような考えで解答に至ったのかを文章で記入することが可能です。
                 使用した技術や工夫したポイントを書いてみんなと共有しましょう。
             </li>
         </ul>
