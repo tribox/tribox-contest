@@ -50,59 +50,80 @@ var collectResults = function() {
         } else {
             console.log('Authenticated successfully with payload:', authData);
 
-            // 333fm 以外はすでに結果が入っているから place に順位だけ入れて完了
-            // 333fm は結果がまだ入っていないので、解答をチェックして結果を記録する
-            contestRef.child('results').child(targetContest).once('value', function(snapResults) {
-                var results = snapResults.val();
+            // スクランブルを取得しておく
+            contestRef.child('scrambles').child(targetContest).once('value', function(snapScrambles) {
+                var scrambles = snapScrambles.val();
+                console.dir(scrambles);
 
-                // 書き込むデータ
-                var ready = {};
+                // 333fm 以外はすでに結果が入っているから place に順位だけ入れて完了
+                // 333fm は結果がまだ入っていないので、解答をチェックして結果を記録する
+                contestRef.child('results').child(targetContest).once('value', function(snapResults) {
+                    var results = snapResults.val();
 
-                Object.keys(results).forEach(function(eventId) {
-                    console.log(eventId);
-                    ready[eventId] = {};
+                    // 書き込むデータ
+                    var ready = {};
 
-                    if (eventId != 'e333fm') {
-                        var place = 1;
-                        var placePrev = -1;
-                        var priorityPrev = "";
-                        Object.keys(results[eventId]).forEach(function(userId) {
-                            if (results[eventId][userId]._dummy == true) {
-                                return;
-                            }
-                            ready[eventId][userId] = {};
+                    Object.keys(results).forEach(function(eventId) {
+                        console.log(eventId);
+                        ready[eventId] = {};
 
-                            var priority = snapResults.child(eventId).child(userId).getPriority();
-                            if (results[eventId][userId]['result']['condition'] == 'DNF') {
-                                ready[eventId][userId]['place'] = place;
-                            } else {
-                                if (priority == priorityPrev) {
-                                    ready[eventId][userId]['place'] = prevPlace;
-                                } else {
-                                    ready[eventId][userId]['place'] = place;
-                                    placePrev = place;
+                        // 333fm 以外
+                        if (eventId != 'e333fm') {
+                            var place = 1;
+                            var placePrev = -1;
+                            var priorityPrev = "";
+                            Object.keys(results[eventId]).forEach(function(userId) {
+                                if (results[eventId][userId]._dummy == true) {
+                                    return;
                                 }
-                                priorityPrev = priority;
-                                place++;
-                            }
-                        });
-                    }
-                });
-                console.dir(ready);
+                                ready[eventId][userId] = {};
 
-                // それぞれ書き込む
-                Object.keys(ready).forEach(function(eventId) {
-                    Object.keys(ready[eventId]).forEach(function(userId) {
-                        contestRef.child('results').child(targetContest).child(eventId).child(userId).update(ready[eventId][userId], function(error) {
-                            if (error) {
-                                console.error(error);
-                            } else {
-                                console.log('Completed updating place: ' + eventId + ' ' + userId);
-                            }
-                        });
+                                var priority = snapResults.child(eventId).child(userId).getPriority();
+                                if (results[eventId][userId]['result']['condition'] == 'DNF') {
+                                    ready[eventId][userId]['place'] = place;
+                                } else {
+                                    if (priority == priorityPrev) {
+                                        ready[eventId][userId]['place'] = prevPlace;
+                                    } else {
+                                        ready[eventId][userId]['place'] = place;
+                                        placePrev = place;
+                                    }
+                                    priorityPrev = priority;
+                                    place++;
+                                }
+                            });
+                        }
+
+                        // 333fm は解答チェックする
+                        else {
+                            Object.keys(results[eventId]).forEach(function(userId) {
+                                if (results[eventId][userId]._dummy == true) {
+                                    return;
+                                }
+                                ready[eventId][userId] = {};
+
+                                var solution = results[eventId][userId]['details'][0]['solution'];
+                                console.log(solution);
+                            });
+                            console.log();
+                        }
                     });
-                });
+                    console.dir(ready);
 
+                    // それぞれ書き込む
+                    /*Object.keys(ready).forEach(function(eventId) {
+                        Object.keys(ready[eventId]).forEach(function(userId) {
+                            contestRef.child('results').child(targetContest).child(eventId).child(userId).update(ready[eventId][userId], function(error) {
+                                if (error) {
+                                    console.error(error);
+                                } else {
+                                    console.log('Completed updating place: ' + eventId + ' ' + userId);
+                                }
+                            });
+                        });
+                    });*/
+
+                });
             });
         }
     });
