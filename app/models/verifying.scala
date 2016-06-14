@@ -20,7 +20,7 @@ object Verifying {
         DB.withConnection { implicit c =>
             val result = SQL("""
                 SELECT id, user_id, customer_type, customer_id
-                FROM contest_verifying
+                FROM verifying
                 ORDER BY id ASC
             """).as(Verifying.data *)
             return result
@@ -32,7 +32,7 @@ object Verifying {
         DB.withConnection { implicit c =>
             val result = SQL("""
                 SELECT id, user_id, customer_type, customer_id
-                FROM contest_verifying
+                FROM verifying
                 WHERE user_id = {userId} AND verified_at IS NOT NULL AND unverified_at IS NULL
                 ORDER BY id ASC
             """).on('userId -> userId).as(Verifying.data *)
@@ -45,7 +45,7 @@ object Verifying {
         DB.withConnection { implicit c =>
             val result = SQL("""
                 SELECT id, user_id, customer_type, customer_id
-                FROM contest_verifying
+                FROM verifying
                 WHERE customer_id = {customerId} AND verified_at IS NOT NULL AND unverified_at IS NULL
                 ORDER BY id ASC
             """).on('customerId -> customerId).as(Verifying.data *)
@@ -58,7 +58,7 @@ object Verifying {
         DB.withConnection { implicit c =>
             val result = SQL("""
                 SELECT id, user_id, customer_type, customer_id
-                FROM contest_verifying
+                FROM verifying
                 WHERE token = {token} AND verified_at IS NULL AND unverified_at IS NULL
                 ORDER BY id ASC
             """).on('token -> token).as(Verifying.data *)
@@ -69,7 +69,7 @@ object Verifying {
     // 新規レコードを挿入
     def insertVerifying(token: String, userId: String, customerId: Int) {
         DB.withConnection { implicit c =>
-            val _id: Int = SQL("INSERT INTO contest_verifying (token, user_id, customer_type, customer_id) values ({token}, {user_id}, 0, {customer_id})").
+            val _id: Int = SQL("INSERT INTO verifying (token, user_id, customer_type, customer_id) values ({token}, {user_id}, 0, {customer_id})").
                 on('token -> token, 'user_id -> userId, 'customer_id -> customerId).executeUpdate()
         }
     }
@@ -77,7 +77,7 @@ object Verifying {
     // 指定したレコードを認証済みとしてマークする
     def makeVerify(id: Int) {
         DB.withConnection { implicit c =>
-            val _id: Int = SQL("UPDATE contest_verifying SET verified_at = NOW() WHERE id = {id}").
+            val _id: Int = SQL("UPDATE verifying SET verified_at = NOW() WHERE id = {id}").
                 on('id -> id).executeUpdate()
         }
     }
@@ -85,7 +85,7 @@ object Verifying {
     // 指定したレコードを認証解除する
     def makeUnverify(userId: String, customerId: Int) {
         DB.withConnection { implicit c =>
-            val _id: Int = SQL("UPDATE contest_verifying SET unverified_at = NOW() WHERE user_Id = {user_id} AND customer_id = {customer_id}").
+            val _id: Int = SQL("UPDATE verifying SET unverified_at = NOW() WHERE user_Id = {user_id} AND customer_id = {customer_id} AND verified_at IS NOT NULL AND unverified_at IS NULL").
                 on('user_id -> userId, 'customer_id -> customerId).executeUpdate()
         }
     }
