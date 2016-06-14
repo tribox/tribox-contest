@@ -1,40 +1,22 @@
 /**
- * Test of alg.js
+ * fmcchecker.js
  */
 
-var alg = require('alg');
 var exec = require('child_process').exec;
 
-var pathToSarumawashi = '/path/to/Sarumawashi';
-
-var scramble = "F' D2 F D2 F2 R2 B' R2 U2 F' D B L' F2 D U2 L B2 F' L";
-var solutions = [
-    "B2 L D2 R U R D' B L2 B D2 L D' L' D L D L D2 F D' B' D F' D' L B F'",
-    "B2 L D2 R U R D’ B L2 B D2 L D’ L’ D L D L D2 F D’ B’ D F’ D’ L B F’",
-    "B2LD2RURD'BL2BD2LD'L'DLDLD2FD'B'DF'D'LBF'",
-    "B2LD2RURD'BL2BD2LD'L'DLDLD2FD'B'DF'D'LBF'FFFF",
-    "B2LD2RURD'BL2BD2LD'L'DLDLD2FD'B'DF'D'LBF'FFFFxyz",
-    "xxxxB2LD2RURD'BL2BD2LD'L'DLDLD2FD'B'DF'D'LBF'FFFFxyz",
-    "UwD'y'B2LD2RURD'BL2BD2LD'L'DLDLD2FD'B'DF'D'LBF'FFFFxyz",
-    "UwD'[u']B2LD2RURD'BL2BD2LD'L'DLDLD2FD'B'DF'D'LBF'FFFFxyz     あかさたな\n\n",
-    "DNF",
-    "DNF\n\n\n\n",
-    "関係ない文字だけ",
-    "x"
-];
+var alg = require('alg');
 var metric = { metric: "obtm" };
 
-var scrambleCube = alg.cube.fromString(scramble);
-console.log(scrambleCube);
-console.log(alg.cube.countMoves(scramble, metric));
-
+var Config = require('./config.js');
 
 // replaceAlg: 置換処理
+//   * 改行             -> 空文字列
 //   * "’"             -> "'"
-//   * " "              -> ""
+//   * " "              -> 空文字列
 //   * "[u]"            -> "y" etc.
-//   * 使用されない文字 -> ""
+//   * 使用されない文字 -> 空文字列
 var replaceAlg = function(str) {
+    str = str.replace(/\\n/g, '').replace(/\\r/g, '');
     str = str.replace(/ /g, '');
     str = str.replace(/’/g, "'");
     str = str.replace(/\[r\]/g, "x").replace(/\[r'\]/g, "x'").replace(/\[r2\]/g, "x2")
@@ -120,7 +102,7 @@ var convAlg = function(str) {
     return str;
 };
 
-var checkSolution = function(solution, callback) {
+exports.checkSolution = function(scramble, solution, callback) {
     var replaced =  replaceAlg(solution);
 
     // 置換後の手順文字列が空文字列ならDNF
@@ -147,7 +129,7 @@ var checkSolution = function(solution, callback) {
     var conved = convAlg(withSpace);
     //console.log('conved: ', conved);
 
-    exec(pathToSarumawashi + '/sample/check_solved "' + scramble + ' ' + conved + '"', function(error, stdout, stderr) {
+    exec(Config.PATH_TO_SARUMAWASHI + '/sample/check_solved "' + scramble + ' ' + conved + '"', function(error, stdout, stderr) {
         if (stdout) {
             //console.log('stdout: ' + stdout);
             if (stdout.charAt(0) == '1') {
@@ -164,9 +146,3 @@ var checkSolution = function(solution, callback) {
         }
     });
 };
-
-solutions.forEach(function(data, index) {
-    checkSolution(data, function(moves) {
-        console.log(data + ' --> ' + moves);
-    });
-});
