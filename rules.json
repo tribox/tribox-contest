@@ -277,6 +277,9 @@
                         "place": {
                             ".validate": "newData.isNumber() && 0 < newData.val()"
                         },
+                        "seasonPoint": {
+                            ".validate": "newData.isNumber() && 0 <= newData.val()"
+                        },
                         "$other": {
                             ".validate": false
                         }

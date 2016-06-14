@@ -242,7 +242,7 @@ app.controller('ContestConfirmCtrl', ['$scope', function($scope) {
                             if ($scope.result.condition == 'DNF') {
                                 $scope.resultResult = 'DNF';
                             } else if (e.format == 'time') {
-                                $scope.resultResult = formatTime($scope.result.record);
+                                $scope.resultResult = TriboxContest.formatTime($scope.result.record);
                             } else if (e.format == 'number') {
                                 $scope.resultResult = $scope.result.record;
                             }
@@ -251,7 +251,7 @@ app.controller('ContestConfirmCtrl', ['$scope', function($scope) {
                                 if (best.condition == 'DNF') {
                                     $scope.resultResultAlt = 'DNF';
                                 } else if (e.format == 'time') {
-                                    $scope.resultResultAlt = formatTime(best.record);
+                                    $scope.resultResultAlt = TriboxContest.formatTime(best.record);
                                 } else if (e.format == 'number') {
                                     $scope.resultResultAlt = best.record;
                                 }

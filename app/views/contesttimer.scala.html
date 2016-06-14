@@ -251,7 +251,7 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
             var btnPenalty = angular.element(document.getElementById('timeform-cond-penalty-' + index));
             var btnDNF = angular.element(document.getElementById('timeform-cond-dnf-' + index));
             $scope.results[index].condition = 'OK';
-            $scope.resultsDetail[index] = formatTime($scope.results[index].record);
+            $scope.resultsDetail[index] = TriboxContest.formatTime($scope.results[index].record);
             btnOK.addClass('cond-ok-on');
             btnPenalty.removeClass('cond-penalty-on');
             btnDNF.removeClass('cond-dnf-on');
@@ -265,7 +265,7 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
             var btnPenalty = angular.element(document.getElementById('timeform-cond-penalty-' + index));
             var btnDNF = angular.element(document.getElementById('timeform-cond-dnf-' + index));
             $scope.results[index].condition = '+2';
-            $scope.resultsDetail[index] = formatTime($scope.results[index].record + 2.000);
+            $scope.resultsDetail[index] = TriboxContest.formatTime($scope.results[index].record + 2.000);
             btnOK.removeClass('cond-ok-on');
             btnPenalty.addClass('cond-penalty-on');
             btnDNF.removeClass('cond-dnf-on');
@@ -480,7 +480,7 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
         timerId = setInterval(function() {
             var elapsed = (Date.now() - startTime) / 1000;
             //timerText.innerHTML = (elapsed).toFixed(3);
-            timerText.innerHTML = formatTime(elapsed);
+            timerText.innerHTML = TriboxContest.formatTime(elapsed);
             if (LIMIT_SECOND <= elapsed) {
                 stopTimer();
             }

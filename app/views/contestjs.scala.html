@@ -1,28 +1,6 @@
 @(cid: String, eid: String = "", fetchScrambles: Boolean = true, fetchResults: Boolean = true)
 
 <script>
-var formatTime = function(input) {
-    var post = '.000';
-    var second = input - 0;
-    if (String(input).indexOf('.') != -1) {
-        second = String(input).split('.')[0] - 0;
-        post = '.' + (String(input).split('.')[1] + '000').substr(0, 3);
-    }
-    if (second < 10) {
-        return (second + post).substr(0, 5);
-    } else if (second < 60) {
-        return (second + post).substr(0, 6);
-    } else {
-        var minute = Math.floor(Math.floor(second) / 60);
-        var s = ('0' + (second - minute * 60)).slice(-2);
-        if (minute < 10) {
-            return (minute + ':' + s + post).substr(0, 8);
-        } else {
-            return (minute + ':' + s + post).substr(0, 9);
-        }
-    }
-};
-
 var calcResult = function(method, format, data) {
     method = method.toLowerCase();
     format = format.toLowerCase();
@@ -164,7 +142,7 @@ app.controller('ContestCtrl', ['$scope', '$timeout', function($scope, $timeout) 
     contestRef.child('events').once('value', function(snapEvents) {
         if (snapEvents.exists()) {
             window.TriboxContest.events = snapEvents.val();
-            contestRef.child('contests').child('c@cid').once('value', function(snapContest) {
+            contestRef.child('contests').child('c@{cid}').once('value', function(snapContest) {
                 if (snapContest.exists() && snapContest.val()._dummy == null) {
                     contestRef.child('inProgress').once('value', function(snapInProgress) {
                         $scope.$apply(function() {
@@ -185,7 +163,7 @@ app.controller('ContestCtrl', ['$scope', '$timeout', function($scope, $timeout) 
                         });
                     });
                 } else {
-                    console.error('Invalid contest: @cid');
+                    console.error('Invalid contest: @{cid}');
                     $scope.$apply(function() {
                         $scope.loadedMain = true;
                         $scope.contestLoaded = $scope.loadedMain && $scope.loadedScrambles && $scope.loadedResults;
@@ -252,51 +230,12 @@ app.controller('ContestCtrl', ['$scope', '$timeout', function($scope, $timeout) 
 
                                         // User
                                         $scope.resultsData[e][uid].user = Users[uid];
-
                                         // Result
-                                        if (results.result.condition != 'DNF') {
-                                            if (Events[e].format == 'time') {
-                                                $scope.resultsData[e][uid].resultF = formatTime(results.result.record);
-                                            } else {
-                                                $scope.resultsData[e][uid].resultF = results.result.record;
-                                            }
-                                        } else {
-                                            $scope.resultsData[e][uid].resultF = 'DNF';
-                                        }
-
+                                        $scope.resultsData[e][uid].resultF = TriboxContest.formatResult(results, e, Events);
                                         // Details
-                                        $scope.resultsData[e][uid].detailsA = [];
-                                        results.details.forEach(function(d, index) {
-                                            var t = '';
-                                            if (Events[e].method == 'average' && (results.result.best == index || results.result.worst == index)) {
-                                                t += '(';
-                                            }
-                                            if (d.condition == 'OK') {
-                                                if (Events[e].format == 'time') {
-                                                    t += formatTime(d.record);
-                                                } else if (Events[e].format == 'number') {
-                                                    t += d.record;
-                                                }
-                                            } else if (d.condition == '+2') {
-                                                t += formatTime(d.record + 2.000);
-                                            } else if (d.condition == 'DNF') {
-                                                t += 'DNF';
-                                            }
-                                            if (Events[e].method == 'average' && (results.result.best == index || results.result.worst == index)) {
-                                                t += ')';
-                                            }
-                                            $scope.resultsData[e][uid].detailsA.push(t);
-                                        });
-                                        $scope.resultsData[e][uid].detailsF = $scope.resultsData[e][uid].detailsA.join(' ');
-
+                                        $scope.resultsData[e][uid].detailsF = TriboxContest.formatDetails(results, e, Events);
                                         // Puzzle
-                                        if (results.puzzle.type == 'database') {
-                                            $scope.resultsData[e][uid].puzzleF = TriboxContest.Products[results.puzzle.product];
-                                        } else if (results.puzzle.type == 'nodatabase') {
-                                            $scope.resultsData[e][uid].puzzleF = results.puzzle.input;
-                                        } else {
-                                            $scope.resultsData[e][uid].puzzleF = '不明';
-                                        }
+                                        $scope.resultsData[e][uid].puzzleF = TriboxContest.formatPuzzle(results);
 
                                         if (count < 3) {
                                             $scope.resultsTop3[e].push($scope.resultsData[e][uid]);
@@ -332,10 +271,10 @@ app.controller('ContestCtrl', ['$scope', '$timeout', function($scope, $timeout) 
         data.forEach(function(d, index) {
             if (format == 'time') {
                 if (d.condition == 'OK') {
-                    res[index] = formatTime(d.record);
+                    res[index] = TriboxContest.formatTime(d.record);
                     $scope.turnOnOK(index);
                 } else if (d.condition == '+2') {
-                    res[index] = formatTime(d.record + 2.000);
+                    res[index] = TriboxContest.formatTime(d.record + 2.000);
                     $scope.turnOnPenalty(index);
                 } else if (d.condition == 'DNF') {
                     res[index] = 'DNF';

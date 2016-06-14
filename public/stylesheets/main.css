@@ -309,6 +309,7 @@ table.scrambles th:first-child {
  */
 table.result {
     font-size: 95%;
+    margin-bottom: 30px;
 }
 
 

@@ -61,8 +61,7 @@
         <h2>{{ contestData.contestName }}</h2>
 
         <p>
-            開始 <i class="fa fa-calendar"></i>: {{ contestData.beginAt | toDate }}<br>
-            終了 <i class="fa fa-calendar"></i>: {{ contestData.endAt | toDate }}
+            <i class="fa fa-calendar"></i> 開催期間: <b>{{ contestData.beginAt | toDate }}</b> ~ <b>{{ contestData.endAt | toDate }}</b>
         </p>
         <p ng-if="countdown == 0">
             現在開催中のコンテストです。

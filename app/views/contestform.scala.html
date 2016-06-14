@@ -128,7 +128,7 @@ app.controller('ContestFormCtrl', ['$scope', '$timeout', function($scope, $timeo
                     } else if (result.details) {
                         $scope.results = result.details;
                         $scope.results.forEach(function(result, index) {
-                            $scope.resultsForm[index] = formatTime($scope.results[index].record);
+                            $scope.resultsForm[index] = TriboxContest.formatTime($scope.results[index].record);
                             if ($scope.results[index].condition == 'OK') {
                                 $scope.applyOK(index);
                             } else if ($scope.results[index].condition == '+2') {
@@ -246,7 +246,7 @@ app.controller('ContestFormCtrl', ['$scope', '$timeout', function($scope, $timeo
             var btnDNF = angular.element(document.getElementById('timeform-cond-dnf-' + index));
             var scrambleLine = angular.element(document.getElementById('scramble-' + index));
             $scope.results[index].condition = 'OK';
-            $scope.resultsForm[index] = formatTime($scope.results[index].record);
+            $scope.resultsForm[index] = TriboxContest.formatTime($scope.results[index].record);
             btnOK.addClass('cond-ok-on');
             btnPenalty.removeClass('cond-penalty-on');
             btnDNF.removeClass('cond-dnf-on');
@@ -262,7 +262,7 @@ app.controller('ContestFormCtrl', ['$scope', '$timeout', function($scope, $timeo
             var btnDNF = angular.element(document.getElementById('timeform-cond-dnf-' + index));
             var scrambleLine = angular.element(document.getElementById('scramble-' + index));
             $scope.results[index].condition = '+2';
-            $scope.resultsForm[index] = formatTime($scope.results[index].record + 2.000);
+            $scope.resultsForm[index] = TriboxContest.formatTime($scope.results[index].record + 2.000);
             btnOK.removeClass('cond-ok-on');
             btnPenalty.addClass('cond-penalty-on');
             btnDNF.removeClass('cond-dnf-on');

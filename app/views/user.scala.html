@@ -1,4 +1,4 @@
-@(id: String, contestName: String, contestUrl: String, firebaseappContest: String)
+@(id: String, contestName: String, contestUrl: String, firebaseappContest: String, historyByUserId: scala.collection.mutable.Map[String, List[CompetedHistory]], products: List[Product])
 
 @defining(id) { title =>
 
@@ -8,28 +8,6 @@
     @header(title, contestName)
 
 @basejs(firebaseappContest)
-@authjs(redirectLogin="", redirectLogout="", checkFirst=true)
-<script>
-app.controller('UserCtrl', ['$scope', '$firebaseObject', function($scope, $firebaseObject) {
-    $scope.userData = null;
-    $scope.userLoaded = false;
-    $scope.existsUser = false;
-
-    // Fetch usernames data
-    contestRef.child('usernames').child('@id').once('value', function(snapUsername) {
-        if (snapUsername.exists() && snapUsername.val().uid != null && snapUsername.val()._dummy == null) {
-            // Fetch user data
-            $scope.userData = $firebaseObject(contestRef.child('users').child(snapUsername.val().uid));
-            $scope.existsUser = true;
-        } else {
-            console.error('Invalid username: @id');
-        }
-        $scope.userLoaded = true;
-    }, function(error) {
-        console.error(error);
-    });
-}]);
-</script>
 </head>
 <body><div class="container">
     @bodyheader(title, contestName)
@@ -52,14 +30,166 @@ app.controller('UserCtrl', ['$scope', '$firebaseObject', function($scope, $fireb
 
         @authinfo()
 
-        <h2>ユーザ: @id</h2>
+        <h2>{{ thisUserData.displayname }} (@id) <i class="fa fa-check-circle" style="color: #3498DB;" ng-if="thisUserData.isTriboxCustomer"></i></h2>
 
-        <p>@id -> userData:</p>
+        <p>
+            所属: {{ thisUserData.organization }}<br>
+            WCA: {{ thisUserData.wcaId }}<br>
+            Twitter: {{ thisUserData.twitterId }}<br>
+            自己紹介: {{ thisUserData.bio }}
+        </p>
+
+        <h3>今シーズンのコンテスト参加履歴</h3>
+
+        <div ng-repeat="(eid, e) in history">
+            <h4 id="{{ eid }}">{{ events[eid].name }}</h4>
+
+            <table class="table table-striped result">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>順位</th>
+                        <th>獲得SP</th>
+                        <th ng-if="eid != 'e333fm' && events[eid].method == 'average'">平均記録</th>
+                        <th ng-if="eid != 'e333fm' && events[eid].method == 'best'">最良記録</th>
+                        <th ng-if="eid == 'e333fm'">記録</th>
+                        <th ng-if="eid != 'e333fm'">個々の記録</th>
+                        <th ng-if="eid == 'e333fm'">解答・コメント</th>
+                        <th>使用キューブ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="c in e | orderBy:'-contestId'">
+                        <td><a href="/contest/{{ c.contestId | removeHead }}/result/{{ eid | removeHead }}">第{{ c.contest.number }}回</a></td>
+                        <td>{{ c.result.place }}</td>
+                        <td ng-if="c.result.seasonPoint && c.result.seasonPoint != 0">{{ c.result.seasonPoint }}</td>
+                        <td ng-if="!(c.result.seasonPoint) || c.result.seasonPoint == 0"></td>
+                        <td>{{ c.result.resultF }}</td>
+                        <td ng-if="eid != 'e333fm'">{{ c.result.detailsF }}</td>
+                        <td ng-if="eid == 'e333fm'">詳細</td>
+                        <td ng-show="c.result.puzzle.type == 'database'">
+                            <a href="http://store.tribox.com/products/detail.php?product_id={{ c.result.puzzle.product }}" target="_blank">{{ c.result.puzzleF }}</a>
+                        </td>
+                        <td ng-show="c.result.puzzle.type == 'nodatabase' || c.result.puzzle.type == 'unknown'">
+                            {{ c.result.puzzleF }}
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        @* <!--<p>@id -> thisUserData:</p>
+        <pre>{{ thisUserData | json }}</pre>
+        <p>@id -> thisUsername:</p>
+        <pre>{{ thisUsername | json }}</pre>--> *@
+
+        @* <!--<p>history:</p>
+        <pre>{{ history | json }}</pre>--> *@
+
+        @* <!--<p>events:</p>
+        <pre>{{ events | json }}</pre>--> *@
+
+        @* <!--<p>contests:</p>
+        <pre>{{ contests | json }}</pre>--> *@
+
+        @* <!--<p>authData:</p>
+        <pre>{{ authData | json }}</pre>
+        <p>userData:</p>
         <pre>{{ userData | json }}</pre>
+        <p>usersecretData:</p>
+        <pre>{{ usersecretData | json }}</pre>--> *@
 
     </div></div></div></div>
 
     @bodyfooter(contestName)
+
+@authjs(redirectLogin="", redirectLogout="", checkFirst=true)
+<script>
+app.controller('UserCtrl', ['$scope', '$timeout', function($scope, $timeout) {
+    $scope.thisUserData = null;
+    $scope.thisUsername = null;
+    $scope.userLoaded = false;
+    $scope.existsUser = false;
+
+    $scope.events = null;
+    $scope.contests = null;
+    $scope.contestsArray = [];
+    $scope.history = {};
+
+    // Fetch usernames data
+    contestRef.child('usernames').child('@id').once('value', function(snapUsername) {
+        if (snapUsername.exists() && snapUsername.val().uid != null && snapUsername.val()._dummy == null) {
+            var userId = snapUsername.val().uid;
+
+            // Fetch user data
+            contestRef.child('users').child(snapUsername.val().uid).once('value', function(snapUser) {
+                var user = snapUser.val();
+                // Fetch user results
+                contestRef.child('events').once('value', function(snapEvents) {
+                    var events = snapEvents.val();
+                    contestRef.child('contests').once('value', function(snapContests) {
+                        var contests = snapContests.val();
+
+                        Object.keys(events).forEach(function(eid) {
+                            Object.keys(contests).forEach(function(cid) {
+                                if (userId in TriboxContest.competedHistory &&
+                                        TriboxContest.competedHistory[userId][cid + '+' + eid]) {
+                                    if (!(eid in $scope.history)) {
+                                        $timeout(function() {
+                                            $scope.history[eid] = [];
+                                        });
+                                    }
+                                    contestRef.child('results').child(cid).child(eid).child(userId).once('value', function(snapResult) {
+                                        var result = snapResult.val();
+                                        result.resultF = TriboxContest.formatResult(result, eid, events);
+                                        result.detailsF = TriboxContest.formatDetails(result, eid, events);
+                                        result.puzzleF = TriboxContest.formatPuzzle(result);
+                                        $timeout(function() {
+                                            $scope.history[eid].push({ 'contestId': contests[cid].contestId, 'contest': contests[cid], 'result': result });
+                                        });
+                                    });
+                                }
+                            });
+                        });
+
+                        $timeout(function() {
+                            $scope.thisUserData = snapUser.val();
+                            $scope.thisUsername = snapUsername.val();
+                            $scope.events = events;
+                            $scope.contests = contests;
+                            $scope.userLoaded = true;
+                            $scope.existsUser = true;
+                            Object.keys(contests).forEach(function(cid) {
+                                $scope.contestsArray.push(contests[cid]);
+                            });
+                        });
+                    });
+                });
+            });
+
+        } else {
+            console.error('Invalid username: @id');
+            $scope.userLoaded = true;
+        }
+    }, function(error) {
+        console.error(error);
+    });
+}]);
+
+TriboxContest.competedHistory = {};
+@for((userId, hl) <- historyByUserId) {
+    TriboxContest.competedHistory['@{userId}'] = {};
+    @for(h <- hl) {
+        TriboxContest.competedHistory['@{userId}']['@{h.contest_id}+@{h.event_id}'] = true;
+    }
+}
+
+TriboxContest.Products = [];
+@for(product:Product <- products) {
+    TriboxContest.Products[@product.product_id] = '@product.product_name';
+}
+</script>
+
 </div></body>
 </html>
 

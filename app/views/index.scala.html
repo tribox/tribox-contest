@@ -75,7 +75,13 @@ app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $fi
 
         @authinfo()
 
-        <h2>開催中のコンテスト</h2>
+        <h2>Welcome home, cubers</h2>
+
+        <p>
+            tribox Contest は、誰でも参加可能。毎週開催の "お得な" ネットコンテストです。
+        </p>
+
+        <h3>開催中のコンテスト</h3>
 
         @* <!--<div>
             <p>開催中のコンテスト (MySQL):<br>@{events.length} events.</p>
@@ -96,12 +102,10 @@ app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $fi
         </div>--> *@
 
         <p>
-            開催中のコンテスト:
             <a href="/contest/{{ inProgressContest.contestId }}">{{ inProgressContest.contestName }}</a> @* ({{ inProgress }}) *@
         </p>
         <p>
-            開始 <i class="fa fa-calendar"></i>: {{ inProgressContest.beginAt | toDate }}<br>
-            終了 <i class="fa fa-calendar"></i>: {{ inProgressContest.endAt | toDate }}
+            <i class="fa fa-calendar"></i> 開催期間: <b>{{ inProgressContest.beginAt | toDate }}</b> ~ <b>{{ inProgressContest.endAt | toDate }}</b>
         </p>
 
         <p>
