@@ -126,7 +126,8 @@ var calcResult = function(method, format, data) {
                         return null;
                     }
                     if (t < best.record) {
-                        best = d;
+                        best.record = t;
+                        best.condition = 'OK';
                         bestIndex = index;
                     }
                 }

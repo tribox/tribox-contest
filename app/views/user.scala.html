@@ -141,12 +141,14 @@ app.controller('UserCtrl', ['$scope', '$timeout', function($scope, $timeout) {
                                     }
                                     contestRef.child('results').child(cid).child(eid).child(userId).once('value', function(snapResult) {
                                         var result = snapResult.val();
-                                        result.resultF = TriboxContest.formatResult(result, eid, events);
-                                        result.detailsF = TriboxContest.formatDetails(result, eid, events);
-                                        result.puzzleF = TriboxContest.formatPuzzle(result);
-                                        $timeout(function() {
-                                            $scope.history[eid].push({ 'contestId': contests[cid].contestId, 'contest': contests[cid], 'result': result });
-                                        });
+                                        if (!(result._dummy) && result.endAt) {
+                                            result.resultF = TriboxContest.formatResult(result, eid, events);
+                                            result.detailsF = TriboxContest.formatDetails(result, eid, events);
+                                            result.puzzleF = TriboxContest.formatPuzzle(result);
+                                            $timeout(function() {
+                                                $scope.history[eid].push({ 'contestId': contests[cid].contestId, 'contest': contests[cid], 'result': result });
+                                            });
+                                        }
                                     });
                                 }
                             });

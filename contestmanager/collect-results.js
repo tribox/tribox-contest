@@ -146,9 +146,9 @@ var collectResults = function() {
                         ready[eventId][userId] = {};
 
                         var priority = snapResults.child(eventId).child(userId).getPriority();
-                        
+
                         // 計測が完了していない場合は無視する
-                        if ('endAt' in results[eventId][userId] && 'result' in results[eventId][userId]) {
+                        if ('endAt' in results[eventId][userId]) {
                             if (results[eventId][userId]['result']['condition'] == 'DNF') {
                                 ready[eventId][userId]['place'] = place;
                             } else {
