@@ -102,7 +102,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="r in resultsTop3[e]">
+                        <tr id="{{ e }}-{{ $index }}" ng-repeat="r in resultsTop3[e]">
                             <td>{{ r.place }}</td>
                             <td ng-if="r.seasonPoint && r.seasonPoint != 0">{{ r.seasonPoint }}</td>
                             <td ng-if="!(r.seasonPoint) || r.seasonPoint == 0"></td>
@@ -110,7 +110,7 @@
                             <td>{{ r.user.organization | shorten10}}</td>
                             <td>{{ r.resultF }}</td>
                             <td ng-if="e != 'e333fm'">{{ r.detailsF }}</td>
-                            <td ng-if="e == 'e333fm'">詳細</td>
+                            <td ng-if="e == 'e333fm'" id="e333fm-{{ $index }}-show"><a class="cursor-pointer" ng-click="showDetail($index)">表示</a></td>
                             <td ng-show="r.puzzle.type == 'database'">
                                 <a href="http://store.tribox.com/products/detail.php?product_id={{ r.puzzle.product }}" target="_blank">{{ r.puzzleF }}</a>
                             </td>
@@ -213,6 +213,18 @@ app.controller('ContestIndexCtrl', ['$scope', function($scope) {
             });
         }
     }
+
+    $scope.showDetail = function(index) {
+        //console.log(index);
+
+        var html = '<tr class="fmc-detail"><td colspan="7">'
+                 + '<p><b>解答:</b><br>' + TriboxContest.escapeHTML($scope.resultsAll['e333fm'][index].details[0].solution) + '</p>'
+                 + '<p><b>コメント:</b><br>' + TriboxContest.escapeHTML($scope.resultsAll['e333fm'][index].details[0].note) + '</p>'
+                 + '</tr><tr style="display:none;"></tr>';
+        angular.element(document.getElementById('e333fm-' + index)).after(html);
+        angular.element(document.getElementById('e333fm-' + index + '-show')).text('表示済み');
+    };
+
 }]);
 
 TriboxContest.Products = [];

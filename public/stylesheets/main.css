@@ -311,6 +311,13 @@ table.result {
     font-size: 95%;
     margin-bottom: 30px;
 }
+a.cursor-pointer {
+    cursor: pointer;
+}
+tr.fmc-detail {
+    background: #F7F7F9;
+    border: 1px solid #E1E1E8;
+}
 
 
 /**

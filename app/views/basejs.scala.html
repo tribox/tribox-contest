@@ -215,6 +215,14 @@ TriboxContest.formatPuzzle = function(results) {
     } else {
         return '不明';
     }
-}
+};
+
+
+// HTML エスケープぽい
+TriboxContest.escapeHTML = function(text) {
+    text = text.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    text = text.replace(/\n/g, '<br>').replace(/\r/g, '<br>');
+    return text;
+};
 
 </script>

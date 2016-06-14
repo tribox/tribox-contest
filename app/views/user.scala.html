@@ -59,14 +59,14 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="c in e | orderBy:'-contestId'">
-                        <td><a href="/contest/{{ c.contestId | removeHead }}/result/{{ eid | removeHead }}">第{{ c.contest.number }}回</a></td>
+                    <tr id="{{ eid }}-{{ c.contestId }}" ng-repeat="c in e | orderBy:'-contestId'">
+                        <td><a href="/contest/{{ c.contestId }}/result/{{ eid | removeHead }}">第{{ c.contest.number }}回</a></td>
                         <td>{{ c.result.place }}</td>
                         <td ng-if="c.result.seasonPoint && c.result.seasonPoint != 0">{{ c.result.seasonPoint }}</td>
                         <td ng-if="!(c.result.seasonPoint) || c.result.seasonPoint == 0"></td>
                         <td>{{ c.result.resultF }}</td>
                         <td ng-if="eid != 'e333fm'">{{ c.result.detailsF }}</td>
-                        <td ng-if="eid == 'e333fm'">詳細</td>
+                        <td ng-if="eid == 'e333fm'" id="e333fm-{{ c.contestId }}-show"><a class="cursor-pointer" ng-click="showDetail(c.contestId)">表示</a></td>
                         <td ng-show="c.result.puzzle.type == 'database'">
                             <a href="http://store.tribox.com/products/detail.php?product_id={{ c.result.puzzle.product }}" target="_blank">{{ c.result.puzzleF }}</a>
                         </td>
@@ -176,6 +176,24 @@ app.controller('UserCtrl', ['$scope', '$timeout', function($scope, $timeout) {
     }, function(error) {
         console.error(error);
     });
+
+    $scope.showDetail = function(contestId) {
+        //console.log(contestId);
+
+        var r;
+        $scope.history['e333fm'].forEach(function(c) {
+            if (c.contestId == contestId) {
+                r = c.result;
+                return;
+            }
+        });
+        var html = '<tr class="fmc-detail"><td colspan="6">'
+                 + '<p><b>解答:</b><br>' + TriboxContest.escapeHTML(r.details[0].solution) + '</p>'
+                 + '<p><b>コメント:</b><br>' + TriboxContest.escapeHTML(r.details[0].note) + '</p>'
+                 + '</tr><tr style="display:none;"></tr>';
+        angular.element(document.getElementById('e333fm-' + contestId)).after(html);
+        angular.element(document.getElementById('e333fm-' + contestId + '-show')).text('表示済み');
+    };
 }]);
 
 TriboxContest.competedHistory = {};
