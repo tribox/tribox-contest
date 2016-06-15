@@ -32,14 +32,32 @@
 
         <h2>{{ thisUserData.displayname }} (@id) <i class="fa fa-check-circle" style="color: #3498DB;" ng-if="thisUserData.isTriboxCustomer"></i></h2>
 
-        <p>
-            所属: {{ thisUserData.organization }}<br>
-            WCA: {{ thisUserData.wcaId }}<br>
-            Twitter: {{ thisUserData.twitterId }}<br>
-            自己紹介: {{ thisUserData.bio }}
-        </p>
+        <table class="profile">
+            <tbody>
+                <tr>
+                    <th>所属</th>
+                    <td>{{ thisUserData.organization }}</td>
+                </tr>
+                <tr ng-show="thisUserData.wcaId">
+                    <th>WCA</th>
+                    <td><a href="https://www.worldcubeassociation.org/results/p.php?i={{ thisUserData.wcaId }}" target="_blank">{{ thisUserData.wcaId }}</a></td>
+                </tr>
+                <tr ng-show="thisUserData.twitterId">
+                    <th>Twitter</th>
+                    <td><a href="https://twitter.com/{{ thisUserData.twitterId }}" target="_blank">@@{{ thisUserData.twitterId }}</a></td>
+                </tr>
+                <tr ng-show="thisUserData.bio">
+                    <th>自己紹介</th>
+                    <td>{{ thisUserData.bio }}</td>
+                </tr>
+            </tbody>
+        </table>
 
         <h3>今シーズンのコンテスト参加履歴</h3>
+
+        <p>
+            <i class="fa fa-star color-star"></i>: 当選ポイント獲得
+        </p>
 
         <div ng-repeat="(eid, e) in history">
             <h4 id="{{ eid }}">{{ events[eid].name }}</h4>
@@ -61,7 +79,7 @@
                 <tbody>
                     <tr id="{{ eid }}-{{ c.contestId }}" ng-repeat="c in e | orderBy:'-contestId'">
                         <td><a href="/contest/{{ c.contestId }}/result/{{ eid | removeHead }}">第{{ c.contest.number }}回</a></td>
-                        <td>{{ c.result.place }}</td>
+                        <td>{{ c.result.place }} <i class="fa fa-star color-star" ng-if="c.result.lottery"></i></td>
                         <td ng-if="c.result.seasonPoint && c.result.seasonPoint != 0">{{ c.result.seasonPoint }}</td>
                         <td ng-if="!(c.result.seasonPoint) || c.result.seasonPoint == 0"></td>
                         <td>{{ c.result.resultF }}</td>

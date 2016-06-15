@@ -58,13 +58,13 @@ app.controller('AuthFirstSettingCtrl', ['$scope', 'Auth', function($scope, Auth)
         // ユーザID、使用文字と長さチェック
         if (!(_username.match(/^[a-zA-Z0-9_]{1,15}$/))) {
             //console.error('Invalid username');
-            $scope.error = 'ユーザIDが不正なフォーマットです。';
+            $scope.error = 'ユーザIDが不正なフォーマットです (1文字以上 15文字以内)。';
             return;
         }
         // 表示名、長さチェック
-        if (!(_displayname.match(/^.{1,31}$/))) {
+        if (!(_displayname.match(/^.{1,30}$/))) {
             //console.error('Invalid displayname');
-            $scope.error = '表示名が不正なフォーマットです。';
+            $scope.error = '表示名の長さが正しくありません (1文字以上 30文字以内)。';
             return;
         }
         // 表示名、使用文字チェック
@@ -79,9 +79,9 @@ app.controller('AuthFirstSettingCtrl', ['$scope', 'Auth', function($scope, Auth)
             }
         }
         // 所属、長さチェック
-        if (!(_organization == null || _organization.length < 32)) {
+        if (!(_organization == null || _organization.length <= 30)) {
             //console.error('Invalid organization');
-            $scope.error = '所属が正しくありません。';
+            $scope.error = '所属が正しくありません (30文字以内)。';
             return;
         }
 

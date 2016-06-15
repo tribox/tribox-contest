@@ -39,9 +39,9 @@ app.controller('AuthSettingCtrl', ['$scope', '$firebaseObject', 'Auth', function
         var _bio          = $scope.userData.bio ? $scope.userData.bio : null;
 
         // 表示名、長さチェック
-        if (!(_displayname.match(/^.{1,31}$/))) {
+        if (!(_displayname.match(/^.{1,30}$/))) {
             //console.error('Invalid displayname');
-            $scope.error = '表示名が正しくありません。';
+            $scope.error = '表示名の長さが正しくありません (1文字以上 30文字以内)。';
             return;
         }
         // 表示名、使用文字チェック
@@ -56,9 +56,9 @@ app.controller('AuthSettingCtrl', ['$scope', '$firebaseObject', 'Auth', function
             }
         }
         // 所属、長さチェック
-        if (!(_organization == null || _organization.length < 32)) {
+        if (!(_organization == null || _organization.length <= 30)) {
             //console.error('Invalid organization');
-            $scope.error = '所属が正しくありません。文字数オーバーです。';
+            $scope.error = '所属が正しくありません (30文字以内)。';
             return;
         }
         // WCA ID、チェック
@@ -72,8 +72,8 @@ app.controller('AuthSettingCtrl', ['$scope', '$firebaseObject', 'Auth', function
             return;
         }
         // Bio、チェック
-        if (!(_bio == null || _bio.length < 256)) {
-            $scope.error = '自己紹介が正しくありません。文字数オーバーです。';
+        if (!(_bio == null || _bio.length <= 200)) {
+            $scope.error = '自己紹介が正しくありません (200文字以内)。';
             return;
         }
 
@@ -82,7 +82,7 @@ app.controller('AuthSettingCtrl', ['$scope', '$firebaseObject', 'Auth', function
             'organization': _organization,
             'wcaId': _wcaId,
             'twitterId': _twitterId,
-            '_bio': _bio
+            'bio': _bio
         }, function(error) {
             if (error) {
                 console.error(error);

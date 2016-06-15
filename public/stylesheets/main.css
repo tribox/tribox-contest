@@ -319,6 +319,22 @@ tr.fmc-detail {
     border: 1px solid #E1E1E8;
 }
 
+.color-star {
+    color: #E3CF7A;
+}
+
+
+/**
+ * Profile table
+ */
+table.profile {
+    margin-bottom: 20px;
+}
+table.profile th {
+    font-weight: bold;
+    padding-right: 10px;
+}
+
 
 /**
  * SkyBlue CSS: Override

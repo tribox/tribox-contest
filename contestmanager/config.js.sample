@@ -16,6 +16,12 @@ exports.MYSQL_USER     = 'xxxxxxxx';
 exports.MYSQL_PASSWORD = 'xxxxxxxx';
 exports.MYSQL_DATABASE = 'xxxxxxxx';
 
+// MySQL の設定 (ストア)
+exports.MYSQL_STORE_HOST     = 'xxxxxxxx';
+exports.MYSQL_STORE_USER     = 'xxxxxxxx';
+exports.MYSQL_STORE_PASSWORD = 'xxxxxxxx';
+exports.MYSQL_STORE_DATABASE = 'xxxxxxxx';
+
 // スクランブル用のシード値
 exports.SEED = 'xxxxxxxx';
 
@@ -26,6 +32,10 @@ exports.PATH_TO_SARUMAWASHI = '/path/to/Sarumawashi';
 exports.SP = {
     1: 20, 2: 10, 3: 5
 };
+// 各競技ごとの当選者数
+exports.NUM_LOTTERY = 3;
+// 抽選ポイント数
+exports.LOTTERY_POINT = 100;
 
 exports.DUMMY_USERS = [
     'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'
