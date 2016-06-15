@@ -53,13 +53,13 @@ object Verifying {
         }
     }
 
-    // トークンに一致するレコードを検索（認証済みは含まない）
+    // トークンに一致するレコードを検索（認証済みでも良い、ただし認証解除は含まない）
     def getOnesByToken(token: String): List[Verifying] = {
         DB.withConnection { implicit c =>
             val result = SQL("""
                 SELECT id, user_id, customer_type, customer_id
                 FROM verifying
-                WHERE token = {token} AND verified_at IS NULL AND unverified_at IS NULL
+                WHERE token = {token} AND unverified_at IS NULL
                 ORDER BY id ASC
             """).on('token -> token).as(Verifying.data *)
             return result

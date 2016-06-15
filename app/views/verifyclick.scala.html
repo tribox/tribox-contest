@@ -40,12 +40,16 @@ app.controller('VerifyClickCtrl', ['$scope', '$timeout', function($scope, $timeo
                 });
             } else {
                 $timeout(function() {
-                    $scope.error = 'ログインしなおしてください。';
+                    //$scope.error = 'ログインしなおしてください。';
+                    $scope.error = '無効なURLです。';
                     $scope.verifyClickLoaded = true;
                 });
             }
         } else {
-            location.href = '@routes.HomeController.index?logout=1';
+            $timeout(function() {
+                $scope.error = 'ログインしなおして再度このURLにアクセスしてください。';
+                $scope.verifyClickLoaded = true;
+            });
         }
     } else {
         $timeout(function() {
