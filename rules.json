@@ -253,7 +253,7 @@
                                 ".validate": "newData.isNumber() && 0 <= newData.val() && newData.val() < root.child('events').child($event_id).child('attempts').val()"
                             },
                             "condition": {
-                                ".validate": "newData.isString() && (newData.val() == 'OK' || newData.val() == '+2' || newData.val() == 'DNF' || newData.val() == 'NOTYET')"
+                                ".validate": "newData.isString() && (newData.val() == 'OK' || newData.val() == 'DNF' || newData.val() == 'NOTYET')"
                             },
                             "$other": {
                                 ".validate": false
@@ -271,14 +271,20 @@
                                 ".validate": "newData.isNumber() && 0 < newData.val()"
                             },
                             "input": {
-                                ".validate": "newData.isString() && newData.val().length < 64"
+                                ".validate": "newData.isString() && newData.val().length <= 50"
                             }
                         },
+                        // 順位
                         "place": {
                             ".validate": "newData.isNumber() && 0 < newData.val()"
                         },
+                        // シーズンポイント (SP)
                         "seasonPoint": {
                             ".validate": "newData.isNumber() && 0 <= newData.val()"
+                        },
+                        // ランダム抽選
+                        "lottery": {
+                            ".validate": "newData.isBoolean() && newData.parent().child('result').child('condition').val() == 'OK'"
                         },
                         "$other": {
                             ".validate": false

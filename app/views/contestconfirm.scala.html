@@ -251,7 +251,13 @@ app.controller('ContestConfirmCtrl', ['$scope', function($scope) {
                                 if (best.condition == 'DNF') {
                                     $scope.resultResultAlt = 'DNF';
                                 } else if (e.format == 'time') {
-                                    $scope.resultResultAlt = TriboxContest.formatTime(best.record);
+                                    if (best.condition == 'OK') {
+                                        $scope.resultResultAlt = TriboxContest.formatTime(best.record);
+                                    } else if (best.condition == '+2') {
+                                        $scope.resultResultAlt = TriboxContest.formatTime(best.record + 2.000);
+                                    } else {
+                                        $scope.resultResultAlt = 'DNF';
+                                    }
                                 } else if (e.format == 'number') {
                                     $scope.resultResultAlt = best.record;
                                 }
@@ -318,8 +324,8 @@ app.controller('ContestConfirmCtrl', ['$scope', function($scope) {
                     $scope.error = 'キューブ名を入力してください。';
                     return;
                 }
-                if (64 <= $scope.puzzle.input.length) {
-                    $scope.error = 'キューブ名は63文字以下で入力してください。';
+                if (TriboxContest.INPUT_LENGTH.puzzleName.max < $scope.puzzle.input.length) {
+                    $scope.error = 'キューブ名は50文字以下で入力してください。';
                     return;
                 }
                 puzzle.input = $scope.puzzle.input;
