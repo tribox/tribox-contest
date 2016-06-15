@@ -217,12 +217,13 @@ app.controller('ContestIndexCtrl', ['$scope', function($scope) {
     $scope.showDetail = function(index) {
         //console.log(index);
 
-        var html = '<tr class="fmc-detail"><td colspan="7">'
+        var html = '<tr id="fmc-detail-' + index + '" class="fmc-detail"><td colspan="7">'
                  + '<p><b>解答:</b><br>' + TriboxContest.escapeHTML($scope.resultsAll['e333fm'][index].details[0].solution) + '</p>'
                  + '<p><b>コメント:</b><br>' + TriboxContest.escapeHTML($scope.resultsAll['e333fm'][index].details[0].note) + '</p>'
                  + '</tr><tr style="display:none;"></tr>';
         angular.element(document.getElementById('e333fm-' + index)).after(html);
         angular.element(document.getElementById('e333fm-' + index + '-show')).text('表示済み');
+        fadeIn(document.getElementById('fmc-detail-' + index));
     };
 
 }]);

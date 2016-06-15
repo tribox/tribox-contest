@@ -187,12 +187,13 @@ app.controller('UserCtrl', ['$scope', '$timeout', function($scope, $timeout) {
                 return;
             }
         });
-        var html = '<tr class="fmc-detail"><td colspan="6">'
+        var html = '<tr id="fmc-detail-' + contestId + '" class="fmc-detail"><td colspan="6">'
                  + '<p><b>解答:</b><br>' + TriboxContest.escapeHTML(r.details[0].solution) + '</p>'
                  + '<p><b>コメント:</b><br>' + TriboxContest.escapeHTML(r.details[0].note) + '</p>'
                  + '</tr><tr style="display:none;"></tr>';
         angular.element(document.getElementById('e333fm-' + contestId)).after(html);
         angular.element(document.getElementById('e333fm-' + contestId + '-show')).text('表示済み');
+        fadeIn(document.getElementById('fmc-detail-' + contestId));
     };
 }]);
 
