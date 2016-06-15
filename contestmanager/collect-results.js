@@ -10,6 +10,7 @@
 
 var async = require('async');
 var mysql = require('mysql');
+var Twitter = require('twitter');
 
 var Config = require('./config.js');
 var fmcchecker = require('./fmcchecker.js');
@@ -60,9 +61,11 @@ var argvrun = argv.run();
 console.log(argvrun);
 
 // 対象コンテスト (c2016xxx)
-var targetContest;
+var targetContest, targetContestObj;
 // ユーザテーブル、ユーザシークレットテーブル
 var Users, Usersecrets;
+// 優勝者 (333の)
+var winner;
 
 // 書き込むデータ (順位、シーズンポイント、当選)
 var ready = {};
@@ -103,7 +106,31 @@ connectionStore.connect();
 // 結果をツイートする
 var doTweet = function() {
     if (argvrun.options.tweet) {
-        process.exit(0);
+        // ツイートテキスト
+        // 例 "Yueh-Lin Tsai (tribox SCT) wins 今週のコンテスト [URL]"
+        var status = ' wins ' + targetContestObj.contestName
+                   + ' https://contest.tribox.com/contest/' + targetContestObj.contestId;
+        if (Users[winner].organization) {
+            status = Users[winner].displayname + ' (' + Users[winner].organization + ')' + status;
+        } else {
+            status = Users[winner].displayname + status;
+        }
+
+        var client = new Twitter({
+            consumer_key: Config.CONSUMER_KEY,
+            consumer_secret: Config.CONSUMER_SECRET,
+            access_token_key: Config.ACCESS_TOKEN,
+            access_token_secret: Config.ACCESS_TOKEN_SECRET
+        });
+        client.post('statuses/update', {status: status}, function(error, tweet, response) {
+            if (!error) {
+                console.log(tweet);
+                process.exit(0);
+            } else {
+                console.error(error);
+                process.exit(1);
+            }
+        });
     } else {
         process.exit(0);
     }
@@ -357,6 +384,11 @@ var collectResults = function() {
 
                             // 計測が完了していない場合は無視する
                             if ('endAt' in results[eventId][userId]) {
+                                // ツイート用に winner を保存しておく
+                                if (!winner && eventId == 'e333' && place == 1) {
+                                    winner = userId;
+                                }
+
                                 if (results[eventId][userId]['result']['condition'] == 'DNF') {
                                     ready[eventId][userId]['place'] = place;
                                 } else {
@@ -497,6 +529,7 @@ var checkExists = function() {
     // コンテストから検索 (認証不要)
     contestRef.child('contests').child(targetContest).once('value', function(snap) {
         if (snap.exists()) {
+            targetContestObj = snap.val();
             checkFMC();
         } else {
             console.error('Contest does not exist');
@@ -510,7 +543,10 @@ var getLastContest = function() {
     // lastContest を取得 (認証不要)
     contestRef.child('inProgress').child('lastContest').once('value', function(snap) {
         targetContest = snap.val();
-        checkFMC();
+        contestRef.child('contests').child(targetContest).once('value', function(snapContest) {
+            targetContestObj = snapContest.val();
+            checkFMC();
+        });
     });
 }
 

@@ -22,6 +22,12 @@ exports.MYSQL_STORE_USER     = 'xxxxxxxx';
 exports.MYSQL_STORE_PASSWORD = 'xxxxxxxx';
 exports.MYSQL_STORE_DATABASE = 'xxxxxxxx';
 
+// Twitter
+exports.CONSUMER_KEY        = 'xxxxxxxx';
+exports.CONSUMER_SECRET     = 'xxxxxxxx';
+exports.ACCESS_TOKEN        = 'xxxxxxxx';
+exports.ACCESS_TOKEN_SECRET = 'xxxxxxxx';
+
 // スクランブル用のシード値
 exports.SEED = 'xxxxxxxx';
 
