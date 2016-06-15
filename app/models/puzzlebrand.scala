@@ -6,7 +6,6 @@ import play.api.db._
 import play.api.Play.current
 
 case class PuzzleBrand(category_id: Int, category_name: String) {
-    def addPuzzleBrand { }
 }
 
 object PuzzleBrand {

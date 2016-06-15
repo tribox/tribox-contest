@@ -6,7 +6,6 @@ import play.api.db._
 import play.api.Play.current
 
 case class Customer(customer_id: Int, email: String) {
-    def addCustomer { }
 }
 
 object Customer {

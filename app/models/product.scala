@@ -6,7 +6,6 @@ import play.api.db._
 import play.api.Play.current
 
 case class Product(product_id: Int, product_name: String) {
-    def addProduct { }
 }
 
 object Product {
