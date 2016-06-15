@@ -17,7 +17,8 @@ var solutions = [
     "DNF",
     "DNF\n\n\n\n",
     "関係ない文字だけ",
-    "x"
+    "x",
+    "逆スクランブル L' F B2 L' U2 D' F2 L B' D' F U2 R2 B R2 F2 D2 F' D2 F"
 ];
 
 //var alg = require('alg');
