@@ -30,7 +30,14 @@ class HomeController @Inject() extends Controller {
     }
 
     /**
-     * Auth: Join / Login / Logout / Forgot password
+     * About
+     */
+    def about = Action {
+        Ok(views.html.about(getContestName, getContestUrl, getFirebaseappContest))
+    }
+
+    /**
+     * Auth
      */
     def join = Action {
         Ok(views.html.join(getContestName, getContestUrl, getFirebaseappContest))

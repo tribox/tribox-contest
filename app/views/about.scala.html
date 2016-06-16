@@ -1,0 +1,68 @@
+@(contestName: String, contestUrl: String, firebaseappContest: String)
+
+@defining("About") { title =>
+
+<!DOCTYPE html>
+<html lang="ja" ng-app="contestApp">
+<head>
+    @header(title, contestName)
+
+@basejs(firebaseappContest)
+@authjs(redirectLogin="", redirectLogout="", checkFirst=true)
+</head>
+<body><div class="container">
+    @bodyheader(title, contestName)
+
+    <div ng-controller="AuthCtrl">
+    <div ng-hide="authLoaded">
+        <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+        <span class="sr-only">Loading...</span>
+        Loading...
+    </div>
+    <div ng-show="authLoaded">
+
+        @authinfo()
+
+        <h2>tribox コンテストとは</h2>
+
+        <p>
+            誰でも参加可能。毎週開催の &quot;お得な&quot; ネットコンテストです。<br>
+            まずは無料でアカウントを作成してください。皆さまのご参加をお待ちしております。
+        </p>
+
+        <h4>認証アカウント</h4>
+        <p>
+            triboxコンテストアカウントは、triboxストアアカウントに結びつけることができます。<br>
+            抽選ポイントや入賞賞金は認証アカウントにのみ付与されます。<br>
+            <a href="@routes.SettingController.verify">アカウントの認証設定ページ</a>
+        </p>
+
+        <h4>抽選ポイント</h4>
+        <p>
+            毎週抽選で3名様に100ポイントが付与されます (1競技につき3名)。<br>
+            ポイントは当選者のtriboxストアアカウントに自動付与され、1ポイント=1円としてご使用頂けます。<br>
+            複数の競技に参加すると、同時に複数当選する可能性もあります。どんどんご参加ください!<br>
+        </p>
+
+        <h4>シーズンランキング</h4>
+        <p>
+            コンテストの結果は毎週日曜日夜に発表され、1位から12位までの入賞者にシーズンポイントが付与されます。<br>
+            シーズンは半年間で、1月〜6月が前期、7月〜12月が後期です。<br>
+            シーズンランキング1位〜3位には、競技ごとに設定された賞金 (triboxポイント) が授与されます。<br>
+            ただしネットコンテストの性質上、以下の参加者はシーズンランキング入賞者から除外されます。
+        </p>
+        <ol style="list-style: upper-alpha;">
+            <li>WCA公式大会未参加者 (C.について検証できないため)</li>
+            <li>未認証アカウント</li>
+            <li>WCA公式記録と本コンテストでの記録の差異が大きい参加者</li>
+            <li>連絡がつかない参加者</li>
+            <li>この他の理由で入賞者として不的確と運営者が判断した参加者</li>
+        </ol>
+
+    </div></div>
+
+    @bodyfooter(contestName)
+</div></body>
+</html>
+
+}

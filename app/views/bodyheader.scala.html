@@ -29,7 +29,7 @@
 @if(cid == "") {
     <div id="main-menu" class="row">
         <div class="col sm-3">
-            <a href="#">トライボックスコンテストとは</a>
+            <a href="@routes.HomeController.about">トライボックスコンテストとは</a>
         </div>
         <div class="col sm-3" ng-controller="InProgressCtrl">
             <a href="/contest/{{ lastContest | removeHead }}">最新のコンテストの結果</a>
