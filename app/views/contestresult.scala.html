@@ -46,15 +46,19 @@
             <i class="fa fa-calendar"></i> 開催期間: <b>{{ contestData.beginAt | toDate }}</b> ~ <b>{{ contestData.endAt | toDate }}</b>
         </p>
 
-        <p class="margin-bottom-0">
-            表示中の競技種目
+        <p>
+            コンテスト・競技種目の表示を切り替える<br>
+            <select class="form-control" style="margin-bottom: 5px;" ng-model="currentContest" ng-change="currentContestChange()">
+                <option ng-repeat="c in contestsList" value="{{ c.id | removeHead}}">
+                    {{ c.name }}
+                </option>
+            </select><br>
+            <select class="form-control" style="margin-bottom: 5px;" ng-model="currentEvent" ng-change="currentEventChange()">
+                <option ng-repeat="e in contestData.events" value="{{ e | removeHead}}">
+                    {{ events[e].name }}
+                </option>
+            </select>
         </p>
-        <select class="form-control" ng-model="currentEvent" ng-change="currentEventChange()">
-            <option ng-repeat="e in contestData.events" value="{{ e | removeHead}}">
-                {{ events[e].name }}
-            </option>
-        </select>
-        @* <!--<pre>{{ currentEvent | json }}</pre>--> *@
 
         <h3>{{ events.e@{eid}.name }}</h3>
         <p>
@@ -130,8 +134,31 @@
 @contestjs(cid=cid, eid=eid, fetchScrambles=true, fetchResults=true)
 <script>
 app.controller('ContestResultCtrl', ['$scope', function($scope) {
-    $scope.contestResultLoaded = true;
+    $scope.contestResultLoaded = false;
+    $scope.currentContest = '@{cid}';
     $scope.currentEvent = '@{eid}';
+    $scope.contestsList = null;
+
+    // 今シーズンの開催済みコンテストリスト
+    // とりあえず contests テーブルから引っ張ってくる
+    contestRef.child('contests').once('value', function(snapContests) {
+        contestRef.child('inProgress').once('value', function(snapInProgress) {
+            var lastContest = snapInProgress.val().lastContest;
+            var contests = snapContests.val();
+            var _contestsList = [];
+            Object.keys(snapContests.val()).forEach(function(contestId) {
+                if (contestId <= lastContest) {
+                    _contestsList.push({'id': contestId, 'name': contests[contestId].contestName});
+                }
+            });
+            $scope.contestsList = _contestsList;
+            $scope.contestResultLoaded = true;
+        });
+    });
+
+    $scope.currentContestChange = function() {
+        location.href = '/contest/' + $scope.currentContest + '/result/@{eid}';
+    };
 
     $scope.currentEventChange = function() {
         location.href = '/contest/@{cid}/result/' + $scope.currentEvent;
