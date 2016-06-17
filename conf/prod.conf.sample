@@ -26,6 +26,7 @@ db {
 # 3) Change contest info.
 contest.name = "tribox Contest"
 contest.url = "https://contest.tribox.com"
+contest.playpath = "/path/to/playapp"
 
 # 4) Change firebase app name.
 firebaseapp.contest = "firebase-contest-app"

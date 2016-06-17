@@ -50,10 +50,8 @@ class SettingController @Inject() extends HomeController {
         // email はストアの顧客DBに存在するもの、token と domain はユーザ入力に依存しないものなので、
         // インジェクション攻撃は無いと思うが、一応正規表現で厳密ではないけどチェックする。
         // http://qiita.com/sakuro/items/1eaa307609ceaaf51123
-        val currentDir = new File(".").getAbsoluteFile().getParent()
-        //println(currentDir)
         if (email.matches("""^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$""")) {
-            Process("/usr/bin/php " + currentDir + "/contestmanager/send-verifyingemail.php " + email + " " + token + " " + getContestUrl) run
+            Process("/usr/bin/php " + getPlayAppPath + "/contestmanager/send-verifyingemail.php " + email + " " + token + " " + getContestUrl) run
         }
     }
 

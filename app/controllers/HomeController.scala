@@ -18,6 +18,9 @@ class HomeController @Inject() extends Controller {
     def getContestUrl(): String = {
         return Play.application.configuration.getString("contest.url").getOrElse("https://contest.tribox.com/")
     }
+    def getPlayAppPath(): String = {
+        return Play.application.configuration.getString("contest.playpath").getOrElse("/path/to/playapp")
+    }
     def getFirebaseappContest(): String = {
         return Play.application.configuration.getString("firebaseapp.contest").getOrElse("tribox-contest")
     }
