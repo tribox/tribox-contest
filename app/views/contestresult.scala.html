@@ -66,10 +66,38 @@
             参加人数: {{ resultsPersons.e@{eid} }} 人
         </p>
 
+        <h4>キューブ使用率</h4>
+        <div class="row">
+            <div class="col sm-6">
+                <ol>
+                    <li ng-repeat="p in resultsPuzzles.e@{eid}">
+                        {{ p.productName }} ({{ p.percentage }} %)
+                    </li>
+                </ol>
+            </div>
+            <div class="col sm-6">
+                <div id="chart"></div>
+            </div>
+        </div>
+<script>
+var drawChart = function(data) {
+    var chart = c3.generate({
+        bindto: '#chart',
+        data: {
+            columns: data,
+            type: 'pie'
+        },
+        size: {
+            height: 240
+        }
+    });
+};
+</script>
+
+        <h4>結果</h4>
         <p>
             <i class="fa fa-star color-star"></i>: 当選ポイント獲得
         </p>
-
         <table class="table result">
             <thead>
                 <tr>
@@ -122,7 +150,8 @@
             </tbody>
         </table>
 
-        @* <!--<pre><pre>{{ resultsAll.e@{eid} | json }}</pre>--> *@
+        @* <!--<pre>{{ resultsAll.e@{eid} | json }}</pre>--> *@
+        @* <!--<pre>{{ resultsPuzzles.e@{eid} | json }}</pre>--> *@
         @* <!--<pre>{{ resultsTop3.e@{eid} | json }}</pre>--> *@
         @* <!--<pre>{{ scramblesData | json }}</pre>--> *@
 
@@ -131,7 +160,7 @@
     @bodyfooter(contestName)
 
 @authjs(redirectLogin="", redirectLogout="", checkFirst=true)
-@contestjs(cid=cid, eid=eid, fetchScrambles=true, fetchResults=true)
+@contestjs(cid=cid, eid=eid, fetchScrambles=true, fetchResultsTop3=false, fetchResultsAll=true)
 <script>
 app.controller('ContestResultCtrl', ['$scope', function($scope) {
     $scope.contestResultLoaded = false;

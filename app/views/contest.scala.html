@@ -151,7 +151,7 @@
     @bodyfooter(contestName)
 
 @authjs(redirectLogin="", redirectLogout="", checkFirst=true)
-@contestjs(cid=cid, fetchScrambles=false, fetchResults=true)
+@contestjs(cid=cid, fetchScrambles=false, fetchResultsTop3=true, fetchResultsAll=false)
 <script>
 app.controller('ContestIndexCtrl', ['$scope', function($scope) {
     $scope.eventsDone = {};

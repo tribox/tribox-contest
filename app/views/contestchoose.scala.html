@@ -120,7 +120,7 @@
     @bodyfooter(contestName)
 
 @authjs(redirectLogin="", redirectLogout="", checkFirst=true)
-@contestjs(cid=cid, eid=eid, fetchScrambles=false, fetchResults=false)
+@contestjs(cid=cid, eid=eid, fetchScrambles=false, fetchResultsTop3=false, fetchResultsAll=false)
 <script>
 app.controller('ContestChooseCtrl', ['$scope', '$timeout', function($scope, $timeout) {
     $scope.invalidPage = false;

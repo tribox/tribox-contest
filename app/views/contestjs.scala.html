@@ -1,4 +1,4 @@
-@(cid: String, eid: String = "", fetchScrambles: Boolean = true, fetchResults: Boolean = true)
+@(cid: String, eid: String = "", fetchScrambles: Boolean = true, fetchResultsTop3: Boolean = false, fetchResultsAll: Boolean = false)
 
 <script>
 var calcResult = function(method, format, data) {
@@ -112,11 +112,6 @@ var calcResult = function(method, format, data) {
 
 app.controller('ContestCtrl', ['$scope', '$timeout', function($scope, $timeout) {
     $scope.contestData = null;
-    $scope.scramblesData = null;
-    $scope.resultsData = null;
-    $scope.resultsPersons = null;
-    $scope.resultsTop3 = null;
-    $scope.resultsAll = null;
     $scope.events = null;
 
     $scope.existsContest = false;
@@ -129,7 +124,7 @@ app.controller('ContestCtrl', ['$scope', '$timeout', function($scope, $timeout) 
     } else {
         $scope.loadedScrambles = true;
     }
-    @if(fetchResults) {
+    @if(fetchResultsTop3 || fetchResultsAll) {
         $scope.loadedResults = false;
     } else {
         $scope.loadedResults = true;
@@ -181,6 +176,7 @@ app.controller('ContestCtrl', ['$scope', '$timeout', function($scope, $timeout) 
     });
 
     // Fetch scrambles data
+    $scope.scramblesData = null;
     @if(fetchScrambles) {
         contestRef.child('scrambles').child('c@cid').once('value', function(snapScrambles) {
             if (snapScrambles.exists() && snapScrambles.val()._dummy == null) {
@@ -205,7 +201,12 @@ app.controller('ContestCtrl', ['$scope', '$timeout', function($scope, $timeout) 
     }
 
     // Fetch results data
-    @if(fetchResults) {
+    $scope.resultsData = {};
+    $scope.resultsPersons = {};
+    $scope.resultsTop3 = {};
+    $scope.resultsAll = {};
+    $scope.resultsPuzzles = {};
+    @if(fetchResultsTop3) {
         contestRef.child('results').child('c@cid').once('value', function(snapResults) {
             if (snapResults.exists() && snapResults.val()._dummy == null) {
                 contestRef.child('events').once('value', function(snapEvents) {
@@ -214,39 +215,142 @@ app.controller('ContestCtrl', ['$scope', '$timeout', function($scope, $timeout) 
                         var Users = snapUsers.val();
                         $timeout(function() {
                             $scope.resultsData = snapResults.val();
-                            $scope.resultsPersons = {};
-                            $scope.resultsTop3 = {};
-                            $scope.resultsAll = {};
                             Object.keys($scope.resultsData).forEach(function(e) {
                                 $scope.resultsPersons[e] = 0;
                                 $scope.resultsTop3[e] = [];
                                 $scope.resultsAll[e] = [];
+                                var _resultsPuzzlesObj = {};
+                                var _resultsPuzzlesSum = 0;
                                 var count = 0;
                                 Object.keys($scope.resultsData[e]).forEach(function(uid) {
                                     if (!($scope.resultsData[e][uid]._dummy) && $scope.resultsData[e][uid].endAt) {
                                         ($scope.resultsPersons[e])++;
-
-                                        // 表示用にデータ加工
-                                        var results = $scope.resultsData[e][uid];
-
-                                        // User
-                                        $scope.resultsData[e][uid].user = Users[uid];
-                                        // Result
-                                        $scope.resultsData[e][uid].resultF = TriboxContest.formatResult(results, e, Events);
-                                        // Details
-                                        $scope.resultsData[e][uid].detailsF = TriboxContest.formatDetails(results, e, Events);
-                                        // Puzzle
-                                        $scope.resultsData[e][uid].puzzleF = TriboxContest.formatPuzzle(results);
-
                                         if (count < 3) {
+                                            // 表示用にデータ加工
+                                            var results = $scope.resultsData[e][uid];
+                                            // User
+                                            $scope.resultsData[e][uid].user = Users[uid];
+                                            // Result
+                                            $scope.resultsData[e][uid].resultF = TriboxContest.formatResult(results, e, Events);
+                                            // Details
+                                            $scope.resultsData[e][uid].detailsF = TriboxContest.formatDetails(results, e, Events);
+                                            // Puzzle
+                                            $scope.resultsData[e][uid].puzzleF = TriboxContest.formatPuzzle(results);
+
                                             $scope.resultsTop3[e].push($scope.resultsData[e][uid]);
                                         }
-                                        $scope.resultsAll[e].push($scope.resultsData[e][uid]);
-
                                         count++
                                     }
                                 });
                             });
+                        });
+                    });
+                });
+            } else {
+                console.error('Invalid: contest (@cid)');
+            }
+            $timeout(function() {
+                $scope.loadedResults = true;
+                $scope.contestLoaded = $scope.loadedMain && $scope.loadedScrambles && $scope.loadedResults;
+            });
+        }, function(error) {
+            //console.error(error);
+            console.error('Cannot access results (@cid)');
+            $timeout(function() {
+                $scope.loadedResults = true;
+                $scope.contestLoaded = $scope.loadedMain && $scope.loadedScrambles && $scope.loadedResults;
+            });
+        });
+    }
+
+    @if(fetchResultsAll) {
+        contestRef.child('results').child('c@cid').child('e@eid').once('value', function(snapResults) {
+            if (snapResults.exists() && snapResults.val()._dummy == null) {
+                contestRef.child('events').once('value', function(snapEvents) {
+                    var Events = snapEvents.val();
+                    contestRef.child('users').once('value', function(snapUsers) {
+                        var Users = snapUsers.val();
+                        $timeout(function() {
+                            $scope.resultsData['e@{eid}'] = snapResults.val();
+                            $scope.resultsPersons['e@{eid}'] = 0;
+                            $scope.resultsAll['e@{eid}'] = [];
+                            var _resultsPuzzlesObj = {};
+                            var _resultsPuzzlesSum = 0;
+                            Object.keys($scope.resultsData['e@{eid}']).forEach(function(uid) {
+                                if (!($scope.resultsData['e@{eid}'][uid]._dummy) && $scope.resultsData['e@{eid}'][uid].endAt) {
+                                    ($scope.resultsPersons['e@{eid}'])++;
+
+                                    // 表示用にデータ加工
+                                    var results = $scope.resultsData['e@{eid}'][uid];
+                                    // User
+                                    $scope.resultsData['e@{eid}'][uid].user = Users[uid];
+                                    // Result
+                                    $scope.resultsData['e@{eid}'][uid].resultF = TriboxContest.formatResult(results, 'e@{eid}', Events);
+                                    // Details
+                                    $scope.resultsData['e@{eid}'][uid].detailsF = TriboxContest.formatDetails(results, 'e@{eid}', Events);
+                                    // Puzzle
+                                    $scope.resultsData['e@{eid}'][uid].puzzleF = TriboxContest.formatPuzzle(results);
+
+                                    $scope.resultsAll['e@{eid}'].push($scope.resultsData['e@{eid}'][uid]);
+
+                                    // パズル集計用
+                                    if (results.puzzle.type == 'database') {
+                                        var productId = results.puzzle.product;
+                                        if (_resultsPuzzlesObj[productId]) {
+                                            (_resultsPuzzlesObj[productId].count)++;
+                                        } else {
+                                            _resultsPuzzlesObj[productId] = {
+                                                'productId': productId,
+                                                'productName': TriboxContest.Products[productId],
+                                                'count': 1
+                                            };
+                                        }
+                                        _resultsPuzzlesSum++;
+                                    }
+                                }
+                            });
+
+                            // パズル集計用 (使用人数でソート)
+                            var _resultsPuzzles = [];
+                            Object.keys(_resultsPuzzlesObj).forEach(function(productId) {
+                                _resultsPuzzles.push(_resultsPuzzlesObj[productId]);
+                            });
+                            _resultsPuzzles.sort(function(a, b) {
+                                if (a.count < b.count) return 1;
+                                else if (a.count > b.count) return -1;
+                                else {
+                                    if (a.productId < b.productId) return 1;
+                                    else if (a.productId > b.productId) return -1;
+                                    else return 0;
+                                };
+                            });
+                            // 上位5パズル以外はその他にする
+                            var _resultsPuzzlesSummary = [];
+                            var _resultsPuzzlesJs = [];
+                            var countOthers = 0;
+                            _resultsPuzzles.forEach(function(puzzleObj, index) {
+                                if (index < 5) {
+                                    puzzleObj.percentage = Math.round(puzzleObj.count / _resultsPuzzlesSum * 100);
+                                    _resultsPuzzlesSummary.push(puzzleObj);
+                                    _resultsPuzzlesJs.push([puzzleObj.productName, puzzleObj.count]);
+                                } else {
+                                    countOthers += puzzleObj.count;
+                                }
+                            });
+                            if (0 < countOthers) {
+                                _resultsPuzzlesSummary.push({
+                                    'productId': -1,
+                                    'productName': 'その他',
+                                    'count': countOthers,
+                                    'percentage': Math.round(puzzleObj.count / _resultsPuzzlesSum * 100)
+                                });
+                                _resultsPuzzlesJs.push(['その他', countOthers]);
+                            }
+                            $scope.resultsPuzzles['e@{eid}'] = _resultsPuzzlesSummary;
+
+                            // 円グラフ描画
+                            drawChart(_resultsPuzzlesJs);
+
                         });
                     });
                 });
