@@ -1,5 +1,4 @@
 @(contestName: String, contestUrl: String, firebaseappContest: String)
-@* @(contestName: String, contestUrl: String, firebaseappContest: String, events:List[Event]) *@
 
 @defining("") { title =>
 
@@ -9,64 +8,17 @@
     @header(title, contestName)
 
 @basejs(firebaseappContest)
-@authjs(redirectLogin="", redirectLogout="", checkFirst=true)
-<script>
-@* /*app.controller('EventListCtrl', function($scope) {
-    $scope.events = [
-        @for(event:Event <- events){
-            {'id': @event.id, 'tag': '@event.tag', 'name': '@event.name'},
-        }
-    ];
-});*/ *@
-
-app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $firebaseObject) {
-    $scope.events = null;
-    $scope.inProgress = null;
-    $scope.inProgressContest = null;
-    $scope.contestLoaded = false;
-
-    contestRef.child('events').once('value', function(snapEvents) {
-        if (snapEvents.exists()) {
-            $scope.events = snapEvents.val();
-            contestRef.child('inProgress').child('contest').once('value', function(snapInProgress) {
-                if (snapInProgress.exists()) {
-                    $scope.inProgress = snapInProgress.val();
-                    $scope.inProgressContest = $firebaseObject(contestRef.child('contests').child($scope.inProgress));
-                    $scope.contestLoaded = true;
-                } else {
-                    console.error('Undefined: inProgress');
-                }
-            }, function(error) {
-                console.error(error);
-            });
-        } else {
-            console.error('Undefined: events');
-        }
-    }, function(error) {
-        console.error(error);
-    });
-
-    $scope.justLogout = null;
-    var authData = contestRef.getAuth();
-    if (!authData) {
-        var vars = getUrlVars();
-        if (vars.logout) {
-            $scope.justLogout = true;
-        }
-    }
-}]);
-</script>
 </head>
 <body><div class="container">
     @bodyheader(title, contestName)
 
-    <div ng-controller="AuthCtrl"><div ng-controller="ContestCtrl">
-    <div ng-hide="authLoaded && contestLoaded">
+    <div ng-controller="AuthCtrl"><div ng-controller="IndexCtrl">
+    <div ng-hide="authLoaded && indexLoaded">
         <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
         <span class="sr-only">Loading...</span>
         Loading...
     </div>
-    <div ng-show="authLoaded && contestLoaded">
+    <div ng-show="authLoaded && indexLoaded">
 
         <p class="notice-success" ng-if="justLogout">
             <i class="fa fa-check"></i>
@@ -75,31 +27,13 @@ app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $fi
 
         @authinfo()
 
-        <h2>Welcome home, cubers</h2>
-
+        <h2>tribox Contest</h2>
         <p>
             tribox Contest は、誰でも参加可能。毎週開催の "お得な" ネットコンテストです。
+            <a href="@routes.HomeController.about">詳しく</a>
         </p>
 
         <h3>開催中のコンテスト</h3>
-
-        @* <!--<div>
-            <p>開催中のコンテスト (MySQL):<br>@{events.length} events.</p>
-            <ul>
-                @for(event:Event <- events){
-                    <li><a href="#@event.tag">@event.name</a></li>
-                }
-            </ul>
-        </div>--> *@
-
-        @* <!--<div ng-controller="EventListCtrl">
-            <p>開催中のコンテスト (MySQL + AngularJS):<br>{{events.length}} events.</p>
-            <ul>
-                <li ng-repeat="event in events">
-                    <a href="#{{event.tag}}">{{event.name}}</a>
-                </li>
-            </ul>
-        </div>--> *@
 
         <p>
             <a href="/contest/{{ inProgressContest.contestId }}">{{ inProgressContest.contestName }}</a> @* ({{ inProgress }}) *@
@@ -108,35 +42,108 @@ app.controller('ContestCtrl', ['$scope', '$firebaseObject', function($scope, $fi
             <i class="fa fa-calendar"></i> 開催期間: <b>{{ inProgressContest.beginAt | toDate }}</b> ~ <b>{{ inProgressContest.endAt | toDate }}</b>
         </p>
 
-        <p>
-            開催中の競技一覧:
-        </p>
-        <ul>
-            <li ng-repeat="e in inProgressContest.events">
-                @* <!--<a href="/contest/{{ inProgressContest.contestId }}#{{ e }}">--> *@
-                    {{ events[e].name }} ({{ events[e].method | uppercaseHead }} of {{ events[e].attempts }})
-                @* <!--</a>--> *@
-            </li>
-        </ul>
-
-        <p>
-            <a href="/contest/{{ inProgressContest.contestId }}" class="btn">コンテストに参加する</a>
-        </p>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>競技種目</th>
+                    <th>計測フォーマット</th>
+                    <th>参加</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="e in inProgressContest.events">
+                    <td>{{ events[e].name }}</td>
+                    <td>{{ events[e].method | uppercaseHead }} of {{ events[e].attempts }}</td>
+                    <td>
+                        <a href="/contest/{{ inProgressContest.contestId }}/{{ e | removeHead }}" ng-if="authData != null && eventsDone[e] == false"><i class="fa fa-play-circle"></i> 参加する</a>
+                        <a href="/contest/{{ inProgressContest.contestId }}/{{ e | removeHead }}/timer" ng-if="authData != null && eventsDone[e] == 'timer'"><i class="fa fa-play-circle"></i> 再開する</a>
+                        <a href="/contest/{{ inProgressContest.contestId }}/{{ e | removeHead }}/form" ng-if="authData != null && eventsDone[e] == 'form'"><i class="fa fa-play-circle"></i> 再開する</a>
+                        <a href="/contest/{{ inProgressContest.contestId }}/{{ e | removeHead }}/solution" ng-if="authData != null && eventsDone[e] == 'solution'"><i class="fa fa-play-circle"></i> 再開する</a>
+                        <span ng-if="authData != null && eventsDone[e] == true"><i class="fa fa-check-circle"></i> 参加済みです</span>
+                        <a href="@routes.HomeController.login" ng-if="authData == null"><i class="fa fa-sign-in"></i> ログインして参加してください</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
 
         @* <!--<p>inProgressContest:</p>
-        <pre>{{ inProgressContest | json }}</pre>--> *@
-
-        @* <!--<p>全競技リスト:</p>
-        <ul>
-            <li ng-repeat="(eid, e) in events">
-                {{ e.name }} ({{ eid }}: {{ e.method }} of {{ e.attempts }}, format={{ e.format }})
-            </li>
-        </ul>
-        <pre>{{ events | json }}</pre>--> *@
+        <pre>{{ inProgressContest | json }}</pre>
+        <p>eventsDone:</p>
+        <pre>{{ eventsDone | json }}</pre>--> *@
 
     </div></div></div>
 
     @bodyfooter(contestName)
+
+@authjs(redirectLogin="", redirectLogout="", checkFirst=true)
+<script>
+app.controller('IndexCtrl', ['$scope', '$timeout', function($scope, $timeout) {
+    $scope.events = null;
+    $scope.inProgress = null;
+    $scope.inProgressContest = null;
+    $scope.eventsDone = {};
+    $scope.indexLoaded = false;
+
+    var authData = contestRef.getAuth();
+
+    // 全競技リスト、開催中コンテスト、開催中コンテストのデータ、ログイン時にユーザの開催中コンテストの結果データ
+    contestRef.child('events').once('value', function(snapEvents) {
+        var events = snapEvents.val();
+        contestRef.child('inProgress').child('contest').once('value', function(snapInProgress) {
+            var inProgress = snapInProgress.val();
+            contestRef.child('contests').child(inProgress).once('value', function(snapContest) {
+                var inProgressContest = snapContest.val();
+                if (authData) {
+                    inProgressContest.events.forEach(function(e) {
+                        contestRef.child('results').child(inProgress).child(e).child(authData.uid).once('value', function(snapResult) {
+                            var resultData = snapResult.val();
+                            $timeout(function() {
+                                var _eventsDone;
+                                if (!resultData) {
+                                    _eventsDone = false;
+                                } else {
+                                    if (resultData.endAt) {
+                                        _eventsDone = true;
+                                    } else {
+                                        _eventsDone = resultData.type;
+                                    }
+                                }
+                                $scope.events = events;
+                                $scope.inProgress = inProgress;
+                                $scope.inProgressContest = inProgressContest;
+                                $scope.eventsDone[e] = _eventsDone;
+                                $scope.indexLoaded = true;
+                            });
+                        }, function(error) {
+                            console.error(error);
+                        });
+                    });
+                } else {
+                    $timeout(function() {
+                        $scope.events = events;
+                        $scope.inProgress = inProgress;
+                        $scope.inProgressContest = inProgressContest;
+                        $scope.indexLoaded = true;
+                    });
+                }
+            });
+        }, function(error) {
+            console.error(error);
+        });
+    }, function(error) {
+        console.error(error);
+    });
+
+    $scope.justLogout = null;
+    if (!authData) {
+        var vars = getUrlVars();
+        if (vars.logout) {
+            $scope.justLogout = true;
+        }
+    }
+}]);
+</script>
+
 </div></body>
 </html>
 
