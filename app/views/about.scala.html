@@ -10,6 +10,13 @@
 
 @basejs(firebaseappContest)
 @authjs(redirectLogin="", redirectLogout="", checkFirst=true)
+
+<style>
+ol, ol li {
+    list-style-type: upper-alpha !important;
+}
+</style>
+
 </head>
 <body><div class="container">
     @bodyheader(title, contestName)
@@ -52,7 +59,7 @@
             シーズンランキング1位〜3位には、競技ごとに設定された賞金 (triboxポイント) が授与されます。<br>
             ただしネットコンテストの性質上、以下の参加者はシーズンランキング入賞者から除外されます。
         </p>
-        <ol style="list-style: upper-alpha;">
+        <ol>
             <li>WCA公式大会未参加者 (C.について検証できないため)</li>
             <li>未認証アカウント</li>
             <li>WCA公式記録と本コンテストでの記録の差異が大きい参加者</li>
