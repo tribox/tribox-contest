@@ -97,6 +97,28 @@
             }
         },
 
+        // List of user's competed history
+        "userhistories": {
+            ".read": false,
+            ".write": false,
+            "$user_id": {
+                ".read": "auth.uid === $user_id",
+                ".write": "auth.uid === $user_id",
+                "$contest_id": {
+                    ".validate": "root.child('contests').hasChild($contest_id)",
+                    "$event_id": {
+                        ".validate": "root.child('events').hasChild($event_id)",
+                        "hasCompeted": {
+                            ".validate": "newData.isBoolean()"
+                        },
+                        "$other": {
+                            ".validate": false
+                        }
+                    }
+                }
+            }
+        },
+
         // Pointer to the contest in progress
         "inProgress": {
             ".read": true,

@@ -1,4 +1,4 @@
-@(id: String, contestName: String, contestUrl: String, firebaseappContest: String, historyByUserId: scala.collection.mutable.Map[String, List[CompetedHistory]], products: List[Product])
+@(id: String, contestName: String, contestUrl: String, firebaseappContest: String, products: List[Product])
 
 @defining(id) { title =>
 
@@ -134,54 +134,57 @@ app.controller('UserCtrl', ['$scope', '$timeout', function($scope, $timeout) {
     $scope.contestsArray = [];
     $scope.history = {};
 
-    // Fetch usernames data
     contestRef.child('usernames').child('@id').once('value', function(snapUsername) {
         if (snapUsername.exists() && snapUsername.val().uid != null && snapUsername.val()._dummy == null) {
             var userId = snapUsername.val().uid;
 
-            // Fetch user data
-            contestRef.child('users').child(snapUsername.val().uid).once('value', function(snapUser) {
+            contestRef.child('users').child(userId).once('value', function(snapUser) {
                 var user = snapUser.val();
-                // Fetch user results
+
                 contestRef.child('events').once('value', function(snapEvents) {
                     var events = snapEvents.val();
+
                     contestRef.child('contests').once('value', function(snapContests) {
                         var contests = snapContests.val();
 
-                        Object.keys(events).forEach(function(eid) {
-                            Object.keys(contests).forEach(function(cid) {
-                                if (userId in TriboxContest.competedHistory &&
-                                        TriboxContest.competedHistory[userId][cid + '+' + eid]) {
-                                    if (!(eid in $scope.history)) {
-                                        $timeout(function() {
-                                            $scope.history[eid] = [];
-                                        });
-                                    }
-                                    contestRef.child('results').child(cid).child(eid).child(userId).once('value', function(snapResult) {
-                                        var result = snapResult.val();
-                                        if (!(result._dummy) && result.endAt) {
-                                            result.resultF = TriboxContest.formatResult(result, eid, events);
-                                            result.detailsF = TriboxContest.formatDetails(result, eid, events);
-                                            result.puzzleF = TriboxContest.formatPuzzle(result);
+                        contestRef.child('userhistories').child(userId).once('value', function(snapUserhistories) {
+                            var userHistories = snapUserhistories.val();
+
+                            Object.keys(events).forEach(function(eid) {
+                                Object.keys(contests).forEach(function(cid) {
+                                    if (cid in userHistories && eid in userHistories[cid] && userHistories[cid][eid].hasCompeted == true) {
+                                        if (!(eid in $scope.history)) {
                                             $timeout(function() {
-                                                $scope.history[eid].push({ 'contestId': contests[cid].contestId, 'contest': contests[cid], 'result': result });
+                                                $scope.history[eid] = [];
                                             });
                                         }
-                                    });
-                                }
+                                        contestRef.child('results').child(cid).child(eid).child(userId).once('value', function(snapResult) {
+                                            var result = snapResult.val();
+                                            if (!(result._dummy) && result.endAt) {
+                                                result.resultF = TriboxContest.formatResult(result, eid, events);
+                                                result.detailsF = TriboxContest.formatDetails(result, eid, events);
+                                                result.puzzleF = TriboxContest.formatPuzzle(result);
+                                                $timeout(function() {
+                                                    $scope.history[eid].push({ 'contestId': contests[cid].contestId, 'contest': contests[cid], 'result': result });
+                                                });
+                                            }
+                                        });
+                                    }
+                                });
                             });
-                        });
 
-                        $timeout(function() {
-                            $scope.thisUserData = snapUser.val();
-                            $scope.thisUsername = snapUsername.val();
-                            $scope.events = events;
-                            $scope.contests = contests;
-                            $scope.userLoaded = true;
-                            $scope.existsUser = true;
-                            Object.keys(contests).forEach(function(cid) {
-                                $scope.contestsArray.push(contests[cid]);
+                            $timeout(function() {
+                                $scope.thisUserData = snapUser.val();
+                                $scope.thisUsername = snapUsername.val();
+                                $scope.events = events;
+                                $scope.contests = contests;
+                                $scope.userLoaded = true;
+                                $scope.existsUser = true;
+                                Object.keys(contests).forEach(function(cid) {
+                                    $scope.contestsArray.push(contests[cid]);
+                                });
                             });
+
                         });
                     });
                 });
@@ -214,14 +217,6 @@ app.controller('UserCtrl', ['$scope', '$timeout', function($scope, $timeout) {
         fadeIn(document.getElementById('fmc-detail-' + contestId));
     };
 }]);
-
-TriboxContest.competedHistory = {};
-@for((userId, hl) <- historyByUserId) {
-    TriboxContest.competedHistory['@{userId}'] = {};
-    @for(h <- hl) {
-        TriboxContest.competedHistory['@{userId}']['@{h.contest_id}+@{h.event_id}'] = true;
-    }
-}
 
 TriboxContest.Products = [];
 @for(product:Product <- products) {

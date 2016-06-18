@@ -161,40 +161,14 @@ var writeResults = function() {
             } else {
                 console.log('Completed updating place, SP, and lottery: ' + eventId + ' ' + userId);
 
-                // ユーザの参加履歴を MySQL に保存する
-                // 存在する場合は update, 存在しない場合は insert
-                connection.query('SELECT id FROM competed_history WHERE user_id = ? AND contest_id = ? AND event_id = ?', [
-                    userId, targetContest, eventId
-                ], function(error, results, fields) {
+                // ユーザの参加履歴をfirebaseに保存する
+                contestRef.child('userhistories').child(userId).child(targetContest).child(eventId).set({
+                    'hasCompeted': true
+                }, function(error) {
                     if (error) {
                         console.error(error);
                     } else {
-                        if (results[0] && 'id' in results[0]) {
-                            console.log('UPDATE competed_history');
-                            connection.query('UPDATE competed_history SET has_competed = 1, updated_at = NOW() WHERE user_id = ? AND contest_id = ? AND event_id = ?', [
-                                userId, targetContest, eventId
-                            ], function(error, results, fields) {
-                                if (error) {
-                                    console.error(error);
-                                }
-                                count++;
-                                next();
-                            });
-                        } else {
-                            console.log('INSERT INTO competed_history');
-                            connection.query('INSERT INTO competed_history SET ?', {
-                                'user_id': userId,
-                                'contest_id': targetContest,
-                                'event_id': eventId,
-                                'has_competed': 1
-                            }, function(error, results, fields) {
-                                if (error) {
-                                    console.error(error);
-                                }
-                                count++;
-                                next();
-                            });
-                        }
+                        next();
                     }
                 });
 
@@ -247,11 +221,11 @@ var writeResults = function() {
                                     var _updatedAt;
                                     if (error) {
                                         console.error(error);
-                                        console.log('Succeeded updating point!');
+                                        console.log('Failed updating point!');
                                         // 加算エラー記録用
                                         _updatedAt = 'NULL';
                                     } else {
-                                        console.log('Failed updating point!');
+                                        console.log('Succeeded updating point!');
                                         // 加算成功記録用
                                         _updatedAt = 'NOW()';
                                     }
