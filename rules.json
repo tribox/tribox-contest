@@ -102,7 +102,7 @@
             ".read": false,
             ".write": false,
             "$user_id": {
-                ".read": "auth.uid === $user_id",
+                ".read": true,
                 ".write": "auth.uid === $user_id",
                 "$contest_id": {
                     ".validate": "root.child('contests').hasChild($contest_id)",
