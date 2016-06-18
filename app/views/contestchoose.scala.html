@@ -1,11 +1,12 @@
-@(cid: String, eid: String, contestName: String, contestUrl: String, firebaseappContest: String)
+@(cid: String, eid: String, contestDescription: String, contestName: String, contestUrl: String, firebaseappContest: String)
 
-@defining("Contest Choose") { title =>
-
+@defining("Contest Choose " + cid + " (" + eid + ")") { title =>
+@defining(contestUrl + "/contest/" + cid + "/" + eid + "/choose") { pageUrl =>
+    
 <!DOCTYPE html>
 <html lang="ja" ng-app="contestApp">
-<head>
-    @header(title, contestName)
+<head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
+    @header(title=title, description=contestDescription, sitename=contestName, url=pageUrl)
 
 <style>
 .choosebox {
@@ -148,4 +149,5 @@ app.controller('ContestChooseCtrl', ['$scope', '$timeout', function($scope, $tim
 </div></body>
 </html>
 
+}
 }

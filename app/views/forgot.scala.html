@@ -1,11 +1,12 @@
-@(contestName: String, contestUrl: String, firebaseappContest: String)
+@(contestName: String, contestDescription: String, contestUrl: String, firebaseappContest: String)
 
 @defining("Forgot Password?") { title =>
+@defining(contestUrl + "/forgot") { pageUrl =>
 
 <!DOCTYPE html>
 <html lang="ja" ng-app="contestApp">
-<head>
-    @header(title, contestName)
+<head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
+    @header(title=title, description=contestDescription, sitename=contestName, url=pageUrl)
 
 @basejs(firebaseappContest)
 @authjs(redirectLogin="", redirectLogout="", checkFirst=true)
@@ -67,4 +68,5 @@ app.controller('AuthForgotCtrl', ['$scope', 'Auth', function($scope, Auth) {
 </div></body>
 </html>
 
+}
 }

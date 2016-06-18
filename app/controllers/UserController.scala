@@ -18,7 +18,7 @@ class UserController @Inject() extends HomeController {
      */
     def user(id: String) = Action {
         val products = Product.getAll
-        Ok(views.html.user(id, getContestName, getContestUrl, getFirebaseappContest, products))
+        Ok(views.html.user(id, products, getContestName, getContestDescription, getContestUrl, getFirebaseappContest))
     }
 
 }

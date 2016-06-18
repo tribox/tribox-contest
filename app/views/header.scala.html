@@ -1,12 +1,29 @@
-@(title: String, contestName: String)
+@(title: String = "", description: String = "", sitename: String = "", url: String = "")
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     @if(title.isEmpty){
-        <title>@contestName</title>
-    }else{
-        <title>@title # @contestName</title>
+        <title>@sitename</title>
+    } else {
+        <title>@title # @sitename</title>
     }
+    <meta name="description" content="@description">
+    <meta name="format-detection" content="telephone=no">
+
+    <meta property="og:url" content="@url">
+    <meta property="og:type" content="website">
+    @if(title.isEmpty) {
+        <meta property="og:title" content="@sitename">
+    } else {
+        <meta property="og:title" content="@title">
+    }
+    <meta property="og:image" content="https://example.com/image.jpg">
+    <meta property="og:site_name" content="@sitename">
+    <meta property="og:description" content="@description">
+    <meta property="og:locale" content="ja_JP">
+
+    <link rel="canonical" href="@url">
+
     <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("skyblue/css/skyblue.min.css")">
     <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/main.css")">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">

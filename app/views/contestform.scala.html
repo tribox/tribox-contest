@@ -2,14 +2,15 @@
  * 結果投稿ページ（タイム手入力）
  *@
 
-@(cid: String, eid: String, contestName: String, contestUrl: String, firebaseappContest: String)
+@(cid: String, eid: String, contestName: String, contestDescription: String, contestUrl: String, firebaseappContest: String)
 
-@defining("Contest Form") { title =>
+@defining("Contest Form " + cid + " (" + eid + ")") { title =>
+@defining(contestUrl + "/contest/" + cid + "/" + eid + "/form") { pageUrl =>
 
 <!DOCTYPE html>
 <html lang="ja" ng-app="contestApp">
-<head>
-    @header(title, contestName)
+<head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
+    @header(title=title, description=contestDescription, sitename=contestName, url=pageUrl)
 
 @basejs(firebaseappContest)
 </head>
@@ -331,4 +332,5 @@ app.controller('ContestFormCtrl', ['$scope', '$timeout', function($scope, $timeo
 </div></body>
 </html>
 
+}
 }

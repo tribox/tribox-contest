@@ -15,47 +15,50 @@ class HomeController @Inject() extends Controller {
     def getContestName(): String = {
         return Play.application.configuration.getString("contest.name").getOrElse("tribox Contest")
     }
+    def getContestDescription(): String = {
+        return Play.application.configuration.getString("contest.description").getOrElse("")
+    }
     def getContestUrl(): String = {
         return Play.application.configuration.getString("contest.url").getOrElse("https://contest.tribox.com/")
     }
-    def getPlayAppPath(): String = {
-        return Play.application.configuration.getString("contest.playpath").getOrElse("/path/to/playapp")
-    }
     def getFirebaseappContest(): String = {
         return Play.application.configuration.getString("firebaseapp.contest").getOrElse("tribox-contest")
+    }
+    def getPlayAppPath(): String = {
+        return Play.application.configuration.getString("contest.playpath").getOrElse("/path/to/playapp")
     }
 
     /**
      * Home
      */
     def index = Action {
-        Ok(views.html.index(getContestName, getContestUrl, getFirebaseappContest))
+        Ok(views.html.index(getContestName, getContestDescription, getContestUrl, getFirebaseappContest))
     }
 
     /**
      * About
      */
     def about = Action {
-        Ok(views.html.about(getContestName, getContestUrl, getFirebaseappContest))
+        Ok(views.html.about(getContestName, getContestDescription, getContestUrl, getFirebaseappContest))
     }
 
     /**
      * Auth
      */
     def join = Action {
-        Ok(views.html.join(getContestName, getContestUrl, getFirebaseappContest))
+        Ok(views.html.join(getContestName, getContestDescription, getContestUrl, getFirebaseappContest))
     }
 
     def login = Action {
-        Ok(views.html.login(getContestName, getContestUrl, getFirebaseappContest))
+        Ok(views.html.login(getContestName, getContestDescription, getContestUrl, getFirebaseappContest))
     }
 
     def logout = Action {
-        Ok(views.html.logout(getContestName, getContestUrl, getFirebaseappContest))
+        Ok(views.html.logout(getContestName, getContestDescription, getContestUrl, getFirebaseappContest))
     }
 
     def forgot = Action {
-        Ok(views.html.forgot(getContestName, getContestUrl, getFirebaseappContest))
+        Ok(views.html.forgot(getContestName, getContestDescription, getContestUrl, getFirebaseappContest))
     }
 
     /**

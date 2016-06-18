@@ -1,11 +1,12 @@
-@(contestName: String, contestUrl: String, firebaseappContest: String)
+@(contestName: String, contestDescription: String, contestUrl: String, firebaseappContest: String)
 
 @defining("Logout") { title =>
-
+@defining(contestUrl + "/logout") { pageUrl =>
+    
 <!DOCTYPE html>
 <html lang="ja" ng-app="contestApp">
-<head>
-    @header(title, contestName)
+<head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
+    @header(title=title, description=contestDescription, sitename=contestName, url=pageUrl)
 
 @basejs(firebaseappContest)
 @authjs(redirectLogin="", redirectLogout="", checkFirst=false)
@@ -43,4 +44,5 @@ app.controller('AuthLogoutCtrl', ['$scope', 'Auth', function($scope, Auth) {
 </div></body>
 </html>
 
+}
 }

@@ -2,14 +2,15 @@
  * 結果投稿ページ（FMC用）
  *@
 
-@(cid: String, eid: String, contestName: String, contestUrl: String, firebaseappContest: String)
+@(cid: String, eid: String, contestName: String, contestDescription: String, contestUrl: String, firebaseappContest: String)
 
-@defining("Contest Solution") { title =>
+@defining("Contest Solution " + cid + " (" + eid + ")") { title =>
+@defining(contestUrl + "/contest/" + cid + "/" + eid + "/solution") { pageUrl =>
 
 <!DOCTYPE html>
 <html lang="ja" ng-app="contestApp">
-<head>
-    @header(title, contestName)
+<head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
+    @header(title=title, description=contestDescription, sitename=contestName, url=pageUrl)
 
 @basejs(firebaseappContest)
 
@@ -326,4 +327,5 @@ app.controller('ContestSolutionCtrl', ['$scope', '$timeout', function($scope, $t
 </div></body>
 </html>
 
+}
 }

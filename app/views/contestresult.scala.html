@@ -1,11 +1,12 @@
-@(cid: String, eid: String, contestName: String, contestUrl: String, firebaseappContest: String, products: List[Product])
+@(cid: String, eid: String, products: List[Product], contestName: String, contestDescription: String, contestUrl: String, firebaseappContest: String)
 
-@defining("Contest Result") { title =>
-
+@defining("Contest Result " + cid + " (" + eid + ")") { title =>
+@defining(contestUrl + "/contest/result/" + cid + "/" + eid) { pageUrl =>
+    
 <!DOCTYPE html>
 <html lang="ja" ng-app="contestApp">
-<head>
-    @header(title, contestName)
+<head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
+    @header(title=title, description=contestDescription, sitename=contestName, url=pageUrl)
 
 @basejs(firebaseappContest)
 
@@ -199,11 +200,11 @@ app.controller('ContestResultCtrl', ['$scope', function($scope) {
     });
 
     $scope.currentContestChange = function() {
-        location.href = '/contest/' + $scope.currentContest + '/result/@{eid}';
+        location.href = '/contest/result/' + $scope.currentContest + '/@{eid}';
     };
 
     $scope.currentEventChange = function() {
-        location.href = '/contest/@{cid}/result/' + $scope.currentEvent;
+        location.href = '/contest/result/@{cid}/' + $scope.currentEvent;
     };
 
     @if(eid == "333fm") {
@@ -230,4 +231,5 @@ TriboxContest.Products = [];
 </div></body>
 </html>
 
+}
 }

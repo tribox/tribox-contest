@@ -2,16 +2,15 @@
  * 結果投稿ページ（確認）
  *@
 
-@(cid: String, eid: String, contestName: String, contestUrl: String, firebaseappContest: String, brandsPuzzles: Map[Int, List[Puzzle]], puzzleBrands: List[PuzzleBrand], puzzleBrandsMap: Map[Int, String])
-@* @(cid: String, eid: String, contestName: String, contestUrl: String, firebaseappContest: String, puzzles: List[Puzzle], puzzleCategories: List[PuzzleCategory], puzzleBrands: List[PuzzleBrand]) *@
-@* @(cid: String, eid: String, contestName: String, contestUrl: String, firebaseappContest: String, cubes: List[Cube], puzzles: List[Puzzle], puzzleCategories: List[PuzzleCategory], puzzleBrands: List[PuzzleBrand]) *@
+@(cid: String, eid: String, brandsPuzzles: Map[Int, List[Puzzle]], puzzleBrands: List[PuzzleBrand], puzzleBrandsMap: Map[Int, String], contestName: String, contestDescription: String, contestUrl: String, firebaseappContest: String)
 
-@defining("Contest Confirm") { title =>
-
+@defining("Contest Confirm " + cid + " (" + eid + ")") { title =>
+@defining(contestUrl + "/contest/" + cid + "/" + eid + "/confirm") { pageUrl =>
+    
 <!DOCTYPE html>
 <html lang="ja" ng-app="contestApp">
-<head>
-    @header(title, contestName)
+<head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
+    @header(title=title, description=contestDescription, sitename=contestName, url=pageUrl)
 
 @basejs(firebaseappContest)
 </head>
@@ -369,4 +368,5 @@ app.controller('ContestConfirmCtrl', ['$scope', function($scope) {
 </div></body>
 </html>
 
+}
 }

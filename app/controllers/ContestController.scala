@@ -18,23 +18,23 @@ class ContestController @Inject() extends HomeController {
      */
     def contest(cid: String) = Action {
         val products = Product.getAll
-        Ok(views.html.contest(cid, getContestName, getContestUrl, getFirebaseappContest, products))
+        Ok(views.html.contest(cid, products, getContestName, getContestDescription, getContestUrl, getFirebaseappContest))
     }
 
     def choose(cid: String, eid: String) = Action {
-        Ok(views.html.contestchoose(cid, eid, getContestName, getContestUrl, getFirebaseappContest))
+        Ok(views.html.contestchoose(cid, eid, getContestName, getContestDescription, getContestUrl, getFirebaseappContest))
     }
 
     def form(cid: String, eid: String) = Action {
-        Ok(views.html.contestform(cid, eid, getContestName, getContestUrl, getFirebaseappContest))
+        Ok(views.html.contestform(cid, eid, getContestName, getContestDescription, getContestUrl, getFirebaseappContest))
     }
 
     def timer(cid: String, eid: String) = Action {
-        Ok(views.html.contesttimer(cid, eid, getContestName, getContestUrl, getFirebaseappContest))
+        Ok(views.html.contesttimer(cid, eid, getContestName, getContestDescription, getContestUrl, getFirebaseappContest))
     }
 
     def solution(cid: String, eid: String) = Action {
-        Ok(views.html.contestsolution(cid, eid, getContestName, getContestUrl, getFirebaseappContest))
+        Ok(views.html.contestsolution(cid, eid, getContestName, getContestDescription, getContestUrl, getFirebaseappContest))
     }
 
     def confirm(cid: String, eid: String) = Action {
@@ -106,9 +106,7 @@ class ContestController @Inject() extends HomeController {
             puzzleBrandsMap += puzzleBrand.category_id -> puzzleBrand.category_name;
         }
 
-        Ok(views.html.contestconfirm(cid, eid, getContestName, getContestUrl, getFirebaseappContest, brandsPuzzles, puzzleBrands, puzzleBrandsMap))
-        //Ok(views.html.contestconfirm(cid, eid, getContestName, getContestUrl, getFirebaseappContest, puzzles, puzzleCategories, puzzleBrands))
-        //Ok(views.html.contestconfirm(cid, eid, getContestName, getContestUrl, getFirebaseappContest, cubes, puzzles, puzzleCategories, puzzleBrands))
+        Ok(views.html.contestconfirm(cid, eid,  brandsPuzzles, puzzleBrands, puzzleBrandsMap, getContestName, getContestDescription, getContestUrl, getFirebaseappContest))
     }
 
     def resultindex(cid: String) = Action {
@@ -117,7 +115,7 @@ class ContestController @Inject() extends HomeController {
 
     def result(cid: String, eid: String) = Action {
         val products = Product.getAll
-        Ok(views.html.contestresult(cid, eid, getContestName, getContestUrl, getFirebaseappContest, products))
+        Ok(views.html.contestresult(cid, eid, products, getContestName, getContestDescription, getContestUrl, getFirebaseappContest))
     }
 
 }
