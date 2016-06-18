@@ -8,7 +8,7 @@ URL: https://contest.tribox.com
 
 ## Requirements
 
-* Java
+* Java 8
 * Scala 2.11.8
 * Node.js v0.10.42
 * [TNoodle](https://github.com/cubing/tnoodle) v0.11.1
