@@ -38,6 +38,10 @@ class SettingController @Inject() extends HomeController {
         Ok(views.html.settingpassword(getContestName, getContestDescription, getContestUrl, getFirebaseappContest))
     }
 
+    def settingusername = Action {
+        Ok(views.html.settingusername(getContestName, getContestDescription, getContestUrl, getFirebaseappContest))
+    }
+
     // トークンを生成
     def genToken: String = {
         return new Random(new SecureRandom()).alphanumeric.take(32).mkString

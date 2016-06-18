@@ -19,6 +19,7 @@ GET     /setting                    controllers.SettingController.setting
 GET     /setting/first              controllers.SettingController.settingfirst
 GET     /setting/email              controllers.SettingController.settingemail
 GET     /setting/password           controllers.SettingController.settingpassword
+GET     /setting/username           controllers.SettingController.settingusername
 
 GET     /setting/verify                         controllers.SettingController.verify
 POST    /setting/verify                         controllers.SettingController.verify

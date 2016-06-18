@@ -79,7 +79,7 @@
                 </thead>
                 <tbody>
                     <tr id="{{ eid }}-{{ c.contestId }}" ng-repeat="c in e | orderBy:'-contestId'">
-                        <td><a href="/contest/{{ c.contestId }}/result/{{ eid | removeHead }}">第{{ c.contest.number }}回</a></td>
+                        <td><a href="/contest/result/{{ c.contestId }}/{{ eid | removeHead }}">第{{ c.contest.number }}回</a></td>
                         <td>{{ c.result.place }} <i class="fa fa-star color-star" ng-if="c.result.lottery"></i></td>
                         <td ng-if="c.result.seasonPoint && c.result.seasonPoint != 0">{{ c.result.seasonPoint }}</td>
                         <td ng-if="!(c.result.seasonPoint) || c.result.seasonPoint == 0"></td>
@@ -136,7 +136,7 @@ app.controller('UserCtrl', ['$scope', '$timeout', function($scope, $timeout) {
     $scope.history = {};
 
     contestRef.child('usernames').child('@id').once('value', function(snapUsername) {
-        if (snapUsername.exists() && snapUsername.val().uid != null && snapUsername.val()._dummy == null) {
+        if (snapUsername.exists() && snapUsername.val().uid != null && snapUsername.val()._dummy == null && !(snapUsername.val().disabledAt)) {
             var userId = snapUsername.val().uid;
 
             contestRef.child('users').child(userId).once('value', function(snapUser) {

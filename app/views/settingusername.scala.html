@@ -1,0 +1,174 @@
+@(contestName: String, contestDescription: String, contestUrl: String, firebaseappContest: String)
+
+@defining("Username Setting") { title =>
+
+<!DOCTYPE html>
+<html lang="ja" ng-app="contestApp">
+<head>
+    @header(title=title, description=contestDescription, sitename=contestName)
+
+@basejs(firebaseappContest)
+@authjs(redirectLogin="", redirectLogout=routes.HomeController.index.toString(), checkFirst=true)
+<script>
+app.controller('AuthUsernameCtrl', ['$scope', '$timeout', 'Auth', function($scope, $timeout, Auth) {
+    $scope.settingLoaded = false;
+
+    Auth.$onAuth(function(authData) {
+        if (!authProcessing) {
+            if (authData) {
+                contestRef.child('users').child(authData.uid).once('value', function(snapUser) {
+                    $timeout(function() {
+                        $scope.oldUsername = snapUser.val().username;
+                        $scope.settingLoaded = true;
+                    });
+                });
+            } else {
+                location.href = '@routes.HomeController.index?logout=1';
+            }
+        }
+    });
+
+    $scope.changeUsername = function() {
+        $scope.message = null;
+        $scope.error = null;
+        var authData = contestRef.getAuth();
+
+        var _oldUsername = $scope.oldUsername;
+        var _newUsername = $scope.newUsername;
+
+        if (authData) {
+            if (_oldUsername == _newUsername) {
+                $scope.error = '現在のユーザIDと新しいユーザIDが同じです。';
+                return;
+            }
+            // ユーザID、使用文字と長さチェック
+            if (!_newUsername || !(_newUsername.match(/^[a-zA-Z0-9_]{1,15}$/))) {
+                $scope.error = 'ユーザIDが不正なフォーマットです (英数字 1文字以上 15文字以内)。';
+                return;
+            }
+
+            contestRef.child('usernames').child(_newUsername).once('value', function(snapUsername) {
+                // 旧ユーザ名を無効にする
+                contestRef.child('usernames').child(_oldUsername).update({
+                    'disabledAt': Firebase.ServerValue.TIMESTAMP
+                }, function(error) {
+                    if (error) {
+                        console.error(error);
+                    } else {
+                        if (snapUsername.exists()) {
+                            if (snapUsername.val().uid == authData.uid) {
+                                // 以前使用していたユーザIDなので usernames を再有効にして users + usersecrets を書き換える
+                                contestRef.child('usernames').child(_newUsername).update({
+                                    'disabledAt': null
+                                }, function(error) {
+                                    if (error) {
+                                        console.error(error);
+                                    } else {
+                                        contestRef.child('users').child(authData.uid).update({
+                                            'username': _newUsername
+                                        }, function(error) {
+                                            if (error) {
+                                                console.error(error);
+                                            } else {
+                                                contestRef.child('usersecrets').child(authData.uid).update({
+                                                    'usernameChangedAt': Firebase.ServerValue.TIMESTAMP
+                                                }, function(error) {
+                                                    if (error) {
+                                                        console.error(error);
+                                                    } else {
+                                                        console.log('Completed updating!');
+                                                        location.href = '@routes.SettingController.setting';
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    }
+                                });
+                            } else {
+                                $timeout(function() {
+                                    $scope.error = 'ユーザID "' + _newUsername + '" はすでに使用されています。';
+                                });
+                            }
+                        } else {
+                            // 新しいユーザIDなので usernames に追加して users + usersecrets を書き換える
+                            contestRef.child('usernames').child(_newUsername).set({
+                                'uid': authData.uid,
+                                'createdAt': Firebase.ServerValue.TIMESTAMP,
+                                'disabledAt': null
+                            }, function(error) {
+                                if (error) {
+                                    console.error(error);
+                                } else {
+                                    contestRef.child('users').child(authData.uid).update({
+                                        'username': _newUsername
+                                    }, function(error) {
+                                        if (error) {
+                                            console.error(error);
+                                        } else {
+                                            contestRef.child('usersecrets').child(authData.uid).update({
+                                                'usernameChangedAt': Firebase.ServerValue.TIMESTAMP
+                                            }, function(error) {
+                                                if (error) {
+                                                    console.error(error);
+                                                } else {
+                                                    console.log('Completed updating!');
+                                                    location.href = '@routes.SettingController.setting';
+                                                }
+                                            });
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    }
+                });
+            });
+        } else {
+            location.href = '@routes.HomeController.index?logout=1';
+        }
+    };
+}]);
+</script>
+</head>
+<body><div class="container">
+    @bodyheader(title, contestName)
+
+    <div ng-controller="AuthCtrl"><div ng-controller="AuthUsernameCtrl">
+    <div ng-hide="authLoaded && settingLoaded">
+        <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+        <span class="sr-only">Loading...</span>
+        Loading...
+    </div>
+    <div ng-show="authLoaded && settingLoaded">
+
+        @authinfo()
+
+        <h2>ユーザID変更</h2>
+
+        <form name="usernameForm" ng-submit="changeUsername()">
+            @* <!--<div class="color-dark margin-bottom-20"ng-if="message">
+                Message: {{ message }}
+            </div>--> *@
+            <div class="color-error margin-bottom-20" ng-if="error">
+                エラー: {{ error }}
+            </div>
+
+            <div>
+                <label>現在のユーザID</label>
+                <input class="form-control" type="text" ng-model="oldUsername" readonly="readonly" disabled="disabled">
+            </div>
+            <div>
+                <label>新しいユーザID</label>
+                <input class="form-control" type="text" ng-model="newUsername">
+            </div>
+
+            <input class="btn" type="submit" value="ユーザIDを変更する">
+        </form>
+
+    </div></div></div>
+
+    @bodyfooter(contestName)
+</div></body>
+</html>
+
+}

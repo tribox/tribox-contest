@@ -122,15 +122,15 @@ app.controller('AuthSettingCtrl', ['$scope', '$firebaseObject', 'Auth', function
             <table class="setting">
                 <tr>
                     <th><label>メールアドレス</label></th>
-                    <td>{{ authData.password.email }} <a href="/setting/email">変更する</a></td>
+                    <td>{{ authData.password.email }} <a href="@routes.SettingController.settingemail">変更する</a></td>
                 </tr>
                 <tr>
                     <th><label>パスワード</label></th>
-                    <td>******** <a href="/setting/password">変更する</a></td>
+                    <td>******** <a href="@routes.SettingController.settingpassword">変更する</a></td>
                 </tr>
                 <tr>
                     <th><label>ユーザID</label></th>
-                    <td>{{ userData.username }} <a href="#">変更する</a></td>
+                    <td>{{ userData.username }} <a href="@routes.SettingController.settingusername">変更する</a></td>
                 </tr>
                 <tr>
                     <th><label>表示名<label></th>
