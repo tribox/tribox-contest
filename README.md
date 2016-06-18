@@ -6,17 +6,18 @@ The application is based on [Play Framework](https://www.playframework.com) and 
 URL: https://contest.tribox.com
 
 
+## Requirements
+
+* Java
+* Scala 2.11.8
+* Node.js v0.10.42
+* [TNoodle](https://github.com/cubing/tnoodle) v0.11.1
+* [Sarumawashi](https://github.com/kotarot/Sarumawashi)
+
+
 ## Setup
 
-Install [Sarumawashi](https://github.com/kotarot/Sarumawashi).
-```
-cd /path/to/sarumawashi
-git clone https://github.com/kotarot/Sarumawashi.git
-cd Sarumawashi
-make all
-```
-
-Install node modules
+Install required node modules.
 ```
 cd contestmanager
 npm install firebase firebase-token-generator alg async argv mysql request twitter
