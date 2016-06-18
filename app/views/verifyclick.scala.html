@@ -1,11 +1,11 @@
-@(userId: String, customerId: Int, contestName: String, contestUrl: String, firebaseappContest: String, message: String = "", errorMessage: String = "")
+@(userId: String, customerId: Int, contestName: String, contestDescription: String, contestUrl: String, firebaseappContest: String, message: String = "", errorMessage: String = "")
 
 @defining("Verify Click") { title =>
 
 <!DOCTYPE html>
 <html lang="ja" ng-app="contestApp">
 <head>
-    @header(title=title, sitename=contestName)
+    @header(title=title, description=contestDescription, sitename=contestName)
 
 @basejs(firebaseappContest)
 @authjs(redirectLogin="", redirectLogout="", checkFirst=true)

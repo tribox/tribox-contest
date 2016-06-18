@@ -1,11 +1,11 @@
-@(contestName: String, contestUrl: String, firebaseappContest: String)
+@(contestName: String, contestDescription: String, contestUrl: String, firebaseappContest: String)
 
 @defining("Setting") { title =>
 
 <!DOCTYPE html>
 <html lang="ja" ng-app="contestApp">
 <head>
-    @header(title=title, sitename=contestName)
+    @header(title=title, description=contestDescription, sitename=contestName)
 
 @basejs(firebaseappContest)
 @authjs(redirectLogin="", redirectLogout=routes.HomeController.index.toString(), checkFirst=true)

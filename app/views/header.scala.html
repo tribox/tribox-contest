@@ -7,11 +7,10 @@
     } else {
         <title>@title # @sitename</title>
     }
+    <meta name="description" content="@description">
     <meta name="format-detection" content="telephone=no">
 
     @if(url != "" && contestUrl != "") {
-        <meta name="description" content="@description">
-
         <meta property="og:url" content="@url">
         <meta property="og:type" content="website">
         @if(title.isEmpty) {
