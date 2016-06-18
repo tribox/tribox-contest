@@ -22,6 +22,17 @@
     <meta property="og:description" content="@description">
     <meta property="og:locale" content="ja_JP">
 
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@sitename">
+    <meta name="twitter:creator" content="@@triboxContest">
+    @if(title.isEmpty) {
+        <meta name="twitter:title" content="@sitename">
+    } else {
+        <meta name="twitter:title" content="@title">
+    }
+    <meta name="twitter:description" content="@description">
+    <meta name="twitter:image:src" content="https://example.com/image.jpg">
+
     <link rel="canonical" href="@url">
 
     <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("skyblue/css/skyblue.min.css")">
