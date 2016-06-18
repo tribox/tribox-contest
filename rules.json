@@ -7,20 +7,18 @@
         "usernames": {
             ".read": true,
             ".write": false,
-            //".indexOn": ["changedAt"],
             "$username": {
                 ".write": "auth.uid === newData.child('uid').val()",
                 ".validate": "newData.hasChildren(['uid', 'createdAt']) && $username.matches(/^[a-zA-Z0-9_]{1,15}$/)",
-                //".validate": "newData.hasChildren(['uid', 'createdAt', 'changedAt']) && $username.matches(/^[a-zA-Z0-9_]{1,15}$/)",
                 "uid": {
                     ".validate": "newData.isString() && auth.uid === newData.val()"
                 },
                 "createdAt": {
                     ".validate": "newData.isNumber() && newData.val() <= now && !data.exists()"
                 },
-                //"changedAt": {
-                //    ".validate": "newData.isNumber() && newData.val() <= now"
-                //},
+                "disabledAt": {
+                    ".validate": "newData.isNumber() && newData.val() <= now"
+                },
                 "$other": {
                     ".validate": false
                 }
@@ -83,6 +81,9 @@
                     ".validate": "newData.isNumber() && newData.val() <= now"
                 },
                 "passwordChangedAt": {
+                    ".validate": "newData.isNumber() && newData.val() <= now"
+                },
+                "usernameChangedAt": {
                     ".validate": "newData.isNumber() && newData.val() <= now"
                 },
                 "triboxStoreCustomerId": {
