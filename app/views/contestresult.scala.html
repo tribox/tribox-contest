@@ -8,6 +8,13 @@
     @header(title, contestName)
 
 @basejs(firebaseappContest)
+
+<style>
+h4 {
+    margin-top: 1em;
+}
+</style>
+
 </head>
 <body><div class="container">
     @bodyheader(title, contestName)
@@ -71,7 +78,13 @@
             <div class="col sm-6">
                 <ol>
                     <li ng-repeat="p in resultsPuzzles.e@{eid}">
-                        {{ p.productName }} ({{ p.percentage }} %)
+                        <a href="http://store.tribox.com/products/detail.php?product_id={{ p.productId }}" target="_blank" ng-if="p.productId != -1">
+                            {{ p.productName }}
+                        </a>
+                        <span ng-if="p.productId == -1">
+                            {{ p.productName }}
+                        </span>
+                        ({{ p.percentage }} %)
                     </li>
                 </ol>
             </div>
