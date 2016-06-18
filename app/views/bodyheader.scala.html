@@ -43,11 +43,13 @@
     </div>
 
 <script>
-app.controller('InProgressCtrl', ['$scope', function($scope) {
+app.controller('InProgressCtrl', ['$scope', '$timeout', function($scope, $timeout) {
     $scope.lastContest = null;
 
     contestRef.child('inProgress').child('lastContest').once('value', function(snap) {
-        $scope.lastContest = snap.val();
+        $timeout(function() {
+            $scope.lastContest = snap.val();
+        });
     });
 }]);
 </script>
