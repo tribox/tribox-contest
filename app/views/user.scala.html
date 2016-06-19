@@ -11,7 +11,7 @@
 @basejs(firebaseappContest)
 
 <style>
-h3 {
+h3, h4 {
     margin-top: 40px;
 }
 a.video-url {
@@ -69,7 +69,14 @@ a.video-url {
 
         <h3>今シーズンのコンテスト参加履歴</h3>
 
-        <p>
+        <p ng-if="authData.uid == thisUsername.uid">
+            <span ng-repeat="toc in tocMyHtml">
+                <span ng-show="$index != 0"> / </span>
+                <a href="#{{ toc.eid }}">{{ toc.name }}</a>
+            </span>
+        </p>
+
+        <p ng-if="authData.uid != thisUsername.uid">
             <span ng-repeat="toc in tocHtml">
                 <span ng-show="$index != 0"> / </span>
                 <a href="#{{ toc.eid }}">{{ toc.name }}</a>
@@ -80,25 +87,19 @@ a.video-url {
             <i class="fa fa-star color-star"></i>: 当選ポイント獲得
         </p>
 
-        <div ng-repeat="(eid, e) in history">
+        <div ng-repeat="(eid, e) in events"><div ng-if="(authData.uid == thisUsername.uid) || (authData.uid != thisUsername.uid && history[eid])">
             <h4 id="{{ eid }}">{{ events[eid].name }}</h4>
 
             <p>
                 合計獲得シーズンポイント: <b>{{ sumSeasonPoint[eid] }}</b> ポイント
             </p>
 
-            <!--<p>
-                <a href="/contest/{{ inProgress.contest | removeHead }}">最新のコンテスト</a>:
-                <span ng-if="historyInProgress[eid]"><i class="fa fa-check-circle"></i> 参加済み</span>
-                <span class="color-error" ng-if="!(historyInProgress[eid])">未参加</span>
-            </p>-->
-
-            <table class="table table-bordered inProgress" style="width: auto;" ng-if="authData && authData.uid == thisUsername.uid">
+            <table class="table table-bordered inProgress" style="width: auto;" ng-if="authData.uid && authData.uid == thisUsername.uid">
                 <thead>
-                    <th>開催中のコンテスト</th>
+                    <th>開催中</th>
                     <th>参加状況</th>
-                    <th>結果</th>
-                    <th>ビデオ</th>
+                    <th>記録</th>
+                    <th>ビデオURL</th>
                 </thead>
                 <tbody>
                     <tr>
@@ -122,7 +123,7 @@ a.video-url {
                 </tbody>
             </table>
 
-            <table class="table table-bordered result tribox-contest margin-bottom-40">
+            <table class="table table-bordered result tribox-contest margin-bottom-40" ng-if="history[eid]">
                 <thead>
                     <tr>
                         <th></th>
@@ -138,7 +139,7 @@ a.video-url {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr id="{{ eid }}-{{ c.contestId }}" ng-repeat="c in e | orderBy:'-contestId'">
+                    <tr id="{{ eid }}-{{ c.contestId }}" ng-repeat="c in history[eid] | orderBy:'-contestId'">
                         <td><a href="/contest/result/{{ c.contestId }}/{{ eid | removeHead }}">第{{ c.contest.number }}回</a></td>
                         <td>{{ c.result.place }} <i class="fa fa-star color-star" ng-if="c.result.lottery"></i></td>
                         <td ng-if="c.result.seasonPoint && c.result.seasonPoint != 0">{{ c.result.seasonPoint }}</td>
@@ -159,7 +160,7 @@ a.video-url {
                     </tr>
                 </tbody>
             </table>
-        </div>
+        </div></div>
 
         @* <!--<p>@id -> thisUserData:</p>
         <pre>{{ thisUserData | json }}</pre>
@@ -220,6 +221,7 @@ app.controller('UserCtrl', ['$scope', '$timeout', function($scope, $timeout) {
     $scope.sumSeasonPoint = {};
     $scope.videoUrlInput = {};
     $scope.tocHtml = [];
+    $scope.tocMyHtml = [];
 
     contestRef.child('usernames').child('@id').once('value', function(snapUsername) {
         if (snapUsername.exists() && snapUsername.val().uid != null && snapUsername.val()._dummy == null && !(snapUsername.val().disabledAt)) {
@@ -248,7 +250,7 @@ app.controller('UserCtrl', ['$scope', '$timeout', function($scope, $timeout) {
                     Object.keys(events).forEach(function(eid) {
                         contestRef.child('results').child(inProgress.contest).child(eid).child(userId).once('value', function(snapResult) {
                             $timeout(function() {
-                                if (snapResult.exists()) {
+                                if (snapResult.exists() && snapResult.val().endAt) {
                                     var r = snapResult.val();
                                     $scope.historyInProgress[eid] = r;
                                     if (eid != "e333fm") {
@@ -265,12 +267,20 @@ app.controller('UserCtrl', ['$scope', '$timeout', function($scope, $timeout) {
                     });
                 }
 
+                // 各競技のシーズンポイント初期化
+                Object.keys(events).forEach(function(eid) {
+                    $timeout(function() {
+                        $scope.sumSeasonPoint[eid] = 0;
+                        $scope.tocMyHtml.push({ 'eid': eid, 'name': events[eid].name });
+                    });
+                });
+
                 Object.keys(events).forEach(function(eid) {
                     Object.keys(contests).forEach(function(cid) {
                         // 現在のシーズンのコンテストのみ
                         if (inProgressContest.year == contests[cid].year && inProgressContest.season == contests[cid].season) {
                             // ユーザが完了済みのコンテストのみ
-                            if (cid in userHistories && eid in userHistories[cid] && userHistories[cid][eid].hasCompeted == true) {
+                            if (userHistories && cid in userHistories && eid in userHistories[cid] && userHistories[cid][eid].hasCompeted == true) {
                                 // 必要な分の結果だけ読み込む
                                 contestRef.child('results').child(cid).child(eid).child(userId).once('value', function(snapResult) {
                                     var result = snapResult.val();
@@ -281,7 +291,6 @@ app.controller('UserCtrl', ['$scope', '$timeout', function($scope, $timeout) {
                                         $timeout(function() {
                                             if (!(eid in $scope.history)) {
                                                 $scope.history[eid] = [];
-                                                $scope.sumSeasonPoint[eid] = 0;
                                                 $scope.tocHtml.push({ 'eid': eid, 'name': events[eid].name });
                                             }
                                             $scope.history[eid].push({ 'contestId': contests[cid].contestId, 'contest': contests[cid], 'result': result });
