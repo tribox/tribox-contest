@@ -23,6 +23,8 @@ h4 {
 
 table {
     width: auto !important;
+    margin-left: auto;
+    margin-right: auto;
 }
 th.color-header, td.color-header {
     background-color: #F7F7F7;
@@ -65,6 +67,8 @@ th.color-bronze {
 
         <h4><a href="@routes.HomeController.regulations">ルールとコンテストの詳細はこちら</a>から。</h4>
 
+        <hr>
+
         <h4>認証アカウント</h4>
         <p>
             triboxコンテストアカウントは、triboxストアアカウントに結びつけることができます。<br>
@@ -96,30 +100,30 @@ th.color-bronze {
             <caption>各競技の賞金額 (総額13万ポイント)</caption>
             <thead>
                 <tr>
-                    <th class="color-header">競技</th>
-                    <th class="color-gold">1位</th>
-                    <th class="color-silver">2位</th>
-                    <th class="color-bronze">3位</th>
+                    <th class="color-header text-center">競技</th>
+                    <th class="color-gold text-center">1位</th>
+                    <th class="color-silver text-center">2位</th>
+                    <th class="color-bronze text-center">3位</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     <td class="color-header">Rubik's Cube</td>
-                    <td>30,000</td>
-                    <td>15,000</td>
-                    <td>5,000</td>
+                    <td class="text-right">30,000</td>
+                    <td class="text-right">15,000</td>
+                    <td class="text-right">5,000</td>
                 </tr>
                 <tr>
                     <td class="color-header">4x4x4, 5x5x5, 2x2x2</td>
-                    <td>10,000</td>
-                    <td>5,000</td>
-                    <td>3,000</td>
+                    <td class="text-right">10,000</td>
+                    <td class="text-right">5,000</td>
+                    <td class="text-right">3,000</td>
                 </tr>
                 <tr>
                     <td class="color-header">その他</td>
-                    <td>5,000</td>
-                    <td>2,000</td>
-                    <td>1,000</td>
+                    <td class="text-right">5,000</td>
+                    <td class="text-right">2,000</td>
+                    <td class="text-right">1,000</td>
                 </tr>
             </tbody>
         </table>
