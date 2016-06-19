@@ -27,28 +27,31 @@
 </div>
 
 @if(cid == "") {
-    <div id="main-menu" class="row">
+    <div id="main-menu" class="row" ng-controller="InProgressCtrl">
         <div class="col sm-3">
             <a href="@routes.HomeController.about">トライボックスコンテストとは</a>
         </div>
-        <div class="col sm-3" ng-controller="InProgressCtrl">
-            <a href="/contest/{{ lastContest | removeHead }}">最新のコンテストの結果</a>
+        <div class="col sm-3">
+            <a href="/contest/{{ inProgress.lastContest | removeHead }}">最新のコンテストの結果</a>
         </div>
         <div class="col sm-3">
-            <a href="#">シーズンランキング</a>
+            <a href="/ranking/{{ inProgressContest.year }}{{ inProgressContest.season }}">シーズンランキング</a>
         </div>
         <div class="col sm-3">
-            <a href="#">キューブ使用率ランキング</a>
+            <a href="/ranking/{{ inProgressContest.year }}{{ inProgressContest.season }}/puzzle">キューブ使用率ランキング</a>
         </div>
     </div>
-
 <script>
 app.controller('InProgressCtrl', ['$scope', '$timeout', function($scope, $timeout) {
-    $scope.lastContest = null;
+    $scope.inProgress = null;
+    $scope.inProgressContest = null;
 
-    contestRef.child('inProgress').child('lastContest').once('value', function(snap) {
-        $timeout(function() {
-            $scope.lastContest = snap.val();
+    contestRef.child('inProgress').once('value', function(snapInProgress) {
+        contestRef.child('contests').child(snapInProgress.val().contest).once('value', function(snapContest) {
+            $timeout(function() {
+                $scope.inProgress = snapInProgress.val();
+                $scope.inProgressContest = snapContest.val();
+            });
         });
     });
 }]);
@@ -57,11 +60,3 @@ app.controller('InProgressCtrl', ['$scope', '$timeout', function($scope, $timeou
 } else {
     <hr id="header-line">
 }
-
-@*
-@if(title.isEmpty){
-    <!--<h1>@contestName</h1>-->
-}else{
-    <!--<h1>@title &mdash; @contestName</h1>-->
-}
-*@

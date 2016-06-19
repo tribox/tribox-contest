@@ -1,0 +1,208 @@
+@(sid: String, products: List[Product], contestName: String, contestDescription: String, contestUrl: String, firebaseappContest: String)
+
+@defining("Ranking " + sid) { title =>
+@defining(contestUrl + "/ranking/" + sid) { pageUrl =>
+
+<!DOCTYPE html>
+<html lang="ja" ng-app="contestApp">
+<head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
+    @header(title=title, description=contestDescription, sitename=contestName, url=pageUrl, contestUrl=contestUrl)
+
+@basejs(firebaseappContest)
+</head>
+<body><div class="container">
+    @bodyheader(title, contestName)
+
+    <div ng-controller="AuthCtrl"><div ng-controller="RankingCtrl">
+    <div ng-hide="authLoaded && rankingLoaded">
+        <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+        <span class="sr-only">Loading...</span>
+        Loading...
+    </div>
+    <div ng-show="authLoaded && rankingLoaded">
+
+    @authinfo()
+
+    <div ng-hide="existsSeason">
+        <p class="color-error">
+            存在しないシーズンです。
+        </p>
+    </div>
+
+    <div ng-show="existsSeason">
+
+        <h2>{{ seasonName }} シーズンランキング</h2>
+
+        <p>
+            <span ng-repeat="(eid, e) in events">
+                <span ng-show="$index != 0"> / </span>
+                <a href="#{{ eid }}">{{ events[eid].name }}</a>
+            </span>
+        </p>
+
+        <div ng-repeat="(eid, e) in events">
+            <h4 id="{{ eid }}">{{ events[eid].name }}</h4>
+
+            <table class="table table-bordered tribox-contest ranking">
+                <thead>
+                    <tr>
+                        <th>順位</th>
+                        <th>名前</th>
+                        <th>所属</th>
+                        <th>合計獲得シーズンポイント</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="data in seasonPointsSorted[eid]">
+                        <td>{{ data.rank }}</td>
+                        <td><a href="/user/{{ data.user.username }}">{{ data.user.displayname }}</a></td>
+                        <td>{{ data.user.organization }}</td>
+                        <td>{{ data.seasonPoint }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div></div></div></div>
+
+    @bodyfooter(contestName)
+
+@authjs(redirectLogin="", redirectLogout="", checkFirst=true)
+<script>
+app.controller('RankingCtrl', ['$scope', '$timeout', function($scope, $timeout) {
+    $scope.rankingLoaded = false;
+    $scope.existsSeason = false;
+
+    $scope.seasonName = null;
+    $scope.events = null;
+    $scope.seasonPointsSorted = null;
+
+    contestRef.child('events').once('value', function(snapEvents) {
+        var events = snapEvents.val();
+
+    contestRef.child('users').once('value', function(snapUsers) {
+        var users = snapUsers.val();
+
+    contestRef.child('inProgress').once('value', function(snapInProgress) {
+        var inProgress = snapInProgress.val();
+
+    contestRef.child('contests').once('value', function(snapContests) {
+        var contests = snapContests.val();
+
+        var seasonName = '';
+        var targetContests = [];
+        Object.keys(contests).forEach(function(cid) {
+            if ('' + contests[cid].year + contests[cid].season == @{sid}) {
+                if (cid < inProgress.contest) {
+                    targetContests.push(cid);
+                    if (seasonName == '') {
+                        seasonName = contests[cid].year + '年';
+                        if (contests[cid].season == 1) {
+                            seasonName += ' 前半期';
+                        } else if (contests[cid].season == 2) {
+                            seasonName += ' 後半期';
+                        }
+                    }
+                }
+            }
+        });
+        if (0 < targetContests.length) {
+
+            var results = {};
+            var numResultsFetched = 0;
+            targetContests.forEach(function(cid) {
+                contestRef.child('results').child(cid).once('value', function(snapResult) {
+                    results[cid] = snapResult.val();
+                    numResultsFetched++;
+                    if (numResultsFetched == targetContests.length) {
+                        // Now, All results fetched
+
+                        // シーズンポイント集計
+                        var seasonPoints = {};
+                        Object.keys(events).forEach(function(eid) {
+                            seasonPoints[eid] = {};
+                        });
+                        Object.keys(results).forEach(function(cid) {
+                            Object.keys(results[cid]).forEach(function(eid) {
+                                Object.keys(results[cid][eid]).forEach(function(uid) {
+                                    if (!(results[cid][eid][uid]._dummy)) {
+                                        if (!(uid in seasonPoints[eid])) {
+                                            seasonPoints[eid][uid] = 0;
+                                        }
+                                        if (results[cid][eid][uid].seasonPoint) {
+                                            seasonPoints[eid][uid] += results[cid][eid][uid].seasonPoint;
+                                        }
+                                    }
+                                });
+                            });
+                        });
+
+                        // 配列化
+                        // 0 シーズンポイントのユーザを排除してユーザ情報を入れる
+                        var seasonPointsSorted = {};
+                        Object.keys(seasonPoints).forEach(function(eid) {
+                            seasonPointsSorted[eid] = [];
+                            Object.keys(seasonPoints[eid]).forEach(function(uid) {
+                                if (0 < seasonPoints[eid][uid]) {
+                                    seasonPointsSorted[eid].push({
+                                        'uid': uid, 'seasonPoint': seasonPoints[eid][uid],
+                                        'user': users[uid]
+                                    });
+                                }
+                            });
+                        });
+
+                        // シーズンポイントでソート
+                        Object.keys(seasonPointsSorted).forEach(function(eid) {
+                            seasonPointsSorted[eid].sort(function(a, b) {
+                                if (a.seasonPoint < b.seasonPoint) return 1;
+                                if (a.seasonPoint > b.seasonPoint) return -1;
+                                return 0;
+                            });
+                        });
+
+                        // ランク付け
+                        Object.keys(seasonPointsSorted).forEach(function(eid) {
+                            var prevSP = -1;
+                            var prevRank = -1;
+                            seasonPointsSorted[eid].forEach(function(data, index) {
+                                if (data.seasonPoint != prevSP) {
+                                    seasonPointsSorted[eid][index].rank = index + 1;
+                                } else {
+                                    seasonPointsSorted[eid][index].rank = prevRank;
+                                }
+                                prevSP = data.seasonPoint;
+                                prevRank = seasonPointsSorted[eid][index].rank;
+                            });
+                        });
+
+                        $timeout(function() {
+                            $scope.rankingLoaded = true;
+                            $scope.existsSeason = true;
+
+                            $scope.seasonName = seasonName;
+                            $scope.events = events;
+                            $scope.seasonPointsSorted = seasonPointsSorted;
+                        });
+
+                    }
+                });
+            });
+        } else {
+            $timeout(function() {
+                $scope.rankingLoaded = true;
+            });
+        }
+
+    });
+    });
+    });
+    });
+}]);
+</script>
+
+</div></body>
+</html>
+
+}
+}

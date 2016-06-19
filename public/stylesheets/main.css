@@ -17,6 +17,12 @@ h1, h2, h3, h4, h5, h6 {
     font-family: 'ヒラギノ角ゴ Pro W3','Hiragino Kaku Gothic Pro','メイリオ',Meiryo,'ＭＳ Ｐゴシック',"Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
+@@media screen and (max-width: 480px) {
+    h2 {
+        font-size: 1.8em;
+    }
+}
+
 
 /**
  * Header
@@ -320,7 +326,7 @@ table.tribox-contest tr:first-child > th {
 
 
 /**
- * Result table / inProgress
+ * Result table / inProgress / Ranking
  */
 table.result {
     font-size: 95%;
@@ -334,6 +340,9 @@ table.inProgress {
 table.inProgress th,
 table.inProgress td {
     border-left: none;
+}
+table.ranking {
+    font-size: 95%;
 }
 
 a.cursor-pointer {
