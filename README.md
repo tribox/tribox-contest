@@ -26,14 +26,14 @@ npm install firebase firebase-token-generator alg async argv mysql request twitt
 
 ## Run
 
-### http サーバ起動
+### [不定期] http サーバ起動
 
 ```
 (開発) activator run -Dconfig.resource=dev.conf
 (本番) activator clean stage && target/universal/stage/bin/contest -Dconfig.file=/var/www/contest/conf/prod.conf
 ```
 
-### 1週間に1回、日曜日午後9時 (JST) 自動実行
+### [1週間に1回] 日曜日午後9時 (JST) 自動実行
 
 inProgressのコンテストを書き換える。
 毎週日曜日の午後9時0分0.001秒に実行すればよいが、実行時刻に合わせるだけなのでいつでも好きなだけ実行して大丈夫。
@@ -48,15 +48,23 @@ node contestmanager/collect-results.js --lastcontest --lottery --tweet
 ```
 `--contest` オプションは指定したコンテストの結果を集計する。
 `--lastcontest` を指定した場合は、inProgress.lastContest のコンテストが対象となる。
-`--lottery` を指定した場合は、当選ポイントをfirebaseに書き込んでポイントをストアに付加する。指定しても既にポイント付加している場合は（MySQLデータベースにそう記録してある場合は）ポイント付加しない。
+`--lottery` を指定した場合は、当選ポイント抽選して、該当者をfirebaseに書き込む。さらにポイント加算対象者をMySQLに待ちレコードとして保存する。ここでは実際にポイント加算はされない。
+`--lotteryall` を指定した場合は、認証アカウントかつDNFでない結果に対して当選ポイントを記録する。上のオプションと同様に、ポイント加算対象者をMySQLに待ちレコードとして保存する。ここでは実際にポイント加算はされない。
 `--tweet` オプションは付けると結果をツイートする。
 
+ポイント加算する。
+```
+node contestmanager/append-points.js
+node contestmanager/append-points.js
+```
+上の `collect-results.js` スクリプトを実行して該当者を待ちレコードに記録した後に実行する。
+本当に対象者が正しいことを目視で確認した後、このスクリプトを実行して実際に抽選ポイントをストアポイントに加算する。
 
-### 半年に1回程度実行
+### [半年に1回程度] 実行
 
 一応、シーズン開始の少し前に実行する想定だが、いつやっても大丈夫。
 
-別のシェルでtnoodleを立ち上げる。
+まず、別のシェルでtnoodleを立ち上げる。
 ```
 cd /path/to/tnoodle
 ./tmt make dist -p wca
@@ -64,7 +72,7 @@ java -jar wca/dist/TNoodle-WCA.jar
 ```
 
 スクランブルデータ生成して、firebaseデータベースに書き込む。
-引数は、例えば、20161 (2016年前半期)、20162 (2016年後半期)、20171 (2017年前半期)、......
+引数は、シーズン。例えば、20161 (2016年前半期)、20162 (2016年後半期)、20171 (2017年前半期)、......
 ```
 node contestmanager/create-season.js 20162
 ```

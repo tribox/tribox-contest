@@ -2,10 +2,12 @@
  * collect-results.js
  *
  * 毎週コンテストが終わるごとに実行する。
- * 以下を更新する。
- *   - 順位
- *   - SP
- *   - 参加履歴
+ * (1) 以下を更新する。
+ *   - 順位 (firebase)
+ *   - シーズンポイントSP (firebase)
+ *   - 参加履歴 (firebase)
+ *   - 抽選ポイント (MySQL) ただし待ちレコードを生成するだけで実際にポイントは加算されない
+ * (2) 結果をツイートする。
  */
 
 var async = require('async');
@@ -46,8 +48,15 @@ argv.option([
         name: 'lottery',
         short: 'p',
         type: 'boolean',
-        description: 'Set lottery and add point to customer',
+        description: 'Set lottery',
         example: "'collect-results.js --lottery' or 'collect-results.js -p'"
+    },
+    {
+        name: 'lotteryall',
+        short: 'a',
+        type: 'boolean',
+        description: 'Set lottery to all verified and non-DNF-resulted users',
+        example: "'collect-results.js --lotteryall' or 'collect-results.js -a'"
     },
     {
         name: 'tweet',
@@ -95,13 +104,6 @@ var connection = mysql.createConnection({
 });
 connection.connect();
 
-var connectionStore = mysql.createConnection({
-    host: Config.MYSQL_STORE_HOST,
-    user: Config.MYSQL_STORE_USER,
-    password: Config.MYSQL_STORE_PASSWORD,
-    database: Config.MYSQL_STORE_DATABASE
-});
-connectionStore.connect();
 
 // 結果をツイートする
 var doTweet = function() {
@@ -132,6 +134,7 @@ var doTweet = function() {
             }
         });
     } else {
+        console.log('Skipped tweet!');
         process.exit(0);
     }
 };
@@ -168,6 +171,7 @@ var writeResults = function() {
                     if (error) {
                         console.error(error);
                     } else {
+                        count++;
                         next();
                     }
                 });
@@ -177,10 +181,10 @@ var writeResults = function() {
 
     }, function(err) {
         if (!err) {
-            console.log('Completed updating! (' + count + ' records)');
+            console.log('Completed updating user histories! (' + count + ' records)');
 
-            if (argvrun.options.lottery) {
-                // 抽選ポイントを加算して履歴を記録する
+            if (argvrun.options.lottery || argvrun.options.lotteryall) {
+                // 抽選ポイントを加算するための待ちレコードを作成する
                 var lotteryReady = [];
                 Object.keys(ready).forEach(function(eventId) {
                     Object.keys(ready[eventId]).forEach(function(userId) {
@@ -200,59 +204,26 @@ var writeResults = function() {
                     var userId = r.userId;
                     var customerId = r.customerId;
 
-                    // ポイント加算履歴を検索して、未加算なら加算する
-                    connection.query('SELECT id FROM lottery_log WHERE user_id = ? AND contest_id = ? AND event_id = ?', [
-                        userId, targetContest, eventId
-                    ], function(error, results, fields) {
+                    // ポイント加算履歴に待ちレコードとして登録する
+                    connection.query('INSERT INTO lottery_log SET ?', {
+                        'user_id': userId,
+                        'contest_id': targetContest,
+                        'event_id': eventId,
+                        'customer_type': 0,
+                        'customer_id': customerId,
+                        'point': Config.LOTTERY_POINT
+                    }, function(error, results, fields) {
                         if (error) {
                             console.error(error);
                         } else {
-                            if (results[0] && 'id' in results[0]) {
-                                // 既に加算されている記録が残っている場合は加算しない
-                                console.log('No need to update point!');
-                                countLottery++;
-                                next();
-                            } else {
-                                // 加算処理
-                                console.log('UPDATE dtb_customer');
-                                connectionStore.query('UPDATE dtb_customer SET point = point + ' + Config.LOTTERY_POINT + ' WHERE customer_id = ?', [
-                                    customerId
-                                ], function(error, results, fields) {
-                                    var _updatedAt;
-                                    if (error) {
-                                        console.error(error);
-                                        console.log('Failed updating point!');
-                                        // 加算エラー記録用
-                                        _updatedAt = 'NULL';
-                                    } else {
-                                        console.log('Succeeded updating point!');
-                                        // 加算成功記録用
-                                        _updatedAt = 'NOW()';
-                                    }
-                                    connection.query('INSERT INTO lottery_log SET ?', {
-                                        'user_id': userId,
-                                        'contest_id': targetContest,
-                                        'event_id': eventId,
-                                        'customer_type': 0,
-                                        'customer_id': customerId,
-                                        'point': Config.LOTTERY_POINT,
-                                        'updated_at': _updatedAt
-                                    }, function(error, results, fields) {
-                                        if (error) {
-                                            console.error(error);
-                                        } else {
-                                            countLottery++;
-                                            next();
-                                        }
-                                    });
-
-                                });
-                            }
+                            countLottery++;
+                            next();
                         }
                     });
+
                 }, function(err) {
                     if (!err) {
-                        console.log('Completed updating lottery point! (' + countLottery + ' records)');
+                        console.log('Completed creating ready records of lottery point! (' + countLottery + ' records)');
                         doTweet();
                     } else {
                         console.error(err);
@@ -273,6 +244,7 @@ var writeResults = function() {
 };
 
 // 順位、SP、当選の記録をリセットする
+// ただし、当選のリセットは当選を再割り当てするとき
 var resetResults = function() {
     // admin 権限でログインしてから操作する
     contestRef.authWithCustomToken(token, function(error, authData) {
@@ -296,11 +268,20 @@ var resetResults = function() {
 
                 // 実行
                 async.each(resets, function(r, next) {
-                    contestRef.child('results').child(targetContest).child(r.eid).child(r.uid).update({
-                        'place': null,
-                        'seasonPoint': null,
-                        'lottery': null
-                    }, function(error) {
+                    var updateData;
+                    if (argvrun.options.lottery || argvrun.options.lotteryall) {
+                        updateData = {
+                            'place': null,
+                            'seasonPoint': null,
+                            'lottery': null
+                        };
+                    } else {
+                        updateData = {
+                            'place': null,
+                            'seasonPoint': null
+                        };
+                    }
+                    contestRef.child('results').child(targetContest).child(r.eid).child(r.uid).update(updateData, function(error) {
                         if (error) {
                             console.error(error);
                             process.exit(1);
@@ -381,7 +362,7 @@ var collectResults = function() {
                                     place++;
 
                                     // 当選者候補
-                                    if (argvrun.options.lottery) {
+                                    if (argvrun.options.lottery || argvrun.options.lotteryall) {
                                         if (Users[userId].isTriboxCustomer) {
                                             lotteryTargets.push(userId);
                                         }
@@ -391,13 +372,20 @@ var collectResults = function() {
 
                         });
 
-                        // 当選者
+                        // 当選者抽選
                         if (argvrun.options.lottery) {
                             shuffle(lotteryTargets);
                             for (var i = 0, l = Math.min(Config.NUM_LOTTERY, lotteryTargets.length); i < l; i++) {
                                 ready[eventId][lotteryTargets[i]]['lottery'] = true;
                             }
                         }
+                        // 当選者全員
+                        if (argvrun.options.lotteryall) {
+                            for (var i = 0, l = lotteryTargets.length; i < l; i++) {
+                                ready[eventId][lotteryTargets[i]]['lottery'] = true;
+                            }
+                        }
+
                     });
                     resetResults();
 
@@ -427,7 +415,7 @@ var checkFMC = function() {
                         var fmcResults = {};
 
                         async.each(Object.keys(results), function(userId, next) {
-                            if (results[userId]._dummy == true) {
+                            if (results[userId]._dummy == true || !(results[userId].endAt)) {
                                 next();
                             } else {
                                 fmcResults[userId] = {};
@@ -522,7 +510,7 @@ var getLastContest = function() {
             checkFMC();
         });
     });
-}
+};
 
 var main = function() {
     if (argvrun.options.contest) {
@@ -533,5 +521,5 @@ var main = function() {
     } else {
         process.exit(1);
     }
-}
+};
 main();
