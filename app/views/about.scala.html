@@ -12,8 +12,32 @@
 @authjs(redirectLogin="", redirectLogout="", checkFirst=true)
 
 <style>
-ol, ol li {
-    list-style-type: upper-alpha !important;
+@@media screen and (max-width: 480px) {
+    h2 {
+        font-size: 1.8em;
+    }
+}
+h4 {
+    margin-top: 30px;
+}
+
+table {
+    width: auto !important;
+}
+th.color-header, td.color-header {
+    background-color: #F7F7F7;
+}
+th.color-gold {
+    background-color: rgb(255, 255, 0);
+    /*background-color: #C98910;*/
+}
+th.color-silver {
+    background-color: rgb(217, 217, 217);
+    /*background-color: #A8A8A8;*/
+}
+th.color-bronze {
+    background-color: rgb(255, 153, 0);
+    /*background-color: #965A38;*/
 }
 </style>
 
@@ -35,8 +59,11 @@ ol, ol li {
 
         <p>
             誰でも参加可能。毎週開催の &quot;お得な&quot; ネットコンテストです。<br>
-            まずは無料でアカウントを作成してください。皆さまのご参加をお待ちしております。
+            まずは無料でアカウントを作成してください。皆さまのご参加をお待ちしております。<br>
+            <a href="@routes.HomeController.join">無料新規登録ページ</a>
         </p>
+
+        <h4><a href="@routes.HomeController.regulations">ルールとコンテストの詳細はこちら</a>から。</h4>
 
         <h4>認証アカウント</h4>
         <p>
@@ -45,27 +72,57 @@ ol, ol li {
             <a href="@routes.SettingController.verify">アカウントの認証設定ページ</a>
         </p>
 
+        <h4>コンテストとシーズン</h4>
+        <p>
+            コンテストは毎週日曜日21時に始まり、翌週日曜日21時に終了、同時に次のコンテストが始まります。<br>
+            シーズンは半年毎に始まります。1〜6月が前期、7〜12月が後期です。<br>
+            半年はおよそ26週間ですから、およそ26回のコンテストの結果、シーズンチャンピオンが決まります。
+        </p>
+
         <h4>抽選ポイント</h4>
         <p>
             毎週抽選で3名様に100ポイントが付与されます (1競技につき3名)。<br>
             ポイントは当選者のtriboxストアアカウントに自動付与され、1ポイント=1円としてご使用頂けます。<br>
-            複数の競技に参加すると、同時に複数当選する可能性もあります。どんどんご参加ください!<br>
+            複数の競技に参加すると、同時に複数当選する可能性もあります。<br>
+            参加者の少ない競技のほうが当選確率が高いので、どんどん新しい競技に挑戦してみてください!
         </p>
 
         <h4>シーズンランキング</h4>
         <p>
-            コンテストの結果は毎週日曜日夜に発表され、1位から12位までの入賞者にシーズンポイントが付与されます。<br>
-            シーズンは半年間で、1月〜6月が前期、7月〜12月が後期です。<br>
-            シーズンランキング1位〜3位には、競技ごとに設定された賞金 (triboxポイント) が授与されます。<br>
-            ただしネットコンテストの性質上、以下の参加者はシーズンランキング入賞者から除外されます。
+            コンテストの1位から12位までの入賞者にはシーズンポイントが付与されます。<br>
+            シーズン終了後、シーズンランキング1位〜3位には競技ごとに設定された賞金 (triboxポイント) が授与されます。
         </p>
-        <ol>
-            <li>WCA公式大会未参加者 (C.について検証できないため)</li>
-            <li>未認証アカウント</li>
-            <li>WCA公式記録と本コンテストでの記録の差異が大きい参加者</li>
-            <li>連絡がつかない参加者</li>
-            <li>この他の理由で入賞者として不的確と運営者が判断した参加者</li>
-        </ol>
+        <table class="table table-bordered">
+            <caption>各競技の賞金額 (総額13万ポイント)</caption>
+            <thead>
+                <tr>
+                    <th class="color-header">競技</th>
+                    <th class="color-gold">1位</th>
+                    <th class="color-silver">2位</th>
+                    <th class="color-bronze">3位</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="color-header">Rubik's Cube</td>
+                    <td>30,000</td>
+                    <td>15,000</td>
+                    <td>5,000</td>
+                </tr>
+                <tr>
+                    <td class="color-header">4x4x4, 5x5x5, 2x2x2</td>
+                    <td>10,000</td>
+                    <td>5,000</td>
+                    <td>3,000</td>
+                </tr>
+                <tr>
+                    <td class="color-header">その他</td>
+                    <td>5,000</td>
+                    <td>2,000</td>
+                    <td>1,000</td>
+                </tr>
+            </tbody>
+        </table>
 
     </div></div>
 

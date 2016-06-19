@@ -5,8 +5,9 @@
 # Home
 GET     /                           controllers.HomeController.index
 
-# About
+# About / Regulations
 GET     /about                      controllers.HomeController.about
+GET     /regulations                controllers.HomeController.regulations
 
 # Auth: Join / Login / Logout / Forgot password / My page / Change email & password
 GET     /join                       controllers.HomeController.join

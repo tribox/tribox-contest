@@ -36,10 +36,13 @@ class HomeController @Inject() extends Controller {
     }
 
     /**
-     * About
+     * About / Regulations
      */
     def about = Action {
         Ok(views.html.about(getContestName, getContestDescription, getContestUrl, getFirebaseappContest))
+    }
+    def regulations = Action {
+        Ok(views.html.regulations(getContestName, getContestDescription, getContestUrl, getFirebaseappContest))
     }
 
     /**
