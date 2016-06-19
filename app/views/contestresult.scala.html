@@ -112,7 +112,7 @@ var drawChart = function(data) {
         <p>
             <i class="fa fa-star color-star"></i>: 当選ポイント獲得
         </p>
-        <table class="table result">
+        <table class="table table-bordered result tribox-contest">
             <thead>
                 <tr>
                     <th>順位</th>
@@ -128,6 +128,7 @@ var drawChart = function(data) {
                         <th>解答・コメント</th>
                     }
                     <th>使用キューブ</th>
+                    <th><i class="fa fa-video-camera"></i></th>
                 </tr>
             </thead>
             <tbody>
@@ -149,6 +150,10 @@ var drawChart = function(data) {
                     <td ng-show="r.puzzle.type == 'nodatabase' || r.puzzle.type == 'unknown'">
                         {{ r.puzzleF }}
                     </td>
+                    <td ng-if="r.videoUrl">
+                        <a href="{{ r.videoUrl }}" target="_blank"><i class="fa fa-video-camera"></i></a>
+                    </td>
+                    <td ng-if="!(r.videoUrl)"></td>
                 </tr>
             </tbody>
         </table>
@@ -213,8 +218,7 @@ app.controller('ContestResultCtrl', ['$scope', function($scope) {
 
             var html = '<tr id="fmc-detail-' + index + '" class="fmc-detail"><td colspan="7">'
                      + '<p><b>解答:</b><br>' + TriboxContest.escapeHTML($scope.resultsAll['e333fm'][index].details[0].solution) + '</p>'
-                     + '<p><b>コメント:</b><br>' + TriboxContest.escapeHTML($scope.resultsAll['e333fm'][index].details[0].note) + '</p>'
-                     + '</tr><tr style="display:none;"></tr>';
+                     + '<p><b>コメント:</b><br>' + TriboxContest.escapeHTML($scope.resultsAll['e333fm'][index].details[0].note) + '</p>';
             angular.element(document.getElementById('e333fm-' + index)).after(html);
             angular.element(document.getElementById('e333fm-' + index + '-show')).text('表示済み');
             fadeIn(document.getElementById('fmc-detail-' + index));

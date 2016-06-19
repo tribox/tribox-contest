@@ -9,6 +9,19 @@
     @header(title=title, description=contestDescription, sitename=contestName, url=pageUrl, contestUrl=contestUrl)
 
 @basejs(firebaseappContest)
+
+<style>
+h3 {
+    margin-top: 40px;
+}
+a.video-url {
+    margin-bottom: 0;
+    min-width: auto;
+    padding: 10px;
+    cursor: pointer;
+}
+</style>
+
 </head>
 <body><div class="container">
     @bodyheader(title, contestName)
@@ -71,10 +84,45 @@
             <h4 id="{{ eid }}">{{ events[eid].name }}</h4>
 
             <p>
-                この競技での合計獲得シーズンポイント: <b>{{ sumSeasonPoint[eid] }}</b> ポイント
+                合計獲得シーズンポイント: <b>{{ sumSeasonPoint[eid] }}</b> ポイント
             </p>
 
-            <table class="table table-striped result">
+            <!--<p>
+                <a href="/contest/{{ inProgress.contest | removeHead }}">最新のコンテスト</a>:
+                <span ng-if="historyInProgress[eid]"><i class="fa fa-check-circle"></i> 参加済み</span>
+                <span class="color-error" ng-if="!(historyInProgress[eid])">未参加</span>
+            </p>-->
+
+            <table class="table table-bordered inProgress" style="width: auto;" ng-if="authData && authData.uid == thisUsername.uid">
+                <thead>
+                    <th>開催中のコンテスト</th>
+                    <th>参加状況</th>
+                    <th>結果</th>
+                    <th>ビデオ</th>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><a href="/contest/{{ inProgress.contest | removeHead }}">第{{ inProgressContest.number }}回</a></td>
+                        <td class="color-success" ng-if="historyInProgress[eid]"><i class="fa fa-check-circle"></i> 参加済み</td>
+                        <td class="color-error" ng-if="!(historyInProgress[eid])">未参加</td>
+                        <td>
+                            <span ng-show="historyInProgress[eid]">
+                                {{ historyInProgress[eid].resultF }}
+                            </span>
+                        </td>
+                        <td>
+                            <span ng-show="historyInProgress[eid]">
+                                <input type="url" placeholder="URLを入力" class="form-control" style="width: auto; margin-bottom: 0;" ng-model="videoUrlInput[eid]">
+                                <a class="btn video-url" ng-click="updateVideoUrl(inProgress.contest, eid);">登録</a>
+                                <span id="update-video-success-{{ eid }}" class="hide">ビデオURLを登録しました。</span>
+                                <span id="update-video-error-{{ eid }}" class="color-error hide"></span>
+                            </span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <table class="table table-bordered result tribox-contest margin-bottom-40">
                 <thead>
                     <tr>
                         <th></th>
@@ -86,6 +134,7 @@
                         <th ng-if="eid != 'e333fm'">個々の記録</th>
                         <th ng-if="eid == 'e333fm'">解答・コメント</th>
                         <th>使用キューブ</th>
+                        <th><i class="fa fa-video-camera"></i></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -103,6 +152,10 @@
                         <td ng-show="c.result.puzzle.type == 'nodatabase' || c.result.puzzle.type == 'unknown'">
                             {{ c.result.puzzleF }}
                         </td>
+                        <td ng-if="c.result.videoUrl">
+                            <a href="{{ c.result.videoUrl }}" target="_blank"><i class="fa fa-video-camera"></i></a>
+                        </td>
+                        <td ng-if="!(c.result.videoUrl)"></td>
                     </tr>
                 </tbody>
             </table>
@@ -113,14 +166,26 @@
         <p>@id -> thisUsername:</p>
         <pre>{{ thisUsername | json }}</pre>--> *@
 
-        <p>history:</p>
-        <pre>{{ history | json }}</pre>
+        @* <!--<p>history:</p>
+        <pre>{{ history | json }}</pre>--> *@
+
+        @* <!--<p>historyInProgress:</p>
+        <pre>{{ historyInProgress | json }}</pre>--> *@
 
         @* <!--<p>tocHtml:</p>
         <pre>{{ tocHtml | json }}</pre>--> *@
 
+        @* <!--<p>videoUrlInput:</p>
+        <pre>{{ videoUrlInput | json }}</pre>--> *@
+
         @* <!--<p>events:</p>
         <pre>{{ events | json }}</pre>--> *@
+
+        @* <!--<p>inProgress:</p>
+        <pre>{{ inProgress | json }}</pre>--> *@
+
+        @* <!--<p>inProgressContest:</p>
+        <pre>{{ inProgressContest | json }}</pre>--> *@
 
         @* <!--<p>contests:</p>
         <pre>{{ contests | json }}</pre>--> *@
@@ -145,10 +210,15 @@ app.controller('UserCtrl', ['$scope', '$timeout', function($scope, $timeout) {
     $scope.existsUser = false;
 
     $scope.events = null;
+    $scope.inProgress = null;
+    $scope.inProgressContest = null;
     $scope.contests = null;
     $scope.contestsArray = [];
+
     $scope.history = {};
+    $scope.historyInProgress = {};
     $scope.sumSeasonPoint = {};
+    $scope.videoUrlInput = {};
     $scope.tocHtml = [];
 
     contestRef.child('usernames').child('@id').once('value', function(snapUsername) {
@@ -158,56 +228,92 @@ app.controller('UserCtrl', ['$scope', '$timeout', function($scope, $timeout) {
             contestRef.child('users').child(userId).once('value', function(snapUser) {
                 var user = snapUser.val();
 
-                contestRef.child('events').once('value', function(snapEvents) {
-                    var events = snapEvents.val();
+            contestRef.child('events').once('value', function(snapEvents) {
+                var events = snapEvents.val();
 
-                    contestRef.child('contests').once('value', function(snapContests) {
-                        var contests = snapContests.val();
+            contestRef.child('inProgress').once('value', function(snapInProgress) {
+                var inProgress = snapInProgress.val();
 
-                        contestRef.child('userhistories').child(userId).once('value', function(snapUserhistories) {
-                            var userHistories = snapUserhistories.val();
+            contestRef.child('contests').once('value', function(snapContests) {
+                var contests = snapContests.val();
 
-                            Object.keys(events).forEach(function(eid) {
-                                Object.keys(contests).forEach(function(cid) {
-                                    if (cid in userHistories && eid in userHistories[cid] && userHistories[cid][eid].hasCompeted == true) {
-                                        contestRef.child('results').child(cid).child(eid).child(userId).once('value', function(snapResult) {
-                                            var result = snapResult.val();
-                                            if (!(result._dummy) && result.endAt) {
-                                                result.resultF = TriboxContest.formatResult(result, eid, events);
-                                                result.detailsF = TriboxContest.formatDetails(result, eid, events);
-                                                result.puzzleF = TriboxContest.formatPuzzle(result);
-                                                $timeout(function() {
-                                                    if (!(eid in $scope.history)) {
-                                                        $scope.history[eid] = [];
-                                                        $scope.sumSeasonPoint[eid] = 0;
-                                                        $scope.tocHtml.push({ 'eid': eid, 'name': events[eid].name });
-                                                    }
-                                                    $scope.history[eid].push({ 'contestId': contests[cid].contestId, 'contest': contests[cid], 'result': result });
-                                                    if (result.seasonPoint) {
-                                                        $scope.sumSeasonPoint[eid] += result.seasonPoint;
-                                                    }
-                                                });
+            contestRef.child('userhistories').child(userId).once('value', function(snapUserhistories) {
+                var userHistories = snapUserhistories.val();
+
+                // 最新のコンテスト
+                var inProgressContest = contests[inProgress.contest];
+                // 最新のコンテストの参加有無
+                var authData = contestRef.getAuth();
+                if (authData && authData.uid == userId) {
+                    Object.keys(events).forEach(function(eid) {
+                        contestRef.child('results').child(inProgress.contest).child(eid).child(userId).once('value', function(snapResult) {
+                            $timeout(function() {
+                                if (snapResult.exists()) {
+                                    var r = snapResult.val();
+                                    $scope.historyInProgress[eid] = r;
+                                    if (eid != "e333fm") {
+                                        $scope.historyInProgress[eid].resultF = TriboxContest.formatResult(r, eid, events);
+                                    } else {
+                                        $scope.historyInProgress[eid].resultF = 'コンテスト終了時に発表';
+                                    }
+                                    $scope.videoUrlInput[eid] = r.videoUrl;
+                                } else {
+                                    $scope.historyInProgress[eid] = null;
+                                }
+                            });
+                        });
+                    });
+                }
+
+                Object.keys(events).forEach(function(eid) {
+                    Object.keys(contests).forEach(function(cid) {
+                        // 現在のシーズンのコンテストのみ
+                        if (inProgressContest.year == contests[cid].year && inProgressContest.season == contests[cid].season) {
+                            // ユーザが完了済みのコンテストのみ
+                            if (cid in userHistories && eid in userHistories[cid] && userHistories[cid][eid].hasCompeted == true) {
+                                // 必要な分の結果だけ読み込む
+                                contestRef.child('results').child(cid).child(eid).child(userId).once('value', function(snapResult) {
+                                    var result = snapResult.val();
+                                    if (!(result._dummy) && result.endAt) {
+                                        result.resultF = TriboxContest.formatResult(result, eid, events);
+                                        result.detailsF = TriboxContest.formatDetails(result, eid, events);
+                                        result.puzzleF = TriboxContest.formatPuzzle(result);
+                                        $timeout(function() {
+                                            if (!(eid in $scope.history)) {
+                                                $scope.history[eid] = [];
+                                                $scope.sumSeasonPoint[eid] = 0;
+                                                $scope.tocHtml.push({ 'eid': eid, 'name': events[eid].name });
+                                            }
+                                            $scope.history[eid].push({ 'contestId': contests[cid].contestId, 'contest': contests[cid], 'result': result });
+                                            if (result.seasonPoint) {
+                                                $scope.sumSeasonPoint[eid] += result.seasonPoint;
                                             }
                                         });
                                     }
                                 });
-                            });
-
-                            $timeout(function() {
-                                $scope.thisUserData = snapUser.val();
-                                $scope.thisUsername = snapUsername.val();
-                                $scope.events = events;
-                                $scope.contests = contests;
-                                $scope.userLoaded = true;
-                                $scope.existsUser = true;
-                                Object.keys(contests).forEach(function(cid) {
-                                    $scope.contestsArray.push(contests[cid]);
-                                });
-                            });
-
-                        });
+                            }
+                        }
                     });
                 });
+
+                $timeout(function() {
+                    $scope.thisUserData = snapUser.val();
+                    $scope.thisUsername = snapUsername.val();
+                    $scope.events = events;
+                    $scope.inProgress = inProgress;
+                    $scope.inProgressContest = inProgressContest;
+                    $scope.contests = contests;
+                    $scope.userLoaded = true;
+                    $scope.existsUser = true;
+                    Object.keys(contests).forEach(function(cid) {
+                        $scope.contestsArray.push(contests[cid]);
+                    });
+                });
+
+            });
+            });
+            });
+            });
             });
 
         } else {
@@ -219,8 +325,6 @@ app.controller('UserCtrl', ['$scope', '$timeout', function($scope, $timeout) {
     });
 
     $scope.showDetail = function(contestId) {
-        //console.log(contestId);
-
         var r;
         $scope.history['e333fm'].forEach(function(c) {
             if (c.contestId == contestId) {
@@ -230,11 +334,47 @@ app.controller('UserCtrl', ['$scope', '$timeout', function($scope, $timeout) {
         });
         var html = '<tr id="fmc-detail-' + contestId + '" class="fmc-detail"><td colspan="6">'
                  + '<p><b>解答:</b><br>' + TriboxContest.escapeHTML(r.details[0].solution) + '</p>'
-                 + '<p><b>コメント:</b><br>' + TriboxContest.escapeHTML(r.details[0].note) + '</p>'
-                 + '</tr><tr style="display:none;"></tr>';
+                 + '<p><b>コメント:</b><br>' + TriboxContest.escapeHTML(r.details[0].note) + '</p>';
         angular.element(document.getElementById('e333fm-' + contestId)).after(html);
         angular.element(document.getElementById('e333fm-' + contestId + '-show')).text('表示済み');
         fadeIn(document.getElementById('fmc-detail-' + contestId));
+    };
+
+    $scope.updateVideoUrl = function(contestId, eventId) {
+        var successDOM = document.getElementById('update-video-success-' + eventId);
+        var errorDOM = document.getElementById('update-video-error-' + eventId);
+
+        angular.element(successDOM).addClass('hide');
+        angular.element(errorDOM).addClass('hide');
+        angular.element(successDOM).removeClass('block');
+        angular.element(errorDOM).addClass('block');
+
+        if (!($scope.videoUrlInput[eventId])) {
+            angular.element(errorDOM).text('URLを入力してください。');
+            angular.element(errorDOM).addClass('block');
+            angular.element(errorDOM).removeClass('hide');
+            return;
+        }
+        if (TriboxContest.INPUT_LENGTH.videoUrl.max < $scope.videoUrlInput[eventId].length) {
+            angular.element(errorDOM).text('URLは' + TriboxContest.INPUT_LENGTH.videoUrl.max + '文字以下で入力してください。');
+            angular.element(errorDOM).addClass('block');
+            angular.element(errorDOM).removeClass('hide');
+            return;
+        }
+
+        var authData = contestRef.getAuth();
+        if (authData && authData.uid == $scope.thisUsername.uid) {
+            contestRef.child('results').child(contestId).child(eventId).child(authData.uid).update({
+                'videoUrl': $scope.videoUrlInput[eventId]
+            }, function(error) {
+                if (error) {
+                    console.error(error);
+                } else {
+                    angular.element(successDOM).addClass('block');
+                    angular.element(successDOM).removeClass('hide');
+                }
+            });
+        }
     };
 }]);
 

@@ -305,17 +305,42 @@ table.scrambles th:first-child {
 
 
 /**
- * Result table
+ * Table format
+ */
+table.tribox-contest {
+    border-left: 1px solid #DDD;
+}
+table.tribox-contest th,
+table.tribox-contest td {
+    border-left: none;
+}
+table.tribox-contest tr:first-child > th {
+    background-color: #f7f7f7;
+}
+
+
+/**
+ * Result table / inProgress
  */
 table.result {
     font-size: 95%;
-    margin-bottom: 30px;
 }
+table.inProgress {
+    font-size: 95%;
+}
+table.inProgress {
+    border-left: 1px solid #DDD;
+}
+table.inProgress th,
+table.inProgress td {
+    border-left: none;
+}
+
 a.cursor-pointer {
     cursor: pointer;
 }
 tr.fmc-detail {
-    background: #F7F7F9;
+    background: #FFF !important; /*background: #F7F7F9;*/
     border: 1px solid #E1E1E8;
 }
 
@@ -365,4 +390,9 @@ textarea.form-control:focus {
 
 .color-lightdark {
     color: #aaa;
+}
+
+table.table th,
+table.table td {
+    vertical-align: middle !important;
 }

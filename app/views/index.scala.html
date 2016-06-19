@@ -35,14 +35,13 @@
 
         <h3>開催中のコンテスト</h3>
 
-        <p>
-            <a href="/contest/{{ inProgressContest.contestId }}">{{ inProgressContest.contestName }}</a> @* ({{ inProgress }}) *@
-        </p>
+        <h4><a href="/contest/{{ inProgressContest.contestId }}">{{ inProgressContest.contestName }}</a></h4>
+
         <p>
             <i class="fa fa-calendar"></i> 開催期間: <b>{{ inProgressContest.beginAt | toDate }}</b> ~ <b>{{ inProgressContest.endAt | toDate }}</b>
         </p>
 
-        <table class="table">
+        <table class="table table-bordered tribox-contest">
             <thead>
                 <tr>
                     <th>競技種目</th>

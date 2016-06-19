@@ -297,6 +297,9 @@
                                 ".validate": "newData.isString() && newData.val().length <= 50"
                             }
                         },
+                        "videoUrl": {
+                            ".validate": "newData.isString() && newData.val().length <= 1023"
+                        },
                         // 順位
                         "place": {
                             ".validate": "newData.isNumber() && 0 < newData.val()"
