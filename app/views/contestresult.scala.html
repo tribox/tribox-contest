@@ -121,7 +121,7 @@ var drawChart = function(data) {
                     <th>所属</th>
                     @if(eid != "333fm") {
                         <th ng-if="events.e@{eid}.method == 'average'">平均記録</th>
-                        <th ng-if="events.e@{eid}.method == 'best'">最良記録</th>
+                        <th ng-if="events.e@{eid}.method == 'best'">最高記録</th>
                         <th>個々の記録</th>
                     } else {
                         <th>記録</th>
