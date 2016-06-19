@@ -30,7 +30,7 @@ npm install firebase firebase-token-generator alg async argv mysql request twitt
 
 ```
 (開発) activator run -Dconfig.resource=dev.conf
-(本番) activator clean stage && target/universal/stage/bin/contest -Dconfig.file=/var/www/contest/conf/prod.conf
+(本番) activator clean stage && target/universal/stage/bin/contest -Dconfig.file=/path/to/contestapp/conf/prod.conf
 ```
 
 ### [1週間に1回] 日曜日午後9時 (JST) 自動実行
