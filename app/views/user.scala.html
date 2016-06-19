@@ -70,6 +70,10 @@
         <div ng-repeat="(eid, e) in history">
             <h4 id="{{ eid }}">{{ events[eid].name }}</h4>
 
+            <p>
+                この競技での合計獲得シーズンポイント: <b>{{ sumSeasonPoint[eid] }}</b> ポイント
+            </p>
+
             <table class="table table-striped result">
                 <thead>
                     <tr>
@@ -109,8 +113,9 @@
         <p>@id -> thisUsername:</p>
         <pre>{{ thisUsername | json }}</pre>--> *@
 
-        @* <!--<p>history:</p>
-        <pre>{{ history | json }}</pre>--> *@
+        <p>history:</p>
+        <pre>{{ history | json }}</pre>
+
         @* <!--<p>tocHtml:</p>
         <pre>{{ tocHtml | json }}</pre>--> *@
 
@@ -143,6 +148,7 @@ app.controller('UserCtrl', ['$scope', '$timeout', function($scope, $timeout) {
     $scope.contests = null;
     $scope.contestsArray = [];
     $scope.history = {};
+    $scope.sumSeasonPoint = {};
     $scope.tocHtml = [];
 
     contestRef.child('usernames').child('@id').once('value', function(snapUsername) {
@@ -173,9 +179,13 @@ app.controller('UserCtrl', ['$scope', '$timeout', function($scope, $timeout) {
                                                 $timeout(function() {
                                                     if (!(eid in $scope.history)) {
                                                         $scope.history[eid] = [];
+                                                        $scope.sumSeasonPoint[eid] = 0;
                                                         $scope.tocHtml.push({ 'eid': eid, 'name': events[eid].name });
                                                     }
                                                     $scope.history[eid].push({ 'contestId': contests[cid].contestId, 'contest': contests[cid], 'result': result });
+                                                    if (result.seasonPoint) {
+                                                        $scope.sumSeasonPoint[eid] += result.seasonPoint;
+                                                    }
                                                 });
                                             }
                                         });
