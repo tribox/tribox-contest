@@ -69,13 +69,13 @@ a.video-url {
 
         <h3>今シーズンのコンテスト参加履歴</h3>
 
+        <h4>競技一覧</h4>
         <p ng-if="authData.uid == thisUsername.uid">
             <span ng-repeat="toc in tocMyHtml">
                 <span ng-show="$index != 0"> / </span>
                 <a href="#{{ toc.eid }}">{{ toc.name }}</a>
             </span>
         </p>
-
         <p ng-if="authData.uid != thisUsername.uid">
             <span ng-repeat="toc in tocHtml">
                 <span ng-show="$index != 0"> / </span>

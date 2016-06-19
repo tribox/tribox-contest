@@ -18,4 +18,9 @@ class RankingController @Inject() extends HomeController {
         Ok(views.html.ranking(sid, products, getContestName, getContestDescription, getContestUrl, getFirebaseappContest))
     }
 
+    def rankingpuzzle(sid: String) = Action {
+        val products = Product.getAll
+        Ok(views.html.rankingpuzzle(sid, products, getContestName, getContestDescription, getContestUrl, getFirebaseappContest))
+    }
+
 }

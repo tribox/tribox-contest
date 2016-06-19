@@ -1,7 +1,7 @@
 @(sid: String, products: List[Product], contestName: String, contestDescription: String, contestUrl: String, firebaseappContest: String)
 
-@defining("Ranking " + sid) { title =>
-@defining(contestUrl + "/ranking/" + sid) { pageUrl =>
+@defining("Puzzle Ranking " + sid) { title =>
+@defining(contestUrl + "/ranking/" + sid + "/puzzle") { pageUrl =>
 
 <!DOCTYPE html>
 <html lang="ja" ng-app="contestApp">
@@ -20,13 +20,13 @@ h3, h4 {
 <body><div class="container">
     @bodyheader(title, contestName)
 
-    <div ng-controller="AuthCtrl"><div ng-controller="RankingCtrl">
-    <div ng-hide="authLoaded && rankingLoaded">
+    <div ng-controller="AuthCtrl"><div ng-controller="RankingPuzzleCtrl">
+    <div ng-hide="authLoaded && rankingPuzzleLoaded">
         <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
         <span class="sr-only">Loading...</span>
         Loading...
     </div>
-    <div ng-show="authLoaded && rankingLoaded">
+    <div ng-show="authLoaded && rankingPuzzleLoaded">
 
     @authinfo()
 
@@ -38,12 +38,16 @@ h3, h4 {
 
     <div ng-show="existsSeason">
 
-        <h2>{{ seasonName }} シーズンランキング</h2>
+        <h2>{{ seasonName }} キューブ使用率ランキング</h2>
 
         <p>
             集計対象コンテスト:<br>
             <b>{{ targetContestFrom.contestName }}</b> ({{ targetContestFrom.beginAt | toDateShort }} 開始) ~
             <b>{{ targetContestTo.contestName }}</b> ({{ targetContestTo.endAt | toDateShort }} 終了)
+        </p>
+        <p>
+            対象者:<br>
+            <b>入賞者 (シーズンポイント獲得者)</b>
         </p>
 
         <h4>競技一覧</h4>
@@ -57,33 +61,25 @@ h3, h4 {
         <div ng-repeat="(eid, e) in events">
             <h4 id="{{ eid }}">{{ events[eid].name }}</h4>
 
-            <table class="table table-bordered tribox-contest ranking">
-                <thead>
-                    <tr>
-                        <th>順位</th>
-                        <th>名前</th>
-                        <th>所属</th>
-                        <th>合計獲得シーズンポイント</th>
-                        <th>メインキューブ *</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr ng-repeat="data in seasonPointsSorted[eid]">
-                        <td>{{ data.rank }}</td>
-                        <td><a href="/user/{{ data.user.username }}">{{ data.user.displayname }}</a></td>
-                        <td>{{ data.user.organization }}</td>
-                        <td>{{ data.seasonPoint }}</td>
-                        <td>
-                            <a href="http://store.tribox.com/products/detail.php?product_id={{ data.bestUsedPuzzleId }}" target="_blank" ng-show="data.bestUsedPuzzleId != -1">
-                                {{ data.bestUsedPuzzleName }}
+            <div class="row">
+                <div class="col sm-4">
+                    <ol>
+                        <li ng-repeat="p in usedPuzzlesSummary[eid]">
+                            <a href="http://store.tribox.com/products/detail.php?product_id={{ p.productId }}" target="_blank" ng-show="p.productId != -1">
+                                {{ p.productName }}
                             </a>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-            <p>
-                * メインキューブとは、このシーズンで最も使用回数が多いパズルを指します。
-            </p>
+                            <span ng-show="p.productId == -1">
+                                不明
+                            </span>
+                            ({{ p.percentage }}%)
+                        </li>
+                    </ol>
+                </div>
+                <div class="col sm-8">
+                    <div id="chart-{{ eid }}"></div>
+                </div>
+            </div>
+
         </div>
 
     </div></div></div></div>
@@ -92,15 +88,31 @@ h3, h4 {
 
 @authjs(redirectLogin="", redirectLogout="", checkFirst=true)
 <script>
-app.controller('RankingCtrl', ['$scope', '$timeout', function($scope, $timeout) {
-    $scope.rankingLoaded = false;
+var chart = {};
+var drawChart = function(eid, data) {
+    if (0 < data.length) {
+        chart[eid] = c3.generate({
+            bindto: '#chart-' + eid,
+            data: {
+                columns: data,
+                type: 'pie'
+            },
+            size: {
+                height: 240
+            }
+        });
+    }
+};
+
+app.controller('RankingPuzzleCtrl', ['$scope', '$timeout', function($scope, $timeout) {
+    $scope.rankingPuzzleLoaded = false;
     $scope.existsSeason = false;
 
     $scope.seasonName = null;
     $scope.targetContestFrom = null;
     $scope.targetContestTo = null;
     $scope.events = null;
-    $scope.seasonPointsSorted = null;
+    $scope.resultsPuzzlesSummary = null;
 
     contestRef.child('events').once('value', function(snapEvents) {
         var events = snapEvents.val();
@@ -157,29 +169,22 @@ app.controller('RankingCtrl', ['$scope', '$timeout', function($scope, $timeout) 
                     if (numResultsFetched == targetContests.length) {
                         // Now, All results fetched
 
-                        // シーズンポイント・使用キューブ集計
-                        var seasonPoints = {};
+                        // 使用キューブ集計
                         var usedPuzzles = {};
                         Object.keys(events).forEach(function(eid) {
-                            seasonPoints[eid] = {};
                             usedPuzzles[eid] = {};
                         });
                         Object.keys(results).forEach(function(cid) {
                             Object.keys(results[cid]).forEach(function(eid) {
                                 Object.keys(results[cid][eid]).forEach(function(uid) {
                                     if (!(results[cid][eid][uid]._dummy)) {
-                                        if (!(uid in seasonPoints[eid])) {
-                                            seasonPoints[eid][uid] = 0;
-                                            usedPuzzles[eid][uid] = {};
-                                        }
                                         if (results[cid][eid][uid].seasonPoint) {
-                                            seasonPoints[eid][uid] += results[cid][eid][uid].seasonPoint;
                                             if (results[cid][eid][uid].puzzle && results[cid][eid][uid].puzzle.type == 'database') {
                                                 var productId = results[cid][eid][uid].puzzle.product;
-                                                if (!(productId in usedPuzzles[eid][uid])) {
-                                                    usedPuzzles[eid][uid][productId] = 0;
+                                                if (!(productId in usedPuzzles[eid])) {
+                                                    usedPuzzles[eid][productId] = 0;
                                                 }
-                                                (usedPuzzles[eid][uid][productId])++;
+                                                (usedPuzzles[eid][productId])++;
                                             }
                                         }
                                     }
@@ -187,69 +192,65 @@ app.controller('RankingCtrl', ['$scope', '$timeout', function($scope, $timeout) 
                             });
                         });
 
-                        // 最も使用されたパズル
-                        // 同数の場合は productId が大きいパズル
-                        var bestUsedPuzzles = {};
+                        // 使用キューブを
+                        // 配列化・ソート
+                        var usedPuzzlesSorted = {};
+                        var usedPuzzlesSummary = {};
+                        var jsdata = {};
                         Object.keys(usedPuzzles).forEach(function(eid) {
-                            bestUsedPuzzles[eid] = {};
-                            Object.keys(usedPuzzles[eid]).forEach(function(uid) {
-                                var bestProductId = -1;
-                                var maxCount = -1;
-                                Object.keys(usedPuzzles[eid][uid]).forEach(function(productId) {
-                                    if (maxCount <= usedPuzzles[eid][uid][productId] && bestProductId < productId) {
-                                        bestProductId = productId;
-                                        maxCount = usedPuzzles[eid][uid][productId];
-                                    }
-                                });
-                                bestUsedPuzzles[eid][uid] = bestProductId;
-                            });
-                        });
+                            var usedPuzzlesSum = 0;
 
-                        // 配列化・ソート・ランク付け
-                        // 0 シーズンポイントのユーザを排除してユーザ情報を入れる
-                        var seasonPointsSorted = {};
-                        Object.keys(seasonPoints).forEach(function(eid) {
                             // 配列化
-                            seasonPointsSorted[eid] = [];
-                            Object.keys(seasonPoints[eid]).forEach(function(uid) {
-                                if (0 < seasonPoints[eid][uid]) {
-                                    var bestUsedPuzzleId = bestUsedPuzzles[eid][uid];
-                                    var bestUsedPuzzleName = '';
-                                    if (0 < bestUsedPuzzleId) {
-                                        bestUsedPuzzleName = TriboxContest.Products[bestUsedPuzzleId];
-                                    }
-                                    seasonPointsSorted[eid].push({
-                                        'uid': uid, 'seasonPoint': seasonPoints[eid][uid],
-                                        'user': users[uid],
-                                        'bestUsedPuzzleId': bestUsedPuzzleId,
-                                        'bestUsedPuzzleName': bestUsedPuzzleName
-                                    });
+                            usedPuzzlesSorted[eid] = [];
+                            usedPuzzlesSummary[eid] = [];
+                            Object.keys(usedPuzzles[eid]).forEach(function(productId) {
+                                var productName = '';
+                                if (0 < productId) {
+                                    productName = TriboxContest.Products[productId];
                                 }
+                                usedPuzzlesSorted[eid].push({
+                                    'productId': productId,
+                                    'productName': productName,
+                                    'count': usedPuzzles[eid][productId]
+                                });
+                                usedPuzzlesSum += usedPuzzles[eid][productId];
                             });
 
                             // ソート
-                            seasonPointsSorted[eid].sort(function(a, b) {
-                                if (a.seasonPoint < b.seasonPoint) return 1;
-                                if (a.seasonPoint > b.seasonPoint) return -1;
+                            usedPuzzlesSorted[eid].sort(function(a, b) {
+                                if (a.count < b.count) return 1;
+                                if (a.count > b.count) return -1;
+                                if (a.productId < b.productId) return 1;
+                                if (a.productId > b.productId) return -1;
                                 return 0;
                             });
 
-                            // ランク付け
-                            var prevSP = -1;
-                            var prevRank = -1;
-                            seasonPointsSorted[eid].forEach(function(data, index) {
-                                if (data.seasonPoint != prevSP) {
-                                    seasonPointsSorted[eid][index].rank = index + 1;
+                            // 上位5パズル以外はその他にする
+                            jsdata[eid] = [];
+                            var countOthers = 0;
+                            usedPuzzlesSorted[eid].forEach(function(puzzleObj, index) {
+                                if (index < 5) {
+                                    puzzleObj.percentage = Math.round(puzzleObj.count / usedPuzzlesSum * 100);
+                                    usedPuzzlesSummary[eid].push(puzzleObj);
+                                    jsdata[eid].push([puzzleObj.productName, puzzleObj.count]);
                                 } else {
-                                    seasonPointsSorted[eid][index].rank = prevRank;
+                                    countOthers += puzzleObj.count;
                                 }
-                                prevSP = data.seasonPoint;
-                                prevRank = seasonPointsSorted[eid][index].rank;
                             });
+                            if (0 < countOthers) {
+                                usedPuzzlesSummary[eid].push({
+                                    'productId': -1,
+                                    'productName': 'その他',
+                                    'count': countOthers,
+                                    'percentage': Math.round(puzzleObj.count / usedPuzzlesSum * 100)
+                                });
+                                jsdata[eid].push(['その他', countOthers]);
+                            }
+
                         });
 
                         $timeout(function() {
-                            $scope.rankingLoaded = true;
+                            $scope.rankingPuzzleLoaded = true;
                             $scope.existsSeason = true;
 
                             $scope.seasonName = seasonName;
@@ -257,8 +258,15 @@ app.controller('RankingCtrl', ['$scope', '$timeout', function($scope, $timeout) 
                             $scope.targetContestTo = contests[targetContestTo];
 
                             $scope.events = events;
-                            $scope.seasonPointsSorted = seasonPointsSorted;
+                            $scope.usedPuzzlesSummary = usedPuzzlesSummary;
                         });
+
+                        // 円グラフ描画 (DOMが生成される前に呼ばれると表示されないから適当に遅らせる)
+                        setTimeout(function() {
+                            Object.keys(usedPuzzles).forEach(function(eid) {
+                                drawChart(eid, jsdata[eid]);
+                            });
+                        }, 1000);
 
                     }
                 });
