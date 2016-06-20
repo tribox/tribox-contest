@@ -103,7 +103,7 @@ a.video-url {
                 </thead>
                 <tbody>
                     <tr>
-                        <td><a href="/contest/{{ inProgress.contest | removeHead }}">第{{ inProgressContest.number }}回</a></td>
+                        <td><a href="/contest/{{ inProgress.contest | removeHead }}">第{{ inProgressContest.number }}節</a></td>
                         <td class="color-success" ng-if="historyInProgress[eid]"><i class="fa fa-check-circle"></i> 参加済み</td>
                         <td class="color-error" ng-if="!(historyInProgress[eid])">未参加</td>
                         <td>
@@ -140,7 +140,7 @@ a.video-url {
                 </thead>
                 <tbody>
                     <tr id="{{ eid }}-{{ c.contestId }}" ng-repeat="c in history[eid] | orderBy:'-contestId'">
-                        <td><a href="/contest/result/{{ c.contestId }}/{{ eid | removeHead }}">第{{ c.contest.number }}回</a></td>
+                        <td><a href="/contest/result/{{ c.contestId }}/{{ eid | removeHead }}">第{{ c.contest.number }}節</a></td>
                         <td>{{ c.result.place }} <i class="fa fa-star color-star" ng-if="c.result.lottery"></i></td>
                         <td ng-if="c.result.seasonPoint && c.result.seasonPoint != 0">{{ c.result.seasonPoint }}</td>
                         <td ng-if="!(c.result.seasonPoint) || c.result.seasonPoint == 0"></td>
