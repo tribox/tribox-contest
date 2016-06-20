@@ -109,8 +109,8 @@ connection.connect();
 var doTweet = function() {
     if (argvrun.options.tweet) {
         // ツイートテキスト
-        // 例 "Yueh-Lin Tsai (tribox SCT) wins 今週のコンテスト [URL]"
-        var status = ' wins ' + targetContestObj.contestName
+        // 例 "Yueh-Lin Tsai (tribox SCT) wins Week 24 (2016, 1H) https://contest.tribox.com/contest/2016124"
+        var status = ' wins Week ' + targetContestObj.number + ' (' + targetContestObj.year + ', ' + targetContestObj.season + 'H)'
                    + ' https://contest.tribox.com/contest/' + targetContestObj.contestId;
         if (Users[winner].organization) {
             status = Users[winner].displayname + ' (' + Users[winner].organization + ')' + status;
