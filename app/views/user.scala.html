@@ -154,7 +154,7 @@ a.video-url {
                             {{ c.result.puzzleF }}
                         </td>
                         <td ng-if="c.result.videoUrl">
-                            <a href="{{ c.result.videoUrl }}" target="_blank"><i class="fa fa-video-camera"></i></a>
+                            <a href="{{ c.result.videoUrl | encodeURI }}" target="_blank"><i class="fa fa-video-camera"></i></a>
                         </td>
                         <td ng-if="!(c.result.videoUrl)"></td>
                     </tr>

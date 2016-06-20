@@ -153,7 +153,7 @@ var drawChart = function(data) {
                         {{ r.puzzleF }}
                     </td>
                     <td ng-if="r.videoUrl">
-                        <a href="{{ r.videoUrl }}" target="_blank"><i class="fa fa-video-camera"></i></a>
+                        <a href="{{ r.videoUrl | encodeURI }}" target="_blank"><i class="fa fa-video-camera"></i></a>
                     </td>
                     <td ng-if="!(r.videoUrl)"></td>
                 </tr>
