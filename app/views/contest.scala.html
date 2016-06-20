@@ -46,13 +46,15 @@
             このコンテストはまだ開始されていません。
         </p>
 
-        <p class="notice-success" ng-if="justSuspended">
+        <p class="notice-success" ng-show="countdown == 0 && justSuspended">
             <i class="fa fa-check"></i>
             "{{ justSuspended }}" が一時中断されました。
         </p>
-        <p class="notice-success" ng-if="justDone">
+        <p class="notice-success" ng-show="countdown == 0 && justDone">
             <i class="fa fa-check"></i>
             "{{ justDone }}" の結果送信が完了しました。
+            <a href="http://twitter.com/share?url=@{contestUrl}%2F&text={{ justDoneText }}&related=triboxContest" class="btn btn-tweet" target="_blank">
+                <i class="fa fa-twitter"></i> Tweet</a>
         </p>
 
         <table class="table table-bordered tribox-contest" ng-if="0 <= countdown">
@@ -158,6 +160,7 @@ app.controller('ContestIndexCtrl', ['$scope', function($scope) {
     $scope.eventsDone = {};
     $scope.justSuspended = null;
     $scope.justDone = null;
+    $scope.justDoneText = '';
     $scope.contestIndexLoaded = true;
 
     // Read personal results
@@ -203,21 +206,32 @@ app.controller('ContestIndexCtrl', ['$scope', function($scope) {
             });
         } else if (vars.done) {
             var qe = 'e' + vars.done;
+            contestRef.child('contests').child('c@{cid}').once('value', function(snapContest) {
+                var contest = snapContest.val();
+                var season = '';
+                if (contest.season == 1) {
+                    season = '前半期';
+                } else if (contest.season == 2) {
+                    season = '後半期';
+                }
             contestRef.child('events').once('value', function(snapEvents) {
                 if (snapEvents.exists() && (snapEvents.val())[qe]) {
                     $scope.$apply(function() {
                         $scope.justDone = (snapEvents.val())[qe].name;
+                        $scope.justDoneText = encodeURIComponent(
+                            'tribox Contest 第' + contest.number + '節 (' + contest.year + season + ') の ' +
+                            (snapEvents.val())[qe].name + ' に参加しました! 参加締切は毎週日曜21時です。'
+                        );
                     });
                 }
             }, function(error) {
                 console.error(error);
             });
+            });
         }
     }
 
     $scope.showDetail = function(index) {
-        //console.log(index);
-
         var html = '<tr id="fmc-detail-' + index + '" class="fmc-detail"><td colspan="7">'
                  + '<p><b>解答:</b><br>' + TriboxContest.escapeHTML($scope.resultsTop3['e333fm'][index].details[0].solution) + '</p>'
                  + '<p><b>コメント:</b><br>' + TriboxContest.escapeHTML($scope.resultsTop3['e333fm'][index].details[0].note) + '</p>';

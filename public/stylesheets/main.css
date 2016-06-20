@@ -142,6 +142,16 @@ a.underlined {
        -moz-border-radius: 5px;
             border-radius: 5px;*/
 }
+.notice-normal {
+    padding: 10px;
+    background: none;
+    color: #555;
+    border: 2px solid #555;
+    border-top: 5px solid #555;
+    /*-webkit-border-radius: 5px;
+       -moz-border-radius: 5px;
+            border-radius: 5px;*/
+}
 
 
 /**
@@ -404,4 +414,18 @@ textarea.form-control:focus {
 table.table th,
 table.table td {
     vertical-align: middle !important;
+}
+
+
+/**
+ * ツイートボタン（独自）
+ */
+.btn.btn-tweet {
+    background-color: #1b95e0;
+    color: #fff;
+
+    padding: 5px 15px;
+    min-width: 30px;
+    font-size: 0.8em;
+    line-height: 1.2em;
 }
