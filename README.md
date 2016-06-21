@@ -13,6 +13,7 @@ URL: https://contest.tribox.com
 * Node.js v0.10.42
 * [TNoodle](https://github.com/cubing/tnoodle) v0.11.1
 * [Sarumawashi](https://github.com/kotarot/Sarumawashi)
+* [wca_importer.php](https://gist.github.com/kotarot/3bca593f7979f82c719d)
 
 
 ## Setup
@@ -26,7 +27,7 @@ npm install firebase firebase-token-generator alg async argv mysql request twitt
 
 ## Run
 
-### [不定期] http サーバ起動
+### http サーバ起動
 
 ```
 (開発) activator run -Dconfig.resource=dev.conf
@@ -75,6 +76,14 @@ java -jar wca/dist/TNoodle-WCA.jar
 引数は、シーズン。例えば、20161 (2016年前半期)、20162 (2016年後半期)、20171 (2017年前半期)、......
 ```
 node contestmanager/create-season.js 20162
+```
+
+### [不定期] 必要時に実行する
+
+WCAデータベースインポート。
+[wca_importer.php](https://gist.github.com/kotarot/3bca593f7979f82c719d) を用いる。
+```
+php -f /path/to/wca_importer.php
 ```
 
 
