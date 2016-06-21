@@ -1,4 +1,4 @@
-@(id: String, products: List[Product], contestName: String, contestDescription: String, contestUrl: String, firebaseappContest: String)
+@(id: String, contestName: String, contestDescription: String, contestUrl: String, firebaseappContest: String)
 
 @defining(id) { title =>
 @defining(contestUrl + "/user/" + id) { pageUrl =>
@@ -386,12 +386,8 @@ app.controller('UserCtrl', ['$scope', '$timeout', function($scope, $timeout) {
         }
     };
 }]);
-
-TriboxContest.Products = [];
-@for(product:Product <- products) {
-    TriboxContest.Products[@product.product_id] = '@product.product_name';
-}
 </script>
+<script type="text/javascript" src="@routes.DynamicJsController.products" async></script>
 
 </div></body>
 </html>

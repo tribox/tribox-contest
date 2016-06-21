@@ -47,5 +47,8 @@ GET     /contest/$cid<[0-9]{4}(1|2)[0-9]{2}>/$eid<[a-zA-Z0-9]{1,15}>/confirm  co
 GET     /ranking/$sid<[0-9]{4}(1|2)>        controllers.RankingController.ranking(sid: String)
 GET     /ranking/$sid<[0-9]{4}(1|2)>/puzzle controllers.RankingController.rankingpuzzle(sid: String)
 
+# Dynamic JS
+GET     /js/products.js             controllers.DynamicJsController.products
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

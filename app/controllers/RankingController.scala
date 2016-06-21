@@ -14,13 +14,11 @@ import play.api.Play.current
 class RankingController @Inject() extends HomeController {
 
     def ranking(sid: String) = Action {
-        val products = Product.getAll
-        Ok(views.html.ranking(sid, products, getContestName, getContestDescription, getContestUrl, getFirebaseappContest))
+        Ok(views.html.ranking(sid, getContestName, getContestDescription, getContestUrl, getFirebaseappContest))
     }
 
     def rankingpuzzle(sid: String) = Action {
-        val products = Product.getAll
-        Ok(views.html.rankingpuzzle(sid, products, getContestName, getContestDescription, getContestUrl, getFirebaseappContest))
+        Ok(views.html.rankingpuzzle(sid, getContestName, getContestDescription, getContestUrl, getFirebaseappContest))
     }
 
 }
