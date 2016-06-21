@@ -21,6 +21,11 @@ db {
     #stickers.url = "jdbc:mysql://localhost/stickersdb?characterEncoding=UTF-8"
     #stickers.username = stickersdbuser
     #stickers.password = "stickersdbpassword"
+
+    wca.driver = com.mysql.jdbc.Driver
+    wca.url = "jdbc:mysql://localhost/wcadb?characterEncoding=UTF-8"
+    wca.username = wcadbuser
+    wca.password = "wcadbpassword"
 }
 
 # 3) Change contest info.

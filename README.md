@@ -13,7 +13,7 @@ URL: https://contest.tribox.com
 * Node.js v0.10.42
 * [TNoodle](https://github.com/cubing/tnoodle) v0.11.1
 * [Sarumawashi](https://github.com/kotarot/Sarumawashi)
-* [wca_importer.php](https://gist.github.com/kotarot/3bca593f7979f82c719d)
+* [wca-importer](https://github.com/kotarot/wca-importer)
 
 
 ## Setup
@@ -81,9 +81,9 @@ node contestmanager/create-season.js 20162
 ### [不定期] 必要時に実行する
 
 WCAデータベースインポート。
-[wca_importer.php](https://gist.github.com/kotarot/3bca593f7979f82c719d) を用いる。
+[wca-importer](https://github.com/kotarot/wca-importer) を用いる。
 ```
-php -f /path/to/wca_importer.php
+php -f /path/to/wca_importer/import.php
 ```
 
 
