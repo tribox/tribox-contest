@@ -14,17 +14,24 @@
     @bodyheader(title, contestName)
 
     <div ng-controller="AuthCtrl"><div ng-controller="IndexCtrl">
+
+        <div id="modal-overlay" ng-show="justLogout"></div>
+        <div id="modal-logout" class="modal-content" ng-show="justLogout">
+            <p>
+                <i class="fa fa-check"></i>
+                ログアウトしました。
+            </p>
+            <p>
+                <a id="modal-logout-close" class="modal-close">閉じる</a>
+            </p>
+        </div>
+
     <div ng-hide="authLoaded && indexLoaded">
         <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
         <span class="sr-only">Loading...</span>
         Loading...
     </div>
     <div ng-show="authLoaded && indexLoaded">
-
-        <p class="notice-success" ng-if="justLogout">
-            <i class="fa fa-check"></i>
-            ログアウトしました。
-        </p>
 
         @authinfo()
 
@@ -137,9 +144,36 @@ app.controller('IndexCtrl', ['$scope', '$timeout', function($scope, $timeout) {
     if (!authData) {
         var vars = getUrlVars();
         if (vars.logout) {
-            $scope.justLogout = true;
+            $timeout(function() {
+                $scope.justLogout = true;
+                // うまくDOMのサイズが取得できないときがあるので何回か呼ぶ
+                showModal();
+                $timeout(showModal, 1000);
+                $timeout(showModal, 10000);
+            });
         }
     }
+
+    // Modal
+    var modalOverlayElem = document.getElementById('modal-overlay');
+    var modalLogoutElem = document.getElementById('modal-logout');
+    var modalLogoutCloseElem = document.getElementById('modal-logout-close');
+    var modalOverlayNgElem = angular.element(modalOverlayElem);
+    var modalLogoutNgElem = angular.element(modalLogoutElem);
+    var showModal = function() {
+        var windowW = window.innerWidth;
+        var windowH = window.innerHeight;
+        var modalW = modalLogoutElem.offsetWidth;
+        var modalH = modalLogoutElem.offsetHeight;
+        modalLogoutNgElem.css('left', ((windowW - modalW) / 2) + 'px');
+        modalLogoutNgElem.css('top', ((windowH - modalH) / 2) + 'px');
+    };
+    var closeModal = function() {
+        modalOverlayNgElem.addClass('hide');
+        modalLogoutNgElem.addClass('hide');
+    };
+    modalOverlayElem.onclick = closeModal;
+    modalLogoutCloseElem.onclick = closeModal;
 }]);
 </script>
 

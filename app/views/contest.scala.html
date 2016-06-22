@@ -14,6 +14,29 @@
     @bodyheader(title, contestName)
 
     <div ng-controller="AuthCtrl"><div ng-controller="ContestCtrl"><div ng-controller="ContestIndexCtrl">
+
+        <div id="modal-overlay" ng-show="countdown == 0 && (justSuspended || justDone)"></div>
+        <div id="modal-suspended" class="modal-content" ng-show="countdown == 0 && justSuspended">
+            <p>
+                <i class="fa fa-check"></i>
+                "{{ justSuspended }}" が一時中断されました。
+            </p>
+            <p>
+                <a id="modal-suspended-close" class="modal-close">閉じる</a>
+            </p>
+        </div>
+        <div id="modal-done" class="modal-content" ng-show="countdown == 0 && justDone">
+            <p>
+                <i class="fa fa-check"></i>
+                "{{ justDone }}" の結果送信が完了しました。
+                <a href="http://twitter.com/share?url=@{contestUrl}%2F&text={{ justDoneText }}&related=triboxContest" class="btn btn-tweet" target="_blank">
+                    <i class="fa fa-twitter"></i> Tweet</a>
+            </p>
+            <p>
+                <a id="modal-done-close" class="modal-close">閉じる</a>
+            </p>
+        </div>
+
     <div ng-hide="authLoaded && contestLoaded && contestIndexLoaded">
         <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
         <span class="sr-only">Loading...</span>
@@ -44,17 +67,6 @@
         </p>
         <p class="color-error" ng-if="countdown > 0">
             このコンテストはまだ開始されていません。
-        </p>
-
-        <p class="notice-success" ng-show="countdown == 0 && justSuspended">
-            <i class="fa fa-check"></i>
-            "{{ justSuspended }}" が一時中断されました。
-        </p>
-        <p class="notice-success" ng-show="countdown == 0 && justDone">
-            <i class="fa fa-check"></i>
-            "{{ justDone }}" の結果送信が完了しました。
-            <a href="http://twitter.com/share?url=@{contestUrl}%2F&text={{ justDoneText }}&related=triboxContest" class="btn btn-tweet" target="_blank">
-                <i class="fa fa-twitter"></i> Tweet</a>
         </p>
 
         <table class="table table-bordered tribox-contest" ng-if="0 <= countdown">
@@ -156,7 +168,7 @@
 @authjs(redirectLogin="", redirectLogout="", checkFirst=true)
 @contestjs(cid=cid, fetchScrambles=false, fetchResultsTop3=true, fetchResultsAll=false)
 <script>
-app.controller('ContestIndexCtrl', ['$scope', function($scope) {
+app.controller('ContestIndexCtrl', ['$scope', '$timeout', function($scope, $timeout) {
     $scope.eventsDone = {};
     $scope.justSuspended = null;
     $scope.justDone = null;
@@ -172,7 +184,7 @@ app.controller('ContestIndexCtrl', ['$scope', function($scope) {
                 contestData.events.forEach(function(e) {
                     contestRef.child('results').child('c@{cid}').child(e).child(authData.uid).once('value', function(snapResult) {
                         var resultData = snapResult.val();
-                        $scope.$apply(function() {
+                        $timeout(function() {
                             if (!resultData) {
                                 $scope.eventsDone[e] = false;
                             } else {
@@ -197,13 +209,40 @@ app.controller('ContestIndexCtrl', ['$scope', function($scope) {
             var qe = 'e' + vars.suspended;
             contestRef.child('events').once('value', function(snapEvents) {
                 if (snapEvents.exists() && (snapEvents.val())[qe]) {
-                    $scope.$apply(function() {
+                    $timeout(function() {
                         $scope.justSuspended = (snapEvents.val())[qe].name;
+                        // うまくDOMのサイズが取得できないときがあるので何回か呼ぶ
+                        showModalSuspended();
+                        $timeout(showModalSuspended, 1000);
+                        $timeout(showModalSuspended, 10000);
                     });
                 }
             }, function(error) {
                 console.error(error);
             });
+
+            // Modal
+            var modalOverlayElem = document.getElementById('modal-overlay');
+            var modalSuspendedElem = document.getElementById('modal-suspended');
+            var modalSuspendedCloseElem = document.getElementById('modal-suspended-close');
+            var modalOverlayNgElem = angular.element(modalOverlayElem);
+            var modalSuspendedNgElem = angular.element(modalSuspendedElem);
+            var showModalSuspended = function() {
+                var windowW = window.innerWidth;
+                var windowH = window.innerHeight;
+                var modalW = modalSuspendedElem.offsetWidth;
+                var modalH = modalSuspendedElem.offsetHeight;
+                modalSuspendedNgElem.css('left', ((windowW - modalW) / 2) + 'px');
+                modalSuspendedNgElem.css('top', ((windowH - modalH) / 2) + 'px');
+            };
+            var closeModalSuspended = function() {
+                modalOverlayNgElem.addClass('hide');
+                modalSuspendedNgElem.addClass('hide');
+                history.replaceState('','','@{cid}');
+            };
+            modalOverlayElem.onclick = closeModalSuspended;
+            modalSuspendedCloseElem.onclick = closeModalSuspended;
+
         } else if (vars.done) {
             var qe = 'e' + vars.done;
             contestRef.child('contests').child('c@{cid}').once('value', function(snapContest) {
@@ -216,18 +255,44 @@ app.controller('ContestIndexCtrl', ['$scope', function($scope) {
                 }
             contestRef.child('events').once('value', function(snapEvents) {
                 if (snapEvents.exists() && (snapEvents.val())[qe]) {
-                    $scope.$apply(function() {
+                    $timeout(function() {
                         $scope.justDone = (snapEvents.val())[qe].name;
                         $scope.justDoneText = encodeURIComponent(
                             'tribox Contest 第' + contest.number + '節 (' + contest.year + season + ') の ' +
                             (snapEvents.val())[qe].name + ' に参加しました! 参加締切は毎週日曜21時です。'
                         );
+                        // うまくDOMのサイズが取得できないときがあるので何回か呼ぶ
+                        showModalDone();
+                        $timeout(showModalDone, 1000);
+                        $timeout(showModalDone, 10000);
                     });
                 }
             }, function(error) {
                 console.error(error);
             });
             });
+
+            // Modal
+            var modalOverlayElem = document.getElementById('modal-overlay');
+            var modalDoneElem = document.getElementById('modal-done');
+            var modalDoneCloseElem = document.getElementById('modal-done-close');
+            var modalOverlayNgElem = angular.element(modalOverlayElem);
+            var modalDoneNgElem = angular.element(modalDoneElem);
+            var showModalDone = function() {
+                var windowW = window.innerWidth;
+                var windowH = window.innerHeight;
+                var modalW = modalDoneElem.offsetWidth;
+                var modalH = modalDoneElem.offsetHeight;
+                modalDoneNgElem.css('left', ((windowW - modalW) / 2) + 'px');
+                modalDoneNgElem.css('top', ((windowH - modalH) / 2) + 'px');
+            };
+            var closeModalDone = function() {
+                modalOverlayNgElem.addClass('hide');
+                modalDoneNgElem.addClass('hide');
+                history.replaceState('','','@{cid}');
+            };
+            modalOverlayElem.onclick = closeModalDone;
+            modalDoneCloseElem.onclick = closeModalDone;
         }
     }
 

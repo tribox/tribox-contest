@@ -125,7 +125,18 @@ TriboxContest.escapeHTML = function(text) {
 var getUrlVars = function() {
     var vars = {};
     var url = window.location.search;
-    var hash  = url.slice(1).split('&');
+    var hash = url.slice(1).split('&');
+    var max = hash.length;
+    for (var i = 0; i < max; i++) {
+        var array = hash[i].split('=');
+        vars[array[0]] = array[1];
+    }
+    return vars;
+};
+var getUrlHashes = function() {
+    var vars = {};
+    var url = window.location.hash;
+    var hash = url.slice(1).split('&');
     var max = hash.length;
     for (var i = 0; i < max; i++) {
         var array = hash[i].split('=');
