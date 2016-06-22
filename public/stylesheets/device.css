@@ -1,0 +1,28 @@
+/**
+ * device.css
+ */
+
+@media screen and (max-width: 480px) {
+    .mb-hide {
+        display: none;
+    }
+    body {
+        background-color: #fcc !important;
+    }
+}
+@media screen and (min-width: 481px) and (max-width: 768px) {
+    .tb-hide {
+        display: none;
+    }
+    body {
+        background-color: #cfc !important;
+    }
+}
+@media screen and (min-width: 769px) {
+    .pc-hide {
+        display: none;
+    }
+    body {
+        background-color: #ccf !important;
+    }
+}

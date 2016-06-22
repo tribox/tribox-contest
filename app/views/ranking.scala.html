@@ -50,12 +50,12 @@ h3, h4 {
         <p>
             <span ng-repeat="(eid, e) in events">
                 <span ng-show="$index != 0"> / </span>
-                <a href="#{{ eid }}">{{ events[eid].name }}</a>
+                <a href="#{{ eid | removeHead }}">{{ events[eid].name }}</a>
             </span>
         </p>
 
         <div ng-repeat="(eid, e) in events">
-            <h4 id="{{ eid }}">{{ events[eid].name }}</h4>
+            <h4 id="{{ eid | removeHead }}">{{ events[eid].name }}</h4>
 
             <table class="table table-bordered tribox-contest ranking">
                 <thead>

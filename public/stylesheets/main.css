@@ -17,7 +17,7 @@ h1, h2, h3, h4, h5, h6 {
     font-family: 'ヒラギノ角ゴ Pro W3','Hiragino Kaku Gothic Pro','メイリオ',Meiryo,'ＭＳ Ｐゴシック',"Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
-@@media screen and (max-width: 480px) {
+@media screen and (max-width: 480px) {
     h2 {
         font-size: 1.8em;
     }
@@ -35,16 +35,7 @@ h1, h2, h3, h4, h5, h6 {
     display: inline-block;
     height: 30px;
 }
-/*@media screen and (max-width: 768px) {
-    #header-logo {
-        margin-left: 0;
-    }
-}
-@media screen and (min-width: 768px) {
-    #header-logo {
-        margin-left: 30px;
-    }
-}*/
+
 #header-logo span {
     display: none;
 }
@@ -55,16 +46,7 @@ h1, h2, h3, h4, h5, h6 {
     margin-top: 10px;
     float: right;
 }
-/*@media screen and (max-width: 768px) {
-    #header-menu {
-        margin-right: 0;
-    }
-}
-@media screen and (min-width: 768px) {
-    #header-menu {
-        margin-right: 30px;
-    }
-}*/
+
 #header-menu a {
     color: #555;
 }
@@ -189,7 +171,7 @@ table.setting th {
         padding: 0;
     }
 }
-@media screen and (min-width: 480px) {
+@media screen and (min-width: 481px) {
     table.setting th,
     table.setting td {
         padding-left: 20px;
@@ -218,7 +200,7 @@ table.scrambles td:first-child,
 table.scrambles th:first-child {
     padding-right: 10px;
 }
-/*@media screen and (min-width: 480px) {
+/*@media screen and (min-width: 481px) {
     table.scrambles td:first-child,
     table.scrambles th:first-child {
         padding-left: 20px;
@@ -235,7 +217,7 @@ table.scrambles th:first-child {
         margin-right: 10px;
     }
 }
-@media screen and (min-width: 768px) {
+@media screen and (min-width: 769px) {
     .timeform-wrap {
         padding-left: 10px;
         padding-right: 10px;
@@ -378,7 +360,11 @@ table.profile th {
     font-weight: bold;
     padding-right: 10px;
 }
-
+table.profile th,
+table.profile td {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
 
 /**
  * SkyBlue CSS: Override
@@ -428,49 +414,4 @@ table.table td {
     min-width: 30px;
     font-size: 0.8em;
     line-height: 1.2em;
-}
-
-
-/**
- * モーダル
- * https://syncer.jp/jquery-modal-window
- */
-.modal-content {
-    z-index: 1001;
-    position: fixed;
-    max-width: 640px;
-    margin: 1.5em auto 0;
-    padding: 20px;
-    background: #fff;
-    border: 1px solid #aaa;
-    -webkit-border-radius: 5px;
-       -moz-border-radius: 5px;
-            border-radius: 5px;
-}
-@media screen and (max-width: 480px) {
-    .modal-content {
-        width: 80%;
-    }
-}
-@media screen and (min-width: 480px) {
-    .modal-content {
-        width: 50%;
-    }
-}
-#modal-overlay {
-    z-index: 1000;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 120%;
-    background-color: rgba(0, 0, 0, 0.6);
-}
-
-.modal-content p:last-child {
-    margin-bottom: 0;
-}
-
-.modal-content a {
-    cursor: pointer;
 }

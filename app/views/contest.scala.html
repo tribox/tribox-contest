@@ -7,6 +7,7 @@
 <html lang="ja" ng-app="contestApp">
 <head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
     @header(title=title, description=contestDescription, sitename=contestName, url=pageUrl, contestUrl=contestUrl)
+    <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/modal.css")">
 
 @basejs(firebaseappContest=firebaseappContest, firebaseappWca=firebaseappWca)
 </head>
@@ -15,8 +16,8 @@
 
     <div ng-controller="AuthCtrl"><div ng-controller="ContestCtrl"><div ng-controller="ContestIndexCtrl">
 
-        <div id="modal-overlay" ng-show="countdown == 0 && (justSuspended || justDone)"></div>
-        <div id="modal-suspended" class="modal-content" ng-show="countdown == 0 && justSuspended">
+        <div id="modal-overlay" class="hide" ng-show="countdown == 0 && (justSuspended || justDone)"></div>
+        <div id="modal-suspended" class="modal-content hide" ng-show="countdown == 0 && justSuspended">
             <p>
                 <i class="fa fa-check"></i>
                 "{{ justSuspended }}" が一時中断されました。
@@ -25,7 +26,7 @@
                 <a id="modal-suspended-close" class="modal-close">閉じる</a>
             </p>
         </div>
-        <div id="modal-done" class="modal-content" ng-show="countdown == 0 && justDone">
+        <div id="modal-done" class="modal-content hide" ng-show="countdown == 0 && justDone">
             <p>
                 <i class="fa fa-check"></i>
                 "{{ justDone }}" の結果送信が完了しました。
@@ -230,6 +231,8 @@ app.controller('ContestIndexCtrl', ['$scope', '$timeout', function($scope, $time
             var modalSuspendedCloseElem = document.getElementById('modal-suspended-close');
             var modalOverlayNgElem = angular.element(modalOverlayElem);
             var modalSuspendedNgElem = angular.element(modalSuspendedElem);
+            modalOverlayNgElem.removeClass('hide');
+            modalSuspendedNgElem.removeClass('hide');
             var showModalSuspended = function() {
                 var windowW = window.innerWidth;
                 var windowH = window.innerHeight;
@@ -281,6 +284,8 @@ app.controller('ContestIndexCtrl', ['$scope', '$timeout', function($scope, $time
             var modalDoneCloseElem = document.getElementById('modal-done-close');
             var modalOverlayNgElem = angular.element(modalOverlayElem);
             var modalDoneNgElem = angular.element(modalDoneElem);
+            modalOverlayNgElem.removeClass('hide');
+            modalDoneNgElem.removeClass('hide');
             var showModalDone = function() {
                 var windowW = window.innerWidth;
                 var windowH = window.innerHeight;

@@ -7,6 +7,7 @@
 <html lang="ja" ng-app="contestApp">
 <head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
     @header(title=title, description=contestDescription, sitename=contestName, url=pageUrl, contestUrl=contestUrl)
+    <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/modal.css")">
 
 @basejs(firebaseappContest)
 </head>
@@ -15,8 +16,8 @@
 
     <div ng-controller="AuthCtrl"><div ng-controller="IndexCtrl">
 
-        <div id="modal-overlay" ng-show="justLogout"></div>
-        <div id="modal-logout" class="modal-content" ng-show="justLogout">
+        <div id="modal-overlay" class="hide" ng-show="justLogout"></div>
+        <div id="modal-logout" class="modal-content hide" ng-show="justLogout">
             <p>
                 <i class="fa fa-check"></i>
                 ログアウトしました。
@@ -160,6 +161,8 @@ app.controller('IndexCtrl', ['$scope', '$timeout', function($scope, $timeout) {
     var modalLogoutCloseElem = document.getElementById('modal-logout-close');
     var modalOverlayNgElem = angular.element(modalOverlayElem);
     var modalLogoutNgElem = angular.element(modalLogoutElem);
+    modalOverlayNgElem.removeClass('hide');
+    modalLogoutNgElem.removeClass('hide');
     var showModal = function() {
         var windowW = window.innerWidth;
         var windowH = window.innerHeight;
