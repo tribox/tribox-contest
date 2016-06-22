@@ -20,6 +20,7 @@ app.controller('AuthCtrl', ['$scope', '$firebaseObject', 'Auth', function($scope
 
     Auth.$onAuth(function(authData) {
         if (authData) {
+            angular.element(document.getElementById('auth-info')).removeClass('hide');
             $scope.message = 'Logged in as: ' + authData.uid + ' (' + authData.password.email + ')';
             $scope.authData = authData;
             $scope.userData = $firebaseObject(contestRef.child('users').child(authData.uid));

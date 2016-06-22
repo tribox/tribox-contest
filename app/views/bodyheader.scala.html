@@ -28,16 +28,16 @@
 
 @if(cid == "") {
     <div id="main-menu" class="row" ng-controller="InProgressCtrl">
-        <div class="col sm-3">
+        <div id="main-menu-1" class="col sm-3">
             <a href="@routes.HomeController.about">トライボックスコンテストとは</a>
         </div>
-        <div class="col sm-3">
+        <div id="main-menu-2" class="col sm-3">
             <a href="/contest/{{ inProgress.lastContest | removeHead }}">最新のコンテストの結果</a>
         </div>
-        <div class="col sm-3">
+        <div id="main-menu-3" class="col sm-3">
             <a href="/ranking/{{ inProgressContest.year }}{{ inProgressContest.season }}">シーズンランキング</a>
         </div>
-        <div class="col sm-3">
+        <div id="main-menu-4" class="col sm-3">
             <a href="/ranking/{{ inProgressContest.year }}{{ inProgressContest.season }}/puzzle">キューブ使用率ランキング</a>
         </div>
     </div>
@@ -54,6 +54,12 @@ app.controller('InProgressCtrl', ['$scope', '$timeout', function($scope, $timeou
             });
         });
     });
+
+    var refHeight = document.getElementById('main-menu-1').offsetHeight;
+    angular.element(document.getElementById('main-menu-1')).css('height', refHeight + 'px');
+    angular.element(document.getElementById('main-menu-2')).css('height', refHeight + 'px');
+    angular.element(document.getElementById('main-menu-3')).css('height', refHeight + 'px');
+    angular.element(document.getElementById('main-menu-4')).css('height', refHeight + 'px');
 }]);
 </script>
 

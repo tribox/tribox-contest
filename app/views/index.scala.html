@@ -149,6 +149,7 @@ app.controller('IndexCtrl', ['$scope', '$timeout', function($scope, $timeout) {
                 $scope.justLogout = true;
                 // うまくDOMのサイズが取得できないときがあるので何回か呼ぶ
                 showModal();
+                $timeout(showModal, 200);
                 $timeout(showModal, 1000);
                 $timeout(showModal, 10000);
             });
@@ -174,6 +175,7 @@ app.controller('IndexCtrl', ['$scope', '$timeout', function($scope, $timeout) {
     var closeModal = function() {
         modalOverlayNgElem.addClass('hide');
         modalLogoutNgElem.addClass('hide');
+        history.replaceState('', '', '/');
     };
     modalOverlayElem.onclick = closeModal;
     modalLogoutCloseElem.onclick = closeModal;

@@ -148,8 +148,8 @@ a.video-url {
                         <th ng-if="eid != 'e333fm' && events[eid].method == 'average'">平均記録</th>
                         <th ng-if="eid != 'e333fm' && events[eid].method == 'best'">最高記録</th>
                         <th ng-if="eid == 'e333fm'">記録</th>
-                        <th ng-if="eid != 'e333fm'">個々の記録</th>
-                        <th ng-if="eid == 'e333fm'">解答・コメント</th>
+                        <th class="mb-hide" ng-if="eid != 'e333fm'">個々の記録</th>
+                        <th class="mb-hide" ng-if="eid == 'e333fm'">解答・コメント</th>
                         <th>使用キューブ</th>
                         <th><i class="fa fa-video-camera"></i></th>
                     </tr>
@@ -161,8 +161,8 @@ a.video-url {
                         <td ng-if="c.result.seasonPoint && c.result.seasonPoint != 0">{{ c.result.seasonPoint }}</td>
                         <td ng-if="!(c.result.seasonPoint) || c.result.seasonPoint == 0"></td>
                         <td>{{ c.result.resultF }}</td>
-                        <td ng-if="eid != 'e333fm'">{{ c.result.detailsF }}</td>
-                        <td ng-if="eid == 'e333fm'" id="e333fm-{{ c.contestId }}-show"><a class="cursor-pointer" ng-click="showDetail(c.contestId)">表示</a></td>
+                        <td class="mb-hide" ng-if="eid != 'e333fm'">{{ c.result.detailsF }}</td>
+                        <td class="mb-hide" ng-if="eid == 'e333fm'" id="e333fm-{{ c.contestId }}-show"><a class="cursor-pointer" ng-click="showDetail(c.contestId)">表示</a></td>
                         <td ng-show="c.result.puzzle.type == 'database'">
                             <a href="http://store.tribox.com/products/detail.php?product_id={{ c.result.puzzle.product }}" target="_blank">{{ c.result.puzzleF }}</a>
                         </td>

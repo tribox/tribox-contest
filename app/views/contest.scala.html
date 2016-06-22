@@ -70,6 +70,15 @@
             このコンテストはまだ開始されていません。
         </p>
 
+        <p>
+            コンテストの表示を切り替える<br>
+            <select class="form-control" style="margin-bottom: 5px;" ng-model="currentContest" ng-change="currentContestChange()">
+                <option ng-repeat="c in contestsList" value="{{ c.id | removeHead}}">
+                    {{ c.shortName }}
+                </option>
+            </select>
+        </p>
+
         <table class="table table-bordered tribox-contest" ng-if="0 <= countdown">
             <thead>
                 <tr>
@@ -108,12 +117,12 @@
                             <th>順位</th>
                             <th>獲得SP</th>
                             <th>名前</th>
-                            <th>所属</th>
+                            <th class="mb-hide">所属</th>
                             <th ng-if="e != 'e333fm' && events[e].method == 'average'">平均記録</th>
                             <th ng-if="e != 'e333fm' && events[e].method == 'best'">最高記録</th>
                             <th ng-if="e == 'e333fm'">記録</th>
-                            <th ng-if="e != 'e333fm'">個々の記録</th>
-                            <th ng-if="e == 'e333fm'">解答・コメント</th>
+                            <th class="mb-hide" ng-if="e != 'e333fm'">個々の記録</th>
+                            <th class="mb-hide" ng-if="e == 'e333fm'">解答・コメント</th>
                             <th>使用キューブ</th>
                         </tr>
                     </thead>
@@ -126,10 +135,10 @@
                                 <img src="@routes.Assets.versioned("flags/flags-iso/shiny/24")/{{ r.user.iso2 }}.png" height="24" style="vertical-align: middle;" ng-show="r.user.iso2">
                                 <a href="/user/{{ r.user.username }}">{{ r.user.displayname }}</a>
                             </td>
-                            <td>{{ r.user.organization | shorten10}}</td>
+                            <td class="mb-hide">{{ r.user.organization | shorten10 }}</td>
                             <td>{{ r.resultF }}</td>
-                            <td ng-if="e != 'e333fm'">{{ r.detailsF }}</td>
-                            <td ng-if="e == 'e333fm'" id="e333fm-{{ $index }}-show"><a class="cursor-pointer" ng-click="showDetail($index)">表示</a></td>
+                            <td class="mb-hide" ng-if="e != 'e333fm'">{{ r.detailsF }}</td>
+                            <td class="mb-hide" ng-if="e == 'e333fm'" id="e333fm-{{ $index }}-show"><a class="cursor-pointer" ng-click="showDetail($index)">表示</a></td>
                             <td ng-show="r.puzzle.type == 'database'">
                                 <a href="http://store.tribox.com/products/detail.php?product_id={{ r.puzzle.product }}" target="_blank">{{ r.puzzleF }}</a>
                             </td>
@@ -140,8 +149,11 @@
                     </tbody>
                 </table>
                 <p>
-                    <a class="btn" href="/contest/result/@{cid}/{{ e | removeHead }}">
+                    <a class="btn mb-hide" href="/contest/result/@{cid}/{{ e | removeHead }}">
                         {{ events[e].name }} のすべての結果を見る
+                    </a>
+                    <a class="btn tb-hide pc-hide" href="/contest/result/@{cid}/{{ e | removeHead }}" style="padding: 10px 15px;">
+                        {{ events[e].name }} すべての結果
                     </a>
                 </p>
                 @* <!--<pre>{{ resultsData[e] | json }}</pre>--> *@
@@ -178,6 +190,9 @@ app.controller('ContestIndexCtrl', ['$scope', '$timeout', function($scope, $time
     $scope.justDone = null;
     $scope.justDoneText = '';
     $scope.contestIndexLoaded = true;
+
+    $scope.currentContest = '@{cid}';
+    $scope.contestsList = null;
 
     // Read personal results
     var authData = contestRef.getAuth();
@@ -217,6 +232,7 @@ app.controller('ContestIndexCtrl', ['$scope', '$timeout', function($scope, $time
                         $scope.justSuspended = (snapEvents.val())[qe].name;
                         // うまくDOMのサイズが取得できないときがあるので何回か呼ぶ
                         showModalSuspended();
+                        $timeout(showModalSuspended, 200);
                         $timeout(showModalSuspended, 1000);
                         $timeout(showModalSuspended, 10000);
                     });
@@ -244,7 +260,7 @@ app.controller('ContestIndexCtrl', ['$scope', '$timeout', function($scope, $time
             var closeModalSuspended = function() {
                 modalOverlayNgElem.addClass('hide');
                 modalSuspendedNgElem.addClass('hide');
-                history.replaceState('','','@{cid}');
+                history.replaceState('', '', '@{cid}');
             };
             modalOverlayElem.onclick = closeModalSuspended;
             modalSuspendedCloseElem.onclick = closeModalSuspended;
@@ -269,6 +285,7 @@ app.controller('ContestIndexCtrl', ['$scope', '$timeout', function($scope, $time
                         );
                         // うまくDOMのサイズが取得できないときがあるので何回か呼ぶ
                         showModalDone();
+                        $timeout(showModalDone, 200);
                         $timeout(showModalDone, 1000);
                         $timeout(showModalDone, 10000);
                     });
@@ -297,12 +314,32 @@ app.controller('ContestIndexCtrl', ['$scope', '$timeout', function($scope, $time
             var closeModalDone = function() {
                 modalOverlayNgElem.addClass('hide');
                 modalDoneNgElem.addClass('hide');
-                history.replaceState('','','@{cid}');
+                history.replaceState('', '', '@{cid}');
             };
             modalOverlayElem.onclick = closeModalDone;
             modalDoneCloseElem.onclick = closeModalDone;
         }
     }
+
+    // 今シーズンの開催済みコンテストリスト
+    // とりあえず contests テーブルから引っ張ってくる
+    contestRef.child('contests').once('value', function(snapContests) {
+        contestRef.child('inProgress').once('value', function(snapInProgress) {
+            var lastContest = snapInProgress.val().lastContest;
+            var contests = snapContests.val();
+            var _contestsList = [];
+            Object.keys(snapContests.val()).forEach(function(contestId) {
+                if (contestId <= lastContest) {
+                    _contestsList.push({ 'id': contestId, 'name': contests[contestId].contestName, 'shortName': contests[contestId].contestName.slice(7) });
+                }
+            });
+            $scope.contestsList = _contestsList;
+        });
+    });
+
+    $scope.currentContestChange = function() {
+        location.href = '/contest/' + $scope.currentContest;
+    };
 
     $scope.showDetail = function(index) {
         var html = '<tr id="fmc-detail-' + index + '" class="fmc-detail"><td colspan="7">'

@@ -6,25 +6,9 @@
         </p>
 }
 
-        <p class="margin-bottom-30" ng-if="isLoggingin">
+        <p id="auth-info" class="margin-bottom-30 hide" ng-show="isLoggingin">
             {{ userData.displayname }}<span ng-show="userData.organization">, {{ userData.organization }}</span>
-            <span class="color-error" ng-if="isTemporaryPassword">
+            <span class="color-error" ng-show="isTemporaryPassword">
                 初期パスワードが変更されていません。<a href="/setting/password" class="underlined">パスワードを変更</a>してください。
             </span>
         </p>
-
-        @* <!--<p ng-if="message">Auth status: <strong>{{ message }}</strong></p>
-        <p ng-if="isTemporaryPassword" style="color:#f00">Please change pasword!</p>
-        <p>authData:</p><pre>{{ authData | json }}</pre>
-        <p>userData:</p><pre>{{ userData | json }}</pre>
-        <p>usersecretData:</p><pre>{{ usersecretData | json }}</pre>
-
-        <ul>
-            <li ng-hide="isLoggingin"><a href="/join">Join</a></li>
-            <li ng-hide="isLoggingin"><a href="/login">Login</a></li>
-            <li ng-hide="isLoggingin"><a href="/forgot">Forgot password?</a></li>
-            <li ng-show="isLoggingin"><a href="/setting">Setting</a></li>
-            <li ng-show="isLoggingin"><a href="/logout">Logout</a></li>
-        </ul>
-
-        <hr>--> *@

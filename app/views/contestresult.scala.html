@@ -58,7 +58,7 @@ h4 {
             コンテスト・競技種目の表示を切り替える<br>
             <select class="form-control" style="margin-bottom: 5px;" ng-model="currentContest" ng-change="currentContestChange()">
                 <option ng-repeat="c in contestsList" value="{{ c.id | removeHead}}">
-                    {{ c.name }}
+                    {{ c.shortName }}
                 </option>
             </select><br>
             <select class="form-control" style="margin-bottom: 5px;" ng-model="currentEvent" ng-change="currentEventChange()">
@@ -120,14 +120,14 @@ var drawChart = function(data) {
                     <th>順位</th>
                     <th>獲得SP</th>
                     <th>名前</th>
-                    <th>所属</th>
+                    <th class="mb-hide">所属</th>
                     @if(eid != "333fm") {
                         <th ng-if="events.e@{eid}.method == 'average'">平均記録</th>
                         <th ng-if="events.e@{eid}.method == 'best'">最高記録</th>
-                        <th>個々の記録</th>
+                        <th class="mb-hide">個々の記録</th>
                     } else {
                         <th>記録</th>
-                        <th>解答・コメント</th>
+                        <th class="mb-hide">解答・コメント</th>
                     }
                     <th>使用キューブ</th>
                     <th><i class="fa fa-video-camera"></i></th>
@@ -142,12 +142,12 @@ var drawChart = function(data) {
                         <img src="@routes.Assets.versioned("flags/flags-iso/shiny/24")/{{ r.user.iso2 }}.png" height="24" style="vertical-align: middle;" ng-show="r.user.iso2">
                         <a href="/user/{{ r.user.username }}">{{ r.user.displayname }}</a>
                     </td>
-                    <td>{{ r.user.organization | shorten10}}</td>
+                    <td class="mb-hide">{{ r.user.organization | shorten10 }}</td>
                     <td>{{ r.resultF }}</td>
                     @if(eid != "333fm") {
-                        <td>{{ r.detailsF }}</td>
+                        <td class="mb-hide">{{ r.detailsF }}</td>
                     } else {
-                        <td id="e@{eid}-{{ $index }}-show"><a class="cursor-pointer" ng-click="showDetail($index)">表示</a></td>
+                        <td id="e@{eid}-{{ $index }}-show" class="mb-hide"><a class="cursor-pointer" ng-click="showDetail($index)">表示</a></td>
                     }
                     <td ng-show="r.puzzle.type == 'database'">
                         <a href="http://store.tribox.com/products/detail.php?product_id={{ r.puzzle.product }}" target="_blank">{{ r.puzzleF }}</a>
@@ -201,7 +201,7 @@ app.controller('ContestResultCtrl', ['$scope', function($scope) {
             var _contestsList = [];
             Object.keys(snapContests.val()).forEach(function(contestId) {
                 if (contestId <= lastContest) {
-                    _contestsList.push({'id': contestId, 'name': contests[contestId].contestName});
+                    _contestsList.push({ 'id': contestId, 'name': contests[contestId].contestName, 'shortName': contests[contestId].contestName.slice(7) });
                 }
             });
             $scope.contestsList = _contestsList;
