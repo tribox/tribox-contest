@@ -1,4 +1,4 @@
-@(cid: String, eid: String, contestName: String, contestDescription: String, contestUrl: String, firebaseappContest: String)
+@(cid: String, eid: String, contestName: String, contestDescription: String, contestUrl: String, firebaseappContest: String, firebaseappWca: String)
 
 @defining("Contest Result " + cid + " (" + eid + ")") { title =>
 @defining(contestUrl + "/contest/result/" + cid + "/" + eid) { pageUrl =>
@@ -8,7 +8,7 @@
 <head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
     @header(title=title, description=contestDescription, sitename=contestName, url=pageUrl, contestUrl=contestUrl)
 
-@basejs(firebaseappContest)
+@basejs(firebaseappContest=firebaseappContest, firebaseappWca=firebaseappWca)
 
 <style>
 h4 {
@@ -138,7 +138,10 @@ var drawChart = function(data) {
                     <td>{{ r.place }} <i class="fa fa-star color-star" ng-if="r.lottery"></i></td>
                     <td ng-if="r.seasonPoint && r.seasonPoint != 0">{{ r.seasonPoint }}</td>
                     <td ng-if="!(r.seasonPoint) || r.seasonPoint == 0"></td>
-                    <td><a href="/user/{{ r.user.username }}">{{ r.user.displayname }}</a></td>
+                    <td>
+                        <img src="@routes.Assets.versioned("flags/flags-iso/shiny/24")/{{ r.user.iso2 }}.png" height="24" style="vertical-align: middle;" ng-show="r.user.iso2">
+                        <a href="/user/{{ r.user.username }}">{{ r.user.displayname }}</a>
+                    </td>
                     <td>{{ r.user.organization | shorten10}}</td>
                     <td>{{ r.resultF }}</td>
                     @if(eid != "333fm") {

@@ -56,9 +56,12 @@ a.video-url {
                     <th>WCA</th>
                     <td><a href="https://www.worldcubeassociation.org/results/p.php?i={{ thisUserData.wcaId }}" target="_blank">{{ thisUserData.wcaId }}</a></td>
                 </tr>
-                <tr ng-show="thisUserData.country">
+                <tr ng-show="thisUserData.wcaId">
                     <th>国籍</th>
-                    <td>{{ thisUserData.country }}</td>
+                    <td>
+                        <img src="@routes.Assets.versioned("flags/flags-iso/shiny/24")/{{ thisUserData.iso2 }}.png" height="24" style="vertical-align: middle;" ng-show="thisUserData.iso2">
+                        {{ thisUserData.country }}
+                    </td>
                 </tr>
                 <tr ng-show="thisUserData.twitterId">
                     <th>Twitter</th>
@@ -331,6 +334,7 @@ app.controller('UserCtrl', ['$scope', '$timeout', function($scope, $timeout) {
                                 if (snapCountry.exists()) {
                                     $timeout(function() {
                                         $scope.thisUserData.country = snapCountry.val().name;
+                                        $scope.thisUserData.iso2 = snapCountry.val().iso2;
                                     });
                                 }
                             });

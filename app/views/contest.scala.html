@@ -1,4 +1,4 @@
-@(cid: String, contestName: String, contestDescription: String, contestUrl: String, firebaseappContest: String)
+@(cid: String, contestName: String, contestDescription: String, contestUrl: String, firebaseappContest: String, firebaseappWca: String)
 
 @defining("Contest " + cid) { title =>
 @defining(contestUrl + "/contest/" + cid) { pageUrl =>
@@ -8,7 +8,7 @@
 <head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
     @header(title=title, description=contestDescription, sitename=contestName, url=pageUrl, contestUrl=contestUrl)
 
-@basejs(firebaseappContest)
+@basejs(firebaseappContest=firebaseappContest, firebaseappWca=firebaseappWca)
 </head>
 <body><div class="container">
     @bodyheader(title, contestName)
@@ -121,7 +121,10 @@
                             <td>{{ r.place }}</td>
                             <td ng-if="r.seasonPoint && r.seasonPoint != 0">{{ r.seasonPoint }}</td>
                             <td ng-if="!(r.seasonPoint) || r.seasonPoint == 0"></td>
-                            <td><a href="/user/{{ r.user.username }}">{{ r.user.displayname }}</a></td>
+                            <td>
+                                <img src="@routes.Assets.versioned("flags/flags-iso/shiny/24")/{{ r.user.iso2 }}.png" height="24" style="vertical-align: middle;" ng-show="r.user.iso2">
+                                <a href="/user/{{ r.user.username }}">{{ r.user.displayname }}</a>
+                            </td>
                             <td>{{ r.user.organization | shorten10}}</td>
                             <td>{{ r.resultF }}</td>
                             <td ng-if="e != 'e333fm'">{{ r.detailsF }}</td>

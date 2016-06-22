@@ -438,7 +438,6 @@ table.table td {
 .modal-content {
     z-index: 1001;
     position: fixed;
-    width: 60%;
     max-width: 640px;
     margin: 1.5em auto 0;
     padding: 20px;
@@ -447,6 +446,16 @@ table.table td {
     -webkit-border-radius: 5px;
        -moz-border-radius: 5px;
             border-radius: 5px;
+}
+@media screen and (max-width: 480px) {
+    .modal-content {
+        width: 80%;
+    }
+}
+@media screen and (min-width: 480px) {
+    .modal-content {
+        width: 50%;
+    }
 }
 #modal-overlay {
     z-index: 1000;

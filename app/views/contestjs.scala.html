@@ -230,6 +230,19 @@ app.controller('ContestCtrl', ['$scope', '$timeout', function($scope, $timeout) 
                                             var results = $scope.resultsData[e][uid];
                                             // User
                                             $scope.resultsData[e][uid].user = Users[uid];
+                                            if (wcaRef && Users[uid].wcaId) {
+                                                wcaRef.child('persons').child(Users[uid].wcaId).once('value', function(snapPerson) {
+                                                    if (snapPerson.exists()) {
+                                                        wcaRef.child('countries').child(snapPerson.val().countryId).once('value', function(snapCountry) {
+                                                            if (snapCountry.exists()) {
+                                                                $timeout(function() {
+                                                                    $scope.resultsData[e][uid].user.iso2 = snapCountry.val().iso2;
+                                                                });
+                                                            }
+                                                        });
+                                                    }
+                                                });
+                                            }
                                             // Result
                                             $scope.resultsData[e][uid].resultF = TriboxContest.formatResult(results, e, Events);
                                             // Details
@@ -284,6 +297,19 @@ app.controller('ContestCtrl', ['$scope', '$timeout', function($scope, $timeout) 
                                     var results = $scope.resultsData['e@{eid}'][uid];
                                     // User
                                     $scope.resultsData['e@{eid}'][uid].user = Users[uid];
+                                    if (wcaRef && Users[uid].wcaId) {
+                                        wcaRef.child('persons').child(Users[uid].wcaId).once('value', function(snapPerson) {
+                                            if (snapPerson.exists()) {
+                                                wcaRef.child('countries').child(snapPerson.val().countryId).once('value', function(snapCountry) {
+                                                    if (snapCountry.exists()) {
+                                                        $timeout(function() {
+                                                            $scope.resultsData['e@{eid}'][uid].user.iso2 = snapCountry.val().iso2;
+                                                        });
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    }
                                     // Result
                                     $scope.resultsData['e@{eid}'][uid].resultF = TriboxContest.formatResult(results, 'e@{eid}', Events);
                                     // Details
