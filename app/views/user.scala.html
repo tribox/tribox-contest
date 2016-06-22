@@ -1,4 +1,4 @@
-@(id: String, contestName: String, contestDescription: String, contestUrl: String, firebaseappContest: String)
+@(id: String, contestName: String, contestDescription: String, contestUrl: String, firebaseappContest: String, firebaseappWca: String)
 
 @defining(id) { title =>
 @defining(contestUrl + "/user/" + id) { pageUrl =>
@@ -8,7 +8,7 @@
 <head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
     @header(title=title, description=contestDescription, sitename=contestName, url=pageUrl, contestUrl=contestUrl)
 
-@basejs(firebaseappContest)
+@basejs(firebaseappContest=firebaseappContest, firebaseappWca=firebaseappWca)
 
 <style>
 h3, h4 {
@@ -55,6 +55,10 @@ a.video-url {
                 <tr ng-show="thisUserData.wcaId">
                     <th>WCA</th>
                     <td><a href="https://www.worldcubeassociation.org/results/p.php?i={{ thisUserData.wcaId }}" target="_blank">{{ thisUserData.wcaId }}</a></td>
+                </tr>
+                <tr ng-show="thisUserData.country">
+                    <th>国籍</th>
+                    <td>{{ thisUserData.country }}</td>
                 </tr>
                 <tr ng-show="thisUserData.twitterId">
                     <th>Twitter</th>
@@ -305,6 +309,7 @@ app.controller('UserCtrl', ['$scope', '$timeout', function($scope, $timeout) {
                     });
                 });
 
+
                 $timeout(function() {
                     $scope.thisUserData = snapUser.val();
                     $scope.thisUsername = snapUsername.val();
@@ -318,6 +323,20 @@ app.controller('UserCtrl', ['$scope', '$timeout', function($scope, $timeout) {
                         $scope.contestsArray.push(contests[cid]);
                     });
                 });
+
+                if (snapUser.val().wcaId) {
+                    wcaRef.child('persons').child(snapUser.val().wcaId).once('value', function(snapPerson) {
+                        if (snapPerson.exists()) {
+                            wcaRef.child('countries').child(snapPerson.val().countryId).once('value', function(snapCountry) {
+                                if (snapCountry.exists()) {
+                                    $timeout(function() {
+                                        $scope.thisUserData.country = snapCountry.val().name;
+                                    });
+                                }
+                            });
+                        }
+                    });
+                }
 
             });
             });
@@ -387,7 +406,7 @@ app.controller('UserCtrl', ['$scope', '$timeout', function($scope, $timeout) {
     };
 }]);
 </script>
-<script type="text/javascript" src="@routes.DynamicJsController.products" async></script>
+<script type="text/javascript" src="@routes.DynamicJsController.products"></script>
 
 </div></body>
 </html>

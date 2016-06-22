@@ -80,10 +80,11 @@ node contestmanager/create-season.js 20162
 
 ### [不定期] 必要時に実行する
 
-WCAデータベースインポート。
+WCAデータベースインポートと、WCA APPの更新。
 [wca-importer](https://github.com/kotarot/wca-importer) を用いる。
 ```
 php -f /path/to/wca_importer/import.php
+node contestmanager/update-wcaapp.js
 ```
 
 

@@ -24,6 +24,9 @@ class HomeController @Inject() extends Controller {
     def getFirebaseappContest(): String = {
         return Play.application.configuration.getString("firebaseapp.contest").getOrElse("tribox-contest")
     }
+    def getFirebaseappWca(): String = {
+        return Play.application.configuration.getString("firebaseapp.wca").getOrElse("")
+    }
     def getPlayAppPath(): String = {
         return Play.application.configuration.getString("contest.playpath").getOrElse("/path/to/playapp")
     }

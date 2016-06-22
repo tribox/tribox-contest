@@ -17,7 +17,7 @@ class UserController @Inject() extends HomeController {
      * User pages
      */
     def user(id: String) = Action {
-        Ok(views.html.user(id, getContestName, getContestDescription, getContestUrl, getFirebaseappContest))
+        Ok(views.html.user(id, getContestName, getContestDescription, getContestUrl, getFirebaseappContest, getFirebaseappWca))
     }
 
 }

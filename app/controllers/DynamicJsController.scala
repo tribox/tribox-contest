@@ -21,14 +21,4 @@ class DynamicJsController @Inject() extends Controller {
         Ok(views.js.products.render(products)).as("text/javascript utf-8")
     }
 
-    /**
-     * WCA Persons
-     */
-    def wcapersons = Action {
-        val wcaPersons = WcaPersons.getAll
-        println(wcaPersons)
-        val products = Product.getAll
-        Ok(views.js.products.render(products)).as("text/javascript utf-8")
-    }
-
 }

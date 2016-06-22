@@ -49,7 +49,6 @@ GET     /ranking/$sid<[0-9]{4}(1|2)>/puzzle controllers.RankingController.rankin
 
 # Dynamic JS
 GET     /js/products.js             controllers.DynamicJsController.products
-GET     /js/wcapersons.js           controllers.DynamicJsController.wcapersons
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

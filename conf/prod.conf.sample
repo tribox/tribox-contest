@@ -22,10 +22,10 @@ db {
     #stickers.username = stickersdbuser
     #stickers.password = "stickersdbpassword"
 
-    wca.driver = com.mysql.jdbc.Driver
-    wca.url = "jdbc:mysql://localhost/wcadb?characterEncoding=UTF-8"
-    wca.username = wcadbuser
-    wca.password = "wcadbpassword"
+    #wca.driver = com.mysql.jdbc.Driver
+    #wca.url = "jdbc:mysql://localhost/wcadb?characterEncoding=UTF-8"
+    #wca.username = wcadbuser
+    #wca.password = "wcadbpassword"
 }
 
 # 3) Change contest info.
@@ -36,3 +36,4 @@ contest.playpath = "/path/to/playapp"
 
 # 4) Change firebase app name.
 firebaseapp.contest = "firebase-contest-app"
+firebaseapp.wca = "firebase-wca-app"

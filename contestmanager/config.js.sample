@@ -22,6 +22,12 @@ exports.MYSQL_STORE_USER     = 'xxxxxxxx';
 exports.MYSQL_STORE_PASSWORD = 'xxxxxxxx';
 exports.MYSQL_STORE_DATABASE = 'xxxxxxxx';
 
+// MySQL の設定 (WCA)
+exports.MYSQL_WCA_HOST     = 'xxxxxxxx';
+exports.MYSQL_WCA_USER     = 'xxxxxxxx';
+exports.MYSQL_WCA_PASSWORD = 'xxxxxxxx';
+exports.MYSQL_WCA_DATABASE = 'xxxxxxxx';
+
 // Twitter
 exports.CONSUMER_KEY        = 'xxxxxxxx';
 exports.CONSUMER_SECRET     = 'xxxxxxxx';

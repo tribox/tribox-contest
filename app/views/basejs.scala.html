@@ -1,4 +1,4 @@
-@(firebaseappContest: String)
+@(firebaseappContest: String, firebaseappWca: String = "")
 
 <script>
 window.TriboxContest = {};
@@ -188,7 +188,9 @@ var fadeIn = function(el, ms, fn) {
  */
 var app = angular.module('contestApp', ['firebase']);
 var contestRef = new Firebase('https://@{firebaseappContest}.firebaseio.com');
-
+@if(firebaseappWca != "") {
+    var wcaRef = new Firebase('https://@{firebaseappWca}.firebaseio.com');
+}
 
 /**
  * Filter: toDate
