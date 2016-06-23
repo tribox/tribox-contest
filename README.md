@@ -21,7 +21,7 @@ URL: https://contest.tribox.com
 Install required node modules.
 ```
 cd contestmanager
-npm install firebase firebase-token-generator alg async argv mysql request twitter
+npm install firebase@2.4.2 firebase-token-generator@2.0.0 alg async argv mysql request twitter
 ```
 
 Set up config files.
