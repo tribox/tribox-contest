@@ -33,7 +33,7 @@ Edit `prod.conf`.
 
 ```
 cd contestmanager
-cp config.js.sample config.js
+cp config.sample.js config.js
 ```
 Edit `config.js`.
 
