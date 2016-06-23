@@ -56,7 +56,6 @@ node contestmanager/collect-results.js --lastcontest --lottery --tweet
 ポイント加算する。
 ```
 node contestmanager/append-points.js
-node contestmanager/append-points.js
 ```
 上の `collect-results.js` スクリプトを実行して該当者を待ちレコードに記録した後に実行する。
 本当に対象者が正しいことを目視で確認した後、このスクリプトを実行して実際に抽選ポイントをストアポイントに加算する。
@@ -85,6 +84,22 @@ WCAデータベースインポートと、WCA APPの更新。
 ```
 php -f /path/to/wca_importer/import.php
 node contestmanager/update-wcaapp.js
+```
+
+
+## Crontab
+
+```
+################################
+# tribox Contest
+################################
+
+# Play application
+#*/1 * * * * /path/to/contestapp/play-start.sh
+
+# Update inProgress
+#0 21 * * 0 node /path/to/contestapp/contestmanager/update-inprogress.js > /path/to/contestapp/logs/update-inprogress.`date +\%Y\%m\%d`.stdout.log 2> /path/to/contestapp/logs/update-inprogress.`date +\%Y\%m\%d`.stderr.log
+#1 21 * * 0 node /path/to/contestapp/contestmanager/collect-results.js --lastcontest --lottery --tweet > /path/to/contestapp/logs/collect-results.`date +\%Y\%m\%d`.stdout.log 2> /path/to/contestapp/contestmanager/collect-results.`date +\%Y\%m\%d`.stderr.log
 ```
 
 
