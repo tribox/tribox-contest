@@ -109,7 +109,7 @@ app.controller('IndexCtrl', ['$scope', '$timeout', function($scope, $timeout) {
             var inProgress = snapInProgress.val();
             contestRef.child('contests').child(inProgress).once('value', function(snapContest) {
                 var inProgressContest = snapContest.val();
-                if (authData) {
+                if (!(inProgressContest._dummy) && authData) {
                     inProgressContest.events.forEach(function(e) {
                         contestRef.child('results').child(inProgress).child(e).child(authData.uid).once('value', function(snapResult) {
                             var resultData = snapResult.val();

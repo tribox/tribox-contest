@@ -32,13 +32,16 @@
             <a href="@routes.HomeController.about">トライボックスコンテストとは</a>
         </div>
         <div id="main-menu-2" class="col sm-3">
-            <a href="/contest/{{ inProgress.lastContest | removeHead }}">最新のコンテストの結果</a>
+            <a href="/contest/{{ inProgress.lastContest | removeHead }}" ng-show="!(inProgressContest._dummy)">最新のコンテストの結果</a>
+            <a href="/contest/#" ng-show="inProgressContest._dummy">最新のコンテストの結果</a>
         </div>
         <div id="main-menu-3" class="col sm-3">
-            <a href="/ranking/{{ inProgressContest.year }}{{ inProgressContest.season }}">シーズンランキング</a>
+            <a href="/ranking/{{ inProgressContest.year }}{{ inProgressContest.season }}" ng-show="!(inProgressContest._dummy)">シーズンランキング</a>
+            <a href="#" ng-show="inProgressContest._dummy">シーズンランキング</a>
         </div>
         <div id="main-menu-4" class="col sm-3">
-            <a href="/ranking/{{ inProgressContest.year }}{{ inProgressContest.season }}/puzzle">キューブ使用率ランキング</a>
+            <a href="/ranking/{{ inProgressContest.year }}{{ inProgressContest.season }}/puzzle" ng-show="!(inProgressContest._dummy)">キューブ使用率ランキング</a>
+            <a href="#" ng-show="inProgressContest._dummy">キューブ使用率ランキング</a>
         </div>
     </div>
 <script>
