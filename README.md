@@ -24,6 +24,19 @@ cd contestmanager
 npm install firebase firebase-token-generator alg async argv mysql request twitter
 ```
 
+Set up config files.
+```
+cd conf
+cp prod.conf.sample prod.conf
+```
+Edit `prod.conf`.
+
+```
+cd contestmanager
+cp config.js.sample config.js
+```
+Edit `config.js`.
+
 
 ## Run
 
