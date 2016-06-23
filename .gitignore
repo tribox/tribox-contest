@@ -15,3 +15,5 @@ target
 
 /contestmanager/node_modules
 /contestmanager/config.js
+
+/backup/*.json

@@ -98,8 +98,11 @@ node contestmanager/update-wcaapp.js
 */1 * * * * /path/to/contestapp/play-start.sh
 
 # Update inProgress
-0 21 * * 0 node /path/to/contestapp/contestmanager/update-inprogress.js > /path/to/contestapp/logs/update-inprogress.`date +\%Y\%m\%d`.stdout.log 2> /path/to/contestapp/logs/update-inprogress.`date +\%Y\%m\%d`.stderr.log
-1 21 * * 0 node /path/to/contestapp/contestmanager/collect-results.js --lastcontest --lottery --tweet > /path/to/contestapp/logs/collect-results.`date +\%Y\%m\%d`.stdout.log 2> /path/to/contestapp/contestmanager/collect-results.`date +\%Y\%m\%d`.stderr.log
+0 21 * * 0 /usr/bin/node /path/to/contestapp/contestmanager/update-inprogress.js > /path/to/contestapp/logs/update-inprogress.`date +\%Y\%m\%d`.stdout.log 2> /path/to/contestapp/logs/update-inprogress.`date +\%Y\%m\%d`.stderr.log
+1 21 * * 0 /usr/bin/node /path/to/contestapp/contestmanager/collect-results.js --lastcontest --lottery --tweet > /path/to/contestapp/logs/collect-results.`date +\%Y\%m\%d`.stdout.log 2> /path/to/contestapp/contestmanager/collect-results.`date +\%Y\%m\%d`.stderr.log
+
+# Backup
+2 0 * * * /usr/bin/node /path/to/contestapp/contestmanager/backup.js > /path/to/contestapp/logs/backup.`date +\%Y\%m\%d`.stdout.log 2> /path/to/contestapp/logs/backup.`date +\%Y\%m\%d`.stderr.log
 ```
 
 
