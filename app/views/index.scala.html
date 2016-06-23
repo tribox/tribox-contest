@@ -43,6 +43,13 @@
 
         <h3>開催中のコンテスト</h3>
 
+        <div ng-show="inProgressContest._dummy">
+            <p class="color-error">
+                開催中のコンテストはありません。
+            </p>
+        </div>
+
+        <div ng-show="!(inProgressContest._dummy)">
         <h4><a href="/contest/{{ inProgressContest.contestId }}">{{ inProgressContest.contestName }}</a></h4>
 
         <p>
@@ -77,6 +84,8 @@
         <pre>{{ inProgressContest | json }}</pre>
         <p>eventsDone:</p>
         <pre>{{ eventsDone | json }}</pre>--> *@
+
+        </div>
 
     </div></div></div>
 
