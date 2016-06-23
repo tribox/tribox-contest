@@ -41,9 +41,10 @@ app.controller('AuthForgotCtrl', ['$scope', 'Auth', function($scope, Auth) {
 
         <h2>パスワードリセット</h2>
 
-        @* <!--<div class="color-success margin-bottom-20" ng-if="message">
-            メッセージ: {{ message }}
-        </div>--> *@
+        <div class="notice-success margin-bottom-20" ng-if="resetMessage">
+            <i class="fa fa-check"></i>
+            {{ resetMessage }}
+        </div>
         <div class="color-error margin-bottom-20" ng-if="error">
             エラー: {{ error }}
         </div>
@@ -57,10 +58,6 @@ app.controller('AuthForgotCtrl', ['$scope', 'Auth', function($scope, Auth) {
             <input class="btn" type="submit" value="パスワードをリセットする">
 
         </form>
-
-        <div class="color-success margin-bottom-20" ng-if="resetMessage">
-            メッセージ: {{ resetMessage }}
-        </div>
 
     </div></div></div>
 
