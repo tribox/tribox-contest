@@ -1,0 +1,105 @@
+{
+    "contests": {
+        "cxxxxxxx": {
+            "_dummy": true
+        }
+    },
+    "events": {
+        "e333": {
+            "attempts": 5,
+            "format": "time",
+            "hasInspection": true,
+            "method": "average",
+            "name": "Rubik's Cube",
+            "scramblePuzzle": "333"
+        },
+        "e444": {
+            "attempts": 5,
+            "format": "time",
+            "hasInspection": true,
+            "method": "average",
+            "name": "4x4x4",
+            "scramblePuzzle": "444"
+        },
+        "e555": {
+            "attempts": 5,
+            "format": "time",
+            "hasInspection": true,
+            "method": "average",
+            "name": "5x5x5",
+            "scramblePuzzle": "555"
+        },
+        "e222": {
+            "attempts": 5,
+            "format": "time",
+            "hasInspection": true,
+            "method": "average",
+            "name": "2x2x2",
+            "scramblePuzzle": "222"
+        },
+        "e333bf": {
+            "attempts": 3,
+            "format": "time",
+            "hasInspection": false,
+            "method": "best",
+            "name": "Rubik's Cube 目隠し",
+            "scramblePuzzle": "333ni"
+        },
+        "e333oh": {
+            "attempts": 5,
+            "format": "time",
+            "hasInspection": true,
+            "method": "average",
+            "name": "Rubik's Cube 片手",
+            "scramblePuzzle": "333"
+        },
+        "e333fm": {
+            "attempts": 1,
+            "format": "number",
+            "hasInspection": false,
+            "method": "best",
+            "name": "Rubik's Cube 最少手数",
+            "scramblePuzzle": "333fm"
+        }
+    },
+    "inProgress": {
+        "contest": "cxxxxxxx",
+        "lastContest": "cxxxxxxx"
+    },
+    "results": {
+        "cxxxxxxx": {
+            "_dummy": true
+        }
+    },
+    "scrambles": {
+        "cxxxxxxx": {
+            "_dummy": true
+        }
+    },
+    "userhistories": {
+        "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx": {
+            "_dummy": true
+        }
+    },
+    "usernames": {
+        "dummy": {
+            "_dummy": true,
+            "createdAt": 0,
+            "uid": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+        }
+    },
+    "users": {
+        "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx": {
+            "_dummy": true,
+            "createdAt": 0,
+            "displayname": "dummy",
+            "screenname": "dummy"
+        }
+    },
+    "usersecrets": {
+        "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx": {
+            "_dummy": true,
+            "loggedinAt": 0
+        }
+    }
+}
