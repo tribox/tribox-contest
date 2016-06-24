@@ -18,24 +18,22 @@ URL: https://contest.tribox.com
 
 ## Setup
 
-Install required node modules.
+Install required node modules:
 ```
 cd contestmanager
 npm install firebase@2.4.2 firebase-token-generator@2.0.0 alg async argv mysql request twitter
 ```
 
-Set up config files.
+コンフィグファイルを設定する:
 ```
-cd conf
-cp prod.conf.sample prod.conf
+cp conf/prod.conf.sample conf/prod.conf  # and edit conf/prod.conf
+cp contestmanager/config.sample.js contestmanager/config.js  # and edit contestmanager/config.js
 ```
-Edit `prod.conf`.
 
+データベースの用意:
 ```
-cd contestmanager
-cp config.sample.js config.js
+TODO
 ```
-Edit `config.js`.
 
 
 ## Run
