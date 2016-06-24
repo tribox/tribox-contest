@@ -38,7 +38,7 @@ body {
         display: none;
     }
 }
-@@media screen and (min-width: 480px) {
+@@media screen and (min-width: 481px) {
     #timerText {
         font-size: 128px;
     }
@@ -229,7 +229,7 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
             });
         });
     } else {
-        location.href = '@routes.HomeController.index?logout=1';
+        location.href = '@routes.HomeController.index?please=1';
     }
 
     var showScramble = function(index) {
@@ -321,7 +321,7 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
                 }
             });
         } else {
-            location.href = '@routes.HomeController.index?logout=1';
+            location.href = '@routes.HomeController.index?please=1';
         }
     };
 

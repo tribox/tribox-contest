@@ -16,11 +16,15 @@
 
     <div ng-controller="AuthCtrl"><div ng-controller="IndexCtrl">
 
-        <div id="modal-overlay" class="hide" ng-show="justLogout"></div>
-        <div id="modal-logout" class="modal-content hide" ng-show="justLogout">
-            <p>
+        <div id="modal-overlay" class="hide" ng-show="justLogout || pleaseLogin"></div>
+        <div id="modal-logout" class="modal-content hide" ng-show="justLogout || pleaseLogin">
+            <p ng-show="justLogout">
                 <i class="fa fa-check"></i>
                 ログアウトしました。
+            </p>
+            <p ng-show="pleaseLogin">
+                <i class="fa fa-check"></i>
+                ログインしなおしてください。
             </p>
             <p>
                 <a id="modal-logout-close" class="modal-close">閉じる</a>
@@ -205,6 +209,15 @@ app.controller('IndexCtrl', ['$scope', '$timeout', function($scope, $timeout) {
         if (vars.logout) {
             $timeout(function() {
                 $scope.justLogout = true;
+                // うまくDOMのサイズが取得できないときがあるので何回か呼ぶ
+                showModal();
+                $timeout(showModal, 200);
+                $timeout(showModal, 1000);
+                $timeout(showModal, 10000);
+            });
+        } else if (vars.please) {
+            $timeout(function() {
+                $scope.pleaseLogin = true;
                 // うまくDOMのサイズが取得できないときがあるので何回か呼ぶ
                 showModal();
                 $timeout(showModal, 200);

@@ -138,11 +138,13 @@ app.controller('ContestCtrl', ['$scope', '$timeout', function($scope, $timeout) 
     contestRef.child('events').once('value', function(snapEvents) {
         if (snapEvents.exists()) {
             window.TriboxContest.events = snapEvents.val();
+            $timeout(function() {
+                $scope.events = snapEvents.val();
+            });
             contestRef.child('contests').child('c@{cid}').once('value', function(snapContest) {
                 if (snapContest.exists() && snapContest.val()._dummy == null) {
                     contestRef.child('inProgress').once('value', function(snapInProgress) {
-                        $scope.$apply(function() {
-                            $scope.events = snapEvents.val();
+                        $timeout(function() {
                             $scope.contestData = snapContest.val();
                             $scope.inProgress = snapInProgress.val();
                             $scope.countdown = @cid - parseInt(snapInProgress.val().contest.substr(1));
@@ -160,7 +162,7 @@ app.controller('ContestCtrl', ['$scope', '$timeout', function($scope, $timeout) 
                     });
                 } else {
                     console.error('Invalid contest: @{cid}');
-                    $scope.$apply(function() {
+                    $timeout(function() {
                         $scope.loadedMain = true;
                         $scope.contestLoaded = $scope.loadedMain && $scope.loadedScrambles && $scope.loadedResults;
                     });
@@ -177,7 +179,7 @@ app.controller('ContestCtrl', ['$scope', '$timeout', function($scope, $timeout) 
 
     // Fetch scrambles data
     $scope.scramblesData = null;
-    @if(fetchScrambles) {
+    @if(fetchScrambles && eid != "demo") {
         contestRef.child('scrambles').child('c@cid').once('value', function(snapScrambles) {
             if (snapScrambles.exists() && snapScrambles.val()._dummy == null) {
                 $timeout(function() {
@@ -197,6 +199,21 @@ app.controller('ContestCtrl', ['$scope', '$timeout', function($scope, $timeout) 
                 $scope.loadedScrambles = true;
                 $scope.contestLoaded = $scope.loadedMain && $scope.loadedScrambles && $scope.loadedResults;
             });
+        });
+    }
+    @if(fetchScrambles && eid == "demo") {
+        $timeout(function() {
+            $scope.scramblesData = {
+                'demo': [
+                    '1本番コンテストではここにスクランブルが表示されます',
+                    '2本番コンテストではここにスクランブルが表示されます',
+                    '3本番コンテストではここにスクランブルが表示されます',
+                    '4本番コンテストではここにスクランブルが表示されます',
+                    '5本番コンテストではここにスクランブルが表示されます'
+                ]
+            };
+            $scope.loadedScrambles = true;
+            $scope.contestLoaded = $scope.loadedMain && $scope.loadedScrambles && $scope.loadedResults;
         });
     }
 

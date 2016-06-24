@@ -320,6 +320,64 @@
             }
         },
 
+        // Data for demo timer
+        "resultsdemo": {
+            ".read": false,
+            ".write": false,
+            "demo": {
+                ".read": false,
+                "$event_id": {
+                    ".validate": "root.child('events').hasChild($event_id)",
+                    "$user_id": {
+                        ".read": "auth.uid === $user_id",
+                        ".write": "auth.uid === $user_id",
+                        ".validate": "root.child('users').hasChild($user_id) && newData.hasChildren(['beginAt'])",
+                        "beginAt": {
+                            ".validate": "newData.isNumber() && 0 <= newData.val()"
+                        },
+                        "details": {
+                            "$details_seq": {
+                                ".validate": "newData.hasChildren(['record', 'condition'])",
+                                "record": {
+                                    ".validate": "newData.isNumber() && 0 <= newData.val() && newData.val() < 10000"
+                                },
+                                "condition": {
+                                    ".validate": "newData.isString() && (newData.val() == 'OK' || newData.val() == '+2' || newData.val() == 'DNF')"
+                                },
+                                "$other": {
+                                    ".validate": false
+                                }
+                            }
+                        },
+                        "result": {
+                            ".validate": "newData.hasChildren(['record', 'best', 'condition'])",
+                            "record": {
+                                ".validate": "newData.isNumber() && 0 <= newData.val() && newData.val() < 10000"
+                            },
+                            "best": {
+                                ".validate": "newData.isNumber() && 0 <= newData.val() && newData.val() < root.child('events').child($event_id).child('attempts').val()"
+                            },
+                            "worst": {
+                                ".validate": "newData.isNumber() && 0 <= newData.val() && newData.val() < root.child('events').child($event_id).child('attempts').val()"
+                            },
+                            "condition": {
+                                ".validate": "newData.isString() && (newData.val() == 'OK' || newData.val() == 'DNF' || newData.val() == 'NOTYET')"
+                            },
+                            "$other": {
+                                ".validate": false
+                            }
+                        },
+                        "$other": {
+                            ".validate": false
+                        }
+                    }
+                }
+            },
+            "$other": {
+                ".validate": false
+            }
+        },
+
         "$other": {
             ".validate": false
         }
