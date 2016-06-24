@@ -29,10 +29,14 @@ app.controller('AuthJoinCtrl', ['$scope', 'Auth', function($scope, Auth) {
         $scope.error = null;
 
         var _email = $scope.email;
-        var _password = 'tmp-' + getRandomStr(12);
+        var _password = $scope.password;
 
         if (!_email) {
             $scope.error = 'メールアドレスを入力してください。';
+            return;
+        }
+        if (!_password) {
+            $scope.error = 'パスワードを入力してください。';
             return;
         }
 
@@ -42,14 +46,8 @@ app.controller('AuthJoinCtrl', ['$scope', 'Auth', function($scope, Auth) {
         }).then(function(userData) {
             //$scope.joinMessage = 'User created with uid: ' + userData.uid;
 
-            Auth.$resetPassword({
-                email: _email
-            }).then(function() {
-                //$scope.message = 'Password email sent successfully!';
-                $scope.joinMessage = 'パスワード通知メールが送信されました。';
-            }).catch(function(error) {
-                $scope.error = error;
-            });
+            $scope.joinMessage = 'ユーザ登録が完了しました。';
+            location.href = '@routes.HomeController.login';
         }).catch(function(error) {
             $scope.error = TriboxContest.convErrorCodes(error.code);
         });
@@ -68,7 +66,7 @@ app.controller('AuthJoinCtrl', ['$scope', 'Auth', function($scope, Auth) {
     </div>
     <div ng-show="authLoaded">
 
-        <h2>新規登録</h2>
+        <h2>新規ユーザ登録</h2>
 
         <div class="notice-success margin-bottom-20" ng-if="joinMessage">
             <i class="fa fa-check"></i>
@@ -79,10 +77,7 @@ app.controller('AuthJoinCtrl', ['$scope', 'Auth', function($scope, Auth) {
         </div>
 
         <p>
-            メールアドレスを入力してください。<br>
-            入力されたメールアドレス宛てに初期パスワードが記載されたメールが送信されます
-            (送信元: noreply@@@{firebaseappContest}.firebaseapp.com)。<br>
-            初期パスワードでログインしてパスワードを変更してください。<br>
+            メールアドレスとパスワードを入力してください。<br>
             すでにアカウントを作成済みの場合は、<a href="@routes.HomeController.login">ログインページ</a>からログインしてください。
         </p>
 
@@ -93,6 +88,10 @@ app.controller('AuthJoinCtrl', ['$scope', 'Auth', function($scope, Auth) {
             </div>
             @* <!--<span ng-show="joinForm.email.$error.email">Not valid email!</span>
             <span ng-show="joinForm.email.$error.required">Required!</span><br>--> *@
+            <div>
+                <label>パスワード</label>
+                <input class="form-control" type="password" ng-model="password">
+            </div>
             <input class="btn" type="submit" value="登録">
         </form>
 
