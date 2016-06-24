@@ -41,11 +41,51 @@
             <a href="@routes.HomeController.about">詳しく</a>
         </p>
 
-        <h3>開催中のコンテスト</h3>
+        <!--<h3>開催中のコンテスト</h3>-->
+
+        <hr>
 
         <div ng-show="inProgressContest._dummy">
-            <p class="color-error">
-                開催中のコンテストはありません。
+            <h4>triboxコンテストへようこそ!</h4>
+            <h4>7月3日21時に最初のコンテストがスタートします。</h4>
+
+            <p>
+                最初のコンテストでは、Rubik's Cube の参加者全員に100ポイントを付与致します。<br>
+                ※認証アカウントのみ。他の競技については通常通り3名が当選、当選者に100ポイントを付与致します。
+            </p>
+
+            <h5>ステップ1 新規会員登録</h5>
+            <p>
+                <a href="@routes.HomeController.join">無料新規登録ページ</a>
+            </p>
+
+            <h5>ステップ2 ログイン・初期設定</h5>
+            <p>
+                <a href="@routes.HomeController.login">ログインページ</a><br>
+                ステップ1で登録したメールアドレスとパスワードを入力して、triboxコンテストにログインしてください。<br>
+                ログインが完了すると、初期設定ページへ移動します。ここでは、ユーザID、名前、所属 (任意) を登録します。<br>
+                初期設定が完了するとコンテストに参加することができます。
+            </p>
+
+            <h5>ステップ3 アカウント認証</h5>
+            <p>
+                <a href="@routes.SettingController.verify">アカウントの認証設定ページ</a><br>
+                triboxコンテストアカウントは、triboxストアアカウントに結びつけることができます。<br>
+                抽選ポイントや入賞賞金は認証アカウントにのみ付与されます。
+            </p>
+
+            <h5>ステップ4 会員情報編集</h5>
+            <p>
+                <a href="@routes.SettingController.setting">アカウント設定ページ</a><br>
+                所属、WCA ID、Twitter ID、自己紹介文を登録することができます。<br>
+                シーズンランキング1位〜3位に授与される賞金を受け取るには、WCA ID が必要です。
+            </p>
+
+            <hr>
+
+            <p>
+                コンテスト開始のアナウンスや結果発表はtwitterでも行います。<br>
+                <a href="https://twitter.com/triboxContest" target="_blank">@@triboxContest</a> をフォローして、今しばらくお待ちください。
             </p>
         </div>
 
