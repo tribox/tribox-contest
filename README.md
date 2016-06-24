@@ -119,7 +119,7 @@ node contestmanager/update-wcaapp.js
 
 ## License
 
-tribox Contest
+tribox Contest  
 Copyright (C) 2016  Tribox Inc.
 
 This program is free software; you can redistribute it and/or modify
