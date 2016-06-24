@@ -10,21 +10,29 @@
 @basejs(firebaseappContest)
 @authjs(redirectLogin="", redirectLogout=routes.HomeController.index.toString(), checkFirst=true)
 <script>
-app.controller('VerifyCtrl', ['$scope', function($scope) {
+app.controller('VerifyCtrl', ['$scope', '$timeout', function($scope, $timeout) {
     $scope.error = null;
+    $scope.showSkip = false;
     $scope.verifyLoaded = false;
 
     // Read personal results
     var authData = contestRef.getAuth();
     if (authData) {
         contestRef.child('users').child(authData.uid).child('isTriboxCustomer').once('value', function(snap) {
-            $scope.$apply(function() {
+            $timeout(function() {
                 if (snap.exists() && snap.val() == true) {
                     $scope.error = 'このアカウントはすでに認証済みです。';
                 }
                 $scope.verifyLoaded = true;
             });
         });
+
+        var vars = getUrlVars();
+        if (vars.showskip) {
+            $timeout(function() {
+                $scope.showSkip = true;
+            });
+        }
     }
 }]);
 </script>
@@ -74,6 +82,7 @@ app.controller('VerifyCtrl', ['$scope', function($scope) {
                 </div>
                 <input type="hidden" name="userId" value="{{ authData.uid }}">
                 <input class="btn" type="submit" value="認証する">
+                <a href="@routes.HomeController.index" class="padding-left-20" ng-show="showSkip">あとで</a>
             </form>
         </div>
 
