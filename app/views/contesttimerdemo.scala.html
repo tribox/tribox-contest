@@ -1,0 +1,371 @@
+@**
+ * Javascript コンテストタイマー デモ用
+ *@
+
+@(contestName: String, contestDescription: String, contestUrl: String, firebaseappContest: String)
+
+@defining("Demo Timer") { title =>
+@defining(contestUrl + "/demo/timer") { pageUrl =>
+
+<!DOCTYPE html>
+<html lang="ja" ng-app="contestApp">
+<head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
+    @header(title=title, description=contestDescription, sitename=contestName, url=pageUrl, contestUrl=contestUrl)
+
+<style>
+body {
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+}
+#timerArea {
+    font-family: Arial, sans-serif !important;
+    text-align: center;
+}
+#timerText {
+    margin: 60px auto;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+#timerNote, #timerNoteMb {
+    padding-bottom: 40px;
+}
+@@media screen and (max-width: 480px) {
+    #timerText {
+        font-size: 96px;
+    }
+    #timerNote {
+        display: none;
+    }
+}
+@@media screen and (min-width: 480px) {
+    #timerText {
+        font-size: 128px;
+    }
+    #timerNoteMb {
+        display: none;
+    }
+}
+.wait {
+    color: #E74C3C !important;
+}
+.ready {
+    color: #1BBC9B !important;
+}
+</style>
+
+@basejs(firebaseappContest)
+
+</head>
+<body><div class="container">
+    @bodyheader(title, contestName, cid="demo", eid="demo")
+
+    <div ng-controller="AuthCtrl"><div ng-controller="ContestTimerCtrl">
+    <div ng-hide="authLoaded && contestTimerLoaded">
+        <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+        <span class="sr-only">Loading...</span>
+        Loading...
+    </div>
+    <div ng-show="authLoaded && contestTimerLoaded">
+
+    @authinfo(eid="demo")
+
+    <div>
+
+        <div id="touchArea">
+
+            <div id="timerArea">
+                <div id="timerText">0.000</div>
+
+                <div id="timerNote"></div>
+                <div id="timerNoteMb"></div>
+
+                <!--
+                    <button id="start">START</button>
+                    <button id="stop">STOP</button>
+                    <button id="reset">RESET</button>
+                -->
+
+                <!--
+                    <div id="keydown"></div>
+                    <div id="keyup"></div>
+                    <div id="info"></div>
+                -->
+            </div>
+
+        </div><!-- /#touchArea -->
+
+        @contesttimeform(eid="333", useInput=false, clickable=true)
+
+        <p id="input-completed" class="margin-top-20 text-center hide">
+            計測が完了しました。<br>
+            <a href="@routes.HomeController.index" class="btn margin-top-10">トップページへ戻る</a>
+        </p>
+
+    </div></div></div></div>
+
+    @bodyfooter(contestName)
+
+@authjs(redirectLogin="", redirectLogout="", checkFirst=true)
+<script>
+window.TriboxContest.timerIdlingText = 'スペースキーを押してインスペクションタイムをスタート';
+window.TriboxContest.timerIdlingTextMb = 'タップしてインスペクションタイムをスタート';
+window.TriboxContest.timerInspectingText = 'スペースキーを長押しして、手を離してタイマースタート';
+window.TriboxContest.timerInspectingTextMb = 'タップ長押しして、手を離してタイマースタート';
+window.TriboxContest.timerRunningText = 'キーを押してタイマーをストップ';
+window.TriboxContest.timerRunningTextMb = 'タップしてタイマーをストップ';
+window.TriboxContest.timerFinishText = '計測が完了しました';
+
+app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $timeout) {
+    $scope.invalidPage = false;
+    $scope.contestTimerLoaded = true;
+
+    // Results
+    $scope.results = [];
+    $scope.resultsDetail = null;
+
+    var startPenalty = false;
+
+    document.getElementById('timerNote').innerHTML = window.TriboxContest.timerIdlingText;
+    document.getElementById('timerNoteMb').innerHTML = window.TriboxContest.timerIdlingTextMb;
+
+    /**
+     * Timer
+     */
+
+    document.onselectstart = function() { return false; };
+
+    var startTime, stopTime = 0;
+    var timerId, dispTimerId;
+    var inspectionTimerId, inspectionPenaltyTimerId, inspectionDNFTimerId;
+
+    var hasInspection = true;
+    var inspectionCountdown;
+
+    var isIdling = true;        @* 待機中 *@
+    var isInspecting = false;   @* インスペクションタイム中 *@
+    var isRunning = false;      @* タイマー動作中 *@
+    var isTouching = false;     @* タッチ中 (スタート時) *@
+    var isTouchingStop = false; @* タッチ中 (ストップ時) *@
+    var startTouch = Infinity;
+
+    var INSPECTION_SECOND = 15; @* /* インスペクションタイムは15秒 */ *@
+    var TOUCHING_TH = 500;      @* /* 0.5秒長押しでタイマースタート */ *@
+    var LIMIT_SECOND = 600;     @* /* 10分でDNF */ *@
+    var FREEZING_TH = 1000;     @* /* タイマーストップ後1秒はタイマースタートできない */ *@
+
+    //var startButton = document.getElementById('start');
+    //var stopButton = document.getElementById('stop');
+    //var resetButton = document.getElementById('reset');
+    var timerText = document.getElementById('timerText');
+
+    var touchX, touchY;
+    var TAP_TH = 10; @* タップと認識する移動距離の閾値 *@
+
+    /*var setButtonState = function(start, stop, reset) {
+        startButton.disabled = !start;
+        stopButton.disabled = !stop;
+        resetButton.disabled = !reset;
+    };*/
+    //setButtonState(true, false, false);
+
+    var updateStatus = function(_isIdling, _isInspecting, _isRunning) {
+        isIdling = _isIdling;
+        isInspecting = _isInspecting;
+        isRunning = _isRunning;
+    };
+
+    var startInspection = function() {
+        if (hasInspection && isIdling) {
+            document.getElementById('timerNote').innerHTML = window.TriboxContest.timerInspectingText;
+            document.getElementById('timerNoteMb').innerHTML = window.TriboxContest.timerInspectingTextMb;
+            startPenalty = false;
+            updateStatus(false, true, false);
+            updateInspectionTimerText();
+        }
+    };
+
+    var updateInspectionTimerText = function() {
+        inspectionCountdown = INSPECTION_SECOND;
+        timerText.innerHTML = inspectionCountdown;
+
+        // インスペクションタイム
+        inspectionTimerId = setInterval(function() {
+            inspectionCountdown--;
+            timerText.innerHTML = inspectionCountdown;
+        }, 1000);
+
+        // スタート時 +2ペナルティ
+        inspectionPenaltyTimerId = setTimeout(function() {
+            clearTimeout(inspectionTimerId);
+            timerText.innerHTML = '+2';
+            startPenalty = true;
+        }, inspectionCountdown * 1000);
+
+        // スタート時DNF
+        inspectionDNFTimerId = setTimeout(function() {
+            clearTimeout(inspectionPenaltyTimerId);
+            timerText.innerHTML = 'DNF';
+
+            $timeout(function() {
+                $scope.results[$scope.scrambleIndex] = {'record': 0, 'condition': 'DNF'};
+                saveAndPrepare();
+                ($scope.scrambleIndex)++;
+                showScramble($scope.scrambleIndex);
+            });
+
+            updateStatus(true, false, false);
+            document.getElementById('timerNote').innerHTML = window.TriboxContest.timerIdlingText;
+            document.getElementById('timerNoteMb').innerHTML = window.TriboxContest.timerIdlingTextMb;
+        }, (inspectionCountdown + 2) * 1000);
+     };
+
+    var startTimer = function() {
+        if ((hasInspection && isInspecting) || (!hasInspection && isIdling)) {
+            startTime = Date.now();
+            document.getElementById('timerNote').innerHTML = window.TriboxContest.timerRunningText;
+            document.getElementById('timerNoteMb').innerHTML = window.TriboxContest.timerRunningTextMb;
+            clearTimeout(inspectionTimerId);
+            clearTimeout(inspectionPenaltyTimerId);
+            clearTimeout(inspectionDNFTimerId);
+            updateStatus(false, false, true);
+            updateTimerText();
+            //setButtonState(false, true, false);
+        }
+    };
+    //startButton.addEventListener('click', startTimer);
+
+    var stopTimer = function() {
+        if (isRunning) {
+            stopTime = Date.now();
+            if (window.TriboxContest.hasInspection) {
+                document.getElementById('timerNote').innerHTML = window.TriboxContest.timerIdlingText;
+                document.getElementById('timerNoteMb').innerHTML = window.TriboxContest.timerIdlingTextMb;
+            } else {
+                document.getElementById('timerNote').innerHTML = window.TriboxContest.timerInspectingText;
+                document.getElementById('timerNoteMb').innerHTML = window.TriboxContest.timerInspectingTextMb;
+            }
+            clearTimeout(timerId);
+            updateStatus(true, false, false);
+            var resultTime = (stopTime - startTime) / 1000;
+            timerText.innerHTML = resultTime.toFixed(3);
+            //setButtonState(true, false, true);
+        }
+    };
+    //stopButton.addEventListener('click', stopTimer);
+
+    /*var resetTimer = function() {
+        if (isRunning) return;
+        timerText.innerHTML = '0.000';
+        //setButtonState(true, false, false);
+    };*/
+    //resetButton.addEventListener('click', resetTimer);
+
+    var updateTimerText = function() {
+        timerId = setInterval(function() {
+            var elapsed = (Date.now() - startTime) / 1000;
+            //timerText.innerHTML = (elapsed).toFixed(3);
+            timerText.innerHTML = TriboxContest.formatTime(elapsed);
+            if (LIMIT_SECOND <= elapsed) {
+                stopTimer();
+            }
+        }, 29);
+    };
+
+    document.addEventListener('keydown', function(e) {
+        //document.getElementById('keydown').innerHTML = e.keyCode + ':' + e.code + ' (' + Date.now() + ')';
+        hasInspection = window.TriboxContest.hasInspection;
+        if (isRunning) {
+            stopTimer();
+            isTouchingStop = true;
+        } else if ((hasInspection && isInspecting || !hasInspection && isIdling) && !isTouching && !isTouchingStop && e.code == 'Space') {
+            if (FREEZING_TH < Date.now() - stopTime) {
+                startTouch = Date.now();
+                isTouching = true;
+                angular.element(document.getElementById('timerText')).addClass('wait');
+                dispTimerId = setTimeout(function() {
+                    angular.element(document.getElementById('timerText')).removeClass('wait');
+                    angular.element(document.getElementById('timerText')).addClass('ready');
+                }, TOUCHING_TH);
+            }
+        }
+    });
+    document.addEventListener('keyup', function(e) {
+        //document.getElementById('keyup').innerHTML = e.keyCode + ':' + e.code + ' (' + Date.now() + ')';
+        if (isTouchingStop) {
+            isTouchingStop = false;
+        } else if ((hasInspection && isInspecting || !hasInspection && isIdling) && e.code == 'Space') {
+            if (FREEZING_TH < Date.now() - stopTime) {
+                isTouching = false;
+                clearTimeout(dispTimerId);
+                angular.element(document.getElementById('timerText')).removeClass('wait');
+                angular.element(document.getElementById('timerText')).removeClass('ready');
+                if (TOUCHING_TH <= (Date.now() - startTouch)) {
+                    startTimer();
+                    startTouch = Infinity;
+                }
+            }
+        } else if (hasInspection && isIdling && e.code == 'Space') {
+            if (FREEZING_TH < Date.now() - stopTime) {
+                startInspection();
+            }
+        }
+    });
+    if(window.TouchEvent) {
+        var touchArea = document.getElementById('touchArea');
+        touchArea.addEventListener('touchstart', function(e) {
+            //document.getElementById('keydown').innerHTML = 'touchstart (' + Date.now() + ' ' + e.changedTouches[0].pageX + ' ' + e.changedTouches[0].pageY + ')';
+            touchX = e.changedTouches[0].pageX;
+            touchY = e.changedTouches[0].pageY;
+            hasInspection = window.TriboxContest.hasInspection;
+            if (isRunning) {
+                stopTimer();
+                isTouchingStop = true;
+            } else if ((hasInspection && isInspecting || !hasInspection && isIdling) && !isTouching && !isTouchingStop) {
+                if (FREEZING_TH < Date.now() - stopTime) {
+                    startTouch = Date.now();
+                    isTouching = true;
+                    angular.element(document.getElementById('timerText')).addClass('wait');
+                    dispTimerId = setTimeout(function() {
+                        angular.element(document.getElementById('timerText')).removeClass('wait');
+                        angular.element(document.getElementById('timerText')).addClass('ready');
+                    }, TOUCHING_TH);
+                }
+            }
+        });
+        document.addEventListener('touchend', function(e) {
+            //document.getElementById('keyup').innerHTML = 'touchend (' + Date.now() + ' ' + e.changedTouches[0].pageX + ' ' + e.changedTouches[0].pageY + ')';
+            if (Math.abs(e.changedTouches[0].pageX - touchX) <= TAP_TH && Math.abs(e.changedTouches[0].pageY - touchY) <= TAP_TH) {
+                if (isTouchingStop) {
+                    isTouchingStop = false;
+                } else if (hasInspection && isInspecting || !hasInspection && isIdling) {
+                    if (FREEZING_TH < Date.now() - stopTime) {
+                        isTouching = false;
+                        clearTimeout(dispTimerId);
+                        angular.element(document.getElementById('timerText')).removeClass('wait');
+                        angular.element(document.getElementById('timerText')).removeClass('ready');
+                        if (TOUCHING_TH <= (Date.now() - startTouch)) {
+                            startTimer();
+                            startTouch = Infinity;
+                        }
+                    }
+                } else if (hasInspection && isIdling) {
+                    if (FREEZING_TH < Date.now() - stopTime) {
+                        startInspection();
+                    }
+                }
+            } else {
+                angular.element(document.getElementById('timerText')).removeClass('wait');
+                angular.element(document.getElementById('timerText')).removeClass('ready');
+            }
+        });
+    }
+
+}]);
+</script>
+
+</div></body>
+</html>
+
+}
+}

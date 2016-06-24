@@ -23,11 +23,15 @@
                 <a href="@routes.HomeController.logout">ログアウト</a>
             </span>
         </div>
-    } else {
+    } else { @if(cid != "demo" && eid != "demo") {
         <div id="header-menu">
             <a href="/contest/@{cid}?suspended=@{eid}">中断</a>
         </div>
-    }
+    } else {
+        <div id="header-menu">
+            <a href="@routes.HomeController.index">中断</a>
+        </div>
+    } }
 </div>
 
 @if(cid == "") {

@@ -47,6 +47,9 @@ GET     /contest/$cid<[0-9]{4}(1|2)[0-9]{2}>/$eid<[a-zA-Z0-9]{1,15}>/confirm  co
 GET     /ranking/$sid<[0-9]{4}(1|2)>        controllers.RankingController.ranking(sid: String)
 GET     /ranking/$sid<[0-9]{4}(1|2)>/puzzle controllers.RankingController.rankingpuzzle(sid: String)
 
+# Demo timer
+GET     /demo/timer                 controllers.DemoController.timer
+
 # Dynamic JS
 GET     /js/products.js             controllers.DynamicJsController.products
 
