@@ -47,7 +47,7 @@ app.controller('AuthJoinCtrl', ['$scope', 'Auth', function($scope, Auth) {
             //$scope.joinMessage = 'User created with uid: ' + userData.uid;
 
             $scope.joinMessage = 'ユーザ登録が完了しました。';
-            location.href = '@routes.HomeController.login';
+            location.href = '@routes.HomeController.login?join=1';
         }).catch(function(error) {
             $scope.error = TriboxContest.convErrorCodes(error.code);
         });

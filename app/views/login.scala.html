@@ -11,7 +11,17 @@
 @basejs(firebaseappContest)
 @authjs(redirectLogin="", redirectLogout="", checkFirst=false)
 <script>
-app.controller('AuthLoginCtrl', ['$scope', 'Auth', function($scope, Auth) {
+app.controller('AuthLoginCtrl', ['$scope', '$timeout', 'Auth', function($scope, $timeout, Auth) {
+    var authData = contestRef.getAuth();
+    if (!authData) {
+        var vars = getUrlVars();
+        if (vars.join) {
+            $timeout(function() {
+                $scope.afterJoin = true;
+            });
+        }
+    }
+
     $scope.login = function() {
         $scope.message = null;
         $scope.error = null;
@@ -67,13 +77,13 @@ app.controller('AuthLoginCtrl', ['$scope', 'Auth', function($scope, Auth) {
         @* <!--<div class="color-dark margin-bottom-20" ng-if="message">
             Message: {{ message }}
         </div>--> *@
+        <div class="notice-success margin-bottom-20" ng-if="afterJoin">
+            <i class="fa fa-check"></i>
+            新規ユーザ登録が完了しました。ログインしてください。
+        </div>
         <div class="color-error margin-bottom-20" ng-if="error">
             エラー: {{ error }}
         </div>
-
-        <p>
-            <a href="@routes.HomeController.join">アカウントを新規作成する</a>
-        </p>
 
         <form name="loginForm" ng-submit="login()">
             <div>
@@ -87,7 +97,12 @@ app.controller('AuthLoginCtrl', ['$scope', 'Auth', function($scope, Auth) {
             <input class="btn" type="submit" value="ログイン">
         </form>
 
-        <p><a href="/forgot">パスワードを忘れましたか？</a></p>
+        <p>
+            <a href="/forgot">パスワードを忘れましたか？</a>
+        </p>
+        <p>
+            <a href="@routes.HomeController.join">アカウントを新規作成する</a>
+        </p>
 
     </div></div></div>
 

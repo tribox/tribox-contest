@@ -13,8 +13,12 @@
                 <a href="@routes.HomeController.login">ログイン</a> /
                 <a href="@routes.HomeController.join">会員登録</a>
             </span>
-            <span ng-show="isLoggingin && authLoaded">
+            <span ng-show="isLoggingin && authLoaded && userData.username">
                 <a href="/user/{{ userData.username }}">マイページ</a> /
+                <a href="@routes.SettingController.setting">設定</a> /
+                <a href="@routes.HomeController.logout">ログアウト</a>
+            </span>
+            <span ng-show="isLoggingin && authLoaded && !(userData.username)">
                 <a href="@routes.SettingController.setting">設定</a> /
                 <a href="@routes.HomeController.logout">ログアウト</a>
             </span>

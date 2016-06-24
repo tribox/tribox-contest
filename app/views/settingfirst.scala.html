@@ -176,11 +176,11 @@ app.controller('AuthFirstSettingCtrl', ['$scope', 'Auth', function($scope, Auth)
                 <label>ユーザID <span class="color-error">(必須)</span></label>
                 <input class="form-control" type="text" ng-model="username">
                 <p>
-                    1文字以上15文字以内で設定してください。
+                    1文字以上15文字以内で設定してください。<br>
                     <a href="https://ja.wikipedia.org/wiki/ISO%E5%9F%BA%E6%9C%AC%E3%83%A9%E3%83%86%E3%83%B3%E3%82%A2%E3%83%AB%E3%83%95%E3%82%A1%E3%83%99%E3%83%83%E3%83%88">ISO基本ラテンアルファベット</a>、
-                    数字、記号（アンダーバー）のみ使用できます。
+                    数字、記号（アンダーバー）のみ使用できます。<br>
                     他のアカウントのユーザIDと重複できません。
-                    個人ページのURLは @{contestUrl}/user/{{ username }} になります。
+                    個人ページのURLは @{contestUrl}/user/{{ username }} になります。<br>
                     あとで変更できます。
                 </p>
             </div>
@@ -188,8 +188,8 @@ app.controller('AuthFirstSettingCtrl', ['$scope', 'Auth', function($scope, Auth)
                 <label>名前 <span class="color-error">(必須)</span></label>
                 <input class="form-control" type="text" ng-model="displayname">
                 <p>
-                    ランキング等で表示される名前です。
-                    1文字以上31文字以内で設定してください。
+                    ランキング等で表示される名前です。<br>
+                    1文字以上31文字以内で設定してください。<br>
                     <a href="https://ja.wikipedia.org/wiki/%E3%83%A9%E3%83%86%E3%83%B3%E6%96%87%E5%AD%97">ラテン文字</a>、
                     数字、記号、スペースのみ使用できます。
                     あとで変更できます。
@@ -199,8 +199,8 @@ app.controller('AuthFirstSettingCtrl', ['$scope', 'Auth', function($scope, Auth)
                 <label>所属</label>
                 <input class="form-control" type="text" ng-model="organization">
                 <p>
-                    ご所属を公開したい場合は入力してください。
-                    31文字以内で設定してください。
+                    ご所属を公開したい場合は入力してください。<br>
+                    31文字以内で設定してください。<br>
                     日本語使用可能です。
                     あとで変更できます。
                 </p>
