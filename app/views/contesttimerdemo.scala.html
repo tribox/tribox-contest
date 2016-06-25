@@ -468,7 +468,7 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
         if (isRunning) {
             stopTimer();
             isTouchingStop = true;
-        } else if ((hasInspection && isInspecting || !hasInspection && isIdling) && !isTouching && !isTouchingStop && e.code == 'Space') {
+        } else if ((hasInspection && isInspecting || !hasInspection && isIdling) && !isTouching && !isTouchingStop && (e.keyCode == 32 || e.code == 'Space')) {
             if (FREEZING_TH < Date.now() - stopTime) {
                 startTouch = Date.now();
                 isTouching = true;
@@ -484,7 +484,7 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
         //document.getElementById('keyup').innerHTML = e.keyCode + ':' + e.code + ' (' + Date.now() + ')';
         if (isTouchingStop) {
             isTouchingStop = false;
-        } else if ((hasInspection && isInspecting || !hasInspection && isIdling) && e.code == 'Space') {
+        } else if ((hasInspection && isInspecting || !hasInspection && isIdling) && (e.keyCode == 32 || e.code == 'Space')) {
             if (FREEZING_TH < Date.now() - stopTime) {
                 isTouching = false;
                 clearTimeout(dispTimerId);
@@ -495,7 +495,7 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
                     startTouch = Infinity;
                 }
             }
-        } else if (hasInspection && isIdling && e.code == 'Space') {
+        } else if (hasInspection && isIdling && (e.keyCode == 32 || e.code == 'Space')) {
             if (FREEZING_TH < Date.now() - stopTime) {
                 startInspection();
             }
