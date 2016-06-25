@@ -5,7 +5,17 @@
         }
     },
     "events": {
+        "e222": {
+            ".priority" : 40.0,
+            "attempts": 5,
+            "format": "time",
+            "hasInspection": true,
+            "method": "average",
+            "name": "2x2x2",
+            "scramblePuzzle": "222"
+        },
         "e333": {
+            ".priority" : 10.0,
             "attempts": 5,
             "format": "time",
             "hasInspection": true,
@@ -13,7 +23,35 @@
             "name": "Rubik's Cube",
             "scramblePuzzle": "333"
         },
+        "e333bf": {
+            ".priority" : 50.0,
+            "attempts": 3,
+            "format": "time",
+            "hasInspection": false,
+            "method": "best",
+            "name": "Rubik's Cube 目隠し",
+            "scramblePuzzle": "333ni"
+        },
+        "e333fm": {
+            ".priority" : 70.0,
+            "attempts": 1,
+            "format": "number",
+            "hasInspection": false,
+            "method": "best",
+            "name": "Rubik's Cube 最少手数",
+            "scramblePuzzle": "333fm"
+        },
+        "e333oh": {
+            ".priority" : 60.0,
+            "attempts": 5,
+            "format": "time",
+            "hasInspection": true,
+            "method": "average",
+            "name": "Rubik's Cube 片手",
+            "scramblePuzzle": "333"
+        },
         "e444": {
+            ".priority" : 20.0,
             "attempts": 5,
             "format": "time",
             "hasInspection": true,
@@ -22,44 +60,13 @@
             "scramblePuzzle": "444"
         },
         "e555": {
+            ".priority" : 30.0,
             "attempts": 5,
             "format": "time",
             "hasInspection": true,
             "method": "average",
             "name": "5x5x5",
             "scramblePuzzle": "555"
-        },
-        "e222": {
-            "attempts": 5,
-            "format": "time",
-            "hasInspection": true,
-            "method": "average",
-            "name": "2x2x2",
-            "scramblePuzzle": "222"
-        },
-        "e333bf": {
-            "attempts": 3,
-            "format": "time",
-            "hasInspection": false,
-            "method": "best",
-            "name": "Rubik's Cube 目隠し",
-            "scramblePuzzle": "333ni"
-        },
-        "e333oh": {
-            "attempts": 5,
-            "format": "time",
-            "hasInspection": true,
-            "method": "average",
-            "name": "Rubik's Cube 片手",
-            "scramblePuzzle": "333"
-        },
-        "e333fm": {
-            "attempts": 1,
-            "format": "number",
-            "hasInspection": false,
-            "method": "best",
-            "name": "Rubik's Cube 最少手数",
-            "scramblePuzzle": "333fm"
         }
     },
     "inProgress": {
