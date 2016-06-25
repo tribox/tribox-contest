@@ -145,6 +145,13 @@ app.controller('AuthUsernameCtrl', ['$scope', '$timeout', 'Auth', function($scop
 
         <h2>ユーザID変更</h2>
 
+        <p>
+            1文字以上15文字以内で設定してください。<br>
+            <a href="https://ja.wikipedia.org/wiki/ISO%E5%9F%BA%E6%9C%AC%E3%83%A9%E3%83%86%E3%83%B3%E3%82%A2%E3%83%AB%E3%83%95%E3%82%A1%E3%83%99%E3%83%83%E3%83%88">ISO基本ラテンアルファベット</a>、
+            数字、記号（アンダーバー）のみ使用できます。<br>
+            他のアカウントのユーザIDと重複できません。
+        </p>
+
         <form name="usernameForm" ng-submit="changeUsername()">
             @* <!--<div class="color-dark margin-bottom-20"ng-if="message">
                 Message: {{ message }}

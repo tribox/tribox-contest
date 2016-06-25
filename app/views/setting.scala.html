@@ -134,12 +134,22 @@ app.controller('AuthSettingCtrl', ['$scope', '$firebaseObject', 'Auth', function
                 </tr>
                 <tr>
                     <th><label>表示名<label></th>
-                    <td><input class="form-control" type="text" ng-model="userData.displayname"></td>
+                    <td><input class="form-control" type="text" style="margin-bottom: 0;" ng-model="userData.displayname"></td>
                 </tr>
+                <tr style="line-height: normal;">
+                    <td colspan="2" style="padding-bottom: 20px;">
+                        30文字以内、<a href="https://ja.wikipedia.org/wiki/%E3%83%A9%E3%83%86%E3%83%B3%E6%96%87%E5%AD%97">アルファベット</a>、
+                        数字、記号、スペースのみ使用可能です
+                    </td>
                 <tr>
                     <th><label>所属</label></th>
-                    <td><input class="form-control" type="text" ng-model="userData.organization"></td>
+                    <td><input class="form-control" type="text" style="margin-bottom: 0;" ng-model="userData.organization"></td>
                 </tr>
+                <tr style="line-height: normal;">
+                    <td colspan="2" style="padding-bottom: 20px;">
+                        30文字以内
+                    </td>
+                <tr>
                 <tr>
                     <th><label>WCA ID</label></th>
                     <td><input class="form-control" type="text" ng-model="userData.wcaId"></td>
