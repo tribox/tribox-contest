@@ -47,7 +47,7 @@ app.controller('VerifyClickCtrl', ['$scope', '$timeout', function($scope, $timeo
             }
         } else {
             $timeout(function() {
-                $scope.error = 'ログインしなおして再度このURLにアクセスしてください。';
+                $scope.error = 'ログイン済みのPC・スマートフォン・タブレット端末等で、再度このURLにアクセスしてください。';
                 $scope.verifyClickLoaded = true;
             });
         }
