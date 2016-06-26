@@ -22,6 +22,7 @@ var countUsernames = function() {
     contestRef.child('usernames').once('value', function(snapUsernames) {
         var usernames = snapUsernames.val();
         var counts = {};
+        var usernamesMoreThanOne = {};
         Object.keys(usernames).forEach(function(username) {
             username = username.toLowerCase();
             if (username in counts) {
@@ -30,7 +31,13 @@ var countUsernames = function() {
                 counts[username] = 1;
             }
         });
+        Object.keys(counts).forEach(function(username) {
+            if (1 < counts[username]) {
+                usernamesMoreThanOne[username] = counts[username];
+            }
+        });
         console.dir(counts);
+        console.dir(usernamesMoreThanOne);
         process.exit(0);
     });
 };
