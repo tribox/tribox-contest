@@ -19,31 +19,6 @@ var token = tokenGenerator.createToken(
 );
 
 var countUsernames = function() {
-    contestRef.child('usernames').once('value', function(snapUsernames) {
-        var usernames = snapUsernames.val();
-        var counts = {};
-        var usernamesMoreThanOne = {};
-        Object.keys(usernames).forEach(function(username) {
-            username = username.toLowerCase();
-            if (username in counts) {
-                counts[username]++;
-            } else {
-                counts[username] = 1;
-            }
-        });
-        Object.keys(counts).forEach(function(username) {
-            if (1 < counts[username]) {
-                usernamesMoreThanOne[username] = counts[username];
-            }
-        });
-        console.dir(counts);
-        console.dir(usernamesMoreThanOne);
-        process.exit(0);
-    });
-};
-countUsernames();
-
-/*var setEventsPriorities = function() {
     // admin 権限でログインしてから操作する
     contestRef.authWithCustomToken(token, function(error, authData) {
         if (error) {
@@ -51,26 +26,52 @@ countUsernames();
         } else {
             //console.log('Authenticated successfully with payload:', authData);
 
-            async.each(Object.keys(EventsPriorities), function(eid, next) {
-                var priority = EventsPriorities[eid];
-                contestRef.child('events').child(eid).setPriority(priority, function(error) {
-                    if (error) {
-                        console.error(error);
+            contestRef.child('users').once('value', function(snapUsers) {
+                var users = snapUsers.val();
+            contestRef.child('usernames').once('value', function(snapUsernames) {
+                var usernames = snapUsernames.val();
+                var counts = {};
+                var usernamesMoreThanOne = {};
+                Object.keys(usernames).forEach(function(username) {
+                    username = username.toLowerCase();
+                    if (username in counts) {
+                        counts[username]++;
                     } else {
-                        console.log(eid + ': ' + priority);
-                        next();
+                        counts[username] = 1;
                     }
                 });
-            }, function (err) {
-                if (err) {
-                    console.error(err);
-                } else {
-                    console.log('Complete!');
-                    process.exit(0);
-                }
+                Object.keys(counts).forEach(function(username) {
+                    if (1 < counts[username]) {
+                        usernamesMoreThanOne[username] = counts[username];
+                    }
+                });
+                console.dir(counts);
+                console.dir(usernamesMoreThanOne);
+
+                // ユーザ名チェック
+                Object.keys(users).forEach(function(uid) {
+                    var user = users[uid];
+                    if (user._dummy) {
+                        return;
+                    }
+
+                    if (!('username' in user)) {
+                        console.error(uid + ' has no username');
+                        process.exit(1);
+                    } else {
+                        var username = user.username;
+                        if ('disabledAt' in usernames[username]) {
+                            console.error(username + ' has disabledAt');
+                            process.exit(1);
+                        }
+                    }
+                });
+
+                process.exit(0);
+            });
             });
 
         }
     });
 };
-setEventsPriorities();*/
+countUsernames();
