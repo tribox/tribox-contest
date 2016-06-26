@@ -39,7 +39,7 @@ app.controller('AuthSettingCtrl', ['$scope', '$firebaseObject', 'Auth', function
         var _bio          = $scope.userData.bio ? $scope.userData.bio : null;
 
         // 表示名、長さチェック
-        if (!(_displayname.match(/^.{1,30}$/))) {
+        if (_displayname == null || !(_displayname.match(/^.{1,30}$/))) {
             //console.error('Invalid displayname');
             $scope.error = '表示名の長さが正しくありません (1文字以上 30文字以内)。';
             return;
