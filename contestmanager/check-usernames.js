@@ -1,10 +1,8 @@
 /**
- * count-usernames.js
+ * check-usernames.js
  *
- * ユーザ名をカウントする。
+ * ユーザ名をチェックする (カウントとか)。
  */
-
-var async = require('async');
 
 var Config = require('./config.js');
 var Firebase = require('firebase');
@@ -18,7 +16,7 @@ var token = tokenGenerator.createToken(
     { admin: true, debug: true }
 );
 
-var countUsernames = function() {
+var checkUsernames = function() {
     // admin 権限でログインしてから操作する
     contestRef.authWithCustomToken(token, function(error, authData) {
         if (error) {
@@ -74,4 +72,4 @@ var countUsernames = function() {
         }
     });
 };
-countUsernames();
+checkUsernames();
