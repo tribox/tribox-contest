@@ -256,7 +256,7 @@
                                 "solution": {
                                     ".validate": "newData.isString() && newData.val().matches(/^.{1,500}$/)"
                                 },
-                                "comment": {
+                                "note": {
                                     ".validate": "newData.isString() && newData.val().length <= 2000"
                                 },
                                 "$other": {
