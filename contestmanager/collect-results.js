@@ -92,6 +92,8 @@ var winner;
 
 // 書き込むデータ (順位、シーズンポイント、当選)
 var ready = {};
+// 契約アカウント用
+var readyTriboxTeam = {};
 
 
 // 配列のシャッフル
@@ -156,6 +158,7 @@ var doTweet = function() {
 // コンテストの集計結果を firebase と MySQL に書き込む
 var writeResults = function() {
     console.dir(ready);
+    console.dir(readyTriboxTeam);
 
     // 書き込むデータを配列化する
     var readyArr = [];
@@ -197,26 +200,45 @@ var writeResults = function() {
         if (!err) {
             console.log('Completed updating user histories! (' + count + ' records)');
 
+            var readyForMysql = [];
             if (argvrun.options.lottery || argvrun.options.lotteryall) {
                 // 抽選ポイントを加算するための待ちレコードを作成する
-                var lotteryReady = [];
                 Object.keys(ready).forEach(function(eventId) {
                     Object.keys(ready[eventId]).forEach(function(userId) {
                         if (ready[eventId][userId].lottery) {
-                            lotteryReady.push({
+                            readyForMysql.push({
                                 'eventId': eventId, 'userId': userId,
-                                'customerId': Usersecrets[userId].triboxStoreCustomerId
+                                'customerId': Usersecrets[userId].triboxStoreCustomerId,
+                                'pointType': 0
                             });
                         }
                     });
                 });
-                console.dir(lotteryReady);
+            }
+            if (argvrun.options.triboxteam) {
+                // 契約アカウント用
+                Object.keys(readyTriboxTeam).forEach(function(eventId) {
+                    Object.keys(readyTriboxTeam[eventId]).forEach(function(userId) {
+                        if (readyTriboxTeam[eventId][userId]) {
+                            readyForMysql.push({
+                                'eventId': eventId, 'userId': userId,
+                                'customerId': Usersecrets[userId].triboxStoreCustomerId,
+                                'pointType': 1
+                            });
+                        }
+                    });
+                });
+            }
+
+            if (argvrun.options.lottery || argvrun.options.lotteryall || argvrun.options.triboxteam) {
+                console.dir(readyForMysql);
 
                 var countLottery = 0;
-                async.each(lotteryReady, function(r, next) {
+                async.each(readyForMysql, function(r, next) {
                     var eventId = r.eventId;
                     var userId = r.userId;
                     var customerId = r.customerId;
+                    var pointType = r.pointType;
 
                     // ポイント加算履歴に待ちレコードとして登録する
                     connection.query('INSERT INTO lottery_log SET ?', {
@@ -226,7 +248,8 @@ var writeResults = function() {
                         'event_id': eventId,
                         'customer_type': 0,
                         'customer_id': customerId,
-                        'point': Config.LOTTERY_POINT
+                        'point': Config.LOTTERY_POINT,
+                        'point_type': pointType
                     }, function(error, results, fields) {
                         if (error) {
                             console.error(error);
@@ -339,11 +362,13 @@ var collectResults = function() {
                     ready = {};
                     Object.keys(results).forEach(function(eventId) {
                         ready[eventId] = {};
+                        readyTriboxTeam[eventId] = {};
 
                         var place = 1;
                         var placePrev = -1;
                         var priorityPrev = "";
                         var lotteryTargets = [];
+                        var triboxTeamTargets = [];
                         Object.keys(results[eventId]).forEach(function(userId) {
                             if (results[eventId][userId]._dummy == true) {
                                 return;
@@ -382,6 +407,13 @@ var collectResults = function() {
                                             lotteryTargets.push(userId);
                                         }
                                     }
+
+                                    // 契約アカウント
+                                    if (argvrun.options.triboxteam) {
+                                        if (Users[userId].isTriboxTeam) {
+                                            triboxTeamTargets.push(userId);
+                                        }
+                                    }
                                 }
                             }
 
@@ -398,6 +430,13 @@ var collectResults = function() {
                             shuffle(lotteryTargets);
                             for (var i = 0, l = Math.min(Config.NUM_LOTTERY, lotteryTargets.length); i < l; i++) {
                                 ready[eventId][lotteryTargets[i]]['lottery'] = true;
+                            }
+                        }
+
+                        // 契約アカウント
+                        if (argvrun.options.triboxteam) {
+                            for (var i = 0, l = triboxTeamTargets.length; i < l; i++) {
+                                readyTriboxTeam[eventId][triboxTeamTargets[i]] = true;
                             }
                         }
 
