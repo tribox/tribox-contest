@@ -206,7 +206,7 @@ app.controller('ContestSolutionCtrl', ['$scope', '$timeout', function($scope, $t
                     } else if (result.details) {
                         $scope.results = result.details;
                         $scope.resultSolution = (result.details)[0].solution;
-                        $scope.resultComment = (result.details)[0].comment;
+                        $scope.resultComment = (result.details)[0].note;
                         $scope.inputchange();
                         $scope.inputblur();
                     }
@@ -289,7 +289,7 @@ app.controller('ContestSolutionCtrl', ['$scope', '$timeout', function($scope, $t
         }
 
         $scope.results[0] = { 'record': 9999, 'condition': 'OK',
-            'solution': resultSolution, 'comment': resultComment };
+            'solution': resultSolution, 'note': resultComment };
         saveAndPrepare();
     };
 

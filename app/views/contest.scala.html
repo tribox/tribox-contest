@@ -70,7 +70,7 @@
             このコンテストはまだ開始されていません。
         </p>
 
-        <p>
+        <p ng-show="countdown < 0">
             コンテストの表示を切り替える<br>
             <select class="form-control" style="margin-bottom: 5px;" ng-model="currentContest" ng-change="currentContestChange()">
                 <option ng-repeat="c in contestsList" value="{{ c.id | removeHead}}">
