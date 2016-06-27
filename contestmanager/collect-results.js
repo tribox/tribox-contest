@@ -45,6 +45,13 @@ argv.option([
         example: "'collect-results.js --lastcontest' or 'collect-results.js -l'"
     },
     {
+        name: 'checkfmc',
+        short: 'f',
+        type: 'boolean',
+        description: 'Check FMC results',
+        example: "'collect-results.js --checkfmc' or 'collect-results.js -f'"
+    },
+    {
         name: 'lottery',
         short: 'p',
         type: 'boolean',
@@ -55,8 +62,15 @@ argv.option([
         name: 'lotteryall',
         short: 'a',
         type: 'boolean',
-        description: 'Set lottery to all verified and non-DNF-resulted users',
+        description: 'Set lottery to all verified and non-DNF-resulted users in 333',
         example: "'collect-results.js --lotteryall' or 'collect-results.js -a'"
+    },
+    {
+        name: 'triboxteam',
+        short: 'x',
+        type: 'boolean',
+        description: 'Prepare points for tribox team',
+        example: "'collect-results.js --triboxteam' or 'collect-results.js -x'"
     },
     {
         name: 'tweet',
@@ -207,6 +221,7 @@ var writeResults = function() {
                     // ポイント加算履歴に待ちレコードとして登録する
                     connection.query('INSERT INTO lottery_log SET ?', {
                         'user_id': userId,
+                        'username': Users[userId].username,
                         'contest_id': targetContest,
                         'event_id': eventId,
                         'customer_type': 0,
@@ -372,16 +387,16 @@ var collectResults = function() {
 
                         });
 
-                        // 当選者抽選
-                        if (argvrun.options.lottery) {
-                            shuffle(lotteryTargets);
-                            for (var i = 0, l = Math.min(Config.NUM_LOTTERY, lotteryTargets.length); i < l; i++) {
+                        // 当選者全員
+                        if (argvrun.options.lotteryall && eventId == 'e333') {
+                            for (var i = 0, l = lotteryTargets.length; i < l; i++) {
                                 ready[eventId][lotteryTargets[i]]['lottery'] = true;
                             }
                         }
-                        // 当選者全員
-                        if (argvrun.options.lotteryall) {
-                            for (var i = 0, l = lotteryTargets.length; i < l; i++) {
+                        // 当選者抽選
+                        else if (argvrun.options.lotteryall || argvrun.options.lottery) {
+                            shuffle(lotteryTargets);
+                            for (var i = 0, l = Math.min(Config.NUM_LOTTERY, lotteryTargets.length); i < l; i++) {
                                 ready[eventId][lotteryTargets[i]]['lottery'] = true;
                             }
                         }
@@ -408,8 +423,8 @@ var checkFMC = function() {
             contestRef.child('scrambles').child(targetContest).once('value', function(snapScrambles) {
                 var scrambles = snapScrambles.val();
 
-                // コンテストにFMC競技があるとき
-                if ('e333fm' in scrambles) {
+                // コンテストにFMC競技がある、かつFMCチェックを実行するとき
+                if ('e333fm' in scrambles && argvrun.options.checkfmc) {
                     contestRef.child('results').child(targetContest).child('e333fm').once('value', function(snapResults) {
                         var results = snapResults.val();
                         var fmcResults = {};
@@ -477,7 +492,7 @@ var checkFMC = function() {
                     });
                 }
 
-                // コンテストにFMC競技があるとき
+                // コンテストにFMC競技がないとき、またはFMCチェックしないとき
                 else {
                     collectResults();
                 }
