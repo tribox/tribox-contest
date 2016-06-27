@@ -42,12 +42,14 @@ exports.PATH_TO_SARUMAWASHI = '/path/to/Sarumawashi';
 
 // シーズンポイント
 exports.SP = {
-    1: 20, 2: 10, 3: 5
+    1: 20, 2: 15, 3: 12, 4: 10, 5: 8, 6: 7, 7: 6, 8: 5, 9: 4, 10: 3, 11: 2, 12: 1
 };
 // 各競技ごとの当選者数
 exports.NUM_LOTTERY = 3;
 // 抽選ポイント数
 exports.LOTTERY_POINT = 100;
+// 契約アカウントへ加算するポイント数
+exports.TRIBOXTEAM_POINT = TODO;
 
 exports.DUMMY_USERS = [
     'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'

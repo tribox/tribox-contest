@@ -209,7 +209,7 @@ var writeResults = function() {
                             readyForMysql.push({
                                 'eventId': eventId, 'userId': userId,
                                 'customerId': Usersecrets[userId].triboxStoreCustomerId,
-                                'pointType': 0
+                                'point': Config.LOTTERY_POINT, 'pointType': 0
                             });
                         }
                     });
@@ -223,7 +223,7 @@ var writeResults = function() {
                             readyForMysql.push({
                                 'eventId': eventId, 'userId': userId,
                                 'customerId': Usersecrets[userId].triboxStoreCustomerId,
-                                'pointType': 1
+                                'point': Config.TRIBOXTEAM_POINT, 'pointType': 1
                             });
                         }
                     });
@@ -238,7 +238,6 @@ var writeResults = function() {
                     var eventId = r.eventId;
                     var userId = r.userId;
                     var customerId = r.customerId;
-                    var pointType = r.pointType;
 
                     // ポイント加算履歴に待ちレコードとして登録する
                     connection.query('INSERT INTO lottery_log SET ?', {
@@ -248,8 +247,8 @@ var writeResults = function() {
                         'event_id': eventId,
                         'customer_type': 0,
                         'customer_id': customerId,
-                        'point': Config.LOTTERY_POINT,
-                        'point_type': pointType
+                        'point': r.point,
+                        'point_type': r.pointType
                     }, function(error, results, fields) {
                         if (error) {
                             console.error(error);
