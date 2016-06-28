@@ -31,20 +31,37 @@ h1, h2, h3, h4, h5, h6 {
     margin-top: 22px;
 }
 
-#header-logo {
-    display: inline-block;
-    height: 30px;
+@media screen and (max-width: 480px) {
+    #header-logo {
+        display: inline-block;
+        height: 20px;
+    }
 }
-
+@media screen and (min-width: 481px) {
+    #header-logo {
+        display: inline-block;
+        height: 30px;
+    }
+}
 #header-logo span {
     display: none;
 }
 
-#header-menu {
-    display: inline-block;
-    height: 30px;
-    margin-top: 10px;
-    float: right;
+@media screen and (max-width: 480px) {
+    #header-menu {
+        display: inline-block;
+        height: auto;
+        margin-top: 5px;
+        float: right;
+    }
+}
+@media screen and (min-width: 481px) {
+    #header-menu {
+        display: inline-block;
+        height: 30px;
+        margin-top: 10px;
+        float: right;
+    }
 }
 
 #header-menu a {

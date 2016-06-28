@@ -1,0 +1,76 @@
+/**
+ * timer.css
+ */
+
+body {
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+}
+
+#timerArea {
+    font-family: Arial, sans-serif !important;
+    text-align: center;
+}
+
+@media screen and (max-width: 480px) {
+    #timerText {
+        font-size: 72px;
+        margin: 30px auto;
+        text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+    }
+    .timerText-tall {
+        margin: 90px auto !important;
+    }
+}
+@media screen and (min-width: 481px) {
+    #timerText {
+        font-size: 128px;
+        margin: 60px auto;
+        text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+    }
+    .timerText-tall {
+        margin: 180px auto !important;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    #timerNote, #timerNoteMb {
+        font-size: 14px;
+    }
+}
+@media screen and (max-width: 768px) {
+    #timerNote, #timerNoteMb {
+        padding-bottom: 20px;
+    }
+    #timerNote {
+        display: none;
+    }
+}
+@media screen and (min-width: 769px) {
+    #timerNote, #timerNoteMb {
+        padding-bottom: 40px;
+    }
+    #timerNoteMb {
+        display: none;
+    }
+}
+
+.wait {
+    color: #E74C3C !important;
+}
+.ready {
+    color: #1BBC9B !important;
+}
+
+
+/* ƒ‚ƒoƒCƒ‹ŠÂ‹«‚Å‰æ–Ê‚ð‚©‚¹‚®‚½‚ß */
+@media screen and (max-width: 480px) {
+    hr#header-line {
+        margin: 5px !important;
+    }
+    p#auth-info {
+        margin-bottom: 10px !important;
+    }
+}

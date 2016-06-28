@@ -11,48 +11,7 @@
 <html lang="ja" ng-app="contestApp">
 <head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
     @header(title=title, description=contestDescription, sitename=contestName, url=pageUrl, contestUrl=contestUrl)
-
-<style>
-body {
-    -webkit-user-select: none;
-       -moz-user-select: none;
-        -ms-user-select: none;
-            user-select: none;
-}
-#timerArea {
-    font-family: Arial, sans-serif !important;
-    text-align: center;
-}
-#timerText {
-    margin: 60px auto;
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
-}
-#timerNote, #timerNoteMb {
-    padding-bottom: 40px;
-}
-@@media screen and (max-width: 480px) {
-    #timerText {
-        font-size: 96px;
-    }
-    #timerNote {
-        display: none;
-    }
-}
-@@media screen and (min-width: 481px) {
-    #timerText {
-        font-size: 128px;
-    }
-    #timerNoteMb {
-        display: none;
-    }
-}
-.wait {
-    color: #E74C3C !important;
-}
-.ready {
-    color: #1BBC9B !important;
-}
-</style>
+    <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/timer.css")">
 
 @basejs(firebaseappContest)
 

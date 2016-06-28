@@ -1,11 +1,11 @@
 @(eid: String = "")
 
 @if(eid == "demo") {
-        <p class="margin-bottom-0">
+        <p id="event-info" class="margin-bottom-0">
             Demo Timer
         </p>
 } else { @if(eid != "") {
-        <p class="margin-bottom-0">
+        <p id="event-info" class="margin-bottom-0">
             {{ events.e@{eid}.name }}
         </p>
 } }

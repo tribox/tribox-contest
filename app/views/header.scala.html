@@ -1,7 +1,12 @@
-@(title: String = "", description: String = "", sitename: String = "", url: String = "", contestUrl: String = "")
+@(title: String = "", description: String = "", sitename: String = "", url: String = "", contestUrl: String = "", userScalable: Boolean = true)
 
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    @if(userScalable) {
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    } else {
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    }
+
     @if(title.isEmpty){
         <title>@sitename</title>
     } else {
