@@ -154,7 +154,7 @@ var getUrlHashes = function() {
 var fadeOut = function(el, ms, fn) {
     ms = ms || 400;             // duration in milliseconds
     el.style.opacity = 1;
-    var interval = 50,           // frame interval 50ms -> 20fps
+    var interval = 100,           // frame interval 100ms -> 10fps
         step = interval / ms;
     function tick() {
         el.style.opacity -= step;
@@ -174,7 +174,7 @@ var fadeIn = function(el, ms, fn) {
         ms = ms || 400;         // duration in milliseconds
         el.style.opacity = 0;
         //el.style.display = 'block';
-        var interval = 50,       // frame interval 50ms -> 20fps
+        var interval = 100,       // frame interval 100ms -> 10fps
             step = interval / ms;
         function tick() {
             el.style.opacity = +el.style.opacity + step;

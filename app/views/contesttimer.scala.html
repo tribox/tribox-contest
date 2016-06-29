@@ -10,7 +10,7 @@
 <!DOCTYPE html>
 <html lang="ja" ng-app="contestApp">
 <head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
-    @header(title=title, description=contestDescription, sitename=contestName, url=pageUrl, contestUrl=contestUrl)
+    @header(title=title, description=contestDescription, sitename=contestName, url=pageUrl, contestUrl=contestUrl, userScalable=false)
     <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/timer.css")">
 
 @basejs(firebaseappContest)
@@ -83,6 +83,33 @@
             計測が完了しました。間違いがなければ確認ページへ進んでください。<br>
             <a href="/contest/@{cid}/@{eid}/confirm" class="btn margin-top-10">確認ページへ</a>
         </p>
+
+        <!--
+        <div id="tabs-timer" class="row pc-hide">
+            <div class="col xs-6 text-center">
+                <span style="color: #659ac9; border-bottom: 2px solid #659ac9; padding-bottom: 4px;">
+                    <i class="fa fa-clock-o"></i> タイマー
+                </span>
+            </div>
+            <div class="col xs-6 text-center">
+                <a style="cursor: pointer;" ng-click="showHistory()">
+                    <i class="fa fa-list-ol"></i> タイム履歴
+                </a>
+            </div>
+        </div>
+        <div id="tabs-history" class="row pc-hide hide" style="margin-bottom: 20px;">
+            <div class="col xs-6 text-center">
+                <a style="cursor: pointer;" ng-click="showTimer()">
+                    <i class="fa fa-clock-o"></i> タイマー
+                </a>
+            </div>
+            <div class="col xs-6 text-center">
+                <span style="color: #659ac9; border-bottom: 2px solid #659ac9; padding-bottom: 4px;">
+                    <i class="fa fa-list-ol"></i> タイム履歴
+                </span>
+            </div>
+        </div>
+        -->
 
     </div></div></div></div></div>
 
@@ -372,6 +399,8 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
             updateStatus(true, false, false);
             document.getElementById('timerNote').innerHTML = window.TriboxContest.timerIdlingText;
             document.getElementById('timerNoteMb').innerHTML = window.TriboxContest.timerIdlingTextMb;
+
+            unShowOnlyTimer();
         }, (inspectionCountdown + 2) * 1000);
      };
 
@@ -452,12 +481,14 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
         hasInspection = window.TriboxContest.hasInspection;
         if (isRunning) {
             stopTimer();
+            unShowOnlyTimer();
             isTouchingStop = true;
-        } else if ((hasInspection && isInspecting || !hasInspection && isIdling) && !isTouching && !isTouchingStop && e.code == 'Space') {
+        } else if ((hasInspection && isInspecting || !hasInspection && isIdling) && !isTouching && !isTouchingStop && (e.keyCode == 32 || e.code == 'Space')) {
             if (FREEZING_TH < Date.now() - stopTime) {
                 startTouch = Date.now();
                 isTouching = true;
                 angular.element(document.getElementById('timerText')).addClass('wait');
+                showOnlyTimer();
                 dispTimerId = setTimeout(function() {
                     angular.element(document.getElementById('timerText')).removeClass('wait');
                     angular.element(document.getElementById('timerText')).addClass('ready');
@@ -469,7 +500,7 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
         //document.getElementById('keyup').innerHTML = e.keyCode + ':' + e.code + ' (' + Date.now() + ')';
         if (isTouchingStop) {
             isTouchingStop = false;
-        } else if ((hasInspection && isInspecting || !hasInspection && isIdling) && e.code == 'Space') {
+        } else if ((hasInspection && isInspecting || !hasInspection && isIdling) && (e.keyCode == 32 || e.code == 'Space')) {
             if (FREEZING_TH < Date.now() - stopTime) {
                 isTouching = false;
                 clearTimeout(dispTimerId);
@@ -480,13 +511,14 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
                     startTouch = Infinity;
                 }
             }
-        } else if (hasInspection && isIdling && e.code == 'Space') {
+        } else if (hasInspection && isIdling && (e.keyCode == 32 || e.code == 'Space')) {
             if (FREEZING_TH < Date.now() - stopTime) {
                 startInspection();
+                showOnlyTimer();
             }
         }
     });
-    if(window.TouchEvent) {
+    if (window.TouchEvent) {
         var touchArea = document.getElementById('touchArea');
         touchArea.addEventListener('touchstart', function(e) {
             //document.getElementById('keydown').innerHTML = 'touchstart (' + Date.now() + ' ' + e.changedTouches[0].pageX + ' ' + e.changedTouches[0].pageY + ')';
@@ -495,12 +527,14 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
             hasInspection = window.TriboxContest.hasInspection;
             if (isRunning) {
                 stopTimer();
+                unShowOnlyTimer();
                 isTouchingStop = true;
             } else if ((hasInspection && isInspecting || !hasInspection && isIdling) && !isTouching && !isTouchingStop) {
                 if (FREEZING_TH < Date.now() - stopTime) {
                     startTouch = Date.now();
                     isTouching = true;
                     angular.element(document.getElementById('timerText')).addClass('wait');
+                    showOnlyTimer();
                     dispTimerId = setTimeout(function() {
                         angular.element(document.getElementById('timerText')).removeClass('wait');
                         angular.element(document.getElementById('timerText')).addClass('ready');
@@ -527,6 +561,7 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
                 } else if (hasInspection && isIdling) {
                     if (FREEZING_TH < Date.now() - stopTime) {
                         startInspection();
+                        showOnlyTimer();
                     }
                 }
             } else {
@@ -535,6 +570,64 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
             }
         });
     }
+
+    // タイマーのみを表示
+    var showOnlyTimer = function() {
+        angular.element(document.getElementById('header')).addClass('hide');
+        angular.element(document.getElementById('header-line')).addClass('hide');
+
+        angular.element(document.getElementById('event-info')).addClass('hide');
+        angular.element(document.getElementById('auth-info')).addClass('hide');
+        angular.element(document.getElementById('contest-scrambles')).addClass('hide');
+        angular.element(document.getElementById('timeforms')).addClass('hide');
+        angular.element(document.getElementById('timerText')).addClass('timerText-tall');
+
+        angular.element(document.getElementById('footer-line')).addClass('hide');
+        angular.element(document.getElementById('footer')).addClass('hide');
+
+        fadeIn(document.getElementById('timerArea'));
+    };
+
+    // タイマーのみを表示を解除
+    var unShowOnlyTimer = function() {
+        angular.element(document.getElementById('header')).removeClass('hide');
+        angular.element(document.getElementById('header-line')).removeClass('hide');
+
+        angular.element(document.getElementById('event-info')).removeClass('hide');
+        angular.element(document.getElementById('auth-info')).removeClass('hide');
+        angular.element(document.getElementById('contest-scrambles')).removeClass('hide');
+        angular.element(document.getElementById('timeforms')).removeClass('hide');
+        angular.element(document.getElementById('timerText')).removeClass('timerText-tall');
+
+        angular.element(document.getElementById('footer-line')).removeClass('hide');
+        angular.element(document.getElementById('footer')).removeClass('hide');
+    };
+
+    // モバイル用
+    // タイマー表示
+    /*$scope.showTimer = function() {
+        angular.element(document.getElementById('timeforms')).removeClass('mb-hide');
+        angular.element(document.getElementById('timeforms')).removeClass('tb-hide');
+
+        angular.element(document.getElementById('tabs-timer')).removeClass('hide');
+        angular.element(document.getElementById('tabs-history')).addClass('hide');
+
+        angular.element(document.getElementById('timeforms')).addClass('hide');
+        angular.element(document.getElementById('touchArea')).removeClass('hide');
+    };*/
+
+    // モバイル用
+    // タイム履歴表示
+    /*$scope.showHistory = function() {
+        angular.element(document.getElementById('timeforms')).removeClass('mb-hide');
+        angular.element(document.getElementById('timeforms')).removeClass('tb-hide');
+
+        angular.element(document.getElementById('tabs-timer')).addClass('hide');
+        angular.element(document.getElementById('tabs-history')).removeClass('hide');
+
+        angular.element(document.getElementById('timeforms')).removeClass('hide');
+        angular.element(document.getElementById('touchArea')).addClass('hide');
+    };*/
 
 }
 
