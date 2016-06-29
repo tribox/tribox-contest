@@ -16,20 +16,24 @@ body {
 
 @media screen and (max-width: 480px) {
     #timerText {
-        font-size: 72px;
+        font-size: 84px;
         margin: 30px auto;
         text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
-    }
-    .timerText-tall {
-        margin: 90px auto !important;
     }
 }
 @media screen and (min-width: 481px) {
     #timerText {
-        font-size: 128px;
-        margin: 60px auto;
+        font-size: 120px;
+        margin: 50px auto;
         text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
     }
+}
+@media screen and (max-width: 768px) {
+    .timerText-tall {
+        margin: 90px auto !important;
+    }
+}
+@media screen and (min-width: 769px) {
     .timerText-tall {
         margin: 180px auto !important;
     }
@@ -65,7 +69,7 @@ body {
 }
 
 
-/* ƒ‚ƒoƒCƒ‹ŠÂ‹«‚Å‰æ–Ê‚ğ‚©‚¹‚®‚½‚ß */
+/* ãƒ¢ãƒã‚¤ãƒ«ç’°å¢ƒã§ç”»é¢ã‚’ã‹ã›ããŸã‚ */
 @media screen and (max-width: 480px) {
     hr#header-line {
         margin: 5px !important;
@@ -73,4 +77,14 @@ body {
     p#auth-info {
         margin-bottom: 10px !important;
     }
+}
+
+
+/* ã‚¿ã‚¤ãƒãƒ¼æ™‚é–“ã®ã¿ã‚’é›†ä¸­è¡¨ç¤º */
+#touchArea.full-screen {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
 }

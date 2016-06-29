@@ -383,42 +383,6 @@ table.profile td {
     padding-bottom: 5px;
 }
 
-/**
- * SkyBlue CSS: Override
- */
-.btn {
-    background-color: #3498DB;
-}
-.btn.btn-empty {
-    -webkit-border-radius: 3px;
-       -moz-border-radius: 3px;
-            border-radius: 3px;
-}
-input[type="text"].form-control:focus,
-input[type="password"].form-control:focus,
-input[type="email"].form-control:focus,
-input[type="search"].form-control:focus,
-input[type="url"].form-control:focus,
-select.form-control:focus,
-textarea.form-control:focus {
-    border: 2px solid #3498DB;
-}
-.fancy-radio input:checked + span:before {
-    background: #3498DB
-}
-.fancy-radio input:focus + span:before {
-    border: 1px solid #3498DB;
-}
-
-.color-lightdark {
-    color: #aaa;
-}
-
-table.table th,
-table.table td {
-    vertical-align: middle !important;
-}
-
 
 /**
  * ツイートボタン（独自）
