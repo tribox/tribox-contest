@@ -415,7 +415,7 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
             clearTimeout(timerId);
             updateStatus(true, false, false);
             var resultTime = (stopTime - startTime) / 1000;
-            timerText.innerHTML = resultTime.toFixed(3);
+            timerText.innerHTML = TriboxContest.formatTime(resultTime);
             //setButtonState(true, false, true);
 
             // Prepare results data
