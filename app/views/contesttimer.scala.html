@@ -234,7 +234,7 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
     // Condition buttons
     $scope.applyOK = function(index) {
         var resultElem = $scope.results[index];
-        if (resultElem && resultElem.record != 0) {
+        if (resultElem && 0 < resultElem.record && resultElem.record < LIMIT_SECOND) {
             var btnOK = angular.element(document.getElementById('timeform-cond-ok-' + index));
             var btnPenalty = angular.element(document.getElementById('timeform-cond-penalty-' + index));
             var btnDNF = angular.element(document.getElementById('timeform-cond-dnf-' + index));
@@ -248,7 +248,7 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
     };
     $scope.applyPenalty = function(index) {
         var resultElem = $scope.results[index];
-        if (resultElem && resultElem.record != 0) {
+        if (resultElem && 0 < resultElem.record && resultElem.record < LIMIT_SECOND) {
             var btnOK = angular.element(document.getElementById('timeform-cond-ok-' + index));
             var btnPenalty = angular.element(document.getElementById('timeform-cond-penalty-' + index));
             var btnDNF = angular.element(document.getElementById('timeform-cond-dnf-' + index));
