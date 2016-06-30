@@ -304,6 +304,7 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
     var isRunning = false;      @* タイマー動作中 *@
     var isTouching = false;     @* タッチ中 (スタート時) *@
     var isTouchingStop = false; @* タッチ中 (ストップ時) *@
+    var isTouchingStartDNF = false; @* タッチ中 (スタート時DNF) *@
     var startTouch = Infinity;
 
     var INSPECTION_SECOND = 15; @* /* インスペクションタイムは15秒 */ *@
@@ -374,6 +375,13 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
             updateStatus(true, false, false);
             document.getElementById('timerNote').innerHTML = window.TriboxContest.timerIdlingText;
             document.getElementById('timerNoteMb').innerHTML = window.TriboxContest.timerIdlingTextMb;
+
+            // インスペクションタイム超過でDNFになるときにスペースキータッチ中の場合の処理
+            if (isTouching) {
+                isTouchingStartDNF = true;
+                angular.element(document.getElementById('timerText')).removeClass('wait');
+                angular.element(document.getElementById('timerText')).removeClass('ready');
+            }
 
             unShowOnlyTimer();
         }, (inspectionCountdown + 2) * 1000);
@@ -476,7 +484,7 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
         //document.getElementById('keyup').innerHTML = e.keyCode + ':' + e.code + ' (' + Date.now() + ')';
         if (isTouchingStop) {
             isTouchingStop = false;
-        } else if ((hasInspection && isInspecting || !hasInspection && isIdling) && (e.keyCode == 32 || e.code == 'Space')) {
+        } else if ((hasInspection && isInspecting || !hasInspection && isIdling) && !isTouchingStartDNF && (e.keyCode == 32 || e.code == 'Space')) {
             if (FREEZING_TH < Date.now() - stopTime) {
                 isTouching = false;
                 clearTimeout(dispTimerId);
@@ -487,12 +495,13 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
                     startTouch = Infinity;
                 }
             }
-        } else if (hasInspection && isIdling && (e.keyCode == 32 || e.code == 'Space')) {
+        } else if (hasInspection && isIdling && !isTouchingStartDNF && (e.keyCode == 32 || e.code == 'Space')) {
             if (FREEZING_TH < Date.now() - stopTime) {
                 startInspection();
                 showOnlyTimer();
             }
         }
+        isTouchingStartDNF = false;
     });
     if (window.TouchEvent) {
         var touchArea = document.getElementById('touchArea');
@@ -522,7 +531,7 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
             //document.getElementById('keyup').innerHTML = 'touchend (' + Date.now() + ' ' + e.changedTouches[0].pageX + ' ' + e.changedTouches[0].pageY + ')';
             if (isTouchingStop) {
                 isTouchingStop = false;
-            } else if (hasInspection && isInspecting || !hasInspection && isIdling) {
+            } else if ((hasInspection && isInspecting || !hasInspection && isIdling) && !isTouchingStartDNF) {
                 if (FREEZING_TH < Date.now() - stopTime) {
                     isTouching = false;
                     clearTimeout(dispTimerId);
@@ -533,7 +542,7 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
                         startTouch = Infinity;
                     }
                 }
-            } else if (hasInspection && isIdling) {
+            } else if (hasInspection && isIdling && !isTouchingStartDNF) {
                 if (Math.abs(e.changedTouches[0].pageX - touchX) <= TAP_TH && Math.abs(e.changedTouches[0].pageY - touchY) <= TAP_TH) {
                     if (FREEZING_TH < Date.now() - stopTime) {
                         startInspection();
@@ -544,6 +553,7 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
                     angular.element(document.getElementById('timerText')).removeClass('ready');
                 }
             }
+            isTouchingStartDNF = false;
         });
     }
 
