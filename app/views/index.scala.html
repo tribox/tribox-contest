@@ -45,8 +45,6 @@
             <a href="@routes.HomeController.about">詳しく</a>
         </p>
 
-        <!--<h3>開催中のコンテスト</h3>-->
-
         <hr>
 
         <div ng-show="inProgressContest._dummy">
@@ -103,6 +101,8 @@
         </div>
 
         <div ng-show="!(inProgressContest._dummy)">
+
+        <p>開催中のコンテスト</p>
         <h4><a href="/contest/{{ inProgressContest.contestId }}">{{ inProgressContest.contestName }}</a></h4>
 
         <p>
