@@ -1,6 +1,6 @@
 @(sid: String, contestName: String, contestDescription: String, contestUrl: String, firebaseappContest: String)
 
-@defining("Puzzle Ranking " + sid) { title =>
+@defining("Puzzle Ranking " + sid.slice(0, 4) + " " + sid.slice(4, 5) + "H") { title =>
 @defining(contestUrl + "/ranking/" + sid + "/puzzle") { pageUrl =>
 
 <!DOCTYPE html>
