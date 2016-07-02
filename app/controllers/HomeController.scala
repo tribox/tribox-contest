@@ -30,12 +30,15 @@ class HomeController @Inject() extends Controller {
     def getPlayAppPath(): String = {
         return Play.application.configuration.getString("contest.playpath").getOrElse("/path/to/playapp")
     }
+    def getGoogleVerification(): String = {
+        return Play.application.configuration.getString("google.verification").getOrElse("")
+    }
 
     /**
      * Home
      */
     def index = Action {
-        Ok(views.html.index(getContestName, getContestDescription, getContestUrl, getFirebaseappContest))
+        Ok(views.html.index(getContestName, getContestDescription, getContestUrl, getFirebaseappContest, getGoogleVerification))
     }
 
     /**

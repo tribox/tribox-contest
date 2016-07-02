@@ -37,3 +37,6 @@ contest.playpath = "/path/to/playapp"
 # 4) Change firebase app name.
 firebaseapp.contest = "firebase-contest-app"
 firebaseapp.wca = "firebase-wca-app"
+
+# 5) Google verificatoion
+google.verification = ""

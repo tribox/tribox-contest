@@ -1,4 +1,4 @@
-@(contestName: String, contestDescription: String, contestUrl: String, firebaseappContest: String)
+@(contestName: String, contestDescription: String, contestUrl: String, firebaseappContest: String, googleVerification: String)
 
 @defining("") { title =>
 @defining(contestUrl + "/") { pageUrl =>
@@ -6,7 +6,7 @@
 <!DOCTYPE html>
 <html lang="ja" ng-app="contestApp">
 <head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
-    @header(title=title, description=contestDescription, sitename=contestName, url=pageUrl, contestUrl=contestUrl)
+    @header(title=title, description=contestDescription, sitename=contestName, url=pageUrl, contestUrl=contestUrl, googleVerification=googleVerification)
     <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/modal.css")">
 
 @basejs(firebaseappContest)
