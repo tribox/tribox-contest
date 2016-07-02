@@ -75,7 +75,7 @@ h3, h4 {
                                 {{ p.productName }}
                             </a>
                             <span ng-show="p.productId == -1">
-                                不明
+                                その他
                             </span>
                             ({{ p.percentage }}%)
                         </li>
@@ -248,7 +248,7 @@ app.controller('RankingPuzzleCtrl', ['$scope', '$timeout', function($scope, $tim
                                     'productId': -1,
                                     'productName': 'その他',
                                     'count': countOthers,
-                                    'percentage': Math.round(puzzleObj.count / usedPuzzlesSum * 100)
+                                    'percentage': Math.round(countOthers / usedPuzzlesSum * 100)
                                 });
                                 jsdata[eid].push(['その他', countOthers]);
                             }
