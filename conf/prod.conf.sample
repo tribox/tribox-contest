@@ -38,5 +38,5 @@ contest.playpath = "/path/to/playapp"
 firebaseapp.contest = "firebase-contest-app"
 firebaseapp.wca = "firebase-wca-app"
 
-# 5) Google verificatoion
+# 5) Google verification (optional)
 google.verification = ""
