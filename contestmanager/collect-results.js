@@ -407,9 +407,9 @@ var collectResults = function() {
                                         }
                                     }
 
-                                    // 契約アカウント
+                                    // 契約アカウント (333のみ)
                                     if (argvrun.options.triboxteam) {
-                                        if (Users[userId].isTriboxTeam) {
+                                        if (Users[userId].isTriboxTeam && eventId == 'e333') {
                                             triboxTeamTargets.push(userId);
                                         }
                                     }
