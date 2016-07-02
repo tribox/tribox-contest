@@ -45,13 +45,17 @@ TODO
 (本番) activator clean stage && target/universal/stage/bin/contest -Dconfig.file=/path/to/contestapp/conf/prod.conf
 ```
 
-### [1週間に1回] 日曜日午後9時 (JST) 自動実行
+### :alarm_clock: 1週間に1回 -- 日曜日午後9時 (JST) 自動実行
+
+#### inProgress 更新
 
 inProgressのコンテストを書き換える。
 毎週日曜日の午後9時0分0.001秒に実行すればよいが、実行時刻に合わせるだけなのでいつでも好きなだけ実行して大丈夫。
 ```
 node contestmanager/update-inprogress.js
 ```
+
+#### 結果集計
 
 結果の集計をする。
 ```
@@ -66,6 +70,8 @@ node contestmanager/collect-results.js --lastcontest --checkfmc --lottery --trib
 * `--triboxteam` は契約アカウントにポイントを与える。ポイント加算対象者をMySQLに待ちレコードとして保存する。ここでは実際にポイント加算はされない。
 * `--tweet` オプションは付けると結果をツイートする。
 
+#### ポイント進呈
+
 ポイント加算する。
 ```
 node contestmanager/append-points.js
@@ -73,7 +79,7 @@ node contestmanager/append-points.js
 上の `collect-results.js` スクリプトを実行して該当者を待ちレコードに記録した後に実行する。
 本当に対象者が正しいことを目視で確認した後、このスクリプトを実行して実際に抽選ポイントをストアポイントに加算する。
 
-### [半年に1回程度] 実行
+### :alarm_clock: 半年に1回程度 -- 実行
 
 一応、シーズン開始の少し前に実行する想定だが、いつやっても大丈夫。
 
@@ -90,7 +96,7 @@ java -jar wca/dist/TNoodle-WCA.jar
 node contestmanager/create-season.js 20162
 ```
 
-### [不定期] 必要時に実行する
+### :alarm_clock: 不定期 -- 必要時に実行する
 
 WCAデータベースインポートと、WCA APPの更新。
 [wca-importer](https://github.com/kotarot/wca-importer) を用いる。
