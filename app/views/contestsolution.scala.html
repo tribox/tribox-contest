@@ -107,21 +107,31 @@ textarea.form-control {
 
         <hr>
 
-        <p style="font-size: 150%;">
-            Scramble: {{ scramblesData.e333fm[0] }}
+        <p id="start-button" class="text-center">
+            <a class="btn" style="cursor: pointer;" ng-click="showContestArea()">スクランブルを表示してタイマースタート</a>
         </p>
 
-        <div>
-            <label>解答 (DNF にする場合は "DNF" と入力してください)</label>
-            <p class="margin-bottom-0 color-lightdark">文字数: {{ resultSolutionLength }} / 500</p>
-            <p id="form-solution-error" class="color-error margin-bottom-0 hide"></p>
-            <textarea id="form-solution" class="form-control" placeholder="例) U R F D L B" ng-model="resultSolution" ng-change="inputchange()" ng-blur="inputblur()"></textarea>
-        </div>
-        <div>
-            <label>コメント</label>
-            <p class="margin-bottom-0 color-lightdark">文字数: {{ resultCommentLength }} / 2000</p>
-            <p id="form-comment-error" class="color-error margin-bottom-0 hide"></p>
-            <textarea id="form-comment" class="form-control" placeholder="例) ここでNISS。" ng-model="resultComment" ng-change="inputchange()" ng-blur="inputblur()"></textarea>
+        <div id="contest-area" class="hide">
+            <p>
+                <span style="font-size: 150%;">残り時間: <span id="remaining">59:59</span></span>
+                ※残り時間が 0 になった後でも解答を提出できます。
+            </p>
+            <p style="font-size: 150%;">
+                Scramble: {{ scramblesData.e333fm[0] }}
+            </p>
+
+            <div>
+                <label>解答 (DNF にする場合は "DNF" と入力してください)</label>
+                <p class="margin-bottom-0 color-lightdark">文字数: {{ resultSolutionLength }} / 500</p>
+                <p id="form-solution-error" class="color-error margin-bottom-0 hide"></p>
+                <textarea id="form-solution" class="form-control" placeholder="例) U R F D L B" ng-model="resultSolution" ng-change="inputchange()" ng-blur="inputblur()"></textarea>
+            </div>
+            <div>
+                <label>コメント</label>
+                <p class="margin-bottom-0 color-lightdark">文字数: {{ resultCommentLength }} / 2000</p>
+                <p id="form-comment-error" class="color-error margin-bottom-0 hide"></p>
+                <textarea id="form-comment" class="form-control" placeholder="例) ここでNISS。" ng-model="resultComment" ng-change="inputchange()" ng-blur="inputblur()"></textarea>
+            </div>
         </div>
 
         <p id="input-completed" class="margin-top-20 text-center hide">
@@ -319,6 +329,25 @@ app.controller('ContestSolutionCtrl', ['$scope', '$timeout', function($scope, $t
         }
     };
 
+    // コンテストエリア (スクランブルと入力欄) を表示してタイマースタート
+    $scope.showContestArea = function() {
+        angular.element(document.getElementById('start-button')).addClass('hide');
+        angular.element(document.getElementById('contest-area')).removeClass('hide');
+
+        var remainingElem = angular.element(document.getElementById('remaining'));
+        var min = 59, sec = 59;
+        setInterval(function() {
+            remainingElem.text(min + ':' + ('0' + sec).slice(-2));
+            if (min == 0 && sec == 0) {
+                min = sec = 0;
+            } else if (sec == 0) {
+                min = min - 1;
+                sec = 59;
+            } else {
+                sec = sec - 1;
+            }
+        }, 1000);
+    };
 }
 
 }]);
