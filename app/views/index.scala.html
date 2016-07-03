@@ -89,7 +89,7 @@
             <p>
                 <a href="@routes.DemoController.timer">練習用コンテストタイマー</a><br>
                 本番のコンテストで使用するコンテストタイマーを体験してみましょう。<br>
-                （※コンテストではタイムを手入力して記録を送信することもできます。）
+                （※コンテストでは使い慣れたタイマーを使用してタイムを手入力して記録を送信することもできます。）
             </p>
 
             <hr>
@@ -122,11 +122,11 @@
                     <td>{{ events[e].name }}</td>
                     <td>{{ events[e].method | uppercaseHead }} of {{ events[e].attempts }}</td>
                     <td>
-                        <a href="/contest/{{ inProgressContest.contestId }}/{{ e | removeHead }}" ng-if="authData != null && eventsDone[e] == false"><i class="fa fa-play-circle"></i> 参加する</a>
-                        <a href="/contest/{{ inProgressContest.contestId }}/{{ e | removeHead }}/timer" ng-if="authData != null && eventsDone[e] == 'timer'"><i class="fa fa-play-circle"></i> 再開する</a>
-                        <a href="/contest/{{ inProgressContest.contestId }}/{{ e | removeHead }}/form" ng-if="authData != null && eventsDone[e] == 'form'"><i class="fa fa-play-circle"></i> 再開する</a>
-                        <a href="/contest/{{ inProgressContest.contestId }}/{{ e | removeHead }}/solution" ng-if="authData != null && eventsDone[e] == 'solution'"><i class="fa fa-play-circle"></i> 再開する</a>
-                        <span ng-if="authData != null && eventsDone[e] == true"><i class="fa fa-check-circle"></i> 参加済みです</span>
+                        <a class="font-bold" href="/contest/{{ inProgressContest.contestId }}/{{ e | removeHead }}" ng-if="authData != null && eventsDone[e] == false"><i class="fa fa-play-circle"></i> 参加する</a>
+                        <a class="font-bold color-error" href="/contest/{{ inProgressContest.contestId }}/{{ e | removeHead }}/timer" ng-if="authData != null && eventsDone[e] == 'timer'"><i class="fa fa-play-circle"></i> 再開する</a>
+                        <a class="font-bold color-error" href="/contest/{{ inProgressContest.contestId }}/{{ e | removeHead }}/form" ng-if="authData != null && eventsDone[e] == 'form'"><i class="fa fa-play-circle"></i> 再開する</a>
+                        <a class="font-bold color-error" href="/contest/{{ inProgressContest.contestId }}/{{ e | removeHead }}/solution" ng-if="authData != null && eventsDone[e] == 'solution'"><i class="fa fa-play-circle"></i> 再開する</a>
+                        <span style="color: #ccc;" ng-if="authData != null && eventsDone[e] == true"><i class="fa fa-check-circle"></i> 参加済みです</span>
                         <a href="@routes.HomeController.login" ng-if="authData == null"><i class="fa fa-sign-in"></i> ログインして参加してください</a>
                     </td>
                 </tr>
@@ -137,7 +137,7 @@
         <p>
             <a href="@routes.DemoController.timer">練習用コンテストタイマー</a><br>
             本番のコンテストで使用するコンテストタイマーを体験してみましょう。<br>
-            （※コンテストではタイムを手入力して記録を送信することもできます。）
+            （※コンテストでは使い慣れたタイマーを使用してタイムを手入力して記録を送信することもできます。）
         </p>
 
         @* <!--<p>inProgressContest:</p>
@@ -150,6 +150,12 @@
     </div></div></div>
 
     @bodyfooter(contestName)
+
+<style>
+.font-bold {
+    font-weight: bold;
+}
+</style>
 
 @authjs(redirectLogin="", redirectLogout="", checkFirst=true)
 <script>

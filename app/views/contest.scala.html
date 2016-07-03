@@ -92,11 +92,11 @@
                     <td>{{ events[e].name }}</td>
                     <td>{{ events[e].method | uppercaseHead }} of {{ events[e].attempts }}</td>
                     <td>
-                        <a href="/contest/@cid/{{ e | removeHead }}" ng-if="countdown == 0 && authData != null && eventsDone[e] == false"><i class="fa fa-play-circle"></i> 参加する</a>
-                        <a href="/contest/@cid/{{ e | removeHead }}/timer" ng-if="countdown == 0 && authData != null && eventsDone[e] == 'timer'"><i class="fa fa-play-circle"></i> 再開する</a>
-                        <a href="/contest/@cid/{{ e | removeHead }}/form" ng-if="countdown == 0 && authData != null && eventsDone[e] == 'form'"><i class="fa fa-play-circle"></i> 再開する</a>
-                        <a href="/contest/@cid/{{ e | removeHead }}/solution" ng-if="countdown == 0 && authData != null && eventsDone[e] == 'solution'"><i class="fa fa-play-circle"></i> 再開する</a>
-                        <span ng-if="countdown == 0 && authData != null && eventsDone[e] == true"><i class="fa fa-check-circle"></i> 参加済みです</span>
+                        <a class="font-bold" href="/contest/@cid/{{ e | removeHead }}" ng-if="countdown == 0 && authData != null && eventsDone[e] == false"><i class="fa fa-play-circle"></i> 参加する</a>
+                        <a class="font-bold color-error" href="/contest/@cid/{{ e | removeHead }}/timer" ng-if="countdown == 0 && authData != null && eventsDone[e] == 'timer'"><i class="fa fa-play-circle"></i> 再開する</a>
+                        <a class="font-bold color-error" href="/contest/@cid/{{ e | removeHead }}/form" ng-if="countdown == 0 && authData != null && eventsDone[e] == 'form'"><i class="fa fa-play-circle"></i> 再開する</a>
+                        <a class="font-bold color-error" href="/contest/@cid/{{ e | removeHead }}/solution" ng-if="countdown == 0 && authData != null && eventsDone[e] == 'solution'"><i class="fa fa-play-circle"></i> 再開する</a>
+                        <span style="color: #ccc;" ng-if="countdown == 0 && authData != null && eventsDone[e] == true"><i class="fa fa-check-circle"></i> 参加済みです</span>
                         <a href="@routes.HomeController.login" ng-if="countdown == 0 && authData == null"><i class="fa fa-sign-in"></i> ログインして参加してください</a>
                         <span ng-if="countdown != 0"><i class="fa fa-ban"></i> 現在このコンテストには参加できません</span>
                     </td>
@@ -180,6 +180,12 @@
     </div></div></div></div></div>
 
     @bodyfooter(contestName)
+
+<style>
+.font-bold {
+    font-weight: bold;
+}
+</style>
 
 @authjs(redirectLogin="", redirectLogout="", checkFirst=true)
 @contestjs(cid=cid, fetchScrambles=false, fetchResultsTop3=true, fetchResultsAll=false)
