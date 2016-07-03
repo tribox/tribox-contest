@@ -160,7 +160,7 @@ a.video-url {
                         <th ng-if="eid != 'e333fm' && events[eid].method == 'best'">最高記録</th>
                         <th ng-if="eid == 'e333fm'">記録</th>
                         <th class="mb-hide" ng-if="eid != 'e333fm'">個々の記録</th>
-                        <th class="mb-hide" ng-if="eid == 'e333fm'">解答・コメント</th>
+                        <th class="mb-hide" ng-if="eid == 'e333fm'">解答・解説コメント</th>
                         <th>使用キューブ</th>
                         <th><i class="fa fa-video-camera"></i></th>
                     </tr>
@@ -388,7 +388,7 @@ app.controller('UserCtrl', ['$scope', '$timeout', function($scope, $timeout) {
         });
         var html = '<tr id="fmc-detail-' + contestId + '" class="fmc-detail"><td colspan="6">'
                  + '<p><b>解答:</b><br>' + TriboxContest.escapeHTML(r.details[0].solution) + '</p>'
-                 + '<p><b>コメント:</b><br>' + TriboxContest.escapeHTML(r.details[0].note) + '</p>';
+                 + '<p><b>解説コメント:</b><br>' + TriboxContest.escapeHTML(r.details[0].note) + '</p>';
         angular.element(document.getElementById('e333fm-' + contestId)).after(html);
         angular.element(document.getElementById('e333fm-' + contestId + '-show')).text('表示済み');
         fadeIn(document.getElementById('fmc-detail-' + contestId));

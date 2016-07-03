@@ -122,7 +122,7 @@
                             <th ng-if="e != 'e333fm' && events[e].method == 'best'">最高記録</th>
                             <th ng-if="e == 'e333fm'">記録</th>
                             <th class="mb-hide" ng-if="e != 'e333fm'">個々の記録</th>
-                            <th class="mb-hide" ng-if="e == 'e333fm'">解答・コメント</th>
+                            <th class="mb-hide" ng-if="e == 'e333fm'">解答・解説コメント</th>
                             <th>使用キューブ</th>
                         </tr>
                     </thead>
@@ -350,7 +350,7 @@ app.controller('ContestIndexCtrl', ['$scope', '$timeout', function($scope, $time
     $scope.showDetail = function(index) {
         var html = '<tr id="fmc-detail-' + index + '" class="fmc-detail"><td colspan="7">'
                  + '<p><b>解答:</b><br>' + TriboxContest.escapeHTML($scope.resultsTop3['e333fm'][index].details[0].solution) + '</p>'
-                 + '<p><b>コメント:</b><br>' + TriboxContest.escapeHTML($scope.resultsTop3['e333fm'][index].details[0].note) + '</p>';
+                 + '<p><b>解説コメント:</b><br>' + TriboxContest.escapeHTML($scope.resultsTop3['e333fm'][index].details[0].note) + '</p>';
         angular.element(document.getElementById('e333fm-' + index)).after(html);
         angular.element(document.getElementById('e333fm-' + index + '-show')).text('表示済み');
         fadeIn(document.getElementById('fmc-detail-' + index));
