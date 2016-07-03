@@ -182,6 +182,8 @@ a.video-url {
                         </td>
                         <td ng-if="c.result.videoUrl">
                             <a href="{{ c.result.videoUrl | encodeURI }}" target="_blank"><i class="fa fa-video-camera"></i></a>
+                            <i class="color-success fa fa-check-circle" ng-show="c.result.videoIsAccepted != null && c.result.videoIsAccepted == true" title="承認済み"></i>
+                            <i class="color-error fa fa-ban" ng-show="c.result.videoIsAccepted != null && c.result.videoIsAccepted == false" title="非承認"></i>
                         </td>
                         <td ng-if="!(c.result.videoUrl)"></td>
                     </tr>
