@@ -98,6 +98,11 @@
         <form name="submitForm" ng-submit="submitResult()">
         <div class="row">
             <div class="col md-6">
+                @if(eid == "333fm") {
+                    <p>
+                        Rubik's Cube 最少手数競技では、メインで使用したキューブを1つ選んで選択してください。
+                    </p>
+                }
                 <label class="fancy-radio">
                     <input name="puzzle-type" type="radio" value="database" ng-model="puzzle.type">
                     <span>使用キューブをデータベースから選択</span>
