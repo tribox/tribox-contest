@@ -259,6 +259,9 @@
                                 "note": {
                                     ".validate": "newData.isString() && newData.val().length <= 2000"
                                 },
+                                "noteIsAccepted": {
+                                    ".validate": "newData.isBoolean()"
+                                },
                                 "$other": {
                                     ".validate": false
                                 }
@@ -299,6 +302,9 @@
                         },
                         "videoUrl": {
                             ".validate": "newData.isString() && newData.val().length <= 1023"
+                        },
+                        "videoIsAccepted": {
+                            ".validate": "newData.isBoolean()"
                         },
                         // 順位
                         "place": {
