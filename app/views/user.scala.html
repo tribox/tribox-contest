@@ -144,6 +144,11 @@ a.video-url {
                     </tr>
                 </tbody>
             </table>
+            <p ng-show="historyInProgress[eid]">
+                <i class="fa fa-hand-o-up" style="font-weight: bold;"></i>
+                <a href="https://support.google.com/youtube/answer/1270709?hl=ja" target="_blank">動画の公開時刻を予約して</a>、
+                コンテストが終了後結果が集計・公開されるまでビデオが公開されないように設定してください。
+            </p>
 
             <table class="table table-bordered result tribox-contest margin-bottom-40" ng-if="history[eid]">
                 <thead>
