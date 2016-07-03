@@ -386,9 +386,19 @@ app.controller('UserCtrl', ['$scope', '$timeout', function($scope, $timeout) {
                 return;
             }
         });
+
+        var acceptedHtml = '<br>';
+        if (r.details[0].noteIsAccepted != null) {
+            if (r.details[0].noteIsAccepted == true) {
+                acceptedHtml = ' <span class="color-success"><i class="fa fa-check-circle"></i> 承認済み</span><br>';
+            } else {
+                acceptedHtml = ' <span class="color-error"><i class="fa fa-ban"></i> 非承認</span><br>';
+            }
+        }
+
         var html = '<tr id="fmc-detail-' + contestId + '" class="fmc-detail"><td colspan="6">'
                  + '<p><b>解答:</b><br>' + TriboxContest.escapeHTML(r.details[0].solution) + '</p>'
-                 + '<p><b>解説コメント:</b><br>' + TriboxContest.escapeHTML(r.details[0].note) + '</p>';
+                 + '<p><b>解説コメント:</b>' + acceptedHtml + TriboxContest.escapeHTML(r.details[0].note) + '</p>';
         angular.element(document.getElementById('e333fm-' + contestId)).after(html);
         angular.element(document.getElementById('e333fm-' + contestId + '-show')).text('表示済み');
         fadeIn(document.getElementById('fmc-detail-' + contestId));
