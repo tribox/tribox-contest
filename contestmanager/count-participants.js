@@ -48,7 +48,12 @@ var countParticipants = function(cid) {
                 //console.dir(Results);
 
                 async.each(Object.keys(Events), function(eid, next) {
-                    var counts = Object.keys(Results[eid]).length - 1;
+                    var counts = 0;
+                    Object.keys(Results[eid]).forEach(function(uid) {
+                        if (Results[eid][uid].endAt) {
+                            counts++;
+                        }
+                    });
                     console.log(eid + ': ' + counts);
                     next();
                 }, function(err) {
