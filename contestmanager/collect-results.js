@@ -400,8 +400,8 @@ var collectResults = function() {
                                     priorityPrev = priority;
                                     place++;
 
-                                    // 当選者候補
-                                    if (argvrun.options.lottery || argvrun.options.lotteryall) {
+                                    // 当選者候補 (3人選ぶやつ)
+                                    if (argvrun.options.lottery) {
                                         if (Users[userId].isTriboxCustomer) {
                                             lotteryTargets.push(userId);
                                         }
@@ -412,6 +412,12 @@ var collectResults = function() {
                                         if (Users[userId].isTriboxTeam && eventId == 'e333') {
                                             triboxTeamTargets.push(userId);
                                         }
+                                    }
+                                }
+                                // 当選者候補 (全員当選・DNFも含む)
+                                if (argvrun.options.lotteryall) {
+                                    if (Users[userId].isTriboxCustomer) {
+                                        lotteryTargets.push(userId);
                                     }
                                 }
                             }
