@@ -52,8 +52,9 @@ TODO
 inProgressのコンテストを書き換える。
 毎週日曜日の午後9時0分0.001秒に実行すればよいが、実行時刻に合わせるだけなのでいつでも好きなだけ実行して大丈夫。
 ```
-node contestmanager/update-inprogress.js
+node contestmanager/update-inprogress.js --tweet
 ```
+* `--tweet` オプションで、コンテスト開始告知をツイートする。
 
 #### 結果集計
 
@@ -78,6 +79,15 @@ node contestmanager/append-points.js
 ```
 上の `collect-results.js` スクリプトを実行して該当者を待ちレコードに記録した後に実行する。
 本当に対象者が正しいことを目視で確認した後、このスクリプトを実行して実際に抽選ポイントをストアポイントに加算する。
+
+### :alarm_clock: 1週間に1回 -- 土曜日午後9時 (JST) 自動実行
+
+#### リマインダ
+
+24時間後にコンテスト終了するというリマインダ。
+```
+node contestmanager/reminder.js
+```
 
 ### :alarm_clock: 半年に1回程度 -- 実行
 
