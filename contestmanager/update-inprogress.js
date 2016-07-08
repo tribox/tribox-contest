@@ -2,8 +2,7 @@
  * update-inprogress.js
  */
 
-var async = require('async');
-var request = require('request');
+var Twitter = require('twitter');
 
 var Config = require('./config.js');
 var Firebase = require('firebase');
@@ -17,13 +16,54 @@ var token = tokenGenerator.createToken(
     { admin: true, debug: true }
 );
 
-var usage = function() {
-    console.error('Usage: node update-inprogress.js');
-    process.exit(1);
-}
+var argv = require('argv');
+argv.option([
+    {
+        name: 'tweet',
+        short: 't',
+        type: 'boolean',
+        description: 'Tweet starting notice',
+        example: "'update-inprogress.js --tweet' or 'update-inprogress.js -t'"
+    }
+]);
+var argvrun = argv.run();
+console.log(argvrun);
+
+
+// 対象のコンテスト
+var targetContest;
+
+// ツイートオプションがついていれば開始を告知する
+var tweetNotice = function() {
+    if (argvrun.options.tweet) {
+        // ツイートテキスト
+        // 例 "tribox Contest Week 2 (2016, 2H) started. https://contest.tribox.com/"
+        var status = 'tribox Contest Week ' + targetContest.number + ' (' + targetContest.year + ', ' + targetContest.season + 'H) started.'
+                   + ' https://contest.tribox.com/';
+
+        var client = new Twitter({
+            consumer_key: Config.CONSUMER_KEY,
+            consumer_secret: Config.CONSUMER_SECRET,
+            access_token_key: Config.ACCESS_TOKEN,
+            access_token_secret: Config.ACCESS_TOKEN_SECRET
+        });
+        client.post('statuses/update', {status: status}, function(error, tweet, response) {
+            if (!error) {
+                console.log(tweet);
+                process.exit(0);
+            } else {
+                console.error(error);
+                process.exit(1);
+            }
+        });
+    } else {
+        console.log('Skipped tweet!');
+        process.exit(0);
+    }
+};
 
 // 関数: inProgress を更新する
-var update = function(callback) {
+var update = function() {
     // コンテストデータを取得 (認証不要)
     contestRef.child('contests').once('value', function(snap) {
         var Contests = snap.val();
@@ -56,6 +96,7 @@ var update = function(callback) {
 
         // 現在時刻の開催コンテストが求まる
         console.log('cuurent contest:', founds[0]);
+        targetContest = Contests[founds[0]];
 
         // 1個前のコンテストのタイムスタンプ
         var lastTimestamp = currentTimestamp - (7 * 24 * 60 * 60 * 1000);
@@ -101,15 +142,11 @@ var update = function(callback) {
                         process.exit(1);
                     } else {
                         console.log('completed');
-                        callback();
+                        tweetNotice();
                     }
                 });
             }
         });
     });
 };
-
-
-update(function() {
-    process.exit(0);
-});
+update();
