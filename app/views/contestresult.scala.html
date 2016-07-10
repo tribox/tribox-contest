@@ -148,13 +148,9 @@ var drawChart = function(data) {
                         <img src="@routes.Assets.versioned("flags/flags-iso/shiny/24")/{{ r.user.iso2 }}.png" height="24" style="vertical-align: middle;" ng-show="r.user.iso2">
                         <a href="/user/{{ r.user.username }}">{{ r.user.displayname }}</a>
                     </td>
-                    <td class="mb-hide">{{ r.user.organization | shorten10 }}</td>
-                    <td>{{ r.resultF }}</td>
-                    @if(eid != "333fm") {
-                        <td class="mb-hide">{{ r.detailsF }}</td>
-                    } else {
-                        <td id="e@{eid}-{{ $index }}-show" class="mb-hide"><a class="cursor-pointer" ng-click="showDetail($index)">表示</a></td>
-                    }
+                    <td class="mb-hide">{{ r.user.organization }}</td>
+                    <td><b>{{ r.resultF }}</b></td>
+                    <td id="e@{eid}-{{ $index }}-show" class="mb-hide"><a class="cursor-pointer" ng-click="showDetail($index)">表示</a></td>
                     <td ng-show="r.puzzle.type == 'database'">
                         <a href="http://store.tribox.com/products/detail.php?product_id={{ r.puzzle.product }}" target="_blank">{{ r.puzzleF }}</a>
                     </td>
@@ -223,16 +219,34 @@ app.controller('ContestResultCtrl', ['$scope', function($scope) {
         location.href = '/contest/result/@{cid}/' + $scope.currentEvent;
     };
 
+    var showDetailList = [];
     @if(eid == "333fm") {
         $scope.showDetail = function(index) {
-            //console.log(index);
-
-            var html = '<tr id="fmc-detail-' + index + '" class="fmc-detail"><td colspan="7">'
-                     + '<p><b>解答:</b><br>' + TriboxContest.escapeHTML($scope.resultsAll['e333fm'][index].details[0].solution) + '</p>'
-                     + '<p><b>解説コメント:</b><br>' + TriboxContest.escapeHTML($scope.resultsAll['e333fm'][index].details[0].note) + '</p>';
-            angular.element(document.getElementById('e333fm-' + index)).after(html);
-            angular.element(document.getElementById('e333fm-' + index + '-show')).text('表示済み');
-            fadeIn(document.getElementById('fmc-detail-' + index));
+            if (!(showDetailList[index])) {
+                showDetailList[index] = true;
+                var html = '<tr id="row-detail-' + index + '" class="row-detail"><td colspan="7">'
+                         + '<p><b>解答:</b><br>' + TriboxContest.escapeHTML($scope.resultsAll['e333fm'][index].details[0].solution) + '</p>'
+                         + '<p><b>解説コメント:</b><br>' + TriboxContest.escapeHTML($scope.resultsAll['e333fm'][index].details[0].note) + '</p>';
+                angular.element(document.getElementById('e333fm-' + index)).after(html);
+                //angular.element(document.getElementById('e333fm-' + index + '-show')).text('表示済み');
+                fadeIn(document.getElementById('row-detail-' + index));
+            } else {
+                showDetailList[index] = false;
+                angular.element(document.getElementById('row-detail-' + index)).remove();
+            }
+        };
+    } else {
+        $scope.showDetail = function(index) {
+            if (!(showDetailList[index])) {
+                showDetailList[index] = true;
+                var html = '<tr id="row-detail-' + index + '" class="row-detail"><td colspan="7">'
+                         + TriboxContest.escapeHTML($scope.resultsAll['e@{eid}'][index].detailsF);
+                angular.element(document.getElementById('e@{eid}-' + index)).after(html);
+                fadeIn(document.getElementById('row-detail-' + index));
+            } else {
+                showDetailList[index] = false;
+                angular.element(document.getElementById('row-detail-' + index)).remove();
+            }
         };
     }
 }]);

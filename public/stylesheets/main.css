@@ -357,7 +357,7 @@ table.ranking {
 a.cursor-pointer {
     cursor: pointer;
 }
-tr.fmc-detail {
+tr.row-detail {
     background: #FFF !important; /*background: #F7F7F9;*/
     border: 1px solid #E1E1E8;
 }
