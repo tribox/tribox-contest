@@ -38,7 +38,7 @@ a.video-url {
         <span class="sr-only">Loading...</span>
         Loading...
     </div>
-    <div ng-show="authLoaded && userLoaded">
+    <div id="main-content" class="hide" ng-show="authLoaded && userLoaded">
 
     <div ng-hide="existsUser">
         <p class="color-error">
@@ -347,6 +347,7 @@ app.controller('UserCtrl', ['$scope', '$timeout', function($scope, $timeout) {
                     Object.keys(contests).forEach(function(cid) {
                         $scope.contestsArray.push(contests[cid]);
                     });
+                    angular.element(document.getElementById('main-content')).removeClass('hide');
                 });
 
                 if (snapUser.val().wcaId) {
