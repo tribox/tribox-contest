@@ -66,6 +66,13 @@ argv.option([
         example: "'collect-results.js --lotteryall' or 'collect-results.js -a'"
     },
     {
+        name: 'resetlottery',
+        short: 'r',
+        type: 'boolean',
+        description: 'Reset lottery',
+        example: "'collect-results.js --resetlottery' or 'collect-results.js -r'"
+    },
+    {
         name: 'triboxteam',
         short: 'x',
         type: 'boolean',
@@ -281,7 +288,7 @@ var writeResults = function() {
 };
 
 // 順位、SP、当選の記録をリセットする
-// ただし、当選のリセットは当選を再割り当てするとき
+// ただし、当選のリセットは当選リセットのオプションがあるときのみ
 var resetResults = function() {
     // admin 権限でログインしてから操作する
     contestRef.authWithCustomToken(token, function(error, authData) {
@@ -306,7 +313,7 @@ var resetResults = function() {
                 // 実行
                 async.each(resets, function(r, next) {
                     var updateData;
-                    if (argvrun.options.lottery || argvrun.options.lotteryall) {
+                    if (argvrun.options.resetlottery) {
                         updateData = {
                             'place': null,
                             'seasonPoint': null,
