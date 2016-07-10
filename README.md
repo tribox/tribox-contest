@@ -65,10 +65,11 @@ node contestmanager/collect-results.js --lastcontest --checkfmc --resetlottery -
 ```
 * `--contest` オプションは指定したコンテストの結果を集計する。
 * 代わりに `--lastcontest` を指定した場合は、inProgress.lastContest のコンテストが対象となる。
+* `--check` はFMC以外の競技の結果 (average または best) を再計算して上書きする。
 * `--checkfmc` はFMC競技の解答を解析して結果を上書きする。
 * `--resetlottery` は当選者をリセットする。
 * `--lottery` を指定した場合は、当選ポイント抽選して、該当者をfirebaseに書き込む。さらにポイント加算対象者をMySQLに待ちレコードとして保存する。ここでは実際にポイント加算はされない。
-* 代わりに `--lotteryall` を指定した場合は、認証アカウントかつDNFでない333の全競技者に対して当選ポイントを記録する。333以外は抽選。上のオプションと同様に、ポイント加算対象者をMySQLに待ちレコードとして保存する。ここでは実際にポイント加算はされない。
+* 代わりに `--lotteryall` を指定した場合は、認証アカウントの333の全競技者に対して当選ポイントを記録する。333以外は抽選。上のオプションと同様に、ポイント加算対象者をMySQLに待ちレコードとして保存する。ここでは実際にポイント加算はされない。
 * `--triboxteam` は契約アカウントにポイントを与える。ポイント加算対象者をMySQLに待ちレコードとして保存する。ここでは実際にポイント加算はされない。
 * `--tweet` オプションは付けると結果をツイートする。
 
@@ -135,7 +136,7 @@ node contestmanager/update-wcaapp.js
 */1 * * * * /path/to/contestapp/play-start.sh
 
 # Update inProgress contest and results
-0 21 * * 0 /usr/bin/node /path/to/contestapp/contestmanager/update-inprogress.js --tweet > /path/to/contestapp/logs/update-inprogress.`date +\%Y\%m\%d`.stdout.log 2> /path/to/contestapp/logs/update-inprogress.`date +\%Y\%m\%d`.stderr.log && /usr/bin/node /path/to/contestapp/contestmanager/collect-results.js --lastcontest --checkfmc --resetlottery --lottery --tweet > /path/to/contestapp/logs/collect-results.`date +\%Y\%m\%d`.stdout.log 2> /path/to/contestapp/contestmanager/collect-results.`date +\%Y\%m\%d`.stderr.log
+0 21 * * 0 /usr/bin/node /path/to/contestapp/contestmanager/update-inprogress.js --tweet > /path/to/contestapp/logs/update-inprogress.`date +\%Y\%m\%d`.stdout.log 2> /path/to/contestapp/logs/update-inprogress.`date +\%Y\%m\%d`.stderr.log && /usr/bin/node /path/to/contestapp/contestmanager/collect-results.js --lastcontest --check --checkfmc --resetlottery --lottery --tweet > /path/to/contestapp/logs/collect-results.`date +\%Y\%m\%d`.stdout.log 2> /path/to/contestapp/contestmanager/collect-results.`date +\%Y\%m\%d`.stderr.log
 
 # Reminder
 0 21 * * 6 /usr/bin/node /path/to/contestapp/contestmanager/reminder.js > /path/to/contestapp/logs/reminder.`date +\%Y\%m\%d`.stdout.log 2> /path/to/contestapp/logs/reminder.`date +\%Y\%m\%d`.stderr.log
