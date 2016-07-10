@@ -100,6 +100,7 @@
                         <span style="color: #ccc;" ng-if="countdown == 0 && authData != null && eventsDone[e] == true"><i class="fa fa-check-circle"></i> 参加済みです</span>
                         <a href="@routes.HomeController.login" ng-if="countdown == 0 && authData == null"><i class="fa fa-sign-in"></i> ログインして参加してください</a>
                         <span ng-if="countdown != 0"><i class="fa fa-ban"></i> 現在このコンテストには参加できません</span>
+                        <span ng-show="countdown == 0">({{ participants[e] }}人参加済)</span>
                     </td>
                 </tr>
             </tbody>
@@ -331,17 +332,19 @@ app.controller('ContestIndexCtrl', ['$scope', '$timeout', function($scope, $time
     // 今シーズンの開催済みコンテストリスト
     // とりあえず contests テーブルから引っ張ってくる
     contestRef.child('contests').once('value', function(snapContests) {
-        contestRef.child('inProgress').once('value', function(snapInProgress) {
-            var lastContest = snapInProgress.val().lastContest;
-            var contests = snapContests.val();
-            var _contestsList = [];
-            Object.keys(snapContests.val()).forEach(function(contestId) {
-                if (contestId <= lastContest) {
-                    _contestsList.push({ 'id': contestId, 'name': contests[contestId].contestName, 'shortName': contests[contestId].contestName.slice(7) });
-                }
-            });
+        var contests = snapContests.val();
+    contestRef.child('inProgress').once('value', function(snapInProgress) {
+        var lastContest = snapInProgress.val().lastContest;
+        var _contestsList = [];
+        Object.keys(snapContests.val()).forEach(function(contestId) {
+            if (contestId <= lastContest) {
+                _contestsList.push({ 'id': contestId, 'name': contests[contestId].contestName, 'shortName': contests[contestId].contestName.slice(7) });
+            }
+        });
+        $timeout(function() {
             $scope.contestsList = _contestsList;
         });
+    });
     });
 
     $scope.currentContestChange = function() {

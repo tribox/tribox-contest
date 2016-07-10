@@ -128,6 +128,7 @@
                         <a class="font-bold color-error" href="/contest/{{ inProgressContest.contestId }}/{{ e | removeHead }}/solution" ng-if="authData != null && eventsDone[e] == 'solution'"><i class="fa fa-play-circle"></i> 再開する</a>
                         <span style="color: #ccc;" ng-if="authData != null && eventsDone[e] == true"><i class="fa fa-check-circle"></i> 参加済みです</span>
                         <a href="@routes.HomeController.login" ng-if="authData == null"><i class="fa fa-sign-in"></i> ログインして参加してください</a>
+                        <span>({{ participants[e] }}人参加済)</span>
                     </td>
                 </tr>
             </tbody>
@@ -163,6 +164,7 @@ app.controller('IndexCtrl', ['$scope', '$timeout', function($scope, $timeout) {
     $scope.events = null;
     $scope.inProgress = null;
     $scope.inProgressContest = null;
+    $scope.participants = null;
     $scope.eventsDone = {};
     $scope.indexLoaded = false;
 
@@ -171,47 +173,52 @@ app.controller('IndexCtrl', ['$scope', '$timeout', function($scope, $timeout) {
     // 全競技リスト、開催中コンテスト、開催中コンテストのデータ、ログイン時にユーザの開催中コンテストの結果データ
     contestRef.child('events').once('value', function(snapEvents) {
         var events = snapEvents.val();
-        contestRef.child('inProgress').child('contest').once('value', function(snapInProgress) {
-            var inProgress = snapInProgress.val();
-            contestRef.child('contests').child(inProgress).once('value', function(snapContest) {
-                var inProgressContest = snapContest.val();
-                if (!(inProgressContest._dummy) && authData) {
-                    inProgressContest.events.forEach(function(e) {
-                        contestRef.child('results').child(inProgress).child(e).child(authData.uid).once('value', function(snapResult) {
-                            var resultData = snapResult.val();
-                            $timeout(function() {
-                                var _eventsDone;
-                                if (!resultData) {
-                                    _eventsDone = false;
-                                } else {
-                                    if (resultData.endAt) {
-                                        _eventsDone = true;
-                                    } else {
-                                        _eventsDone = resultData.type;
-                                    }
-                                }
-                                $scope.events = events;
-                                $scope.inProgress = inProgress;
-                                $scope.inProgressContest = inProgressContest;
-                                $scope.eventsDone[e] = _eventsDone;
-                                $scope.indexLoaded = true;
-                            });
-                        }, function(error) {
-                            console.error(error);
-                        });
-                    });
-                } else {
+    contestRef.child('inProgress').child('contest').once('value', function(snapInProgress) {
+        var inProgress = snapInProgress.val();
+    contestRef.child('participants').child(inProgress).once('value', function(snapParticipants) {
+        var participants = snapParticipants.val();
+    contestRef.child('contests').child(inProgress).once('value', function(snapContest) {
+        var inProgressContest = snapContest.val();
+        if (!(inProgressContest._dummy) && authData) {
+            inProgressContest.events.forEach(function(e) {
+                contestRef.child('results').child(inProgress).child(e).child(authData.uid).once('value', function(snapResult) {
+                    var resultData = snapResult.val();
+                    var _eventsDone;
+                    if (!resultData) {
+                        _eventsDone = false;
+                    } else {
+                        if (resultData.endAt) {
+                            _eventsDone = true;
+                        } else {
+                            _eventsDone = resultData.type;
+                        }
+                    }
                     $timeout(function() {
                         $scope.events = events;
                         $scope.inProgress = inProgress;
                         $scope.inProgressContest = inProgressContest;
+                        $scope.participants = participants;
+                        $scope.eventsDone[e] = _eventsDone;
                         $scope.indexLoaded = true;
                     });
-                }
+                }, function(error) {
+                    console.error(error);
+                });
             });
-        }, function(error) {
-            console.error(error);
-        });
+        } else {
+            $timeout(function() {
+                $scope.events = events;
+                $scope.inProgress = inProgress;
+                $scope.inProgressContest = inProgressContest;
+                $scope.participants = participants;
+                $scope.indexLoaded = true;
+            });
+        }
+    });
+    });
+    }, function(error) {
+        console.error(error);
+    });
     }, function(error) {
         console.error(error);
     });

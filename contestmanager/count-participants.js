@@ -2,6 +2,7 @@
  * count-participants.js
  *
  * 指定コンテストの参加者をカウントする。
+ * オプションによってはカウント数をデータベースに書き込む。
  */
 
 var async = require('async');
@@ -27,12 +28,30 @@ argv.option([
         type: 'string',
         description: 'Target contest',
         example: "'count-participants.js --contest=2016121' or 'count-participants.js -c 2016121'"
+    },
+    {
+        name: 'inprogress',
+        short: 'p',
+        type: 'boolean',
+        description: 'Set target contest to inProgress.contest',
+        example: "'count-participants.js --inprogress' or 'count-participants.js -p"
+    },
+    {
+        name: 'save',
+        short: 's',
+        type: 'boolean',
+        description: 'Store counted value to firebase database',
+        example: "'count-participants.js --save' or 'count-participants.js -s"
     }
 ]);
 var argvrun = argv.run();
 //console.log(argvrun);
 
-var countParticipants = function(cid) {
+// Target contest id
+var cid;
+
+
+var countParticipants = function() {
     // admin 権限でログインしてから操作する
     contestRef.authWithCustomToken(token, function(error, authData) {
         if (error) {
@@ -47,20 +66,31 @@ var countParticipants = function(cid) {
                 var Results = snapResults.val();
                 //console.dir(Results);
 
+                var counts = {};
                 async.each(Object.keys(Events), function(eid, next) {
-                    var counts = 0;
+                    counts[eid] = 0;
                     Object.keys(Results[eid]).forEach(function(uid) {
                         if (Results[eid][uid].endAt) {
-                            counts++;
+                            counts[eid]++;
                         }
                     });
-                    console.log(eid + ': ' + counts);
+                    console.log(eid + ': ' + counts[eid]);
                     next();
                 }, function(err) {
                     if (err) {
                         console.error(err);
                     } else {
-                        process.exit(0);
+                        if (argvrun.options.save) {
+                            contestRef.child('participants').child(cid).set(counts, function(error) {
+                                if (error) {
+                                    console.error(error);
+                                } else {
+                                    process.exit(0);
+                                }
+                            });
+                        } else {
+                            process.exit(0);
+                        }
                     }
                 });
 
@@ -72,9 +102,15 @@ var countParticipants = function(cid) {
 
 var main = function() {
     if (argvrun.options.contest) {
-        var targetContest = 'c' + argvrun.options.contest;
-        countParticipants(targetContest);
+        cid = 'c' + argvrun.options.contest;
+        countParticipants();
+    } else if (argvrun.options.inprogress) {
+        contestRef.child('inProgress').child('contest').once('value', function(snap) {
+            cid = snap.val();
+            countParticipants();
+        });
     } else {
+        console.error('Specify contest!');
         process.exit(1);
     }
 };

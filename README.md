@@ -108,7 +108,14 @@ node contestmanager/create-season.js 20162
 
 ### :alarm_clock: 不定期 -- 必要時に実行する
 
-WCAデータベースインポートと、WCA APPの更新。
+#### 参加済み人数の更新
+
+参加済み人数を表示するために、適当な間隔でポーリングする。カウント結果はfirebaseデータベースに書き込まれる。
+```
+node contestmanager/count-participants.js --inprogress --save
+```
+
+#### WCAデータベースインポートとWCA APPの更新
 [wca-importer](https://github.com/kotarot/wca-importer) を用いる。
 ```
 php -f /path/to/wca_importer/import.php
@@ -131,6 +138,9 @@ node contestmanager/update-wcaapp.js
 
 # Reminder
 0 21 * * 6 /usr/bin/node /path/to/contestapp/contestmanager/reminder.js > /path/to/contestapp/logs/reminder.`date +\%Y\%m\%d`.stdout.log 2> /path/to/contestapp/logs/reminder.`date +\%Y\%m\%d`.stderr.log
+
+# Count participants
+5,15,25,35,45,55 * * * * /usr/bin/node /path/to/contestapp/contestmanager/count-participants.js --inprogress -save
 
 # Backup
 2 0 * * * /usr/bin/node /path/to/contestapp/contestmanager/backup.js > /path/to/contestapp/logs/backup.`date +\%Y\%m\%d`.stdout.log 2> /path/to/contestapp/logs/backup.`date +\%Y\%m\%d`.stderr.log

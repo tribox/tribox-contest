@@ -62,7 +62,7 @@ argv.option([
         name: 'lotteryall',
         short: 'a',
         type: 'boolean',
-        description: 'Set lottery to all verified and non-DNF-resulted users in 333',
+        description: 'Set lottery to all verified users in 333',
         example: "'collect-results.js --lotteryall' or 'collect-results.js -a'"
     },
     {

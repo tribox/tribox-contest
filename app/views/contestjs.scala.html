@@ -416,6 +416,12 @@ app.controller('ContestCtrl', ['$scope', '$timeout', function($scope, $timeout) 
         });
     }
 
+    // 参加人数
+    $scope.participants = null;
+    contestRef.child('participants').child('c@{cid}').once('value', function(snapParticipants) {
+        $scope.participants = snapParticipants.val();
+    });
+
     $scope.turnOnButtons = function(format, data) {
         var res = [];
         data.forEach(function(d, index) {
