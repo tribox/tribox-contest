@@ -66,6 +66,7 @@ var convAlg = function(str) {
 
     // これで手順には以下の文字のみ使用されるように変換できた
     //   R, L, U, D, F, B, x, y ,z
+    //console.log('only: ', str);
 
     // 末尾の全体回転は削除する
     while(str.slice(-2) == ' x' || str.slice(-2) == ' y' || str.slice(-2) == ' z') {
@@ -81,6 +82,11 @@ var convAlg = function(str) {
 
     // 全体回転がなくなるまで繰り返す
     while(str.indexOf('x') != -1 || str.indexOf('y') != -1 || str.indexOf('z') != -1) {
+        // x x x x みたいに消せるものを消す
+        str = str.replace(/ x x x x/g, '')
+                 .replace(/ y y y y/g, '')
+                 .replace(/ z z z z/g, '');
+
         var arr = str.split(' ');
         var found = '';
         for (var i = 0; i < arr.length; i++) {
@@ -97,6 +103,7 @@ var convAlg = function(str) {
             }
         }
         str = arr.join(' ');
+        //console.log(str);
     }
 
     return str;
@@ -104,6 +111,7 @@ var convAlg = function(str) {
 
 exports.checkSolution = function(scramble, solution, callback) {
     var replaced =  replaceAlg(solution);
+    //console.log(replaced);
 
     // 置換後の手順文字列が空文字列ならDNF
     if (replaced.length <= 0) {
@@ -112,8 +120,15 @@ exports.checkSolution = function(scramble, solution, callback) {
     }
 
     // OBTM での手数
-    var moves = alg.cube.countMoves(replaced, metric);
-    //console.log('moves: ', moves);
+    // パーズエラーが例外でくることがあるので処理忘れずに
+    try {
+        var moves = alg.cube.countMoves(replaced, metric);
+        //console.log('moves: ', moves);
+    } catch(e) {
+        //console.error(e);
+        callback(-1);
+        return;
+    }
 
     // 手数が10手未満は明らかにおかしい
     if (moves < 10) {
