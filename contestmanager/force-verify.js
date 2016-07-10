@@ -53,8 +53,8 @@ var main = function() {
                     'customer_id': r.customer_id
                 });
             });
-            console.dir(UsersClicked);
-            
+            //console.dir(UsersClicked);
+
             contestRef.child('users').once('value', function(snapUsers) {
                 var Users = snapUsers.val();
             contestRef.child('usersecrets').once('value', function(snapUsersecrets) {
