@@ -203,7 +203,7 @@ app.controller('ContestResultCtrl', ['$scope', function($scope) {
             var _contestsList = [];
             Object.keys(snapContests.val()).forEach(function(contestId) {
                 if (contestId <= lastContest) {
-                    _contestsList.push({ 'id': contestId, 'name': contests[contestId].contestName, 'shortName': contests[contestId].contestName.slice(7) });
+                    _contestsList.push({ 'id': contestId, 'name': contests[contestId].contestName, 'shortName': contests[contestId].contestName.slice(15) });
                 }
             });
             $scope.contestsList = _contestsList;

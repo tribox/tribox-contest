@@ -337,7 +337,7 @@ app.controller('ContestIndexCtrl', ['$scope', '$timeout', function($scope, $time
         var _contestsList = [];
         Object.keys(snapContests.val()).forEach(function(contestId) {
             if (contestId <= lastContest) {
-                _contestsList.push({ 'id': contestId, 'name': contests[contestId].contestName, 'shortName': contests[contestId].contestName.slice(7) });
+                _contestsList.push({ 'id': contestId, 'name': contests[contestId].contestName, 'shortName': contests[contestId].contestName.slice(15) });
             }
         });
         $timeout(function() {
