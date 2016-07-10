@@ -387,7 +387,7 @@ app.controller('ContestCtrl', ['$scope', '$timeout', function($scope, $timeout) 
                                     'productId': -1,
                                     'productName': 'その他',
                                     'count': countOthers,
-                                    'percentage': Math.round(puzzleObj.count / _resultsPuzzlesSum * 100)
+                                    'percentage': Math.round(countOthers / _resultsPuzzlesSum * 100)
                                 });
                                 jsdata.push(['その他', countOthers]);
                             }
