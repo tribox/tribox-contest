@@ -100,7 +100,7 @@
                         <span style="color: #ccc;" ng-if="countdown == 0 && authData != null && eventsDone[e] == true"><i class="fa fa-check-circle"></i> 参加済みです</span>
                         <a href="@routes.HomeController.login" ng-if="countdown == 0 && authData == null"><i class="fa fa-sign-in"></i> ログインして参加してください</a>
                         <span ng-if="countdown != 0"><i class="fa fa-ban"></i> 現在このコンテストには参加できません</span>
-                        <span ng-show="countdown == 0">({{ participants[e] }}人参加済)</span>
+                        <span ng-show="countdown == 0">({{ participants[e] }}名参加済)</span>
                     </td>
                 </tr>
             </tbody>
