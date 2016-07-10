@@ -125,7 +125,7 @@ node contestmanager/update-wcaapp.js
 ```
 
 
-## Crontab
+## Crontab example
 
 ```
 ################################
@@ -136,7 +136,7 @@ node contestmanager/update-wcaapp.js
 */1 * * * * /path/to/contestapp/play-start.sh
 
 # Update inProgress contest and results
-0 21 * * 0 /usr/bin/node /path/to/contestapp/contestmanager/update-inprogress.js --tweet > /path/to/contestapp/logs/update-inprogress.`date +\%Y\%m\%d`.stdout.log 2> /path/to/contestapp/logs/update-inprogress.`date +\%Y\%m\%d`.stderr.log && /usr/bin/node /path/to/contestapp/contestmanager/collect-results.js --lastcontest --check --checkfmc --resetlottery --lottery --tweet > /path/to/contestapp/logs/collect-results.`date +\%Y\%m\%d`.stdout.log 2> /path/to/contestapp/contestmanager/collect-results.`date +\%Y\%m\%d`.stderr.log
+0 21 * * 0 /usr/bin/node /path/to/contestapp/contestmanager/update-inprogress.js --tweet > /path/to/contestapp/logs/update-inprogress.`date +\%Y\%m\%d`.stdout.log 2> /path/to/contestapp/logs/update-inprogress.`date +\%Y\%m\%d`.stderr.log && /usr/bin/node /path/to/contestapp/contestmanager/collect-results.js --lastcontest --check --checkfmc --resetlottery --lottery --tweet > /path/to/contestapp/logs/collect-results.`date +\%Y\%m\%d`.stdout.log 2> /path/to/contestapp/logs/collect-results.`date +\%Y\%m\%d`.stderr.log
 
 # Reminder
 0 21 * * 6 /usr/bin/node /path/to/contestapp/contestmanager/reminder.js > /path/to/contestapp/logs/reminder.`date +\%Y\%m\%d`.stdout.log 2> /path/to/contestapp/logs/reminder.`date +\%Y\%m\%d`.stderr.log
