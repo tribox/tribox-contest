@@ -60,8 +60,8 @@ node contestmanager/update-inprogress.js --tweet
 
 結果の集計をする。
 ```
-node contestmanager/collect-results.js --contest=2016121 --checkfmc --resetlottery --lottery --triboxteam --tweet
-node contestmanager/collect-results.js --lastcontest --checkfmc --resetlottery --lottery --triboxteam --tweet
+node contestmanager/collect-results.js --contest=2016121 --check --checkfmc --resetlottery --lottery --triboxteam --tweet
+node contestmanager/collect-results.js --lastcontest --check --checkfmc --resetlottery --lottery --triboxteam --tweet
 ```
 * `--contest` オプションは指定したコンテストの結果を集計する。
 * 代わりに `--lastcontest` を指定した場合は、inProgress.lastContest のコンテストが対象となる。
