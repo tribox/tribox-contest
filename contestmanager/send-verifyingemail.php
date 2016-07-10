@@ -24,7 +24,7 @@ $header = 'From:' . mb_encode_mimeheader('tribox Contest') . '<support@tribox.jp
                   . 'Reply-to: support@tribox.jp';
 $subject = 'アカウント認証のためのメールアドレス確認';
 $body = $to . " 様\n\n"
-      . "アカウント認証を完了するために以下のURLにアクセスしてください。\n"
+      . "アカウント認証を完了するためにtriboxコンテストにログイン済みのデバイス・Webブラウザで以下のURLにアクセスしてください。\n"
       . $domain . "/setting/verify/" . $token . "\n\n"
       . "triboxコンテスト\n"
       . $domain . "\n";
