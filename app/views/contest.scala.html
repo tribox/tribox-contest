@@ -72,7 +72,7 @@
         </p>
 
         <p ng-show="countdown < 0">
-            コンテストの表示を切り替える<br>
+            別のコンテスト結果を見る<br>
             <select class="form-control" style="margin-bottom: 5px;" ng-model="currentContest" ng-change="currentContestChange()">
                 <option ng-repeat="c in contestsList" value="{{ c.id | removeHead}}">
                     {{ c.shortName }}
