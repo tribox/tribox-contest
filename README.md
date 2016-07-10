@@ -145,7 +145,9 @@ node contestmanager/update-wcaapp.js
 5,15,25,35,45,55 * * * * /usr/bin/node /path/to/contestapp/contestmanager/count-participants.js --inprogress -save
 
 # Backup
-2 0 * * * /usr/bin/node /path/to/contestapp/contestmanager/backup.js > /path/to/contestapp/logs/backup.`date +\%Y\%m\%d`.stdout.log 2> /path/to/contestapp/logs/backup.`date +\%Y\%m\%d`.stderr.log
+2 0 * * * curl "https://##firebaseapp##.firebaseio.com//.json?print=pretty&auth=##AUTHTOKEN##" -o /path/to/contestapp/backup/contestapp-curl.`date +\%Y\%m\%d`.json
+# Backup (古い)
+#2 0 * * * /usr/bin/node /path/to/contestapp/contestmanager/backup.js > /path/to/contestapp/logs/backup.`date +\%Y\%m\%d`.stdout.log 2> /path/to/contestapp/logs/backup.`date +\%Y\%m\%d`.stderr.log
 ```
 
 
