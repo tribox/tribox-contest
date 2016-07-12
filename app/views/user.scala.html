@@ -168,7 +168,13 @@ a.video-url {
                 <tbody>
                     <tr id="{{ eid }}-{{ c.contestId }}" ng-repeat="c in history[eid] | orderBy:'-contestId'">
                         <td><a href="/contest/result/{{ c.contestId }}/{{ eid | removeHead }}">第{{ c.contest.number }}節</a></td>
-                        <td>{{ c.result.place }} <i class="fa fa-star color-star" ng-if="c.result.lottery"></i></td>
+                        <td>
+                          {{ c.result.place }}
+                          <span class="lottery" ng-show="c.result.lottery">
+                            <i class="fa fa-star color-star"></i>
+                            <span class="lottery-point">100<span>
+                          </span>
+                        </td>
                         <td ng-if="c.result.seasonPoint && c.result.seasonPoint != 0">{{ c.result.seasonPoint }}</td>
                         <td ng-if="!(c.result.seasonPoint) || c.result.seasonPoint == 0"></td>
                         <td>{{ c.result.resultF }}</td>

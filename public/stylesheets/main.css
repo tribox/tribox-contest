@@ -385,6 +385,24 @@ table.profile td {
 
 
 /**
+ * 獲得ポイント
+ */
+.lottery {
+    position: relative;
+}
+.lottery-point {
+    position: absolute;
+    display: inline-block;
+    position: absolute;
+    font-size: 12px;
+    color: #c00;
+    top: 0;
+    left: -2px;
+    opacity: 0.5;
+}
+
+
+/**
  * ツイートボタン（独自）
  */
 .btn.btn-tweet {
