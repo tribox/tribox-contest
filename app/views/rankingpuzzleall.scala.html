@@ -1,7 +1,7 @@
 @(sid: String, contestName: String, contestDescription: String, contestUrl: String, firebaseappContest: String)
 
-@defining("Puzzle Ranking " + sid.slice(0, 4) + " " + sid.slice(4, 5) + "H") { title =>
-@defining(contestUrl + "/ranking/" + sid + "/puzzle") { pageUrl =>
+@defining("All Puzzle Ranking " + sid.slice(0, 4) + " " + sid.slice(4, 5) + "H") { title =>
+@defining(contestUrl + "/ranking/" + sid + "/puzzle/all") { pageUrl =>
 
 <!DOCTYPE html>
 <html lang="ja" ng-app="contestApp">
@@ -53,11 +53,11 @@ h3, h4 {
         </p>
         <p>
             対象者:<br>
-            <b>入賞者 (シーズンポイント獲得者)</b><br>
+            <b>参加者全員</b>
         </p>
 
         <p>
-            <a href="@routes.RankingController.rankingpuzzleall(sid)"><i class="fa fa-pie-chart"></i> 参加者全員のキューブ使用率ランキング</a> に切り替える
+            <a href="@routes.RankingController.rankingpuzzle(sid)"><i class="fa fa-pie-chart"></i> 入賞者のキューブ使用率ランキング</a> に切り替える
         </p>
 
         <h4>競技一覧</h4>
@@ -187,7 +187,7 @@ app.controller('RankingPuzzleCtrl', ['$scope', '$timeout', function($scope, $tim
                         Object.keys(results).forEach(function(cid) {
                             Object.keys(results[cid]).forEach(function(eid) {
                                 Object.keys(results[cid][eid]).forEach(function(uid) {
-                                    if (!(results[cid][eid][uid]._dummy) && results[cid][eid][uid].seasonPoint) {
+                                    if (!(results[cid][eid][uid]._dummy)) {
                                         if (results[cid][eid][uid].puzzle && results[cid][eid][uid].puzzle.type == 'database') {
                                             var productId = results[cid][eid][uid].puzzle.product;
                                             if (!(productId in usedPuzzles[eid])) {
