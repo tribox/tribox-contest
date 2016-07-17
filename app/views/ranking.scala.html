@@ -1,4 +1,4 @@
-@(sid: String, contestName: String, contestDescription: String, contestUrl: String, firebaseappContest: String)
+@(sid: String, contestName: String, contestDescription: String, contestUrl: String, firebaseappContest: String, firebaseappWca: String)
 
 @defining("Ranking " + sid.slice(0, 4) + " " + sid.slice(4, 5) + "H") { title =>
 @defining(contestUrl + "/ranking/" + sid) { pageUrl =>
@@ -8,7 +8,7 @@
 <head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
     @header(title=title, description=contestDescription, sitename=contestName, url=pageUrl, contestUrl=contestUrl)
 
-@basejs(firebaseappContest)
+@basejs(firebaseappContest=firebaseappContest, firebaseappWca=firebaseappWca)
 
 <style>
 h3, h4 {
@@ -70,7 +70,10 @@ h3, h4 {
                 <tbody>
                     <tr ng-repeat="data in seasonPointsSorted[eid]">
                         <td>{{ data.rank }}</td>
-                        <td><a href="/user/{{ data.user.username }}">{{ data.user.displayname }}</a></td>
+                        <td>
+                            <img src="@routes.Assets.versioned("flags/flags-iso/shiny/24")/{{ data.user.iso2 }}.png" height="24" style="vertical-align: middle;" ng-show="data.user.iso2">
+                            <a href="/user/{{ data.user.username }}">{{ data.user.displayname }}</a>
+                        </td>
                         <td>{{ data.user.organization }}</td>
                         <td>{{ data.seasonPoint }}</td>
                         <td>
@@ -258,6 +261,26 @@ app.controller('RankingCtrl', ['$scope', '$timeout', function($scope, $timeout) 
 
                             $scope.events = events;
                             $scope.seasonPointsSorted = seasonPointsSorted;
+                        });
+
+                        // ユーザの国籍を非同期に読み込む
+                        Object.keys(seasonPointsSorted).forEach(function(eid) {
+                            seasonPointsSorted[eid].forEach(function(data, index) {
+                                if (wcaRef && data.user.wcaId) {
+                                    wcaRef.child('persons').child(data.user.wcaId).once('value', function(snapPerson) {
+                                        if (snapPerson.exists()) {
+                                            wcaRef.child('countries').child(snapPerson.val().countryId).once('value', function(snapCountry) {
+                                                if (snapCountry.exists()) {
+                                                    seasonPointsSorted[eid][index].user.iso2 = snapCountry.val().iso2;
+                                                    $timeout(function() {
+                                                        $scope.seasonPointsSorted = seasonPointsSorted;
+                                                    });
+                                                }
+                                            });
+                                        }
+                                    });
+                                }
+                            });
                         });
 
                     }

@@ -17,7 +17,7 @@ class RankingController @Inject() extends HomeController {
         Ok(views.html.rankingdefault(getFirebaseappContest))
     }
     def ranking(sid: String) = Action {
-        Ok(views.html.ranking(sid, getContestName, getContestDescription, getContestUrl, getFirebaseappContest))
+        Ok(views.html.ranking(sid, getContestName, getContestDescription, getContestUrl, getFirebaseappContest, getFirebaseappWca))
     }
 
     def rankingpuzzledefault = Action {
