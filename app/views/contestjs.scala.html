@@ -243,11 +243,10 @@ app.controller('ContestCtrl', ['$scope', '$timeout', function($scope, $timeout) 
                                 $scope.resultsAll[e] = [];
                                 var _resultsPuzzlesObj = {};
                                 var _resultsPuzzlesSum = 0;
-                                var count = 0;
                                 Object.keys($scope.resultsData[e]).forEach(function(uid) {
                                     if (!($scope.resultsData[e][uid]._dummy) && $scope.resultsData[e][uid].endAt) {
                                         ($scope.resultsPersons[e])++;
-                                        if (count < 3) {
+                                        if ($scope.resultsData[e][uid].place <= 3) {
                                             // 表示用にデータ加工
                                             var results = $scope.resultsData[e][uid];
                                             // User
@@ -274,7 +273,6 @@ app.controller('ContestCtrl', ['$scope', '$timeout', function($scope, $timeout) 
 
                                             $scope.resultsTop3[e].push($scope.resultsData[e][uid]);
                                         }
-                                        count++
                                     }
                                 });
                             });
