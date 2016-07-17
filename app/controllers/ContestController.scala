@@ -16,6 +16,10 @@ class ContestController @Inject() extends HomeController {
     /**
      * Contest pages
      */
+    def contestdefault = Action {
+        Ok(views.html.contestdefault(getFirebaseappContest))
+    }
+
     def contest(cid: String) = Action {
         Ok(views.html.contest(cid, getContestName, getContestDescription, getContestUrl, getFirebaseappContest, getFirebaseappWca))
     }

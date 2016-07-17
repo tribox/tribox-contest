@@ -55,8 +55,9 @@
     </div>
 <script>
 app.controller('InProgressCtrl', ['$scope', '$timeout', function($scope, $timeout) {
-    $scope.inProgress = null;
-    $scope.inProgressContest = null;
+    // 初期値はデフォルトページへ飛ばす値
+    $scope.inProgress = { 'lastContest': 'cdefault' };
+    $scope.inProgressContest = { 'year': 'default', 'season': '' };
 
     contestRef.child('inProgress').once('value', function(snapInProgress) {
         contestRef.child('contests').child(snapInProgress.val().contest).once('value', function(snapContest) {

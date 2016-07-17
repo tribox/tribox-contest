@@ -1,0 +1,24 @@
+@(firebaseappContest: String)
+
+<!DOCTYPE html>
+<html lang="ja" ng-app="contestApp">
+<head>
+    @headeronlyfire()
+
+@basejs(firebaseappContest=firebaseappContest)
+</head>
+<body ng-controller="RedirectCtrl">
+    Redirecting...
+
+<script>
+app.controller('RedirectCtrl', ['$scope', function($scope) {
+    contestRef.child('inProgress').once('value', function(snapInProgress) {
+        contestRef.child('contests').child(snapInProgress.val().contest).once('value', function(snapContest) {
+            var contest = snapContest.val();
+            window.location = '/ranking/' + contest.year + contest.season;
+        });
+    });
+}]);
+</script>
+</body>
+</html>

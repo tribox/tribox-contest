@@ -237,14 +237,15 @@ app.filter('toDateShort', [function() {
 /**
  * Filter: removeHead
  */
+var removeHead = function(str) {
+    if (str && 0 < str.length) {
+        return str.substr(1);
+    } else {
+        return str;
+    }
+};
 app.filter('removeHead', [function() {
-    return function(str) {
-        if (str && 0 < str.length) {
-            return str.substr(1);
-        } else {
-            return str;
-        }
-    };
+    return removeHead;
 }]);
 
 

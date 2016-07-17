@@ -13,10 +13,16 @@ import play.api.Play.current
 @Singleton
 class RankingController @Inject() extends HomeController {
 
+    def rankingdefault = Action {
+        Ok(views.html.rankingdefault(getFirebaseappContest))
+    }
     def ranking(sid: String) = Action {
         Ok(views.html.ranking(sid, getContestName, getContestDescription, getContestUrl, getFirebaseappContest))
     }
 
+    def rankingpuzzledefault = Action {
+        Ok(views.html.rankingpuzzledefault(getFirebaseappContest))
+    }
     def rankingpuzzle(sid: String) = Action {
         Ok(views.html.rankingpuzzle(sid, getContestName, getContestDescription, getContestUrl, getFirebaseappContest))
     }

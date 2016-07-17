@@ -36,6 +36,7 @@ GET     /contest/result/$cid<[0-9]{4}(1|2)[0-9]{2}>                         cont
 GET     /contest/result/$cid<[0-9]{4}(1|2)[0-9]{2}>/$eid<[a-zA-Z0-9]{1,15}> controllers.ContestController.result(cid: String, eid: String)
 
 # Contests
+GET     /contest/default                                                      controllers.ContestController.contestdefault
 GET     /contest/$cid<[0-9]{4}(1|2)[0-9]{2}>                                  controllers.ContestController.contest(cid: String)
 GET     /contest/$cid<[0-9]{4}(1|2)[0-9]{2}>/$eid<[a-zA-Z0-9]{1,15}>          controllers.ContestController.choose(cid: String, eid: String)
 GET     /contest/$cid<[0-9]{4}(1|2)[0-9]{2}>/$eid<[a-zA-Z0-9]{1,15}>/form     controllers.ContestController.form(cid: String, eid: String)
@@ -44,7 +45,10 @@ GET     /contest/$cid<[0-9]{4}(1|2)[0-9]{2}>/$eid<[a-zA-Z0-9]{1,15}>/solution co
 GET     /contest/$cid<[0-9]{4}(1|2)[0-9]{2}>/$eid<[a-zA-Z0-9]{1,15}>/confirm  controllers.ContestController.confirm(cid: String, eid: String)
 
 # Season Ranking
+GET     /ranking/default                    controllers.RankingController.rankingdefault
 GET     /ranking/$sid<[0-9]{4}(1|2)>        controllers.RankingController.ranking(sid: String)
+
+GET     /ranking/default/puzzle             controllers.RankingController.rankingpuzzledefault
 GET     /ranking/$sid<[0-9]{4}(1|2)>/puzzle controllers.RankingController.rankingpuzzle(sid: String)
 
 # Demo timer
