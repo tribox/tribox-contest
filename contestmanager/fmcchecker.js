@@ -40,12 +40,12 @@ var convAlg = function(str) {
     str = str.replace(/Rw/g, 'r').replace(/Lw/g, 'l')
              .replace(/Uw/g, 'u').replace(/Dw/g, 'd')
              .replace(/Fw/g, 'f').replace(/Bw/g, 'b');
-    str = str.replace(/R'/g, 'R R R').replace(/r'/, 'r r r')
-             .replace(/L'/g, 'L L L').replace(/l'/, 'l l l')
-             .replace(/U'/g, 'U U U').replace(/u'/, 'u u u')
-             .replace(/D'/g, 'D D D').replace(/d'/, 'd d d')
-             .replace(/F'/g, 'F F F').replace(/f'/, 'f f f')
-             .replace(/B'/g, 'B B B').replace(/b'/, 'b b b');
+    str = str.replace(/R'/g, 'R R R').replace(/r'/g, 'r r r')
+             .replace(/L'/g, 'L L L').replace(/l'/g, 'l l l')
+             .replace(/U'/g, 'U U U').replace(/u'/g, 'u u u')
+             .replace(/D'/g, 'D D D').replace(/d'/g, 'd d d')
+             .replace(/F'/g, 'F F F').replace(/f'/g, 'f f f')
+             .replace(/B'/g, 'B B B').replace(/b'/g, 'b b b');
     str = str.replace(/R2/g, 'R R').replace(/r2/g, 'r r')
              .replace(/L2/g, 'L L').replace(/l2/g, 'l l')
              .replace(/U2/g, 'U U').replace(/u2/g, 'u u')

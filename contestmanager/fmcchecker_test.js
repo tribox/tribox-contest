@@ -69,8 +69,8 @@ var solutions = [
 "R U2 F' U F R' D' R D' R' D R U2 F D2 F' L D2 L' R D' R' D2 L' D L B D2 B' L D' L' D2 L D L' z2 Fw R U R' U' Fw' L' U2 L U L' U L U2 R U R' U' R' F R2 U' R' U' R U R' F' y' R U' R U R U R U' R' U' R2" // ffb82e98-34b0-4fa0-afed-9da92c5041fc
 ];*/
 
-// 2016前半期第1期のチェック時点でプログラム落ちたやつ
-var scramble = "R' U' F U' F2 U2 L2 U' R2 U2 L2 F2 R2 U2 F' L F2 U B2 F2 L2 B' R U' R' U' F"
+// 2016後半期第1期のチェック時点でプログラム落ちたやつ
+/*var scramble = "R' U' F U' F2 U2 L2 U' R2 U2 L2 F2 R2 U2 F' L F2 U B2 F2 L2 B' R U' R' U' F"
 var solutions = [
 "x B L' F' D' B' U2 R' U2 R F U' F' L U' L' B' U2 B2 U2 B' U' R' U R U2 R' U F' U F2 R F' B U' z R U R' U' Fw' y' x' R U' R D2 R' U R D2 R2", // 1784871d-c869-40b8-8b2d-0bbfaf19b2a3
 "x2 R' u' R y2 F2 U' R2 D R U' R' U2 d F' U' F y2 U2 R U R' U d F' U' F y R U R' U2 R U R' U' d' R U R' y2 R' U' R U2 R' U R y' f' L' U' L U f y R' U2 R U2 R' F R U R' U' R' F' R2 U'", // 5a23ee56-215a-4532-ba9b-f26de197ded4  (algエラー)
@@ -79,6 +79,18 @@ var solutions = [
 "2yx'UwLUwB'R'UwR'UwRUL'ULR'UBUB'ULU'L'RU'R'UBU'B'U2RU'R'URUR'yR'wU'RwU'R'URU'R'URR'wURw", // 8b690e48-bcb9-404a-a529-a744734d1169 (algエラー)
 "B D' R U R B' R' F' R F2 D F2 R F R' D' L' D' L2 B' L' B [r2] [u']\nFw R U R' U' Fw' [u'] F R U R' U'\nR U' R' U R U R2 F' R U R U' R'", // afe5d84e-0bc5-42c8-9383-8d6bf2e16b13
 "z2 Uw' F R2 Uw' U2 R' Uw2 R U2 R' y U' R' L U' L2 R2 B L U2 R2 U' R U' F' U F U R' U2 R U' R' U R F' Rw U R' U' L' U Lw U' R U' R U R U R U' R' U' R2" // b1680ba5-ebc7-4fca-b16a-e3481fa967cb
+];*/
+
+// 2016後半期第1節で揃うけどDNFになったやつ
+/*var scramble = "R' U' F U' F2 U2 L2 U' R2 U2 L2 F2 R2 U2 F' L F2 U B2 F2 L2 B' R U' R' U' F";
+var solutions = [
+"z2 Uw' F R2 Uw' U2 R' Uw2 R U2 R' y U' R' L U' L2 R2 B L U2 R2 U' R U' F' U F U R' U2 R U' R' U R F' Rw U R' U' L' U Lw U' R U' R U R U R U' R' U' R2"
+];*/
+
+// 2016後半期第2節で揃うけどDNFになったやつ
+var scramble = "R' U' F U2 F2 U R2 B2 L2 F2 D' U' B' F' L B2 F' R' B' R' U L2 F' R' U' F";
+var solutions = [
+"U F2 U F2 D F' U L2 U2 L U L' F2 L U' F U2 L' U' Fw L Fw' F L F' L' Fw L' Fw' F U' F D2 F' U F D2 F2 L"
 ];
 
 //var alg = require('alg');
