@@ -53,7 +53,7 @@ var calcResult = function(method, format, data) {
 
     // Average of X
     if (method == 'average') {
-        var lowerIndex = -1, upperIndex = -1;
+        var lowerIndex = -1, upperIndex = -1, dnfIndex = -1;
         if (format == 'time') {
             var sum = 0.000;
             var count = 0, countDNF = 0;
@@ -61,7 +61,7 @@ var calcResult = function(method, format, data) {
             data.forEach(function(d, index) {
                 if (d.condition == 'DNF') {
                     countDNF++;
-                    upperIndex = index;
+                    dnfIndex = index;
                     if (lowerIndex == -1) {
                         lowerIndex = index;
                     }
@@ -92,9 +92,9 @@ var calcResult = function(method, format, data) {
                         'best': lowerIndex, 'worst': upperIndex, 'condition': 'OK' };
             } else if (countDNF == 1) {
                 return {'record': (Math.round(((sum - lower) / (count - 1)) * 1000)) / 1000,
-                        'best': lowerIndex, 'worst': upperIndex, 'condition': 'OK' };
+                        'best': lowerIndex, 'worst': dnfIndex, 'condition': 'OK' };
             } else {
-                return {'record': 9999.999, 'best': lowerIndex, 'worst': upperIndex, 'condition': 'DNF'};
+                return {'record': 9999.999, 'best': lowerIndex, 'worst': dnfIndex, 'condition': 'DNF'};
             }
         } else {
             return null;
