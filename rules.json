@@ -60,6 +60,26 @@
                 "isTriboxCustomer": {
                     ".validate": "newData.isBoolean()"
                 },
+                "lastUsedPuzzles": {
+                    "$event_id": {
+                        ".validate": "root.child('events').hasChild($event_id) && newData.hasChildren(['type'])",
+                        "type": {
+                            ".validate": "newData.isString() && (newData.val() == 'database' || newData.val() == 'nodatabase' || newData.val() == 'unknown')"
+                        },
+                        "brand": {
+                            ".validate": "newData.isNumber() && 0 < newData.val()"
+                        },
+                        "product": {
+                            ".validate": "newData.isNumber() && 0 < newData.val()"
+                        },
+                        "input": {
+                            ".validate": "newData.isString() && newData.val().length <= 50"
+                        },
+                        "$other": {
+                            ".validate": false
+                        }
+                    }
+                },
                 "$other": {
                     ".validate": false
                 }
@@ -298,6 +318,9 @@
                             },
                             "input": {
                                 ".validate": "newData.isString() && newData.val().length <= 50"
+                            },
+                            "$other": {
+                                ".validate": false
                             }
                         },
                         // ビデオ

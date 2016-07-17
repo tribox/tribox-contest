@@ -202,7 +202,7 @@
 @authjs(redirectLogin="", redirectLogout="", checkFirst=true)
 @contestjs(cid=cid, eid=eid, fetchScrambles=false, fetchResultsTop3=false, fetchResultsAll=false)
 <script>
-app.controller('ContestConfirmCtrl', ['$scope', function($scope) {
+app.controller('ContestConfirmCtrl', ['$scope', '$timeout', function($scope, $timeout) {
     $scope.result = null;
     $scope.resultsData = null;
     $scope.resultsDetail = null;
@@ -214,74 +214,93 @@ app.controller('ContestConfirmCtrl', ['$scope', function($scope) {
     $scope.resultTitleAlt = null;
     $scope.resultResultAlt = null;
 
+    // パズル選択の初期値
+    $scope.puzzle = {};
+
     contestRef.child('events').child('e@{eid}').once('value', function(snapEvent) {
         if (!(snapEvent.exists())) {
-            $scope.$apply(function() {
+            $timeout(function() {
                 $scope.contestConfirmLoaded = true;
             });
         } else {
             var e = snapEvent.val();
-            $scope.$apply(function() {
+            $timeout(function() {
                 $scope.resultTitle = e.method + ' of ' + e.attempts;
                 if (e.method == 'average') {
                     $scope.resultTitleAlt = 'best';
                 }
             });
 
-            // Read personal results
-            var authData = contestRef.getAuth();
-            if (authData) {
-                //var contestData = snapContest.val();
-                contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).once('value', function(snapResult) {
-                    if (snapResult.exists()) {
-                        var resultsData = snapResult.val();
-                        $scope.$apply(function() {
-                            $scope.result = calcResult(e.method, e.format, resultsData.details);
-                            // FMC: Calculate later
-                            @if(eid == "333fm") {
-                                $scope.result.condition = 'NOTYET';
-                                $scope.result.best = 0; // validation 回避
-                            }
-                            $scope.resultsData = resultsData;
-                            if ($scope.result.condition == 'DNF') {
-                                $scope.resultResult = 'DNF';
-                            } else if (e.format == 'time') {
-                                $scope.resultResult = TriboxContest.formatTime($scope.result.record);
-                            } else if (e.format == 'number') {
-                                $scope.resultResult = $scope.result.record;
-                            }
-                            if (e.method == 'average') {
-                                var best = (resultsData.details)[$scope.result.best];
-                                if (best.condition == 'DNF') {
-                                    $scope.resultResultAlt = 'DNF';
-                                } else if (e.format == 'time') {
-                                    if (best.condition == 'OK') {
-                                        $scope.resultResultAlt = TriboxContest.formatTime(best.record);
-                                    } else if (best.condition == '+2') {
-                                        $scope.resultResultAlt = TriboxContest.formatTime(best.record + 2.000);
-                                    } else {
-                                        $scope.resultResultAlt = 'DNF';
-                                    }
-                                } else if (e.format == 'number') {
-                                    $scope.resultResultAlt = best.record;
-                                }
-                            }
-                            $scope.resultsDetail = $scope.turnOnButtons(e.format, resultsData.details);
-                            $scope.contestConfirmLoaded = true;
-                        });
-                    } else {
-                        $scope.$apply(function() {
-                            $scope.contestConfirmLoaded = true;
-                        });
+    // Read personal results
+    var authData = contestRef.getAuth();
+    if (authData) {
+        // パズル選択の初期値
+        contestRef.child('users').child(authData.uid).child('lastUsedPuzzles').child('e@{eid}').once('value', function(snapLastUsedPuzzle) {
+            var lastUsedPuzzle = snapLastUsedPuzzle.val();
+            if (lastUsedPuzzle) {
+                $scope.puzzle.type = lastUsedPuzzle.type;
+                if (lastUsedPuzzle.type == 'database') {
+                    $scope.puzzle.brand = '' + lastUsedPuzzle.brand;
+                    $scope.puzzle.product = '' + lastUsedPuzzle.product;
+                } else if (lastUsedPuzzle.type == 'nodatabase') {
+                    $scope.puzzle.input = lastUsedPuzzle.input;
+                } else if (lastUsedPuzzle.type == 'unknown') {
+                    ;
+                }
+            }
+
+        contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).once('value', function(snapResult) {
+            if (snapResult.exists()) {
+                var resultsData = snapResult.val();
+                $timeout(function() {
+                    $scope.result = calcResult(e.method, e.format, resultsData.details);
+                    // FMC: Calculate later
+                    @if(eid == "333fm") {
+                        $scope.result.condition = 'NOTYET';
+                        $scope.result.best = 0; // validation 回避
                     }
-                }, function(error) {
-                    console.error(error);
+                    $scope.resultsData = resultsData;
+                    if ($scope.result.condition == 'DNF') {
+                        $scope.resultResult = 'DNF';
+                    } else if (e.format == 'time') {
+                        $scope.resultResult = TriboxContest.formatTime($scope.result.record);
+                    } else if (e.format == 'number') {
+                        $scope.resultResult = $scope.result.record;
+                    }
+                    if (e.method == 'average') {
+                        var best = (resultsData.details)[$scope.result.best];
+                        if (best.condition == 'DNF') {
+                            $scope.resultResultAlt = 'DNF';
+                        } else if (e.format == 'time') {
+                            if (best.condition == 'OK') {
+                                $scope.resultResultAlt = TriboxContest.formatTime(best.record);
+                            } else if (best.condition == '+2') {
+                                $scope.resultResultAlt = TriboxContest.formatTime(best.record + 2.000);
+                            } else {
+                                $scope.resultResultAlt = 'DNF';
+                            }
+                        } else if (e.format == 'number') {
+                            $scope.resultResultAlt = best.record;
+                        }
+                    }
+                    $scope.resultsDetail = $scope.turnOnButtons(e.format, resultsData.details);
+                    $scope.contestConfirmLoaded = true;
                 });
             } else {
-                $scope.$apply(function() {
+                $timeout(function() {
                     $scope.contestConfirmLoaded = true;
                 });
             }
+        }, function(error) {
+            console.error(error);
+        });
+        });
+    } else {
+        $timeout(function() {
+            $scope.contestConfirmLoaded = true;
+        });
+    }
+
         }
     }, function(error) {
         console.error(error);
@@ -343,7 +362,7 @@ app.controller('ContestConfirmCtrl', ['$scope', function($scope) {
             // The letter '+' forces it to be string
             var priority = toFixedForPriority($scope.result.record) + '+' + toFixedForPriority($scope.resultsData.details[$scope.result.best].record);
 
-            // Save
+            // Save results
             contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).update({
                 'endAt': Firebase.ServerValue.TIMESTAMP,
                 'result': $scope.result,
@@ -353,8 +372,17 @@ app.controller('ContestConfirmCtrl', ['$scope', function($scope) {
                     // And set priority
                     contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).setPriority(priority, function(error) {
                         if (!error) {
-                            console.log('Complete!');
-                            location.href = "/contest/@{cid}?done=@{eid}";
+
+            // Save last used puzzle
+            contestRef.child('users').child(authData.uid).child('lastUsedPuzzles').child('e@{eid}').set(puzzle, function(error) {
+                if (!error) {
+                    console.log('Complete!');
+                    location.href = "/contest/@{cid}?done=@{eid}";
+                } else {
+                    console.error(error);
+                }
+            });
+
                         } else {
                             console.error(error);
                         }
