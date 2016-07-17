@@ -32,7 +32,7 @@ var reminder = function() {
         // ツイートテキスト
         // 例 "tribox Contest Week1 (2016, 2H) closes tomorrow! The deadline is Sunday 21:00 (GMT+9). https://contest.tribox.com/"
         var status = 'tribox Contest Week ' + contest.number + ' (' + contest.year + ', ' + contest.season + 'H) closes tomorrow! '
-                   + 'The deadline is Sunday 21:00 (GMT+9) https://contest.tribox.com/';
+                   + 'The deadline is Sunday 21:00 (GMT+9). https://contest.tribox.com/';
 
         var client = new Twitter({
             consumer_key: Config.CONSUMER_KEY,
