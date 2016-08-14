@@ -64,7 +64,7 @@ h3, h4 {
                         <th>名前</th>
                         <th>所属</th>
                         <th>合計獲得シーズンポイント</th>
-                        <th>メインキューブ *</th>
+                        <th>最近使用したキューブ</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -84,9 +84,6 @@ h3, h4 {
                     </tr>
                 </tbody>
             </table>
-            <p>
-                * メインキューブとは、このシーズンで最も使用回数が多いパズルを指します。
-            </p>
         </div>
 
     </div></div></div></div>
@@ -163,9 +160,11 @@ app.controller('RankingCtrl', ['$scope', '$timeout', function($scope, $timeout) 
                         // シーズンポイント・使用キューブ集計
                         var seasonPoints = {};
                         var usedPuzzles = {};
+                        var lastUsedPuzzles = {};
                         Object.keys(events).forEach(function(eid) {
                             seasonPoints[eid] = {};
                             usedPuzzles[eid] = {};
+                            lastUsedPuzzles[eid] = {};
                         });
                         Object.keys(results).forEach(function(cid) {
                             Object.keys(results[cid]).forEach(function(eid) {
@@ -175,6 +174,9 @@ app.controller('RankingCtrl', ['$scope', '$timeout', function($scope, $timeout) 
                                             seasonPoints[eid][uid] = 0;
                                             usedPuzzles[eid][uid] = {};
                                         }
+                                        if (!(uid in lastUsedPuzzles[eid])) {
+                                            lastUsedPuzzles[eid][uid] = 0;
+                                        }
                                         if (results[cid][eid][uid].seasonPoint) {
                                             seasonPoints[eid][uid] += results[cid][eid][uid].seasonPoint;
                                             if (results[cid][eid][uid].puzzle && results[cid][eid][uid].puzzle.type == 'database') {
@@ -183,6 +185,7 @@ app.controller('RankingCtrl', ['$scope', '$timeout', function($scope, $timeout) 
                                                     usedPuzzles[eid][uid][productId] = 0;
                                                 }
                                                 (usedPuzzles[eid][uid][productId])++;
+                                                lastUsedPuzzles[eid][uid] = productId;
                                             }
                                         }
                                     }
@@ -221,11 +224,18 @@ app.controller('RankingCtrl', ['$scope', '$timeout', function($scope, $timeout) 
                                     if (0 < bestUsedPuzzleId) {
                                         bestUsedPuzzleName = TriboxContest.Products[bestUsedPuzzleId];
                                     }
+                                    var lastUsedPuzzleId = lastUsedPuzzles[eid][uid];
+                                    var lastUsedPuzzleName = '';
+                                    if (0 < lastUsedPuzzleId) {
+                                        lastUsedPuzzleName = TriboxContest.Products[lastUsedPuzzleId];
+                                    }
                                     seasonPointsSorted[eid].push({
                                         'uid': uid, 'seasonPoint': seasonPoints[eid][uid],
                                         'user': users[uid],
                                         'bestUsedPuzzleId': bestUsedPuzzleId,
-                                        'bestUsedPuzzleName': bestUsedPuzzleName
+                                        'bestUsedPuzzleName': bestUsedPuzzleName,
+                                        'lastUsedPuzzleId': lastUsedPuzzleId,
+                                        'lastUsedPuzzleName': lastUsedPuzzleName
                                     });
                                 }
                             });
