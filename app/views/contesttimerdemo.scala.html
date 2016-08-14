@@ -384,6 +384,8 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
             }
 
             unShowOnlyTimer();
+            alert("インスペクションタイムを超過しました。");
+            alert("インスペクションタイムを超過したためDNFです。");
         }, (inspectionCountdown + 2) * 1000);
      };
 
