@@ -227,6 +227,7 @@ app.controller('ContestCtrl', ['$scope', '$timeout', function($scope, $timeout) 
     $scope.resultsPersons = {};
     $scope.resultsTop3 = {};
     $scope.resultsAll = {};
+    $scope.resultsPuzzlesAll = {};
     $scope.resultsPuzzles = {};
     @if(fetchResultsTop3) {
         contestRef.child('results').child('c@cid').once('value', function(snapResults) {
@@ -241,8 +242,6 @@ app.controller('ContestCtrl', ['$scope', '$timeout', function($scope, $timeout) 
                                 $scope.resultsPersons[e] = 0;
                                 $scope.resultsTop3[e] = [];
                                 $scope.resultsAll[e] = [];
-                                var _resultsPuzzlesObj = {};
-                                var _resultsPuzzlesSum = 0;
                                 Object.keys($scope.resultsData[e]).forEach(function(uid) {
                                     if (!($scope.resultsData[e][uid]._dummy) && $scope.resultsData[e][uid].endAt) {
                                         ($scope.resultsPersons[e])++;
@@ -309,7 +308,9 @@ app.controller('ContestCtrl', ['$scope', '$timeout', function($scope, $timeout) 
                             $scope.resultsData['e@{eid}'] = snapResults.val();
                             $scope.resultsPersons['e@{eid}'] = 0;
                             $scope.resultsAll['e@{eid}'] = [];
+                            var _resultsPuzzlesAllObj = {};
                             var _resultsPuzzlesObj = {};
+                            var _resultsPuzzlesAllSum = 0;
                             var _resultsPuzzlesSum = 0;
                             Object.keys($scope.resultsData['e@{eid}']).forEach(function(uid) {
                                 if (!($scope.resultsData['e@{eid}'][uid]._dummy) && $scope.resultsData['e@{eid}'][uid].endAt) {
@@ -343,26 +344,83 @@ app.controller('ContestCtrl', ['$scope', '$timeout', function($scope, $timeout) 
 
                                     // パズル集計用
                                     if (results.puzzle.type == 'database') {
+                                        // 対象: 参加者全員
                                         var productId = results.puzzle.product;
-                                        if (_resultsPuzzlesObj[productId]) {
-                                            (_resultsPuzzlesObj[productId].count)++;
+                                        if (_resultsPuzzlesAllObj[productId]) {
+                                            (_resultsPuzzlesAllObj[productId].count)++;
                                         } else {
                                             var productName = '';
                                             if (0 < productId) {
                                                 productName = TriboxContest.Products[productId];
                                             }
-                                            _resultsPuzzlesObj[productId] = {
+                                            _resultsPuzzlesAllObj[productId] = {
                                                 'productId': productId,
                                                 'productName': productName,
                                                 'count': 1
                                             };
                                         }
-                                        _resultsPuzzlesSum++;
+                                        _resultsPuzzlesAllSum++;
+
+                                        // 対象: 入賞者
+                                        if (results.seasonPoint) {
+                                            if (_resultsPuzzlesObj[productId]) {
+                                                (_resultsPuzzlesObj[productId].count)++;
+                                            } else {
+                                                var productName = '';
+                                                if (0 < productId) {
+                                                    productName = TriboxContest.Products[productId];
+                                                }
+                                                _resultsPuzzlesObj[productId] = {
+                                                    'productId': productId,
+                                                    'productName': productName,
+                                                    'count': 1
+                                                };
+                                            }
+                                            _resultsPuzzlesSum++;
+                                        }
                                     }
                                 }
                             });
 
                             // パズル集計用 (使用人数でソート)
+                            // 対象: 参加者全員
+                            var _resultsPuzzlesAll = [];
+                            Object.keys(_resultsPuzzlesAllObj).forEach(function(productId) {
+                                _resultsPuzzlesAll.push(_resultsPuzzlesAllObj[productId]);
+                            });
+                            _resultsPuzzlesAll.sort(function(a, b) {
+                                if (a.count < b.count) return 1;
+                                if (a.count > b.count) return -1;
+                                if (a.productId < b.productId) return 1;
+                                if (a.productId > b.productId) return -1;
+                                return 0;
+                            });
+                            // 上位5パズル以外はその他にする
+                            var _resultsPuzzlesAllSummary = [];
+                            var jsdataall = [];
+                            var countOthersAll = 0;
+                            _resultsPuzzlesAll.forEach(function(puzzleObj, index) {
+                                if (index < 5) {
+                                    puzzleObj.percentage = Math.round(puzzleObj.count / _resultsPuzzlesAllSum * 100);
+                                    _resultsPuzzlesAllSummary.push(puzzleObj);
+                                    jsdataall.push([puzzleObj.productName, puzzleObj.count]);
+                                } else {
+                                    countOthersAll += puzzleObj.count;
+                                }
+                            });
+                            if (0 < countOthersAll) {
+                                _resultsPuzzlesAllSummary.push({
+                                    'productId': -1,
+                                    'productName': 'その他',
+                                    'count': countOthersAll,
+                                    'percentage': Math.round(countOthersAll / _resultsPuzzlesAllSum * 100)
+                                });
+                                jsdataall.push(['その他', countOthersAll]);
+                            }
+                            $scope.resultsPuzzlesAll['e@{eid}'] = _resultsPuzzlesAllSummary;
+
+                            // パズル集計用 (使用人数でソート)
+                            // 対象: 入賞者
                             var _resultsPuzzles = [];
                             Object.keys(_resultsPuzzlesObj).forEach(function(productId) {
                                 _resultsPuzzles.push(_resultsPuzzlesObj[productId]);
@@ -399,7 +457,7 @@ app.controller('ContestCtrl', ['$scope', '$timeout', function($scope, $timeout) 
                             $scope.resultsPuzzles['e@{eid}'] = _resultsPuzzlesSummary;
 
                             // 円グラフ描画
-                            drawChart(jsdata);
+                            drawChart(jsdataall, jsdata);
 
                         });
                     });

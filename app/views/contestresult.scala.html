@@ -82,6 +82,26 @@ h4 {
 
         <h4>キューブ使用率ランキング</h4>
         <div class="row">
+            <div class="col sm-12"><b>集計対象: 参加者全員</b></div>
+            <div class="col sm-4">
+                <ol>
+                    <li ng-repeat="p in resultsPuzzlesAll.e@{eid}">
+                        <a href="http://store.tribox.com/products/detail.php?product_id={{ p.productId }}" target="_blank" ng-show="p.productId != -1">
+                            {{ p.productName }}
+                        </a>
+                        <span ng-show="p.productId == -1">
+                            その他
+                        </span>
+                        ({{ p.percentage }}%)
+                    </li>
+                </ol>
+            </div>
+            <div class="col sm-8">
+                <div id="chartall"></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col sm-12"><b>集計対象: 入賞者</b></div>
             <div class="col sm-4">
                 <ol>
                     <li ng-repeat="p in resultsPuzzles.e@{eid}">
@@ -100,7 +120,20 @@ h4 {
             </div>
         </div>
 <script>
-var drawChart = function(data) {
+var drawChart = function(dataall, data) {
+    if (0 < dataall.length) {
+        var chart = c3.generate({
+            bindto: '#chartall',
+            data: {
+                columns: dataall,
+                type: 'pie',
+                order: null
+            },
+            size: {
+                height: 240
+            }
+        });
+    }
     if (0 < data.length) {
         var chart = c3.generate({
             bindto: '#chart',
