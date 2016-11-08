@@ -305,17 +305,20 @@ table.scrambles th:first-child {
     line-height: 40px;
     text-align: center;
     margin-right: 6px;
-    cursor: default;
+    cursor: pointer;
 }
 
 .cond-ok-on {
     background-color: #1BBC9B;
+    color:#FFF;
 }
 .cond-penalty-on {
     background-color: #F1C000;
+    color:#FFF;
 }
 .cond-dnf-on {
     background-color: #E74C3C;
+    color:#FFF;
 }
 
 
