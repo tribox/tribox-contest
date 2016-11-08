@@ -16,14 +16,18 @@ app.controller('AuthForgotCtrl', ['$scope', 'Auth', function($scope, Auth) {
         $scope.resetMessage = null;
         $scope.error = null;
 
-        Auth.$unauth();
-        Auth.$resetPassword({
-            email: $scope.email
-        }).then(function() {
-            $scope.resetMessage = '新しいパスワードを電子メールで送信しました。';
-        }).catch(function(error) {
-            $scope.error = error;
-        });
+        if (!($scope.email)) {
+            $scope.error = 'メールアドレスを入力してください。';
+        } else {
+            Auth.$unauth();
+            Auth.$resetPassword({
+                email: $scope.email
+            }).then(function() {
+                $scope.resetMessage = '新しいパスワードを電子メールで送信しました。';
+            }).catch(function(error) {
+                $scope.error = TriboxContest.convErrorCodesAlt(error.code);
+            });
+        }
     };
 }]);
 </script>
