@@ -197,6 +197,81 @@ a.video-url {
             </table>
         </div></div>
 
+
+        @* <!-- 過去シーズン (とりあえず) --> *@
+        <hr>
+        <h3>過去のシーズンのコンテスト参加履歴</h3>
+        <h4><a class="cursor-pointer" ng-click="showPastSeason()">2016 後半期</a></h4>
+
+        <div ng-show="isShownPastSeason">
+        <h4>競技一覧</h4>
+        <p>
+            <span ng-repeat="toc in tocHtmlPast">
+                <span ng-show="$index != 0"> / </span>
+                <a href="#{{ toc.eid | removeHead }}">{{ toc.name }}</a>
+            </span>
+        </p>
+
+        <p>
+            <i class="fa fa-star color-star"></i>: 当選ポイント獲得
+        </p>
+
+        <div ng-repeat="(eid, e) in events"><div ng-if="historyPast[eid]">
+            <h4 id="{{ eid | removeHead }}">{{ events[eid].name }}</h4>
+
+            <p>
+                合計獲得シーズンポイント: <b>{{ sumSeasonPointPast[eid] }}</b> ポイント
+            </p>
+
+            <table class="table table-bordered result tribox-contest margin-bottom-40" ng-if="historyPast[eid]">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>順位</th>
+                        <th>獲得SP</th>
+                        <th ng-if="eid != 'e333fm' && events[eid].method == 'average'">平均記録</th>
+                        <th ng-if="eid != 'e333fm' && events[eid].method == 'best'">最高記録</th>
+                        <th ng-if="eid == 'e333fm'">記録</th>
+                        <th class="mb-hide" ng-if="eid != 'e333fm'">個々の記録</th>
+                        <th class="mb-hide" ng-if="eid == 'e333fm'">解答・解説コメント</th>
+                        <th>使用キューブ</th>
+                        <th><i class="fa fa-video-camera"></i></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr id="{{ eid }}-{{ c.contestId }}" ng-repeat="c in historyPast[eid] | orderBy:'-contestId'">
+                        <td><a href="/contest/result/{{ c.contestId }}/{{ eid | removeHead }}">第{{ c.contest.number }}節</a></td>
+                        <td>
+                          {{ c.result.place }}
+                          <span class="lottery" ng-show="c.result.lottery">
+                            <i class="fa fa-star color-star"></i>
+                            <span class="lottery-point">100<span>
+                          </span>
+                        </td>
+                        <td ng-if="c.result.seasonPoint && c.result.seasonPoint != 0">{{ c.result.seasonPoint }}</td>
+                        <td ng-if="!(c.result.seasonPoint) || c.result.seasonPoint == 0"></td>
+                        <td>{{ c.result.resultF }}</td>
+                        <td class="mb-hide" ng-if="eid != 'e333fm'">{{ c.result.detailsF }}</td>
+                        <td class="mb-hide" ng-if="eid == 'e333fm'" id="e333fm-{{ c.contestId }}-show"><a class="cursor-pointer" ng-click="showDetailPast(c.contestId)">表示</a></td>
+                        <td ng-show="c.result.puzzle.type == 'database'">
+                            <a href="http://store.tribox.com/products/detail.php?product_id={{ c.result.puzzle.product }}" target="_blank">{{ c.result.puzzleF }}</a>
+                        </td>
+                        <td ng-show="c.result.puzzle.type == 'nodatabase' || c.result.puzzle.type == 'unknown'">
+                            {{ c.result.puzzleF }}
+                        </td>
+                        <td ng-if="c.result.videoUrl">
+                            <a href="{{ c.result.videoUrl | encodeURI }}" target="_blank"><i class="fa fa-video-camera"></i></a>
+                            <i class="color-success fa fa-check-circle" ng-show="c.result.videoIsAccepted != null && c.result.videoIsAccepted == true" title="承認済み"></i>
+                            <i class="color-error fa fa-ban" ng-show="c.result.videoIsAccepted != null && c.result.videoIsAccepted == false" title="非承認"></i>
+                        </td>
+                        <td ng-if="!(c.result.videoUrl)"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div></div>
+        </div>
+
+
         @* <!--<p>@id -> thisUserData:</p>
         <pre>{{ thisUserData | json }}</pre>
         <p>@id -> thisUsername:</p>
@@ -258,6 +333,10 @@ app.controller('UserCtrl', ['$scope', '$timeout', function($scope, $timeout) {
     $scope.tocHtml = [];
     $scope.tocMyHtml = [];
 
+    $scope.historyPast = {};
+    $scope.sumSeasonPointPast = {};
+    $scope.tocHtmlPast = [];
+
     contestRef.child('usernames').child('@id').once('value', function(snapUsername) {
         if (snapUsername.exists() && snapUsername.val().uid != null && snapUsername.val()._dummy == null && !(snapUsername.val().disabledAt)) {
             var userId = snapUsername.val().uid;
@@ -307,6 +386,9 @@ app.controller('UserCtrl', ['$scope', '$timeout', function($scope, $timeout) {
                     $timeout(function() {
                         $scope.sumSeasonPoint[eid] = 0;
                         $scope.tocMyHtml.push({ 'eid': eid, 'name': events[eid].name });
+
+                        // 過去のシーズン (とりあえず)
+                        $scope.sumSeasonPointPast[eid] = 0;
                     });
                 });
 
@@ -331,6 +413,32 @@ app.controller('UserCtrl', ['$scope', '$timeout', function($scope, $timeout) {
                                             $scope.history[eid].push({ 'contestId': contests[cid].contestId, 'contest': contests[cid], 'result': result });
                                             if (result.seasonPoint) {
                                                 $scope.sumSeasonPoint[eid] += result.seasonPoint;
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        }
+
+                        // 過去のシーズン（とりあえず）
+                        else {
+                            // ユーザが完了済みのコンテストのみ
+                            if (userHistories && cid in userHistories && eid in userHistories[cid] && userHistories[cid][eid].hasCompeted == true) {
+                                // 必要な分の結果だけ読み込む
+                                contestRef.child('results').child(cid).child(eid).child(userId).once('value', function(snapResult) {
+                                    var result = snapResult.val();
+                                    if (!(result._dummy) && result.endAt) {
+                                        result.resultF = TriboxContest.formatResult(result, eid, events);
+                                        result.detailsF = TriboxContest.formatDetails(result, eid, events);
+                                        result.puzzleF = TriboxContest.formatPuzzle(result);
+                                        $timeout(function() {
+                                            if (!(eid in $scope.historyPast)) {
+                                                $scope.historyPast[eid] = [];
+                                                $scope.tocHtmlPast.push({ 'eid': eid, 'name': events[eid].name });
+                                            }
+                                            $scope.historyPast[eid].push({ 'contestId': contests[cid].contestId, 'contest': contests[cid], 'result': result });
+                                            if (result.seasonPoint) {
+                                                $scope.sumSeasonPointPast[eid] += result.seasonPoint;
                                             }
                                         });
                                     }
@@ -385,6 +493,7 @@ app.controller('UserCtrl', ['$scope', '$timeout', function($scope, $timeout) {
         console.error(error);
     });
 
+    var showDetailList = [];
     $scope.showDetail = function(contestId) {
         var r;
         $scope.history['e333fm'].forEach(function(c) {
@@ -403,13 +512,61 @@ app.controller('UserCtrl', ['$scope', '$timeout', function($scope, $timeout) {
             }
         }
 
-        var html = '<tr id="fmc-detail-' + contestId + '" class="fmc-detail"><td colspan="6">'
-                 + '<p><b>解答:</b><br>' + TriboxContest.escapeHTML(r.details[0].solution) + '</p>'
-                 + '<p><b>解説コメント:</b>' + acceptedHtml + TriboxContest.escapeHTML(r.details[0].note) + '</p>';
-        angular.element(document.getElementById('e333fm-' + contestId)).after(html);
-        angular.element(document.getElementById('e333fm-' + contestId + '-show')).text('表示済み');
-        fadeIn(document.getElementById('fmc-detail-' + contestId));
+        if (!(showDetailList[contestId])) {
+            showDetailList[contestId] = true;
+            var html = '<tr id="fmc-detail-' + contestId + '" class="fmc-detail"><td colspan="6">'
+                     + '<p><b>解答:</b><br>' + TriboxContest.escapeHTML(r.details[0].solution) + '</p>'
+                     + '<p><b>解説コメント:</b>' + acceptedHtml + TriboxContest.escapeHTML(r.details[0].note) + '</p>';
+            angular.element(document.getElementById('e333fm-' + contestId)).after(html);
+            //angular.element(document.getElementById('e333fm-' + contestId + '-show')).text('表示済み');
+            fadeIn(document.getElementById('fmc-detail-' + contestId));
+        } else {
+            showDetailList[contestId] = false;
+            angular.element(document.getElementById('fmc-detail-' + contestId)).remove();
+        }
     };
+
+    @* /* 過去のシーズン用 (とりあえず) */ *@
+    var showDetailListPast = [];
+    $scope.showDetailPast = function(contestId) {
+        var r;
+        $scope.historyPast['e333fm'].forEach(function(c) {
+            if (c.contestId == contestId) {
+                r = c.result;
+                return;
+            }
+        });
+
+        var acceptedHtml = '<br>';
+        if (r.details[0].noteIsAccepted != null) {
+            if (r.details[0].noteIsAccepted == true) {
+                acceptedHtml = ' <span class="color-success"><i class="fa fa-check-circle"></i> 承認済み</span><br>';
+            } else {
+                acceptedHtml = ' <span class="color-error"><i class="fa fa-ban"></i> 非承認</span><br>';
+            }
+        }
+
+        if (!(showDetailListPast[contestId])) {
+            showDetailListPast[contestId] = true;
+            var html = '<tr id="fmc-detail-' + contestId + '" class="fmc-detail"><td colspan="6">'
+                     + '<p><b>解答:</b><br>' + TriboxContest.escapeHTML(r.details[0].solution) + '</p>'
+                     + '<p><b>解説コメント:</b>' + acceptedHtml + TriboxContest.escapeHTML(r.details[0].note) + '</p>';
+            angular.element(document.getElementById('e333fm-' + contestId)).after(html);
+            //angular.element(document.getElementById('e333fm-' + contestId + '-show')).text('表示済み');
+            fadeIn(document.getElementById('fmc-detail-' + contestId));
+        } else {
+            showDetailListPast[contestId] = false;
+            angular.element(document.getElementById('fmc-detail-' + contestId)).remove();
+        }
+    };
+
+    @* /* 過去のシーズン表示用 */ *@
+    $scope.isShownPastSeason = false;
+    $scope.showPastSeason = function() {
+        $timeout(function() {
+            $scope.isShownPastSeason = !($scope.isShownPastSeason);
+        });
+    }
 
     $scope.updateVideoUrl = function(contestId, eventId) {
         var successDOM = document.getElementById('update-video-success-' + eventId);
