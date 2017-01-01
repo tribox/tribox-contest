@@ -178,7 +178,6 @@ var drawChart = function(dataall, data) {
                     <td>
                       {{ r.place }}
                     </td>
-                    <!--<td ng-if="r.seasonPoint && r.seasonPoint != 0">-->
                     <td>
                       <span ng-if="r.seasonPoint && r.seasonPoint != 0">{{ r.seasonPoint }}</span>
                       <span class="lottery" ng-show="r.lottery">
@@ -186,7 +185,6 @@ var drawChart = function(dataall, data) {
                         <span class="lottery-point">100<span>
                       </span>
                     </td>
-                    <!--<td ng-if="!(r.seasonPoint) || r.seasonPoint == 0"></td>-->
                     <td>
                         <img src="@routes.Assets.versioned("flags/flags-iso/shiny/24")/{{ r.user.iso2 }}.png" height="24" style="vertical-align: middle;" ng-show="r.user.iso2">
                         <a href="/user/{{ r.user.username }}">{{ r.user.displayname }}</a>
