@@ -120,6 +120,19 @@ node contestmanager/tabulate-kaikin.js --season=20162
 node contestmanager/append-kaikin.js
 ```
 
+#### 入賞賞金ポイント進呈
+
+次のコマンドを実行して `winners` テーブルの内容をチェックする。
+```
+node contestmanager/tabulate-winners.js --season=20162
+```
+
+よければ、次のコマンドでポイント加算とメール送信。
+```
+node contestmanager/append-winners.js
+```
+
+
 ### :alarm_clock: 不定期 -- 必要時に実行する
 
 #### 参加済み人数の更新
