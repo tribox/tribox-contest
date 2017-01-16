@@ -21,10 +21,10 @@ $season = $argv[3];
 $events_name = $argv[4];
 $point = $argv[5];
 
-$seasonstr = substr($season, 0, 4);
+$seasonstr = substr($season, 0, 4) . '年';
 if (substr($season, 4, 1) === '1') {
     $seasonstr .= '前半期';
-} else {
+} else if (substr($season, 4, 1) === '2') {
     $seasonstr .= '後半期';
 }
 
