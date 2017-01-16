@@ -175,7 +175,7 @@ var checkKaikin = function() {
                             }
                         });
                         // 全部終わっているかつDNF規定回数以内
-                        if (countCompleted == countTargetContests && countTargetContests - 3 <= countCompletedSuccess && countCompletedSuccess < countTargetContests - 1) {
+                        if (countCompleted == countTargetContests && countTargetContests - 3 <= countCompletedSuccess) {
                             //console.log(eventId + ' ' + countCompleted);
                             Kaikin[userId + eventId] = {
                                 'userId': userId,

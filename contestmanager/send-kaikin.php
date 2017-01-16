@@ -31,11 +31,10 @@ if (substr($season, 4, 1) === '1') {
 $header = 'From:' . mb_encode_mimeheader('tribox Contest') . '<support@tribox.jp>' . "\n"
                   . 'Cc: support@tribox.jp' . "\n"
                   . 'Reply-to: support@tribox.jp';
-$subject = '[tribox Contest] 皆勤賞ポイント進呈のお知らせ (追加)';
+$subject = '[tribox Contest] 皆勤賞ポイント進呈のお知らせ';
 $body = $to_name . " 様\n\n"
       . "トライボックスコンテストにご参加頂き、誠にありがとうございます。\n"
-      . "このメールは、" . $seasonstr . "の \"皆勤賞\" を受賞されたみなさまにお送りしています。\n"
-      . "先ほどお送りした皆勤賞にもれがありましたので、追加分をお知らせします。\n\n"
+      . "このメールは、" . $seasonstr . "の \"皆勤賞\" を受賞されたみなさまにお送りしています。\n\n"
       . "みなさまのおかげ様で、トライボックスコンテストは素晴らしいスタートを切ることができました。\n"
       . "ささやかではありますが、皆勤賞としてtriboxポイントを付与させて頂きました。\n"
       . "triboxストアのマイページよりご確認ください。\n\n"
