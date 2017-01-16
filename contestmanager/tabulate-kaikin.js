@@ -14,7 +14,7 @@
  */
 
 var async = require('async');
-//var mysql = require('mysql');
+var mysql = require('mysql');
 
 var Config = require('./config.js');
 
@@ -48,9 +48,9 @@ var targetSeason, targetSeasonObj;
 var Users, Usersecrets;
 
 // 書き込むデータ (順位、シーズンポイント、当選)
-var ready = {};
+//var ready = {};
 // 契約アカウント用
-var readyTriboxTeam = {};
+//var readyTriboxTeam = {};
 
 
 // 配列のシャッフル
@@ -59,7 +59,7 @@ var readyTriboxTeam = {};
 // Fisher–Yates Shuffle というらしい
 //  * https://bost.ocks.org/mike/shuffle/
 //  * https://bost.ocks.org/mike/shuffle/compare.html
-var shuffle = function(a) {
+/*var shuffle = function(a) {
     var j, x, i;
     for (i = a.length; i; i -= 1) {
         j = Math.floor(Math.random() * i);
@@ -67,142 +67,56 @@ var shuffle = function(a) {
         a[i - 1] = a[j];
         a[j] = x;
     }
-};
+};*/
 
 
-/*var connection = mysql.createConnection({
+var connection = mysql.createConnection({
     host: Config.MYSQL_HOST,
     user: Config.MYSQL_USER,
     password: Config.MYSQL_PASSWORD,
     database: Config.MYSQL_DATABASE
 });
-connection.connect();*/
+connection.connect();
 
 
-// コンテストの集計結果を firebase と MySQL に書き込む
-/*var writeResults = function() {
-    console.dir(ready);
-    console.dir(readyTriboxTeam);
+// 皆勤賞の結果を MySQL に書き込む
+var writeDB = function(Kaikin) {
 
-    // 書き込むデータを配列化する
-    var readyArr = [];
-    Object.keys(ready).forEach(function(eventId) {
-        Object.keys(ready[eventId]).forEach(function(userId) {
-            readyArr.push({ 'eventId': eventId, 'userId': userId });
-        });
-    });
+    var countKaikin = 0;
+    async.each(Kaikin, function(r, next) {
+        //console.dir(r);
 
-    // 結果をひとつひとつ書き込む (順位とSPを上書きする)
-    var count = 0;
-    async.each(readyArr, function(r, next) {
-        var eventId = r.eventId;
-        var userId = r.userId;
-
-        // Firebase に書き込む
-        contestRef.child('results').child(targetContest).child(eventId).child(userId).update(ready[eventId][userId], function(error) {
+        // 待ちレコードとして登録する
+        connection.query('INSERT INTO kaikin SET ?', {
+            'user_id': r.userId,
+            'username': r.username,
+            'season': targetSeason,
+            'event_id': r.eventId,
+            'customer_type': 0,
+            'customer_id': r.triboxStoreCustomerId,
+            'point': r.point,
+            'count_completed': r.countCompleted,
+            'count_completed_success': r.countCompletedSuccess
+        }, function(error, results, fields) {
             if (error) {
                 console.error(error);
             } else {
-                console.log('Completed updating place, SP, and lottery: ' + eventId + ' ' + userId);
-
-                // ユーザの参加履歴をfirebaseに保存する
-                contestRef.child('userhistories').child(userId).child(targetContest).child(eventId).set({
-                    'hasCompeted': true
-                }, function(error) {
-                    if (error) {
-                        console.error(error);
-                    } else {
-                        count++;
-                        next();
-                    }
-                });
-
+                countKaikin++;
+                next();
             }
         });
 
     }, function(err) {
         if (!err) {
-            console.log('Completed updating user histories! (' + count + ' records)');
-
-            var readyForMysql = [];
-            if (argvrun.options.lottery || argvrun.options.lotteryall) {
-                // 抽選ポイントを加算するための待ちレコードを作成する
-                Object.keys(ready).forEach(function(eventId) {
-                    Object.keys(ready[eventId]).forEach(function(userId) {
-                        if (ready[eventId][userId].lottery) {
-                            readyForMysql.push({
-                                'eventId': eventId, 'userId': userId,
-                                'customerId': Usersecrets[userId].triboxStoreCustomerId,
-                                'point': Config.LOTTERY_POINT, 'pointType': 0
-                            });
-                        }
-                    });
-                });
-            }
-            if (argvrun.options.triboxteam) {
-                // 契約アカウント用
-                Object.keys(readyTriboxTeam).forEach(function(eventId) {
-                    Object.keys(readyTriboxTeam[eventId]).forEach(function(userId) {
-                        if (readyTriboxTeam[eventId][userId]) {
-                            readyForMysql.push({
-                                'eventId': eventId, 'userId': userId,
-                                'customerId': Usersecrets[userId].triboxStoreCustomerId,
-                                'point': Config.TRIBOXTEAM_POINT, 'pointType': 1
-                            });
-                        }
-                    });
-                });
-            }
-
-            if (argvrun.options.lottery || argvrun.options.lotteryall || argvrun.options.triboxteam) {
-                console.dir(readyForMysql);
-
-                var countLottery = 0;
-                async.each(readyForMysql, function(r, next) {
-                    var eventId = r.eventId;
-                    var userId = r.userId;
-                    var customerId = r.customerId;
-
-                    // ポイント加算履歴に待ちレコードとして登録する
-                    connection.query('INSERT INTO lottery_log SET ?', {
-                        'user_id': userId,
-                        'username': Users[userId].username,
-                        'contest_id': targetContest,
-                        'event_id': eventId,
-                        'customer_type': 0,
-                        'customer_id': customerId,
-                        'point': r.point,
-                        'point_type': r.pointType
-                    }, function(error, results, fields) {
-                        if (error) {
-                            console.error(error);
-                        } else {
-                            countLottery++;
-                            next();
-                        }
-                    });
-
-                }, function(err) {
-                    if (!err) {
-                        console.log('Completed creating ready records of lottery point! (' + countLottery + ' records)');
-                        doTweet();
-                    } else {
-                        console.error(err);
-                        process.exit(1);
-                    }
-                });
-
-            } else {
-                console.log('Skipped lottery point');
-                doTweet();
-            }
+            console.log('Completed creating ready records of Kaikin! (' + countKaikin + ' records)');
+            process.exit(0);
         } else {
             console.error(err);
             process.exit(1);
         }
     });
 
-};*/
+};
 
 // 皆勤賞を調べる
 var checkKaikin = function() {
@@ -214,12 +128,12 @@ var checkKaikin = function() {
             //console.log('Authenticated successfully with payload:', authData);
 
     contestRef.child('users').once('value', function(snapUsers) {
-    //contestRef.child('usersecrets').once('value', function(snapUsersecrets) {
+    contestRef.child('usersecrets').once('value', function(snapUsersecrets) {
     contestRef.child('events').once('value', function(snapEvents) {
     contestRef.child('contests').once('value', function(snapContests) {
     contestRef.child('results').once('value', function(snapResults) {
         var Users = snapUsers.val();
-        //var Usersecrets = snapUsersecrets.val();
+        var Usersecrets = snapUsersecrets.val();
         var Events = snapEvents.val();
         var Contests = snapContests.val();
         var Results = snapResults.val();
@@ -237,9 +151,6 @@ var checkKaikin = function() {
 
         // 皆勤賞のリスト
         var Kaikin = {};
-        Object.keys(Events).forEach(function(eventId) {
-            Kaikin[eventId] = {};
-        });
 
         // ユーザごと
         Object.keys(Users).forEach(function(userId) {
@@ -266,12 +177,16 @@ var checkKaikin = function() {
                         // 全部終わっているかつDNF規定回数以内
                         if (countCompleted == countTargetContests && countTargetContests - 1 <= countCompletedSuccess) {
                             //console.log(eventId + ' ' + countCompleted);
-                            Kaikin[eventId][userId] = {
+                            Kaikin[userId + eventId] = {
                                 'userId': userId,
                                 'username': Users[userId].username,
                                 'displayname': Users[userId].displayname,
+                                'triboxStoreCustomerId': Usersecrets[userId].triboxStoreCustomerId,
+                                'eventId': eventId,
+                                'eventName': Events[eventId].name,
                                 'countCompleted': countCompleted,
                                 'countCompletedSuccess': countCompletedSuccess,
+                                'point': 300
                             };
                         }
                     });
@@ -280,17 +195,17 @@ var checkKaikin = function() {
         });
 
         // 皆勤賞リストの表示
-        Object.keys(Kaikin).forEach(function(eventId) {
-            Object.keys(Kaikin[eventId]).forEach(function(userId) {
-                console.log(eventId + ' ' + Kaikin[eventId][userId].username + ' ' + Kaikin[eventId][userId].countCompletedSuccess + '/' + Kaikin[eventId][userId].countCompleted);
-            });
+        Object.keys(Kaikin).forEach(function(id) {
+            console.log(Kaikin[id].username + ' ' + Kaikin[id].displayname + ' '
+                + Kaikin[id].eventId + ' ' + Kaikin[id].eventName + ' '
+                + Kaikin[id].countCompletedSuccess + '/' + Kaikin[id].countCompleted + ' ' + Kaikin[id].point);
         });
-        process.exit(0);
+        writeDB(Kaikin);
 
     });
     });
     });
-    //});
+    });
     });
 
         }

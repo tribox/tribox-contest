@@ -75,7 +75,7 @@ node contestmanager/collect-results.js --lastcontest --check --checkfmc --resetl
 
 #### ポイント進呈
 
-ポイント加算する。
+ポイント進呈する。
 ```
 node contestmanager/append-points.js
 ```
@@ -106,6 +106,18 @@ java -jar wca/dist/TNoodle-WCA.jar
 引数は、シーズン。例えば、20161 (2016年前半期)、20162 (2016年後半期)、20171 (2017年前半期)、......
 ```
 node contestmanager/create-season.js 20162
+```
+
+#### 皆勤賞ポイント進呈
+
+次のコマンドを実行して `kaikin` テーブルの内容をチェックする。
+```
+node contestmanager/tabulate-kaikin.js --season=20162
+```
+
+よければ、次のコマンドでポイント加算とメール送信。
+```
+node contestmanager/append-kaikin.js
 ```
 
 ### :alarm_clock: 不定期 -- 必要時に実行する
