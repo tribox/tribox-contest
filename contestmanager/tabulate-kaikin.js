@@ -175,7 +175,7 @@ var checkKaikin = function() {
                             }
                         });
                         // 全部終わっているかつDNF規定回数以内
-                        if (countCompleted == countTargetContests && countTargetContests - 1 <= countCompletedSuccess) {
+                        if (countCompleted == countTargetContests && countTargetContests - 3 <= countCompletedSuccess && countCompletedSuccess < countTargetContests - 1) {
                             //console.log(eventId + ' ' + countCompleted);
                             Kaikin[userId + eventId] = {
                                 'userId': userId,
@@ -196,8 +196,8 @@ var checkKaikin = function() {
 
         // 皆勤賞リストの表示
         Object.keys(Kaikin).forEach(function(id) {
-            console.log(Kaikin[id].username + ' ' + Kaikin[id].displayname + ' '
-                + Kaikin[id].eventId + ' ' + Kaikin[id].eventName + ' '
+            console.log(Kaikin[id].username + ' '/* + Kaikin[id].displayname + ' '*/
+                + Kaikin[id].eventId + ' '/* + Kaikin[id].eventName + ' '*/
                 + Kaikin[id].countCompletedSuccess + '/' + Kaikin[id].countCompleted + ' ' + Kaikin[id].point);
         });
         writeDB(Kaikin);
