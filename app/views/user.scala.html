@@ -46,7 +46,13 @@ a.video-url {
         </p>
     </div>
 
-    <div ng-show="existsUser">
+    <div ng-show="suspendedUser">
+        <p class="color-error">
+            このアカウントは一時停止中です。
+        </p>
+    </div>
+
+    <div ng-show="existsUser && !suspendedUser">
 
         @authinfo()
 
@@ -319,6 +325,7 @@ app.controller('UserCtrl', ['$scope', '$timeout', function($scope, $timeout) {
     $scope.thisUsername = null;
     $scope.userLoaded = false;
     $scope.existsUser = false;
+    $scope.suspendedUser = false;
 
     $scope.events = null;
     $scope.inProgress = null;
@@ -401,20 +408,22 @@ app.controller('UserCtrl', ['$scope', '$timeout', function($scope, $timeout) {
                                 // 必要な分の結果だけ読み込む
                                 contestRef.child('results').child(cid).child(eid).child(userId).once('value', function(snapResult) {
                                     var result = snapResult.val();
-                                    if (!(result._dummy) && result.endAt) {
-                                        result.resultF = TriboxContest.formatResult(result, eid, events);
-                                        result.detailsF = TriboxContest.formatDetails(result, eid, events);
-                                        result.puzzleF = TriboxContest.formatPuzzle(result);
-                                        $timeout(function() {
-                                            if (!(eid in $scope.history)) {
-                                                $scope.history[eid] = [];
-                                                $scope.tocHtml.push({ 'eid': eid, 'name': events[eid].name });
-                                            }
-                                            $scope.history[eid].push({ 'contestId': contests[cid].contestId, 'contest': contests[cid], 'result': result });
-                                            if (result.seasonPoint) {
-                                                $scope.sumSeasonPoint[eid] += result.seasonPoint;
-                                            }
-                                        });
+                                    if (result != null) {
+                                        if (!(result._dummy) && result.endAt) {
+                                            result.resultF = TriboxContest.formatResult(result, eid, events);
+                                            result.detailsF = TriboxContest.formatDetails(result, eid, events);
+                                            result.puzzleF = TriboxContest.formatPuzzle(result);
+                                            $timeout(function() {
+                                                if (!(eid in $scope.history)) {
+                                                    $scope.history[eid] = [];
+                                                    $scope.tocHtml.push({ 'eid': eid, 'name': events[eid].name });
+                                                }
+                                                $scope.history[eid].push({ 'contestId': contests[cid].contestId, 'contest': contests[cid], 'result': result });
+                                                if (result.seasonPoint) {
+                                                    $scope.sumSeasonPoint[eid] += result.seasonPoint;
+                                                }
+                                            });
+                                        }
                                     }
                                 });
                             }
@@ -427,20 +436,22 @@ app.controller('UserCtrl', ['$scope', '$timeout', function($scope, $timeout) {
                                 // 必要な分の結果だけ読み込む
                                 contestRef.child('results').child(cid).child(eid).child(userId).once('value', function(snapResult) {
                                     var result = snapResult.val();
-                                    if (!(result._dummy) && result.endAt) {
-                                        result.resultF = TriboxContest.formatResult(result, eid, events);
-                                        result.detailsF = TriboxContest.formatDetails(result, eid, events);
-                                        result.puzzleF = TriboxContest.formatPuzzle(result);
-                                        $timeout(function() {
-                                            if (!(eid in $scope.historyPast)) {
-                                                $scope.historyPast[eid] = [];
-                                                $scope.tocHtmlPast.push({ 'eid': eid, 'name': events[eid].name });
-                                            }
-                                            $scope.historyPast[eid].push({ 'contestId': contests[cid].contestId, 'contest': contests[cid], 'result': result });
-                                            if (result.seasonPoint) {
-                                                $scope.sumSeasonPointPast[eid] += result.seasonPoint;
-                                            }
-                                        });
+                                    if (result != null) {
+                                        if (!(result._dummy) && result.endAt) {
+                                            result.resultF = TriboxContest.formatResult(result, eid, events);
+                                            result.detailsF = TriboxContest.formatDetails(result, eid, events);
+                                            result.puzzleF = TriboxContest.formatPuzzle(result);
+                                            $timeout(function() {
+                                                if (!(eid in $scope.historyPast)) {
+                                                    $scope.historyPast[eid] = [];
+                                                    $scope.tocHtmlPast.push({ 'eid': eid, 'name': events[eid].name });
+                                                }
+                                                $scope.historyPast[eid].push({ 'contestId': contests[cid].contestId, 'contest': contests[cid], 'result': result });
+                                                if (result.seasonPoint) {
+                                                    $scope.sumSeasonPointPast[eid] += result.seasonPoint;
+                                                }
+                                            });
+                                        }
                                     }
                                 });
                             }
@@ -456,11 +467,16 @@ app.controller('UserCtrl', ['$scope', '$timeout', function($scope, $timeout) {
                     $scope.inProgress = inProgress;
                     $scope.inProgressContest = inProgressContest;
                     $scope.contests = contests;
-                    $scope.userLoaded = true;
-                    $scope.existsUser = true;
                     Object.keys(contests).forEach(function(cid) {
                         $scope.contestsArray.push(contests[cid]);
                     });
+
+                    if (snapUser.val().isSuspended) {
+                        $scope.suspendedUser = true;
+                    }
+                    $scope.existsUser = true;
+                    $scope.userLoaded = true;
+
                     angular.element(document.getElementById('main-content')).removeClass('hide');
                 });
 
