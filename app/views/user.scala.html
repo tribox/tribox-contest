@@ -204,17 +204,23 @@ a.video-url {
         </div></div>
 
 
-        @* <!-- 過去シーズン (とりあえず) --> *@
+        @* <!-- 過去シーズン --> *@
         <hr>
         <h3>過去のシーズンのコンテスト参加履歴</h3>
-        <h4><a class="cursor-pointer" ng-click="showPastSeason()">2016 後半期</a></h4>
+        <h4 class="past-season-header"><a class="cursor-pointer" ng-click="showPastSeason(20172)">2017 後半期</a></h4>
+        <h4 class="past-season-header"><a class="cursor-pointer" ng-click="showPastSeason(20171)">2017 前半期</a></h4>
+        <h4 class="past-season-header"><a class="cursor-pointer" ng-click="showPastSeason(20162)">2016 後半期</a></h4>
+
+<style>
+.past-season-header { margin-top: 0; }
+</style>
 
         <div ng-show="isShownPastSeason">
         <h4>競技一覧</h4>
         <p>
             <span ng-repeat="toc in tocHtmlPast">
                 <span ng-show="$index != 0"> / </span>
-                <a href="#{{ toc.eid | removeHead }}">{{ toc.name }}</a>
+                <a href="#past-{{ toc.eid | removeHead }}">{{ toc.name }}</a>
             </span>
         </p>
 
@@ -223,7 +229,7 @@ a.video-url {
         </p>
 
         <div ng-repeat="(eid, e) in events"><div ng-if="historyPast[eid]">
-            <h4 id="{{ eid | removeHead }}">{{ events[eid].name }}</h4>
+            <h4 id="past-{{ eid | removeHead }}">{{ events[eid].name }}</h4>
 
             <p>
                 合計獲得シーズンポイント: <b>{{ sumSeasonPointPast[eid] }}</b> ポイント
@@ -393,9 +399,6 @@ app.controller('UserCtrl', ['$scope', '$timeout', function($scope, $timeout) {
                     $timeout(function() {
                         $scope.sumSeasonPoint[eid] = 0;
                         $scope.tocMyHtml.push({ 'eid': eid, 'name': events[eid].name });
-
-                        // 過去のシーズン (とりあえず)
-                        $scope.sumSeasonPointPast[eid] = 0;
                     });
                 });
 
@@ -421,34 +424,6 @@ app.controller('UserCtrl', ['$scope', '$timeout', function($scope, $timeout) {
                                                 $scope.history[eid].push({ 'contestId': contests[cid].contestId, 'contest': contests[cid], 'result': result });
                                                 if (result.seasonPoint) {
                                                     $scope.sumSeasonPoint[eid] += result.seasonPoint;
-                                                }
-                                            });
-                                        }
-                                    }
-                                });
-                            }
-                        }
-
-                        // 過去のシーズン（とりあえず）
-                        else {
-                            // ユーザが完了済みのコンテストのみ
-                            if (userHistories && cid in userHistories && eid in userHistories[cid] && userHistories[cid][eid].hasCompeted == true) {
-                                // 必要な分の結果だけ読み込む
-                                contestRef.child('results').child(cid).child(eid).child(userId).once('value', function(snapResult) {
-                                    var result = snapResult.val();
-                                    if (result != null) {
-                                        if (!(result._dummy) && result.endAt) {
-                                            result.resultF = TriboxContest.formatResult(result, eid, events);
-                                            result.detailsF = TriboxContest.formatDetails(result, eid, events);
-                                            result.puzzleF = TriboxContest.formatPuzzle(result);
-                                            $timeout(function() {
-                                                if (!(eid in $scope.historyPast)) {
-                                                    $scope.historyPast[eid] = [];
-                                                    $scope.tocHtmlPast.push({ 'eid': eid, 'name': events[eid].name });
-                                                }
-                                                $scope.historyPast[eid].push({ 'contestId': contests[cid].contestId, 'contest': contests[cid], 'result': result });
-                                                if (result.seasonPoint) {
-                                                    $scope.sumSeasonPointPast[eid] += result.seasonPoint;
                                                 }
                                             });
                                         }
@@ -542,7 +517,89 @@ app.controller('UserCtrl', ['$scope', '$timeout', function($scope, $timeout) {
         }
     };
 
-    @* /* 過去のシーズン用 (とりあえず) */ *@
+    @* /* 過去のシーズン表示用 */ *@
+    $scope.isShownPastSeason = false;
+    $scope.showPastSeason = function(season) {
+
+        $scope.historyPast = {};
+        $scope.sumSeasonPointPast = {};
+        $scope.tocHtmlPast = [];
+
+    contestRef.child('usernames').child('@id').once('value', function(snapUsername) {
+        if (snapUsername.exists() && snapUsername.val().uid != null && snapUsername.val()._dummy == null && !(snapUsername.val().disabledAt)) {
+            var userId = snapUsername.val().uid;
+
+            contestRef.child('users').child(userId).once('value', function(snapUser) {
+                var user = snapUser.val();
+
+            contestRef.child('events').once('value', function(snapEvents) {
+                var events = snapEvents.val();
+
+            contestRef.child('contests').once('value', function(snapContests) {
+                var contests = snapContests.val();
+
+            contestRef.child('userhistories').child(userId).once('value', function(snapUserhistories) {
+                var userHistories = snapUserhistories.val();
+
+                // 各競技のシーズンポイント初期化
+                Object.keys(events).forEach(function(eid) {
+                    $timeout(function() {
+                        // 過去のシーズン
+                        $scope.sumSeasonPointPast[eid] = 0;
+                    });
+                });
+
+                Object.keys(events).forEach(function(eid) {
+                    Object.keys(contests).forEach(function(cid) {
+                        // 過去のシーズン
+                        if (cid.substr(1, 5) == season) {
+                            // ユーザが完了済みのコンテストのみ
+                            if (userHistories && cid in userHistories && eid in userHistories[cid] && userHistories[cid][eid].hasCompeted == true) {
+                                // 必要な分の結果だけ読み込む
+                                contestRef.child('results').child(cid).child(eid).child(userId).once('value', function(snapResult) {
+                                    var result = snapResult.val();
+                                    if (result != null) {
+                                        if (!(result._dummy) && result.endAt) {
+                                            result.resultF = TriboxContest.formatResult(result, eid, events);
+                                            result.detailsF = TriboxContest.formatDetails(result, eid, events);
+                                            result.puzzleF = TriboxContest.formatPuzzle(result);
+                                            $timeout(function() {
+                                                if (!(eid in $scope.historyPast)) {
+                                                    $scope.historyPast[eid] = [];
+                                                    $scope.tocHtmlPast.push({ 'eid': eid, 'name': events[eid].name });
+                                                }
+                                                $scope.historyPast[eid].push({ 'contestId': contests[cid].contestId, 'contest': contests[cid], 'result': result });
+                                                if (result.seasonPoint) {
+                                                    $scope.sumSeasonPointPast[eid] += result.seasonPoint;
+                                                }
+                                            });
+                                        }
+                                    }
+                                });
+                            }
+                        }
+                    });
+                });
+
+            });
+            });
+            });
+            });
+
+        } else {
+            console.error('Invalid username: @id');
+            $scope.userLoaded = true;
+        }
+    }, function(error) {
+        console.error(error);
+    });
+
+        $timeout(function() {
+            $scope.isShownPastSeason = true;
+        });
+    }
+
+    @* /* 過去のシーズン用 */ *@
     var showDetailListPast = [];
     $scope.showDetailPast = function(contestId) {
         var r;
@@ -575,14 +632,6 @@ app.controller('UserCtrl', ['$scope', '$timeout', function($scope, $timeout) {
             angular.element(document.getElementById('fmc-detail-' + contestId)).remove();
         }
     };
-
-    @* /* 過去のシーズン表示用 */ *@
-    $scope.isShownPastSeason = false;
-    $scope.showPastSeason = function() {
-        $timeout(function() {
-            $scope.isShownPastSeason = !($scope.isShownPastSeason);
-        });
-    }
 
     $scope.updateVideoUrl = function(contestId, eventId) {
         var successDOM = document.getElementById('update-video-success-' + eventId);
