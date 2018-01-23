@@ -78,7 +78,8 @@ app.controller('AuthJoinCtrl', ['$scope', 'Auth', function($scope, Auth) {
 
         <p>
             メールアドレスとパスワードを入力してください。<br>
-            すでにアカウントを作成済みの場合は、<a href="@routes.HomeController.login">ログインページ</a>からログインしてください。
+            すでにアカウントを作成済みの場合は、<a href="@routes.HomeController.login">ログインページ</a>からログインしてください。<br>
+            hotmailでは確認メールが受信できない場合があります。
         </p>
 
         <form name="joinForm" ng-submit="createUser()">
