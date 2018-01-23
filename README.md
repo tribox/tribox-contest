@@ -40,9 +40,21 @@ TODO
 
 ### http サーバ起動
 
+#### 開発
+
 ```
-(開発) activator run -Dconfig.resource=dev.conf
-(本番) activator clean stage && target/universal/stage/bin/contest -Dconfig.file=/path/to/contestapp/conf/prod.conf
+activator run -Dconfig.resource=dev.conf
+```
+
+#### 本番
+
+本番サーバでは、cron で定期的にチェック＆再起動のスクリプトが実行されるため、
+まず1つ目のコマンドでコンパイルして，次に2つ目のコマンドでプロセスを落とす。
+すると、あとは放置してればそのうち play が再起動する．
+
+```
+activator clean stage
+./play-kill.sh
 ```
 
 ### :alarm_clock: 1週間に1回 -- 日曜日午後9時 (JST) 自動実行
