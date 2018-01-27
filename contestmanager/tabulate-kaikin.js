@@ -165,11 +165,13 @@ var checkKaikin = function() {
                         var countCompleted = 0;
                         var countCompletedSuccess = 0;
                         Object.keys(targetContests).forEach(function(contestId) {
-                            if (Results[contestId][eventId][userId]) {
-                                if ('endAt' in Results[contestId][eventId][userId]) {
-                                    countCompleted++;
-                                    if (Results[contestId][eventId][userId]['result']['condition'] != 'DNF') {
-                                        countCompletedSuccess++;
+                            if (Results[contestId][eventId] !== undefined) {
+                                if (Results[contestId][eventId][userId]) {
+                                    if ('endAt' in Results[contestId][eventId][userId]) {
+                                        countCompleted++;
+                                        if (Results[contestId][eventId][userId]['result']['condition'] != 'DNF') {
+                                            countCompletedSuccess++;
+                                        }
                                     }
                                 }
                             }
