@@ -172,13 +172,15 @@ var checkWinners = function() {
                     // イベントごとに調べる
                     Object.keys(Events).forEach(function(eventId) {
                         Object.keys(targetContests).forEach(function(contestId) {
-                            if (Results[contestId][eventId][userId]) {
-                                if ('seasonPoint' in Results[contestId][eventId][userId]) {
-                                    if (0 < Results[contestId][eventId][userId].seasonPoint) {
-                                        for (var i = 0; i < Winners[eventId].length; i++) {
-                                            if (Winners[eventId][i].userId == userId) {
-                                                Winners[eventId][i].seasonPoint += Results[contestId][eventId][userId].seasonPoint;
-                                                break;
+                            if (Results[contestId][eventId] !== undefined) {
+                                if (Results[contestId][eventId][userId]) {
+                                    if ('seasonPoint' in Results[contestId][eventId][userId]) {
+                                        if (0 < Results[contestId][eventId][userId].seasonPoint) {
+                                            for (var i = 0; i < Winners[eventId].length; i++) {
+                                                if (Winners[eventId][i].userId == userId) {
+                                                    Winners[eventId][i].seasonPoint += Results[contestId][eventId][userId].seasonPoint;
+                                                    break;
+                                                }
                                             }
                                         }
                                     }
@@ -208,7 +210,10 @@ var checkWinners = function() {
             'e222': [10000, 5000, 3000],
             'e333bf': [5000, 2000, 1000],
             'e333oh': [5000, 2000, 1000],
-            'e333fm': [5000, 2000, 1000]
+            'e333fm': [5000, 2000, 1000],
+            'eminx':  [5000, 2000, 1000],
+            'epyram': [5000, 2000, 1000],
+            'esq1':   [5000, 2000, 1000]
         };
         Object.keys(Events).forEach(function(eventId) {
             for (var i = 0; i < 3; i++) {
