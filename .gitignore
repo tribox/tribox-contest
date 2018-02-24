@@ -21,3 +21,4 @@ target
 
 # SSL auth file
 fileauth.txt
+fileauth_*.txt
