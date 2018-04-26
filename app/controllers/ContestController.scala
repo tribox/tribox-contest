@@ -94,9 +94,9 @@ class ContestController @Inject() extends HomeController {
         } else if (eid == "222") {
             targetCategory = 101;
         } else if (eid == "minx") {
-            targetCategory = 111;
+            targetCategory = 526;
         } else if (eid == "pyram") {
-            targetCategory = 110;
+            targetCategory = 527;
         } else if (eid == "sq1") {
             targetCategory = 113;
         }
