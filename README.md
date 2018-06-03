@@ -162,6 +162,14 @@ node contestmanager/update-wcaapp.js
 ```
 
 
+## Abuse 関係
+
+#### ユーザーを凍結する
+
+(1) Firebase の Database で `users.<UID>.isSuspended` を `true` に設定する。  
+(2) Firebase の Authentication で「アカウントを無効にする」を設定する (忘れがちなので注意！)。  
+
+
 ## Crontab example
 
 ```
