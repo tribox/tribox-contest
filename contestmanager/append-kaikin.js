@@ -52,7 +52,7 @@ var appendPoints = function() {
 
             // ユーザごと
             var Ready = {};
-            async.each(results, function(result, next) {
+            async.eachSeries(results, function(result, next) {
                 if (!(result.user_id in Ready)) {
                     Ready[result.user_id] = result;
                     Ready[result.user_id]['events'] = [result.event_id];
@@ -77,7 +77,7 @@ var appendPoints = function() {
             connectionStore.query('SET NAMES utf8', function() {
 
             var count = 0;
-            async.each(Ready, function(r, next) {
+            async.eachSeries(Ready, function(r, next) {
                 // ポイント加算処理・メール送信
                 if (r.customer_type == 0) { // store
                     connectionStore.query('SELECT name01, name02, email FROM dtb_customer WHERE customer_id = ?', [
@@ -128,7 +128,9 @@ var appendPoints = function() {
                                                 } else {
                                                     //console.log(stdout);
                                                     console.error(stderr);
-                                                    next();
+                                                    setTimeout(function() {
+                                                        next();
+                                                    }, 1000);
                                                 }
                                             });
                                         }
