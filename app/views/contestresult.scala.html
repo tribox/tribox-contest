@@ -177,13 +177,13 @@ var drawChart = function(dataall, data) {
                 <tr id="e@{eid}-{{ $index }}" ng-repeat="r in resultsAll.e@{eid}">
                     <td>
                       {{ r.place }}
-                    </td>
-                    <td>
-                      <span ng-if="r.seasonPoint && r.seasonPoint != 0">{{ r.seasonPoint }}</span>
                       <span class="lottery" ng-show="r.lottery">
                         <i class="fa fa-star color-star"></i>
                         <span class="lottery-point">100</span>
                       </span>
+                    </td>
+                    <td>
+                      <span ng-if="r.seasonPoint && r.seasonPoint != 0">{{ r.seasonPoint }}</span>
                     </td>
                     <td>
                         <img src="@routes.Assets.versioned("flags/flags-iso/shiny/24")/{{ r.user.iso2 }}.png" height="24" style="vertical-align: middle;" ng-show="r.user.iso2">
