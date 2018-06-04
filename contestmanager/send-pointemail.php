@@ -4,7 +4,7 @@
  * ポイント加算通知メールを送る
  *
  * Usage:
- *   php send-verifyingemail.php foo@tribox.jp "名前" "コンテスト名" "競技名" ポイント数 ポイントタイプ(0/1)
+ *   php send-verifyingemail.php foo@tribox.jp "名前" "コンテスト名" "種目名" ポイント数 ポイントタイプ(0/1)
  */
 
 //var_dump($argv);
@@ -34,7 +34,7 @@ $subject = '[tribox Contest] ポイント進呈のお知らせ';
 $body = $to_name . " 様\n\n"
       . $text
       . "コンテスト名: " . $contest_name . "\n"
-      . "競技名: " . $event_name . "\n"
+      . "種目名: " . $event_name . "\n"
       . "進呈ポイント: " . $point . "\n\n"
       . "triboxストアのマイページよりご確認ください。\n"
       . "https://store.tribox.com/mypage/\n\n"

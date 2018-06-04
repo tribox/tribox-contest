@@ -4,7 +4,7 @@
  * 記録削除通知メールを送る
  *
  * Usage:
- *   php send-deleteemail.php foo@tribox.jp "名前" "コンテストID" "競技名"
+ *   php send-deleteemail.php foo@tribox.jp "名前" "コンテストID" "種目名"
  */
 
 //var_dump($argv);

@@ -4,7 +4,7 @@
  * 皆勤賞ポイント進呈通知メールを送る
  *
  * Usage:
- *   php send-kaikin.php foo@tribox.jp "名前" "シーズン名" "競技名ハイフン区切り" ポイント数
+ *   php send-kaikin.php foo@tribox.jp "名前" "シーズン名" "種目名ハイフン区切り" ポイント数
  */
 
 var_dump($argv);
