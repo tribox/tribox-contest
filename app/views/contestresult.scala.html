@@ -190,7 +190,8 @@ var drawChart = function(dataall, data) {
                         <a href="/user/{{ r.user.username }}">{{ r.user.displayname }}</a>
                     </td>
                     <td class="mb-hide">{{ r.user.organization }}</td>
-                    <td><b>{{ r.resultF }}</b></td>
+                    <td class="mb-hide"><b>{{ r.resultF }}</b></td>
+                    <td class="tb-hide pc-hide"><a class="cursor-pointer" ng-click="showDetail($index)"><b style="color: rgb(85, 85, 85);">{{ r.resultF }}</b></a></td>
                     <td id="e@{eid}-{{ $index }}-show" class="mb-hide"><a class="cursor-pointer" ng-click="showDetail($index)">表示</a></td>
                     <td ng-show="r.puzzle.type == 'database'">
                         <a href="http://store.tribox.com/products/detail.php?product_id={{ r.puzzle.product }}" target="_blank">{{ r.puzzleF }}</a>
