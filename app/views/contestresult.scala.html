@@ -213,7 +213,7 @@ var drawChart = function(dataall, data) {
             <tbody>
                 <tr ng-repeat="s in scramblesData.e@{eid}">
                     <td>{{ $index + 1}}</td>
-                    <td>{{ s }}</td>
+                    <td ng-bind-html="s"></td>
                 </tr>
             </tbody>
         </table>

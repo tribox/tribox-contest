@@ -185,7 +185,13 @@ app.controller('ContestCtrl', ['$scope', '$timeout', function($scope, $timeout) 
         contestRef.child('scrambles').child('c@cid').once('value', function(snapScrambles) {
             if (snapScrambles.exists() && snapScrambles.val()._dummy == null) {
                 $timeout(function() {
-                    $scope.scramblesData = snapScrambles.val();
+                    var scramblesVal = snapScrambles.val();
+                    @if(eid == "minx") {
+                        Object.keys(scramblesVal.eminx).forEach(function(index) {
+                            scramblesVal.eminx[index] = scramblesVal.eminx[index].replace(/\n/g, '<br>');
+                        });
+                    }
+                    $scope.scramblesData = scramblesVal;
                 });
             } else {
                 console.error('Invalid: contest (@cid)');

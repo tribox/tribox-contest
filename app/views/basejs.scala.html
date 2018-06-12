@@ -199,7 +199,7 @@ var fadeIn = function(el, ms, fn) {
 /**
  * FIREBASE
  */
-var app = angular.module('contestApp', ['firebase']);
+var app = angular.module('contestApp', ['firebase', 'ngSanitize']);
 var contestRef = new Firebase('https://@{firebaseappContest}.firebaseio.com');
 @if(firebaseappWca != "") {
     var wcaRef = new Firebase('https://@{firebaseappWca}.firebaseio.com');
