@@ -102,7 +102,7 @@ var appendPoints = function() {
                                     process.exit(1);
                                 } else {
                                     console.log('Succeeded updating point!');
-                                    connection.query('UPDATE kaikin SET appended_at = NOW() WHERE appended_at IS NULL AND user_id = ?', [
+                                    connection.query('UPDATE kaikin100 SET appended_at = NOW() WHERE appended_at IS NULL AND user_id = ?', [
                                         r.user_id
                                     ], function(error, results, fields) {
                                         if (error) {
@@ -124,7 +124,7 @@ var appendPoints = function() {
                                                 if (err) {
                                                     console.error(err);
                                                 } else {
-                                                    //console.log(stdout);
+                                                    console.log(stdout);
                                                     console.error(stderr);
                                                     setTimeout(function() {
                                                         next();
