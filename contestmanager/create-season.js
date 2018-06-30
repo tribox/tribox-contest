@@ -115,7 +115,7 @@ contestRef.child('events').once('value', function(snap) {
         var scrambles = {};
         var scramblesIndexes = contestsIndexes;
 
-        async.each(contestsIndexes, function(contestId, next) {
+        async.eachSeries(contestsIndexes, function(contestId, next) {
             var contest = contests[contestId];
 
             var url = 'http://localhost:2014/scramble/.json?seed=' + contestId + Config.SEED;
@@ -183,7 +183,7 @@ var saveContests = function(contests, contestsIndexes, callback) {
                 //console.dir(current);
 
                 // write
-                async.each(contestsIndexes, function(contestId, next) {
+                async.eachSeries(contestsIndexes, function(contestId, next) {
                     // 上書きはしない
                     if (current[contestId] !== undefined) {
                         console.error('Already exists:', contestId);
@@ -237,7 +237,7 @@ var saveScrambles = function(scrambles, scramblesIndexes, callback) {
                 //console.dir(current);
 
                 // write
-                async.each(scramblesIndexes, function(contestId, next) {
+                async.eachSeries(scramblesIndexes, function(contestId, next) {
                     // 上書きはしない
                     if (current[contestId] !== undefined) {
                         console.error('Already exists:', contestId);
@@ -290,7 +290,7 @@ var saveResults = function(contests, contestsIndexes, callback) {
                 //console.dir(current);
 
                 // write
-                async.each(contestsIndexes, function(contestId, next) {
+                async.eachSeries(contestsIndexes, function(contestId, next) {
                     // 上書きはしない
                     if (current[contestId] !== undefined) {
                         console.error('Already exists:', contestId);
