@@ -91,6 +91,10 @@ class ContestController @Inject() extends HomeController {
             targetCategory = 107;
         } else if (eid == "555") {
             targetCategory = 108;
+        } else if (eid == "666") {
+            targetCategory = 525;
+        } else if (eid == "777") {
+            targetCategory = 524;
         } else if (eid == "222") {
             targetCategory = 101;
         } else if (eid == "minx") {
