@@ -175,9 +175,51 @@ var calcResult = function(method, format, data) {
         }
     }
 
-    // Mean of X (Not implemented yet)
+    // Mean of X
     else if (method == 'mean') {
-        return null;
+        var lowerIndex = -1, upperIndex = -1, dnfIndex = -1;
+        if (format == 'time') {
+            var sum = 0.000;
+            var count = 0, countDNF = 0;
+            var lower = 9999.999, upper = 0.000;
+            data.forEach(function(d, index) {
+                if (d.condition == 'DNF') {
+                    countDNF++;
+                    dnfIndex = index;
+                    if (lowerIndex == -1) {
+                        lowerIndex = index;
+                    }
+                } else {
+                    var t;
+                    if (d.condition == 'OK') {
+                        t = d.record;
+                    } else if (d.condition == '+2') {
+                        t = d.record + 2.000;
+                    } else {
+                        return null;
+                    }
+
+                    sum += t;
+                    count++;
+                    if (t < lower) {
+                        lower = t;
+                        lowerIndex = index;
+                    }
+                    if (upper < t) {
+                        upper = t;
+                        upperIndex = index;
+                    }
+                }
+            });
+            if (countDNF == 0) {
+                return {'record': (Math.round((sum / count) * 1000)) / 1000,
+                        'best': lowerIndex, 'worst': upperIndex, 'condition': 'OK' };
+            } else {
+                return {'record': 9999.999, 'best': lowerIndex, 'worst': dnfIndex, 'condition': 'DNF'};
+            }
+        } else {
+            return null;
+        }
     }
 
     // Best of X
@@ -301,7 +343,7 @@ var writeResults = function() {
 
     // 結果をひとつひとつ書き込む (順位とSPを上書きする)
     var count = 0;
-    async.each(readyArr, function(r, next) {
+    async.eachSeries(readyArr, function(r, next) {
         var eventId = r.eventId;
         var userId = r.userId;
 
@@ -365,7 +407,7 @@ var writeResults = function() {
                 console.dir(readyForMysql);
 
                 var countLottery = 0;
-                async.each(readyForMysql, function(r, next) {
+                async.eachSeries(readyForMysql, function(r, next) {
                     var eventId = r.eventId;
                     var userId = r.userId;
                     var customerId = r.customerId;
@@ -435,7 +477,7 @@ var resetResults = function() {
                 //console.dir(resets);
 
                 // 実行
-                async.each(resets, function(r, next) {
+                async.eachSeries(resets, function(r, next) {
                     var updateData;
                     if (argvrun.options.resetlottery) {
                         updateData = {
@@ -604,7 +646,7 @@ var checkFMC = function() {
                     var results = snapResults.val();
                     var fmcResults = {};
 
-                    async.each(Object.keys(results), function(userId, next) {
+                    async.eachSeries(Object.keys(results), function(userId, next) {
                         if (results[userId]._dummy == true || !(results[userId].endAt)) {
                             next();
                         } else {
@@ -635,7 +677,7 @@ var checkFMC = function() {
                             //console.dir(fmcResults);
 
                             // FMC結果の書き込み
-                            async.each(Object.keys(fmcResults), function(userId, next) {
+                            async.eachSeries(Object.keys(fmcResults), function(userId, next) {
                                 contestRef.child('results').child(targetContest).child('e333fm').child(userId).update({
                                     'result': {
                                         'condition': fmcResults[userId]['result']['condition'],
@@ -725,7 +767,7 @@ var checkResults = function() {
                     });
 
                     // 結果の更新書き込み
-                    async.each(readyResults, function(_ready, next) {
+                    async.eachSeries(readyResults, function(_ready, next) {
                         contestRef.child('results').child(targetContest).child(_ready.eid).child(_ready.uid).update({
                             'result': _ready['data']['result'],
                             'priority': _ready['data']['.priority']
