@@ -1,6 +1,6 @@
 # tribox Contest
 
-tribox Contest is an Online Rubik's Cube Competition organized by [Tribox Inc](http://tribox.com).
+tribox Contest is an Online Speed-Solving Competition organized by [Tribox Inc](http://tribox.com).
 The application is based on [Play Framework](https://www.playframework.com) and [Firebase](https://www.firebase.com).
 
 URL: https://contest.tribox.com
