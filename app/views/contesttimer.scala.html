@@ -334,7 +334,7 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
     var startTouch = Infinity;
 
     var INSPECTION_SECOND = 15; @* /* インスペクションタイムは15秒 */ *@
-    var TOUCHING_TH = 500;      @* /* 0.5秒長押しでタイマースタート */ *@
+    var TOUCHING_TH = 350;      @* /* 0.35秒長押しでタイマースタート */ *@
     var LIMIT_SECOND = 600;     @* /* 10分でDNF */ *@
     var FREEZING_TH = 1000;     @* /* タイマーストップ後1秒はタイマースタートできない */ *@
 
