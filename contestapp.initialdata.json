@@ -11,7 +11,7 @@
             "format": "time",
             "hasInspection": true,
             "method": "average",
-            "name": "2x2x2",
+            "name": "2×2×2",
             "scramblePuzzle": "222"
         },
         "e333": {
@@ -20,7 +20,7 @@
             "format": "time",
             "hasInspection": true,
             "method": "average",
-            "name": "Rubik's Cube",
+            "name": "3×3×3",
             "scramblePuzzle": "333"
         },
         "e333bf": {
@@ -29,7 +29,7 @@
             "format": "time",
             "hasInspection": false,
             "method": "best",
-            "name": "Rubik's Cube 目隠し",
+            "name": "3×3×3 目隠し",
             "scramblePuzzle": "333ni"
         },
         "e333fm": {
@@ -38,7 +38,7 @@
             "format": "number",
             "hasInspection": false,
             "method": "best",
-            "name": "Rubik's Cube 最少手数",
+            "name": "3×3×3 最少手数",
             "scramblePuzzle": "333fm"
         },
         "e333oh": {
@@ -47,7 +47,7 @@
             "format": "time",
             "hasInspection": true,
             "method": "average",
-            "name": "Rubik's Cube 片手",
+            "name": "3×3×3 片手",
             "scramblePuzzle": "333"
         },
         "e444": {
@@ -56,7 +56,7 @@
             "format": "time",
             "hasInspection": true,
             "method": "average",
-            "name": "4x4x4",
+            "name": "4×4×4",
             "scramblePuzzle": "444"
         },
         "e555": {
@@ -65,7 +65,7 @@
             "format": "time",
             "hasInspection": true,
             "method": "average",
-            "name": "5x5x5",
+            "name": "5×5×5",
             "scramblePuzzle": "555"
         }
     },
