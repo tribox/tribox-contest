@@ -120,6 +120,8 @@ java -jar wca/dist/TNoodle-WCA.jar
 node contestmanager/create-season.js 20162
 ```
 
+また、`app/views/user.scala.html` を変更して、シーズン用のボタンを付ける。
+
 #### 皆勤賞ポイント進呈
 
 次のコマンドを実行して `kaikin` テーブルの内容をチェックする。
