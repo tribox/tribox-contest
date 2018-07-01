@@ -343,7 +343,7 @@ var writeResults = function() {
 
     // 結果をひとつひとつ書き込む (順位とSPを上書きする)
     var count = 0;
-    async.eachSeries(readyArr, function(r, next) {
+    async.each(readyArr, function(r, next) {
         var eventId = r.eventId;
         var userId = r.userId;
 
@@ -407,7 +407,7 @@ var writeResults = function() {
                 console.dir(readyForMysql);
 
                 var countLottery = 0;
-                async.eachSeries(readyForMysql, function(r, next) {
+                async.each(readyForMysql, function(r, next) {
                     var eventId = r.eventId;
                     var userId = r.userId;
                     var customerId = r.customerId;
@@ -477,7 +477,7 @@ var resetResults = function() {
                 //console.dir(resets);
 
                 // 実行
-                async.eachSeries(resets, function(r, next) {
+                async.each(resets, function(r, next) {
                     var updateData;
                     if (argvrun.options.resetlottery) {
                         updateData = {
@@ -646,7 +646,7 @@ var checkFMC = function() {
                     var results = snapResults.val();
                     var fmcResults = {};
 
-                    async.eachSeries(Object.keys(results), function(userId, next) {
+                    async.each(Object.keys(results), function(userId, next) {
                         if (results[userId]._dummy == true || !(results[userId].endAt)) {
                             next();
                         } else {
@@ -677,7 +677,7 @@ var checkFMC = function() {
                             //console.dir(fmcResults);
 
                             // FMC結果の書き込み
-                            async.eachSeries(Object.keys(fmcResults), function(userId, next) {
+                            async.each(Object.keys(fmcResults), function(userId, next) {
                                 contestRef.child('results').child(targetContest).child('e333fm').child(userId).update({
                                     'result': {
                                         'condition': fmcResults[userId]['result']['condition'],
@@ -767,7 +767,7 @@ var checkResults = function() {
                     });
 
                     // 結果の更新書き込み
-                    async.eachSeries(readyResults, function(_ready, next) {
+                    async.each(readyResults, function(_ready, next) {
                         contestRef.child('results').child(targetContest).child(_ready.eid).child(_ready.uid).update({
                             'result': _ready['data']['result'],
                             'priority': _ready['data']['.priority']
