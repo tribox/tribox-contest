@@ -127,16 +127,8 @@
                 </div>
 
                 <label class="fancy-radio">
-                    <input name="puzzle-type" type="radio" value="nodatabase" ng-model="puzzle.type">
-                    <span>データベースに無いキューブを入力</span>
-                </label>
-                <div ng-show="puzzle.type == 'nodatabase'">
-                    <input class="form-control" type="text" ng-model="puzzle.input">
-                </div>
-
-                <label class="fancy-radio">
                     <input name="puzzle-type" type="radio" value="unknown" ng-model="puzzle.type">
-                    <span>不明</span>
+                    <span>その他・不明</span>
                 </label>
             </div>
             <div class="col md-6">
@@ -343,15 +335,8 @@ app.controller('ContestConfirmCtrl', ['$scope', '$timeout', function($scope, $ti
                 puzzle.brand = parseInt($scope.puzzle.brand);
                 puzzle.product = parseInt($scope.puzzle.product);
             } else if ($scope.puzzle.type == 'nodatabase') {
-                if (!($scope.puzzle.input) || $scope.puzzle.input.length <= 0) {
-                    $scope.error = 'キューブ名を入力してください。';
-                    return;
-                }
-                if (TriboxContest.INPUT_LENGTH.puzzleName.max < $scope.puzzle.input.length) {
-                    $scope.error = 'キューブ名は50文字以下で入力してください。';
-                    return;
-                }
-                puzzle.input = $scope.puzzle.input;
+                $scope.error = 'パズルを選択してください。';
+                return;
             } else if ($scope.puzzle.type == 'unknown') {
                 ;
             } else {
