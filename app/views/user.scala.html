@@ -164,7 +164,7 @@ a.video-url {
                         <th></th>
                         <th>順位</th>
                         <th>獲得SP</th>
-                        <th ng-if="eid != 'e333fm' && events[eid].method == 'average'">平均記録</th>
+                        <th ng-if="eid != 'e333fm' && (events[eid].method == 'average' || events[eid].method == 'mean')">平均記録</th>
                         <th ng-if="eid != 'e333fm' && events[eid].method == 'best'">最高記録</th>
                         <th ng-if="eid == 'e333fm'">記録</th>
                         <th class="mb-hide" ng-if="eid != 'e333fm'">個々の記録</th>
@@ -240,7 +240,7 @@ a.video-url {
                         <th></th>
                         <th>順位</th>
                         <th>獲得SP</th>
-                        <th ng-if="eid != 'e333fm' && events[eid].method == 'average'">平均記録</th>
+                        <th ng-if="eid != 'e333fm' && (events[eid].method == 'average' || events[eid].method == 'mean')">平均記録</th>
                         <th ng-if="eid != 'e333fm' && events[eid].method == 'best'">最高記録</th>
                         <th ng-if="eid == 'e333fm'">記録</th>
                         <th class="mb-hide" ng-if="eid != 'e333fm'">個々の記録</th>

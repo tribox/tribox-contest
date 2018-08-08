@@ -120,7 +120,7 @@
                             <th>獲得SP</th>
                             <th>名前</th>
                             <th class="mb-hide">所属</th>
-                            <th ng-if="e != 'e333fm' && events[e].method == 'average'">平均記録</th>
+                            <th ng-if="e != 'e333fm' && (events[e].method == 'average' || events[e].method == 'mean')">平均記録</th>
                             <th ng-if="e != 'e333fm' && events[e].method == 'best'">最高記録</th>
                             <th ng-if="e == 'e333fm'">記録</th>
                             <th class="mb-hide" ng-if="e != 'e333fm'">個々の記録</th>
