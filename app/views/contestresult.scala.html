@@ -162,7 +162,7 @@ var drawChart = function(dataall, data) {
                     <th>名前</th>
                     <th class="mb-hide">所属</th>
                     @if(eid != "333fm") {
-                    <th ng-if="events.e@{eid}.method == 'average' || events.e@{eid}.method == 'mean'">平均記録</th>
+                        <th ng-if="events.e@{eid}.method == 'average' || events.e@{eid}.method == 'mean'">平均記録</th>
                         <th ng-if="events.e@{eid}.method == 'best'">最高記録</th>
                         <th class="mb-hide">個々の記録</th>
                     } else {
