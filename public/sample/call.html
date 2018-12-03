@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <title>Call example</title>
+  <!--<script src="/assets/audiojs/audiojs/audio.min.js" type="text/javascript"></script>-->
+  <!--<script src="/assets/audiojs/audiojs/audio.js" type="text/javascript"></script>-->
+  <script src="/assets/audiojs/audiojs/audio.tribox.js" type="text/javascript"></script>
+</head>
+<body>
+  <h1>Call example</h1>
+
+  <div style="display: none;">
+    <audio src="/assets/call/kanako_8s.mp3" preload="auto" />
+    <audio src="/assets/call/kanako_12s.mp3" preload="auto" />
+    <audio src="/assets/call/kanako_ready.mp3" preload="auto" />
+    <audio src="/assets/call/kanako_ok.mp3" preload="auto" />
+    <audio src="/assets/call/kanako_penalty.mp3" preload="auto" />
+    <audio src="/assets/call/kanako_dnf.mp3" preload="auto" />
+  </div>
+
+  <div class="container">
+    <button id="btn-8s" class="button is-primary is-large is-rounded">8s</button><br>
+    <button id="btn-12s" class="button is-primary is-large is-rounded">12s</button><br>
+    <button id="btn-ready" class="button is-primary is-large is-rounded">Ready?</button><br>
+    <button id="btn-ok" class="button is-primary is-large is-rounded">OK</button><br>
+    <button id="btn-penalty" class="button is-primary is-large is-rounded">Penalty</button><br>
+    <button id="btn-dnf" class="button is-primary is-large is-rounded">DNF</button>
+  </div>
+
+<script>
+audiojs.events.ready(function() {
+    var as = audiojs.createAll();
+});
+
+var a = audiojs.createAll();
+console.log(a);
+
+const button0 = document.getElementById('btn-8s');
+button0.addEventListener('click', async () => {
+    a[0].play();
+});
+const button1 = document.getElementById('btn-12s');
+button1.addEventListener('click', async () => {
+    a[1].play();
+});
+const button2 = document.getElementById('btn-ready');
+button2.addEventListener('click', async () => {
+    a[2].play();
+});
+const button3 = document.getElementById('btn-ok');
+button3.addEventListener('click', async () => {
+    a[3].play();
+});
+const button4 = document.getElementById('btn-penalty');
+button4.addEventListener('click', async () => {
+    a[4].play();
+});
+const button5 = document.getElementById('btn-dnf');
+button5.addEventListener('click', async () => {
+    a[5].play();
+});
+</script>
+
+</body>
+</html>
