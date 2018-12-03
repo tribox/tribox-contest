@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <title>GiiKER example</title>
+  <script src="/assets/giiker/giiker.js" type="text/javascript"></script>
+</head>
+<body>
+  <h1>GiiKER example</h1>
+  <div class="container">
+    <button class="button is-primary is-large is-rounded">Connect!</button><br>
+    <textarea class="textarea is-primary" type="text" placeholder="Primary textarea"></textarea>
+  </div>
+
+<script>
+const button = document.querySelector('button');
+const textarea = document.querySelector('textarea');
+
+var isSolved = function(stateStr) {
+    return stateStr == "UUUUUUUUURRRRRRRRRFFFFFFFFFDDDDDDDDDLLLLLLLLLBBBBBBBBB";
+};
+
+button.addEventListener('click', async () => {
+    button.classList.add('is-loading');
+    button.disabled = true;
+
+    const giiker = await GiiKER.connect();
+    console.log(giiker);
+    button.classList.remove('is-loading');
+    button.textContent = 'Connected!';
+
+    //const batteryLevel = await GiiKER.getBatteryLevel();
+    //console.log(batteryLevel);
+
+    giiker.on('move', (move) => {
+        console.log(move);
+        console.log(giiker.state);
+        console.log(giiker.stateString);
+        console.log(isSolved(giiker.stateString));
+        textarea.value += ` ${move.notation}`;
+    });
+
+    // Expose giiker object for testing on console
+    window.giiker = giiker;
+});
+</script>
+
+</body>
+</html>
