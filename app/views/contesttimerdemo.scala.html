@@ -16,6 +16,7 @@
 
 @basejs(firebaseappContest)
 
+    <script src="/assets/audiojs/audiojs/audio.tribox.js" type="text/javascript"></script>
 </head>
 <body><div class="container">
     @bodyheader(title, contestName, cid="demo", eid="demo")
@@ -31,6 +32,15 @@
     @authinfo(eid="demo")
 
     <div>
+
+        <div style="display: none;">
+            <audio src="/assets/call/kanako_8s.mp3" preload="auto" />
+            <audio src="/assets/call/kanako_12s.mp3" preload="auto" />
+            <audio src="/assets/call/kanako_ready.mp3" preload="auto" />
+            <audio src="/assets/call/kanako_ok.mp3" preload="auto" />
+            <audio src="/assets/call/kanako_penalty.mp3" preload="auto" />
+            <audio src="/assets/call/kanako_dnf.mp3" preload="auto" />
+        </div>
 
         <div id="touchArea">
 
@@ -105,6 +115,11 @@ window.TriboxContest.timerInspectingTextMb = 'タップ長押しして、手を�
 window.TriboxContest.timerRunningText = 'キーを押してタイマーをストップ';
 window.TriboxContest.timerRunningTextMb = 'タップしてタイマーをストップ';
 window.TriboxContest.timerFinishText = '計測が完了しました';
+
+audiojs.events.ready(function() {
+    var as = audiojs.createAll();
+});
+var a = audiojs.createAll();
 
 app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $timeout) {
     $scope.invalidPage = false;
@@ -208,6 +223,7 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
             btnOK.addClass('cond-ok-on');
             btnPenalty.removeClass('cond-penalty-on');
             btnDNF.removeClass('cond-dnf-on');
+            a[3].play();
             saveAndPrepare();
         }
     };
@@ -222,6 +238,7 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
             btnOK.removeClass('cond-ok-on');
             btnPenalty.addClass('cond-penalty-on');
             btnDNF.removeClass('cond-dnf-on');
+            a[4].play();
             saveAndPrepare();
         }
     };
@@ -236,6 +253,7 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
             btnOK.removeClass('cond-ok-on');
             btnPenalty.removeClass('cond-penalty-on');
             btnDNF.addClass('cond-dnf-on');
+            a[5].play();
             saveAndPrepare();
         }
     };
@@ -348,9 +366,19 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
         timerText.innerHTML = inspectionCountdown;
 
         // インスペクションタイム
+        var hasCalled8s = false;
+        var hasCalled12s = false;
         inspectionTimerId = setInterval(function() {
             inspectionCountdown--;
             timerText.innerHTML = inspectionCountdown;
+            if (inspectionCountdown == 7 && !hasCalled8s) {
+                a[0].play();
+                hasCalled8s = true;
+            }
+            if (inspectionCountdown == 3 && !hasCalled12s) {
+                a[1].play();
+                hasCalled12s = true;
+            }
         }, 1000);
 
         // スタート時 +2ペナルティ
