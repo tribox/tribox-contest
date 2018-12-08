@@ -22,7 +22,7 @@ var token = tokenGenerator.createToken(
 );
 
 // デフォルトの競技
-var EventsDefault = ['e333', 'e444', 'e555', 'e666', 'e777', 'e222', 'e333bf', 'e333oh', 'e333fm', 'eminx', 'epyram', 'esq1'];
+var EventsDefault = ['e333', 'e444', 'e555', 'e666', 'e777', 'e222', 'e333bf', 'e333oh', 'e333fm', 'eminx', 'epyram', 'eskewb', 'esq1'];
 
 
 var usage = function() {
