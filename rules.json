@@ -245,6 +245,22 @@
             }
         },
 
+        // Data for scrambles images
+        "scramblesimg": {
+            ".read": false,
+            ".write": false,
+            "$contest_id": {
+                ".read": "root.child('contests').child($contest_id).child('beginAt').val() <= now",
+                ".validate": "root.child('contests').hasChild($contest_id)",
+                "$event_id": {
+                    ".validate": "root.child('events').hasChild($event_id)",
+                    "$scramble_seq": {
+                        ".validate": "newData.isString() && newData.val().matches(/^.{1,1023}$/)"
+                    }
+                }
+            }
+        },
+
         // Data for contest results
         "results": {
             ".read": false,
