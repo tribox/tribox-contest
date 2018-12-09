@@ -245,7 +245,7 @@ app.controller('ContestConfirmCtrl', ['$scope', '$timeout', function($scope, $ti
             if (snapResult.exists()) {
                 var resultsData = snapResult.val();
                 $timeout(function() {
-                    $scope.result = calcResult(e.method, e.format, resultsData.details);
+                    $scope.result = calcResult(e.method, e.format, resultsData.details.slice(0, e.attempts));
                     // FMC: Calculate later
                     @if(eid == "333fm") {
                         $scope.result.condition = 'NOTYET';
