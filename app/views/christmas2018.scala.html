@@ -1,0 +1,85 @@
+@(contestName: String, contestDescription: String, contestUrl: String, firebaseappContest: String)
+
+@defining("クリスマスアップデート2018") { title =>
+@defining(contestUrl + "/release-notes/christmas-2018") { pageUrl =>
+
+<!DOCTYPE html>
+<html lang="ja" ng-app="contestApp">
+<head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
+    @header(title=title, description="2018年クリスマスアップデートです！Skewbの追加、FMCスクランブル画像の表示、インスペクション時のジャッジコールを追加しました！", sitename=contestName, url=pageUrl, contestUrl=contestUrl)
+
+@basejs(firebaseappContest)
+@authjs(redirectLogin="", redirectLogout="", checkFirst=true)
+
+<style>
+h3 {
+    margin-top: 50px;
+}
+p {
+    line-height: 1.6em;
+    margin-bottom: 30px;
+}
+</style>
+
+</head>
+<body><div class="container">
+    @bodyheader(title, contestName)
+
+    <div ng-controller="AuthCtrl">
+    <div ng-hide="authLoaded">
+        <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+        <span class="sr-only">Loading...</span>
+        Loading...
+    </div>
+    <div ng-show="authLoaded">
+
+        @authinfo()
+
+        <h2>tribox Contest クリスマスアップデート 2018</h2>
+
+        <p>
+            クリスマスアップデートです！
+        </p>
+
+        <h3>Skewb</h3>
+        <p>
+            2019年前半期 (2019年1月6日スタート) から「Skewb/スキューブ」が新種目としてtriboxコンテストに追加されます！<br>
+            また、本日開始の2018年後半期第24節よりSkewbのプレコンテストを開催します。プレコンテストは今シーズンのランキング対象外となります。今期の残り4戦はぜひSkewbにもチャレンジしてみてください！
+        </p>
+        <img src="/assets/images/christmas-update-2018-skewb.png" />
+
+        <h3>FMCスクランブル画像</h3>
+        <p>
+            FMC (最少手数種目) にスクランブル状態の展開図が表示されるようになりました。より実戦に近い環境で競技をすることができるようになります！
+        </p>
+        <img src="/assets/images/christmas-update-2018-fmcimg.png" />
+
+        <h3>インスペクションタイムでのジャッジコール</h3>
+        <p>
+            内蔵タイマー使用時に、「8秒」「12秒」「OK」等のインスペクション時・完了時のジャッジコールがされるようになりました！声を担当していただいたのはtriboxレビュー動画でおなじみの方です！
+        </p>
+
+        <p>
+            その他、いくつかのバグを修正いたしました。
+        </p>
+        <p>
+            よりよいコンテストにアップデートしていきます。今後ともtribox Contestをよろしくお願いいたします！<br>
+            メリークリスマス！よいお年を！
+        </p>
+
+        <p>
+            ※本リリースノートは<a href="https://adventar.org/calendars/3001" target="_blank">ルービックキューブ Advent Calendar 2018</a>の9日目として公開されています。
+        </p>
+
+        <p>
+            <a href="/">tribox Contest トップへ</a>
+        </p>
+
+    </div></div>
+
+    @bodyfooter(contestName)
+</div></body>
+</html>
+
+}
+}
