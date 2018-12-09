@@ -748,7 +748,7 @@ var checkResults = function() {
                             Object.keys(results[eid]).forEach(function(uid) {
                                 if (!(results[eid][uid]._dummy) && results[eid][uid].endAt) {
                                     //console.dir(results[eid][uid]);
-                                    var result = calcResult(Events[eid].method, Events[eid].format, results[eid][uid].details);
+                                    var result = calcResult(Events[eid].method, Events[eid].format, results[eid][uid].details.slice(0, Events[eid].attempts));
                                     //console.dir(result);
 
                                     var _ready = {

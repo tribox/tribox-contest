@@ -142,7 +142,7 @@ audiojs.events.ready(function() {
 });
 var a = audiojs.createAll();
 
-app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $timeout) {
+app.controller('ContestTimerCtrl', ['$scope', '$timeout', '$interval', function($scope, $timeout, $interval) {
 
 @if(eid == "333fm") {
 
@@ -163,6 +163,16 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
     //angular.element(document.getElementById('scramble-0')).removeClass('hide');
 
     var startPenalty = false;
+
+    // Forcefully show the button to the confirmation page whenever needed
+    $interval(function() {
+        if (window.TriboxContest.events.e@{eid}.attempts <= $scope.scrambleIndex) {
+            angular.element(document.getElementById('input-completed')).removeClass('hide');
+            document.getElementById('timerNote').innerHTML = window.TriboxContest.timerFinishText;
+            document.getElementById('timerNoteMb').innerHTML = window.TriboxContest.timerFinishText;
+            updateStatus(false, false, false);
+        }
+    }, 1000);
 
     // Set begin time
     var authData = contestRef.getAuth();
