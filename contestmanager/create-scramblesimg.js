@@ -28,7 +28,7 @@ contestRef.authWithCustomToken(token, function(error, authData) {
     } else {
         console.log('Authenticated successfully with payload:', authData);
 
-        contestRef.child('scramblesimg0').set({
+        contestRef.child('scramblesimg').set({
             'cxxxxxxx': { '_dummy': true }
         });
     }
