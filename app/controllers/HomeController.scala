@@ -52,6 +52,13 @@ class HomeController @Inject() extends Controller {
     }
 
     /**
+     * Release Notes
+     */
+    def christmas2018 = Action {
+        Ok(views.html.christmas2018(getContestName, getContestDescription, getContestUrl, getFirebaseappContest))
+    }
+
+    /**
      * Auth
      */
     def join = Action {

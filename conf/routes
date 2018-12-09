@@ -9,6 +9,9 @@ GET     /                           controllers.HomeController.index
 GET     /about                      controllers.HomeController.about
 GET     /regulations                controllers.HomeController.regulations
 
+# Release Notes
+GET     /release-notes/christmas-2018 controllers.HomeController.christmas2018
+
 # Auth: Join / Login / Logout / Forgot password / My page / Change email & password
 GET     /join                       controllers.HomeController.join
 GET     /login                      controllers.HomeController.login
