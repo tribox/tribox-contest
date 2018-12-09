@@ -270,6 +270,24 @@ app.controller('ContestCtrl', ['$scope', '$timeout', function($scope, $timeout) 
         });
     }
 
+    // Fetch scrambles images data
+    $scope.scramblesImgData = null;
+    @if(fetchScrambles && eid == "333fm") {
+        contestRef.child('scramblesimg').child('c@cid').once('value', function(snapScramblesImg) {
+            if (snapScramblesImg.exists() && snapScramblesImg.val()._dummy == null) {
+                $timeout(function() {
+                    var scramblesImgVal = snapScramblesImg.val();
+                    $scope.scramblesImgData = scramblesImgVal;
+                });
+            } else {
+                console.error('Invalid: contest (@cid)');
+            }
+        }, function(error) {
+            //console.error(error);
+            console.error('Cannot access scrambles (@cid)');
+        });
+    }
+
     // Fetch results data
     $scope.resultsData = {};
     $scope.resultsPersons = {};

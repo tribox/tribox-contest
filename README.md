@@ -21,7 +21,7 @@ URL: https://contest.tribox.com
 Install required node modules:
 ```
 cd contestmanager
-npm install firebase@2.4.2 firebase-token-generator@2.0.0 alg async argv mysql request twitter
+npm install firebase@2.4.2 firebase-token-generator@2.0.0 alg async argv mysql nanoid request twitter
 ```
 
 コンフィグファイルを設定する:

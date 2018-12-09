@@ -1,3 +1,4 @@
+# Play stuffs
 logs
 target
 /.idea
@@ -13,9 +14,14 @@ target
 /conf/dev.conf
 /conf/prod.conf
 
+# Contest Manager
 /contestmanager/node_modules
 /contestmanager/config.js
 
+# FMC images
+/public/333fm/*.png
+
+# Backup
 /backup/*.json
 /backup/*.sql
 
