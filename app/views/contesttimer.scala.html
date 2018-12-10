@@ -13,6 +13,7 @@
 <head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
     @header(title=title, description=contestDescription, sitename=contestName, url=pageUrl, contestUrl=contestUrl, userScalable=false)
     <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/timer.css")">
+    <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/toggle.css")">
 
 @basejs(firebaseappContest)
 
@@ -55,12 +56,19 @@
     <div ng-show="existsContest && existsEvent && inProgress.contest == 'c@{cid}' && !invalidPage">
 
         <div style="display: none;">
-            <audio src="/assets/call/8s.mp3" preload="auto" />
-            <audio src="/assets/call/12s.mp3" preload="auto" />
-            <audio src="/assets/call/ready.mp3" preload="auto" />
-            <audio src="/assets/call/ok.mp3" preload="auto" />
-            <audio src="/assets/call/penalty.mp3" preload="auto" />
-            <audio src="/assets/call/dnf.mp3" preload="auto" />
+            <audio class="judgecall-audio" src="/assets/call/8s.mp3" preload="auto" />
+            <audio class="judgecall-audio" src="/assets/call/12s.mp3" preload="auto" />
+            <audio class="judgecall-audio" src="/assets/call/ready.mp3" preload="auto" />
+            <audio class="judgecall-audio" src="/assets/call/ok.mp3" preload="auto" />
+            <audio class="judgecall-audio" src="/assets/call/penalty.mp3" preload="auto" />
+            <audio class="judgecall-audio" src="/assets/call/dnf.mp3" preload="auto" />
+        </div>
+
+        <div class="switch">
+            <div class="sound-sw sound-sw-off"><i id="sound-off" class="fa fa-volume-off fa-2x" aria-hidden="true"></i></div>
+            <input id="cmn-toggle-sound" class="cmn-toggle cmn-toggle-round-flat" type="checkbox" ng-model="judgecall" ng-change="judgecallchange()" />
+            <label class="toggle-label" for="cmn-toggle-sound"></label>
+            <div class="sound-sw sound-sw-on"><i id="sound-on" class="fa fa-volume-up fa-2x" aria-hidden="true"></i></div>
         </div>
 
         <div id="touchArea">
@@ -162,6 +170,20 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', '$interval', function(
     $scope.scrambleIndexText = '1st';
     //angular.element(document.getElementById('scramble-0')).removeClass('hide');
 
+    // Judge Call
+    $scope.judgecall = false;
+
+    // Set volume for Judge Call
+    // true: on (volume=1), false: off (volume=0)
+    var setJudgecallVolume = function(state) {
+        var audios = document.getElementsByClassName('judgecall-audio');
+        var vol = (state == true)? 1 : 0;
+        for (var i = 0; i < audios.length; i++) {
+            audios[i].volume = vol;
+        }
+    };
+    setJudgecallVolume(false);
+
     var startPenalty = false;
 
     // Forcefully show the button to the confirmation page whenever needed
@@ -240,9 +262,33 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', '$interval', function(
                 $scope.contestTimerLoaded = true;
             });
         });
+
+        // Judge Call
+        contestRef.child('usersecrets').child(authData.uid).on('value', function(snapUserSecret) {
+            if (snapUserSecret.exists()) {
+                var userSecret = snapUserSecret.val();
+                if ('prefJudgecall' in userSecret) {
+                    if (userSecret['prefJudgecall'] == true) {
+                        $timeout(function() {
+                            $scope.judgecall = true;
+                            setJudgecallVolume($scope.judgecall);
+                        });
+                    }
+                }
+            }
+        });
+
     } else {
         location.href = '@routes.HomeController.index?please=1';
     }
+
+    // Judge Call on change
+    $scope.judgecallchange = function() {
+        if (authData) {
+            contestRef.child('usersecrets').child(authData.uid).child('prefJudgecall').set($scope.judgecall);
+            setJudgecallVolume($scope.judgecall);
+        }
+    };
 
     var showScramble = function(index) {
         $timeout(function() {

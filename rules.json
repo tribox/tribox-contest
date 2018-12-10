@@ -115,6 +115,9 @@
                 "triboxStickersCustomerId": {
                     ".validate": "newData.isNumber() && 0 < newData.val() && root.child('users').child($user_id).child('isTriboxCustomer').val() === true"
                 },
+                "prefJudgecall": {
+                    ".validate": "newData.isBoolean()"
+                },
                 "$other": {
                     ".validate": false
                 }
