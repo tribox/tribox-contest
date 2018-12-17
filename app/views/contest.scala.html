@@ -203,7 +203,7 @@ app.controller('ContestIndexCtrl', ['$scope', '$timeout', function($scope, $time
     $scope.contestsList = null;
 
     // Read personal results
-    var authData = contestRef.getAuth();
+    var authData = firebase.auth().currentUser;
     if (authData) {
         contestRef.child('contests').child('c@{cid}').once('value', function(snapContest) {
             if (snapContest.exists()) {

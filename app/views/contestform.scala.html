@@ -102,7 +102,7 @@ app.controller('ContestFormCtrl', ['$scope', '$timeout', function($scope, $timeo
     $scope.results = [];
 
     // Set begin time
-    var authData = contestRef.getAuth();
+    var authData = firebase.auth().currentUser;
     if (authData) {
         // do not overwrite
         contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).once('value', function(snapResult) {
@@ -292,7 +292,7 @@ app.controller('ContestFormCtrl', ['$scope', '$timeout', function($scope, $timeo
     // Save & Fetch data
     // Prepare button for the next page
     var saveAndPrepare = function() {
-        var authData = contestRef.getAuth();
+        var authData = firebase.auth().currentUser;
         if (authData) {
             contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).child('details').set($scope.results, function(error) {
                 if (!error) {

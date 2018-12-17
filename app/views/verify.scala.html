@@ -16,7 +16,7 @@ app.controller('VerifyCtrl', ['$scope', '$timeout', function($scope, $timeout) {
     $scope.verifyLoaded = false;
 
     // Read personal results
-    var authData = contestRef.getAuth();
+    var authData = firebase.auth().currentUser;
     if (authData) {
         contestRef.child('users').child(authData.uid).child('isTriboxCustomer').once('value', function(snap) {
             $timeout(function() {

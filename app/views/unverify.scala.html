@@ -15,7 +15,7 @@ app.controller('UnverifyCtrl', ['$scope', '$timeout', function($scope, $timeout)
     $scope.customerId = -1;
     $scope.unverifyLoaded = false;
 
-    var authData = contestRef.getAuth();
+    var authData = firebase.auth().currentUser;
 
     @if(userId == "" && customerId == -1) {
         // Read personal results

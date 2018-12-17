@@ -224,7 +224,7 @@ app.controller('ContestConfirmCtrl', ['$scope', '$timeout', function($scope, $ti
             });
 
     // Read personal results
-    var authData = contestRef.getAuth();
+    var authData = firebase.auth().currentUser;
     if (authData) {
         // パズル選択の初期値
         contestRef.child('users').child(authData.uid).child('lastUsedPuzzles').child('e@{eid}').once('value', function(snapLastUsedPuzzle) {
@@ -310,7 +310,7 @@ app.controller('ContestConfirmCtrl', ['$scope', '$timeout', function($scope, $ti
     };
 
     $scope.submitResult = function() {
-        var authData = contestRef.getAuth();
+        var authData = firebase.auth().currentUser;
         if (authData) {
             if (!($scope.puzzle) || !($scope.puzzle.type)) {
                 $scope.error = '使用キューブを選択してください。';

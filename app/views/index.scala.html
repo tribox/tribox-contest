@@ -207,7 +207,7 @@ app.controller('IndexCtrl', ['$scope', '$timeout', function($scope, $timeout) {
     $scope.eventsDone = {};
     $scope.indexLoaded = false;
 
-    var authData = contestRef.getAuth();
+    var authData = firebase.auth().currentUser;
 
     // 全競技リスト、開催中コンテスト、開催中コンテストのデータ、ログイン時にユーザの開催中コンテストの結果データ
     contestRef.child('events').once('value', function(snapEvents) {

@@ -193,7 +193,7 @@ app.controller('ContestSolutionCtrl', ['$scope', '$timeout', function($scope, $t
     $scope.results = [];
 
     // Set begin time
-    var authData = contestRef.getAuth();
+    var authData = firebase.auth().currentUser;
     if (authData) {
         // do not overwrite
         contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).once('value', function(snapResult) {

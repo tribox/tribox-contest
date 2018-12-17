@@ -31,7 +31,7 @@ app.controller('AuthUsernameCtrl', ['$scope', '$timeout', 'Auth', function($scop
     $scope.changeUsername = function() {
         $scope.message = null;
         $scope.error = null;
-        var authData = contestRef.getAuth();
+        var authData = firebase.auth().currentUser;
 
         var _oldUsername = $scope.oldUsername;
         var _newUsername = $scope.newUsername;

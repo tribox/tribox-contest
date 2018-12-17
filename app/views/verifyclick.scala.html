@@ -15,7 +15,7 @@ app.controller('VerifyClickCtrl', ['$scope', '$timeout', function($scope, $timeo
     $scope.verifyClickLoaded = false;
 
     @if(message != "") {
-        var authData = contestRef.getAuth();
+        var authData = firebase.auth().currentUser;
         if (authData) {
             if (authData.uid == '@{userId}') {
                 // 認証アカウントをセットする

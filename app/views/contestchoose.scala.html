@@ -128,7 +128,7 @@ app.controller('ContestChooseCtrl', ['$scope', '$timeout', function($scope, $tim
     $scope.contestChooseLoaded = false;
 
     // Read personal results
-    var authData = contestRef.getAuth();
+    var authData = firebase.auth().currentUser;
     if (authData) {
         contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).once('value', function(snapResult) {
             $timeout(function() {

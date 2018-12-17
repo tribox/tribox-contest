@@ -161,7 +161,7 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
     var startPenalty = false;
 
     // Set begin time
-    var authData = contestRef.getAuth();
+    var authData = firebase.auth().currentUser;
     if (authData) {
         contestRef.child('events').child('e333').child('hasInspection').once('value', function(snapHasInspection) {
             window.TriboxContest.hasInspection = snapHasInspection.val();
@@ -306,7 +306,7 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
 
     // Save & Fetch data
     var saveAndPrepare = function() {
-        var authData = contestRef.getAuth();
+        var authData = firebase.auth().currentUser;
         if (authData) {
             contestRef.child('resultsdemo').child('demo').child('e333').child(authData.uid).child('details').set($scope.results, function(error) {
                 if (!error) {
@@ -698,7 +698,7 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', function($scope, $time
 
     // デモ用 -- 記録リセット & トップページへジャンプ
     $scope.resetAndBack = function() {
-        var authData = contestRef.getAuth();
+        var authData = firebase.auth().currentUser;
         if (authData) {
             contestRef.child('resultsdemo').child('demo').child('e333').child(authData.uid).set(null, function(error) {
                 if (error) {
