@@ -219,9 +219,17 @@ var config = {
 firebase.initializeApp(config);
 var contestRef = firebase.database().ref();
 
-@* TODO: 要対応 *@
 @if(firebaseappWca != "") {
-    //var wcaRef = new Firebase('https://@{firebaseappWca}.firebaseio.com');
+var wcaConfig = {
+    apiKey: "AIzaSyAUq3WAGmhgkGscQPIwuICQuzV9KBrcxXo",
+    authDomain: "@{firebaseappWca}.firebaseapp.com",
+    databaseURL: "https://@{firebaseappWca}.firebaseio.com",
+    projectId: "@{firebaseappWca}",
+    storageBucket: "@{firebaseappWca}.appspot.com",
+    messagingSenderId: "871724054787"
+};
+var wcaApp = firebase.initializeApp(wcaConfig, "wca");
+var wcaRef = wcaApp.database().ref();
 }
 
 /**
