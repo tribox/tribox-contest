@@ -44,7 +44,7 @@ app.controller('AuthEmailCtrl', ['$scope', 'Auth', function($scope, Auth) {
         }).then(function() {
             $scope.message = 'Email changed successfully!';
             authProcessing = true;
-            Auth.$unauth();
+            Auth.$signOut();
             Auth.$authWithPassword({
                 email: _newEmail,
                 password: _password

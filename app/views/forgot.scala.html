@@ -19,7 +19,7 @@ app.controller('AuthForgotCtrl', ['$scope', 'Auth', function($scope, Auth) {
         if (!($scope.email)) {
             $scope.error = 'メールアドレスを入力してください。';
         } else {
-            Auth.$unauth();
+            Auth.$signOut();
             Auth.$resetPassword({
                 email: $scope.email
             }).then(function() {

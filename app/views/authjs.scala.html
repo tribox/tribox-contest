@@ -27,16 +27,16 @@ app.controller('AuthCtrl', ['$scope', '$firebaseObject', 'Auth', function($scope
             $scope.userData.$loaded().then(function() {
                 @* Issue #32 凍結してたら強制ログアウトする *@
                 if ($scope.userData.isSuspended) {
-                    Auth.$unauth();
+                    Auth.$signOut();
                     location.href = '@routes.HomeController.index?logout=1';
                 }
                 $scope.authLoaded = true;
             });
             $scope.usersecretData = $firebaseObject(contestRef.child('usersecrets').child(authData.uid));
             $scope.isLoggingin = true;
-            @* これは emailVerified で取れるようになったが、一旦trueにします *@
+            @* これは emailVerified で取れるようになったが、一旦falseにします *@
             //$scope.isTemporaryPassword = authData.password.isTemporaryPassword;
-            $scope.isTemporaryPassword = true;
+            $scope.isTemporaryPassword = false;
             @if(!redirectLogin.isEmpty){
                 if (!authProcessing) {
                     location.href = '@redirectLogin';
@@ -51,7 +51,7 @@ app.controller('AuthCtrl', ['$scope', '$firebaseObject', 'Auth', function($scope
                         location.href = '@routes.SettingController.settingfirst';
                     }
                 }, function(error) {
-                    Auth.$unauth();
+                    Auth.$signOut();
                     $scope.error = error;
                 });
             }

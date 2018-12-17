@@ -107,7 +107,7 @@ app.controller('AuthFirstSettingCtrl', ['$scope', 'Auth', function($scope, Auth)
                                 }, function(error) {
                                     if (error) {
                                         console.error(error);
-                                        Auth.$unauth();
+                                        Auth.$signOut();
                                     } else {
                                         contestRef.child('users').child(authData.uid).set({
                                             'createdAt': Firebase.ServerValue.TIMESTAMP,
@@ -117,14 +117,14 @@ app.controller('AuthFirstSettingCtrl', ['$scope', 'Auth', function($scope, Auth)
                                         }, function(error) {
                                             if (error) {
                                                 console.error(error);
-                                                Auth.$unauth();
+                                                Auth.$signOut();
                                             } else {
                                                 contestRef.child('usersecrets').child(authData.uid).set({
                                                     'loggedinAt': Firebase.ServerValue.TIMESTAMP
                                                 }, function(error) {
                                                     if (error) {
                                                         console.error(error);
-                                                        Auth.$unauth();
+                                                        Auth.$signOut();
                                                     } else {
                                                         console.log('Update successfully: ' + authData.uid + ' (' + _username + ')');
                                                         location.href = '@routes.SettingController.verify?showskip=1';
