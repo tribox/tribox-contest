@@ -200,7 +200,18 @@ var fadeIn = function(el, ms, fn) {
  * FIREBASE
  */
 var app = angular.module('contestApp', ['firebase', 'ngSanitize']);
-var contestRef = new Firebase('https://@{firebaseappContest}.firebaseio.com');
+var config = {
+    apiKey: "AIzaSyABXPV-4zWNWQabh2yA19p8IUTqHSOLyC4",
+    authDomain: "@{firebaseappContest}.firebaseapp.com",
+    databaseURL: "https://@{firebaseappContest}.firebaseio.com",
+    projectId: "@{firebaseappContest}",
+    storageBucket: "@{firebaseappContest}.appspot.com",
+    messagingSenderId: "465497610065"
+};
+firebase.initializeApp(config);
+var contestRef = firebase.database().ref();
+
+@* TODO: 要対応 *@
 @if(firebaseappWca != "") {
     var wcaRef = new Firebase('https://@{firebaseappWca}.firebaseio.com');
 }
