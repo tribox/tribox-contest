@@ -30,14 +30,23 @@ app.controller('AuthEmailCtrl', ['$scope', 'Auth', function($scope, Auth) {
 
         var _oldEmail = $scope.oldEmail;
         var _newEmail = $scope.newEmail;
-        var _password = $scope.password;
+        //var _password = $scope.password;
 
         if (_oldEmail == _newEmail) {
             $scope.error = '現在のメールアドレスと新しいメールアドレスが同じです。';
             return;
         }
 
-        Auth.$changeEmail({
+        Auth.$updateEmail(_newEmail).then(function() {
+            $scope.message = 'Email changed successfully!';
+            authProcessing = true;
+            location.href = '@routes.SettingController.setting';
+        }).catch(function(error) {
+            //console.error(error);
+            $scope.error = 'メールアドレス変更できません。';
+        });
+
+        /*Auth.$changeEmail({
             oldEmail: _oldEmail,
             newEmail: _newEmail,
             password: _password
@@ -64,7 +73,7 @@ app.controller('AuthEmailCtrl', ['$scope', 'Auth', function($scope, Auth) {
             });
         }).catch(function(error) {
             $scope.error = TriboxContest.convErrorCodesAlt(error.code);
-        });
+        });*/
     };
 }]);
 </script>
@@ -100,10 +109,10 @@ app.controller('AuthEmailCtrl', ['$scope', 'Auth', function($scope, Auth) {
                 <label>新しいメールアドレス</label>
                 <input class="form-control" type="email" ng-model="newEmail">
             </div>
-            <div>
+            <!--<div>
                 <label>パスワード</label>
                 <input class="form-control" type="password" ng-model="password">
-            </div>
+            </div>-->
 
             <input class="btn" type="submit" value="メールアドレスを変更する">
 
