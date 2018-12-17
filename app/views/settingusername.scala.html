@@ -13,7 +13,7 @@
 app.controller('AuthUsernameCtrl', ['$scope', '$timeout', 'Auth', function($scope, $timeout, Auth) {
     $scope.settingLoaded = false;
 
-    Auth.$onAuth(function(authData) {
+    Auth.$onAuthStateChanged(function(authData) {
         if (!authProcessing) {
             if (authData) {
                 contestRef.child('users').child(authData.uid).once('value', function(snapUser) {

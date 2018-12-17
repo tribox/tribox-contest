@@ -21,9 +21,9 @@ app.controller('AuthCtrl', ['$scope', '$firebaseObject', 'Auth', function($scope
     $scope.isLoggingin = false;
     $scope.authLoading = false;
 
-    Auth.$onAuth(function(authData) {
+    Auth.$onAuthStateChanged(function(authData) {
         if (authData) {
-            $scope.message = 'Logged in as: ' + authData.uid + ' (' + authData.password.email + ')';
+            $scope.message = 'Logged in as: ' + authData.uid + ' (' + authData.email + ')';
             $scope.authData = authData;
             $scope.userData = $firebaseObject(contestRef.child('users').child(authData.uid));
             $scope.usersecretData = $firebaseObject(contestRef.child('usersecrets').child(authData.uid));
@@ -85,7 +85,7 @@ app.controller('AuthFirstSettingCtrl', ['$scope', 'Auth', function($scope, Auth)
             return;
         }
 
-        Auth.$onAuth(function(authData) {
+        Auth.$onAuthStateChanged(function(authData) {
             if (authData) {
                 contestRef.child('users').child(authData.uid).once('value', function(userSnap) {
                     if (userSnap.exists()) {

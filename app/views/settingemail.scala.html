@@ -13,10 +13,10 @@
 app.controller('AuthEmailCtrl', ['$scope', 'Auth', function($scope, Auth) {
     $scope.settingLoaded = false;
 
-    Auth.$onAuth(function(authData) {
+    Auth.$onAuthStateChanged(function(authData) {
         if (!authProcessing) {
             if (authData) {
-                $scope.oldEmail = authData.password.email;
+                $scope.oldEmail = authData.email;
                 $scope.settingLoaded = true;
             } else {
                 location.href = '@routes.HomeController.index';

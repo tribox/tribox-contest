@@ -6,7 +6,7 @@
 var authProcessing = false;
 
 app.factory('Auth', ['$firebaseAuth', function($firebaseAuth) {
-    return $firebaseAuth(contestRef);
+    return $firebaseAuth();
 }]);
 
 app.controller('AuthCtrl', ['$scope', '$firebaseObject', 'Auth', function($scope, $firebaseObject, Auth) {
@@ -18,10 +18,10 @@ app.controller('AuthCtrl', ['$scope', '$firebaseObject', 'Auth', function($scope
     $scope.isTemporaryPassword = false;
     $scope.authLoaded = false;
 
-    Auth.$onAuth(function(authData) {
+    Auth.$onAuthStateChanged(function(authData) {
         if (authData) {
             angular.element(document.getElementById('auth-info')).removeClass('hide');
-            $scope.message = 'Logged in as: ' + authData.uid + ' (' + authData.password.email + ')';
+            $scope.message = 'Logged in as: ' + authData.uid + ' (' + authData.email + ')';
             $scope.authData = authData;
             $scope.userData = $firebaseObject(contestRef.child('users').child(authData.uid));
             $scope.userData.$loaded().then(function() {
@@ -34,7 +34,9 @@ app.controller('AuthCtrl', ['$scope', '$firebaseObject', 'Auth', function($scope
             });
             $scope.usersecretData = $firebaseObject(contestRef.child('usersecrets').child(authData.uid));
             $scope.isLoggingin = true;
-            $scope.isTemporaryPassword = authData.password.isTemporaryPassword;
+            @* これは emailVerified で取れるようになったが、一旦trueにします *@
+            //$scope.isTemporaryPassword = authData.password.isTemporaryPassword;
+            $scope.isTemporaryPassword = true;
             @if(!redirectLogin.isEmpty){
                 if (!authProcessing) {
                     location.href = '@redirectLogin';
