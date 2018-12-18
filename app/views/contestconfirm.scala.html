@@ -349,7 +349,7 @@ firebase.auth().onAuthStateChanged(function(authData) {
 
             // Save results
             contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).update({
-                'endAt': Firebase.ServerValue.TIMESTAMP,
+                'endAt': firebase.database.ServerValue.TIMESTAMP,
                 'result': $scope.result,
                 'puzzle': puzzle
             }, function(error) {

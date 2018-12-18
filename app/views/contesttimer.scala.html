@@ -188,11 +188,13 @@ firebase.auth().onAuthStateChanged(function(authData) {
 
     // Forcefully show the button to the confirmation page whenever needed
     $interval(function() {
-        if (window.TriboxContest.events.e@{eid}.attempts <= $scope.scrambleIndex) {
-            angular.element(document.getElementById('input-completed')).removeClass('hide');
-            document.getElementById('timerNote').innerHTML = window.TriboxContest.timerFinishText;
-            document.getElementById('timerNoteMb').innerHTML = window.TriboxContest.timerFinishText;
-            updateStatus(false, false, false);
+        if (window.TriboxContest.events) {
+            if (window.TriboxContest.events.e@{eid}.attempts <= $scope.scrambleIndex) {
+                angular.element(document.getElementById('input-completed')).removeClass('hide');
+                document.getElementById('timerNote').innerHTML = window.TriboxContest.timerFinishText;
+                document.getElementById('timerNoteMb').innerHTML = window.TriboxContest.timerFinishText;
+                updateStatus(false, false, false);
+            }
         }
     }, 1000);
 
