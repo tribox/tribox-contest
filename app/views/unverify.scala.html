@@ -11,11 +11,10 @@
 @authjs(redirectLogin="", redirectLogout=routes.HomeController.index.toString(), checkFirst=true)
 <script>
 app.controller('UnverifyCtrl', ['$scope', '$timeout', function($scope, $timeout) {
+firebase.auth().onAuthStateChanged(function(authData) {
     $scope.error = null;
     $scope.customerId = -1;
     $scope.unverifyLoaded = false;
-
-    var authData = contestRef.getAuth();
 
     @if(userId == "" && customerId == -1) {
         // Read personal results
@@ -73,6 +72,7 @@ app.controller('UnverifyCtrl', ['$scope', '$timeout', function($scope, $timeout)
             location.href = '@routes.HomeController.index?logout=1';
         }
     }
+}); // onAuthStateChange
 }]);
 </script>
 </head>

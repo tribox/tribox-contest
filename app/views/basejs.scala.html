@@ -4,10 +4,14 @@
 window.TriboxContest = {};
 
 TriboxContest.ERROR_CODES = {
-    'EMAIL_TAKEN':      'すでに登録済みのメールアドレスです',
-    'INVALID_EMAIL':    'メールアドレスまたはパスワードが間違っています',
-    'INVALID_PASSWORD': 'メールアドレスまたはパスワードが間違っています',
-    'INVALID_USER':     'メールアドレスまたはパスワードが間違っています'
+    'EMAIL_TAKEN':         'すでに登録済みのメールアドレスです',
+    'INVALID_EMAIL':       'メールアドレスまたはパスワードが間違っています',
+    'INVALID_PASSWORD':    'メールアドレスまたはパスワードが間違っています',
+    'INVALID_USER':        'メールアドレスまたはパスワードが間違っています',
+    'auth/invalid-email':  'メールアドレスまたはパスワードが間違っています',
+    'auth/user-disabled':  'メールアドレスまたはパスワードが間違っています',
+    'auth/user-not-found': 'メールアドレスまたはパスワードが間違っています',
+    'auth/wrong-password': 'メールアドレスまたはパスワードが間違っています'
 };
 TriboxContest.convErrorCodes = function(code) {
     if (code in TriboxContest.ERROR_CODES) {
@@ -18,10 +22,14 @@ TriboxContest.convErrorCodes = function(code) {
 };
 
 TriboxContest.ERROR_CODES_ALT = {
-    'EMAIL_TAKEN':      'すでに登録済みのメールアドレスです',
-    'INVALID_EMAIL':    'メールアドレスが間違っています',
-    'INVALID_PASSWORD': 'パスワードが間違っています',
-    'INVALID_USER':     'ユーザが間違っています'
+    'EMAIL_TAKEN':         'すでに登録済みのメールアドレスです',
+    'INVALID_EMAIL':       'メールアドレスが間違っています',
+    'INVALID_PASSWORD':    'パスワードが間違っています',
+    'INVALID_USER':        'ユーザが間違っています',
+    'auth/invalid-email':  'メールアドレスが間違っています',
+    'auth/user-disabled':  'ユーザが間違っています',
+    'auth/user-not-found': 'ユーザが間違っています',
+    'auth/wrong-password': 'パスワードが間違っています'
 };
 TriboxContest.convErrorCodesAlt = function(code) {
     if (code in TriboxContest.ERROR_CODES_ALT) {
@@ -200,9 +208,28 @@ var fadeIn = function(el, ms, fn) {
  * FIREBASE
  */
 var app = angular.module('contestApp', ['firebase', 'ngSanitize']);
-var contestRef = new Firebase('https://@{firebaseappContest}.firebaseio.com');
+var config = {
+    apiKey: "AIzaSyABXPV-4zWNWQabh2yA19p8IUTqHSOLyC4",
+    authDomain: "@{firebaseappContest}.firebaseapp.com",
+    databaseURL: "https://@{firebaseappContest}.firebaseio.com",
+    projectId: "@{firebaseappContest}",
+    storageBucket: "@{firebaseappContest}.appspot.com",
+    messagingSenderId: "465497610065"
+};
+firebase.initializeApp(config);
+var contestRef = firebase.database().ref();
+
 @if(firebaseappWca != "") {
-    var wcaRef = new Firebase('https://@{firebaseappWca}.firebaseio.com');
+var wcaConfig = {
+    apiKey: "AIzaSyAUq3WAGmhgkGscQPIwuICQuzV9KBrcxXo",
+    authDomain: "@{firebaseappWca}.firebaseapp.com",
+    databaseURL: "https://@{firebaseappWca}.firebaseio.com",
+    projectId: "@{firebaseappWca}",
+    storageBucket: "@{firebaseappWca}.appspot.com",
+    messagingSenderId: "871724054787"
+};
+var wcaApp = firebase.initializeApp(wcaConfig, "wca");
+var wcaRef = wcaApp.database().ref();
 }
 
 /**

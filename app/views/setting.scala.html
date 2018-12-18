@@ -16,7 +16,7 @@ app.controller('AuthSettingCtrl', ['$scope', '$firebaseObject', 'Auth', function
     $scope.usersecretData = null;
     $scope.settingLoaded = false;
 
-    Auth.$onAuth(function(authData) {
+    Auth.$onAuthStateChanged(function(authData) {
         if (authData) {
             $scope.authData = authData;
             $scope.userData = $firebaseObject(contestRef.child('users').child(authData.uid));

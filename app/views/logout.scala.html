@@ -2,7 +2,7 @@
 
 @defining("Logout") { title =>
 @defining(contestUrl + "/logout") { pageUrl =>
-    
+
 <!DOCTYPE html>
 <html lang="ja" ng-app="contestApp">
 <head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
@@ -13,7 +13,7 @@
 <script>
 app.controller('AuthLogoutCtrl', ['$scope', 'Auth', function($scope, Auth) {
     $scope.logout = function() {
-        Auth.$unauth();
+        Auth.$signOut();
         location.href = '@routes.HomeController.index?logout=1';
     };
 }]);

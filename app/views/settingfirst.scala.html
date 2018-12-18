@@ -10,7 +10,7 @@
 @basejs(firebaseappContest)
 <script>
 app.factory('Auth', ['$firebaseAuth', function($firebaseAuth) {
-    return $firebaseAuth(contestRef);
+    return $firebaseAuth();
 }]);
 
 app.controller('AuthCtrl', ['$scope', '$firebaseObject', 'Auth', function($scope, $firebaseObject, Auth) {
@@ -21,9 +21,9 @@ app.controller('AuthCtrl', ['$scope', '$firebaseObject', 'Auth', function($scope
     $scope.isLoggingin = false;
     $scope.authLoading = false;
 
-    Auth.$onAuth(function(authData) {
+    Auth.$onAuthStateChanged(function(authData) {
         if (authData) {
-            $scope.message = 'Logged in as: ' + authData.uid + ' (' + authData.password.email + ')';
+            $scope.message = 'Logged in as: ' + authData.uid + ' (' + authData.email + ')';
             $scope.authData = authData;
             $scope.userData = $firebaseObject(contestRef.child('users').child(authData.uid));
             $scope.usersecretData = $firebaseObject(contestRef.child('usersecrets').child(authData.uid));
@@ -85,7 +85,7 @@ app.controller('AuthFirstSettingCtrl', ['$scope', 'Auth', function($scope, Auth)
             return;
         }
 
-        Auth.$onAuth(function(authData) {
+        Auth.$onAuthStateChanged(function(authData) {
             if (authData) {
                 contestRef.child('users').child(authData.uid).once('value', function(userSnap) {
                     if (userSnap.exists()) {
@@ -103,28 +103,28 @@ app.controller('AuthFirstSettingCtrl', ['$scope', 'Auth', function($scope, Auth)
                                 // Set new data to usernames DB and users DB
                                 contestRef.child('usernames').child(_username).set({
                                     'uid': authData.uid,
-                                    'createdAt': Firebase.ServerValue.TIMESTAMP
+                                    'createdAt': firebase.database.ServerValue.TIMESTAMP
                                 }, function(error) {
                                     if (error) {
                                         console.error(error);
-                                        Auth.$unauth();
+                                        Auth.$signOut();
                                     } else {
                                         contestRef.child('users').child(authData.uid).set({
-                                            'createdAt': Firebase.ServerValue.TIMESTAMP,
+                                            'createdAt': firebase.database.ServerValue.TIMESTAMP,
                                             'username': _username,
                                             'displayname': _displayname,
                                             'organization': _organization
                                         }, function(error) {
                                             if (error) {
                                                 console.error(error);
-                                                Auth.$unauth();
+                                                Auth.$signOut();
                                             } else {
                                                 contestRef.child('usersecrets').child(authData.uid).set({
-                                                    'loggedinAt': Firebase.ServerValue.TIMESTAMP
+                                                    'loggedinAt': firebase.database.ServerValue.TIMESTAMP
                                                 }, function(error) {
                                                     if (error) {
                                                         console.error(error);
-                                                        Auth.$unauth();
+                                                        Auth.$signOut();
                                                     } else {
                                                         console.log('Update successfully: ' + authData.uid + ' (' + _username + ')');
                                                         location.href = '@routes.SettingController.verify?showskip=1';

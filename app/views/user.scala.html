@@ -371,7 +371,7 @@ app.controller('UserCtrl', ['$scope', '$timeout', function($scope, $timeout) {
                 // 最新のコンテスト
                 var inProgressContest = contests[inProgress.contest];
                 // 最新のコンテストの参加有無
-                var authData = contestRef.getAuth();
+                firebase.auth().onAuthStateChanged(function(authData) {
                 if (authData && authData.uid == userId) {
                     Object.keys(events).forEach(function(eid) {
                         contestRef.child('results').child(inProgress.contest).child(eid).child(userId).once('value', function(snapResult) {
@@ -468,6 +468,8 @@ app.controller('UserCtrl', ['$scope', '$timeout', function($scope, $timeout) {
                         }
                     });
                 }
+
+                }); // onAuthStateChange
 
             });
             });
@@ -662,7 +664,7 @@ app.controller('UserCtrl', ['$scope', '$timeout', function($scope, $timeout) {
             return;
         }
 
-        var authData = contestRef.getAuth();
+        firebase.auth().onAuthStateChanged(function(authData) {
         if (authData && authData.uid == $scope.thisUsername.uid) {
             contestRef.child('results').child(contestId).child(eventId).child(authData.uid).update({
                 'videoUrl': $scope.videoUrlInput[eventId]
@@ -675,6 +677,7 @@ app.controller('UserCtrl', ['$scope', '$timeout', function($scope, $timeout) {
                 }
             });
         }
+        }); // onAuthStateChange
     };
 }]);
 </script>

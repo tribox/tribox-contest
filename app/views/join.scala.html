@@ -40,12 +40,8 @@ app.controller('AuthJoinCtrl', ['$scope', 'Auth', function($scope, Auth) {
             return;
         }
 
-        Auth.$createUser({
-            email: _email,
-            password: _password
-        }).then(function(userData) {
+        Auth.$createUserWithEmailAndPassword(_email, _password).then(function(userData) {
             //$scope.joinMessage = 'User created with uid: ' + userData.uid;
-
             $scope.joinMessage = 'ユーザ登録が完了しました。';
             location.href = '@routes.HomeController.login?join=1';
         }).catch(function(error) {

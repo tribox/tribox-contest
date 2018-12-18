@@ -11,12 +11,12 @@
 @authjs(redirectLogin="", redirectLogout=routes.HomeController.index.toString(), checkFirst=true)
 <script>
 app.controller('VerifyCtrl', ['$scope', '$timeout', function($scope, $timeout) {
+firebase.auth().onAuthStateChanged(function(authData) {
     $scope.error = null;
     $scope.showSkip = false;
     $scope.verifyLoaded = false;
 
     // Read personal results
-    var authData = contestRef.getAuth();
     if (authData) {
         contestRef.child('users').child(authData.uid).child('isTriboxCustomer').once('value', function(snap) {
             $timeout(function() {
@@ -34,6 +34,7 @@ app.controller('VerifyCtrl', ['$scope', '$timeout', function($scope, $timeout) {
             });
         }
     }
+}); // onAuthStateChange
 }]);
 </script>
 </head>

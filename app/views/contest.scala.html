@@ -193,6 +193,7 @@
 @contestjs(cid=cid, fetchScrambles=false, fetchResultsTop3=true, fetchResultsAll=false)
 <script>
 app.controller('ContestIndexCtrl', ['$scope', '$timeout', function($scope, $timeout) {
+firebase.auth().onAuthStateChanged(function(authData) {
     $scope.eventsDone = {};
     $scope.justSuspended = null;
     $scope.justDone = null;
@@ -203,7 +204,6 @@ app.controller('ContestIndexCtrl', ['$scope', '$timeout', function($scope, $time
     $scope.contestsList = null;
 
     // Read personal results
-    var authData = contestRef.getAuth();
     if (authData) {
         contestRef.child('contests').child('c@{cid}').once('value', function(snapContest) {
             if (snapContest.exists()) {
@@ -240,9 +240,12 @@ app.controller('ContestIndexCtrl', ['$scope', '$timeout', function($scope, $time
                         $scope.justSuspended = (snapEvents.val())[qe].name;
                         // うまくDOMのサイズが取得できないときがあるので何回か呼ぶ
                         showModalSuspended();
-                        $timeout(showModalSuspended, 200);
-                        $timeout(showModalSuspended, 1000);
-                        $timeout(showModalSuspended, 10000);
+                        for (var delay = 1; delay <= 20; delay++) {
+                            $timeout(showModalSuspended, delay * 50);
+                        }
+                        for (var delay = 2; delay <= 10; delay++) {
+                            $timeout(showModalSuspended, delay * 1000);
+                        }
                     });
                 }
             }, function(error) {
@@ -293,9 +296,12 @@ app.controller('ContestIndexCtrl', ['$scope', '$timeout', function($scope, $time
                         );
                         // うまくDOMのサイズが取得できないときがあるので何回か呼ぶ
                         showModalDone();
-                        $timeout(showModalDone, 200);
-                        $timeout(showModalDone, 1000);
-                        $timeout(showModalDone, 10000);
+                        for (var delay = 1; delay <= 20; delay++) {
+                            $timeout(showModalDone, delay * 50);
+                        }
+                        for (var delay = 2; delay <= 10; delay++) {
+                            $timeout(showModalDone, delay * 1000);
+                        }
                     });
                 }
             }, function(error) {
@@ -381,6 +387,7 @@ app.controller('ContestIndexCtrl', ['$scope', '$timeout', function($scope, $time
         }
     };
 
+}); // onAuthStateChange
 }]);
 </script>
 <script type="text/javascript" src="@routes.DynamicJsController.products"></script>

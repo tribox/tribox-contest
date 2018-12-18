@@ -93,7 +93,7 @@ app.controller('ContestFormCtrl', ['$scope', '$timeout', function($scope, $timeo
     $scope.contestFormLoaded = true;
 
 } else {
-
+firebase.auth().onAuthStateChanged(function(authData) {
     $scope.invalidPage = false;
     $scope.contestFormLoaded = false;
 
@@ -102,13 +102,12 @@ app.controller('ContestFormCtrl', ['$scope', '$timeout', function($scope, $timeo
     $scope.results = [];
 
     // Set begin time
-    var authData = contestRef.getAuth();
     if (authData) {
         // do not overwrite
         contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).once('value', function(snapResult) {
             if (!(snapResult.exists())) {
                 contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).set({
-                    'beginAt': Firebase.ServerValue.TIMESTAMP,
+                    'beginAt': firebase.database.ServerValue.TIMESTAMP,
                     'type': 'form'
                 }, function(error) {
                     if (error) {
@@ -292,7 +291,7 @@ app.controller('ContestFormCtrl', ['$scope', '$timeout', function($scope, $timeo
     // Save & Fetch data
     // Prepare button for the next page
     var saveAndPrepare = function() {
-        var authData = contestRef.getAuth();
+        firebase.auth().onAuthStateChanged(function(authData) {
         if (authData) {
             contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).child('details').set($scope.results, function(error) {
                 if (!error) {
@@ -322,8 +321,10 @@ app.controller('ContestFormCtrl', ['$scope', '$timeout', function($scope, $timeo
         } else {
             location.href = '@routes.HomeController.index?logout=1';
         }
+        }); // onAuthStateChange
     };
 
+}); // onAuthStateChange
 }
 
 }]);
