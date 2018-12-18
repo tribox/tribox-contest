@@ -193,6 +193,7 @@
 @contestjs(cid=cid, fetchScrambles=false, fetchResultsTop3=true, fetchResultsAll=false)
 <script>
 app.controller('ContestIndexCtrl', ['$scope', '$timeout', function($scope, $timeout) {
+firebase.auth().onAuthStateChanged(function(authData) {
     $scope.eventsDone = {};
     $scope.justSuspended = null;
     $scope.justDone = null;
@@ -203,7 +204,6 @@ app.controller('ContestIndexCtrl', ['$scope', '$timeout', function($scope, $time
     $scope.contestsList = null;
 
     // Read personal results
-    var authData = firebase.auth().currentUser;
     if (authData) {
         contestRef.child('contests').child('c@{cid}').once('value', function(snapContest) {
             if (snapContest.exists()) {
@@ -387,6 +387,7 @@ app.controller('ContestIndexCtrl', ['$scope', '$timeout', function($scope, $time
         }
     };
 
+}); // onAuthStateChange
 }]);
 </script>
 <script type="text/javascript" src="@routes.DynamicJsController.products"></script>

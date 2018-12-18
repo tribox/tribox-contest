@@ -181,7 +181,7 @@ app.controller('ContestSolutionCtrl', ['$scope', '$timeout', function($scope, $t
     $scope.contestSolutionLoaded = true;
 
 } else {
-
+firebase.auth().onAuthStateChanged(function(authData) {
     $scope.invalidPage = false;
     $scope.contestSolutionLoaded = false;
 
@@ -193,7 +193,6 @@ app.controller('ContestSolutionCtrl', ['$scope', '$timeout', function($scope, $t
     $scope.results = [];
 
     // Set begin time
-    var authData = firebase.auth().currentUser;
     if (authData) {
         // do not overwrite
         contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).once('value', function(snapResult) {
@@ -310,7 +309,7 @@ app.controller('ContestSolutionCtrl', ['$scope', '$timeout', function($scope, $t
     // Save & Fetch data
     // Prepare button for the next page
     var saveAndPrepare = function() {
-        var authData = contestRef.getAuth();
+        firebase.auth().onAuthStateChanged(function(authData) {
         if (authData) {
             contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).child('details').set($scope.results, function(error) {
                 if (!error) {
@@ -331,6 +330,7 @@ app.controller('ContestSolutionCtrl', ['$scope', '$timeout', function($scope, $t
         } else {
             location.href = '@routes.HomeController.index?logout=1';
         }
+        }); // onAuthStateChange
     };
 
     // コンテストエリア (スクランブルと入力欄) を表示してタイマースタート
@@ -352,6 +352,8 @@ app.controller('ContestSolutionCtrl', ['$scope', '$timeout', function($scope, $t
             }
         }, 1000);
     };
+
+}); // onAuthStateChange
 }
 
 }]);

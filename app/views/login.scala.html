@@ -12,7 +12,7 @@
 @authjs(redirectLogin="", redirectLogout="", checkFirst=false)
 <script>
 app.controller('AuthLoginCtrl', ['$scope', '$timeout', 'Auth', function($scope, $timeout, Auth) {
-    var authData = firebase.auth().currentUser;
+firebase.auth().onAuthStateChanged(function(authData) {
     if (!authData) {
         var vars = getUrlVars();
         if (vars.join) {
@@ -21,6 +21,7 @@ app.controller('AuthLoginCtrl', ['$scope', '$timeout', 'Auth', function($scope, 
             });
         }
     }
+}); // onAuthStateChange
 
     $scope.login = function() {
         $scope.message = null;

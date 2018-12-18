@@ -158,7 +158,7 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', '$interval', function(
     $scope.contestTimerLoaded = true;
 
 } else {
-
+firebase.auth().onAuthStateChanged(function(authData) {
     $scope.invalidPage = false;
     $scope.contestTimerLoaded = false;
 
@@ -197,7 +197,6 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', '$interval', function(
     }, 1000);
 
     // Set begin time
-    var authData = firebase.auth().currentUser;
     if (authData) {
         contestRef.child('events').child('e@{eid}').child('hasInspection').once('value', function(snapHasInspection) {
             window.TriboxContest.hasInspection = snapHasInspection.val();
@@ -213,7 +212,7 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', '$interval', function(
             contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).once('value', function(snapResult) {
                 if (!(snapResult.exists())) {
                     contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).set({
-                        'beginAt': Firebase.ServerValue.TIMESTAMP,
+                        'beginAt': firebase.database.ServerValue.TIMESTAMP,
                         'type': 'timer'
                     }, function(error) {
                         if (error) {
@@ -351,7 +350,7 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', '$interval', function(
 
     // Save & Fetch data
     var saveAndPrepare = function() {
-        var authData = firebase.auth().currentUser;
+        //var authData = firebase.auth().currentUser;
         if (authData) {
             contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).child('details').set($scope.results, function(error) {
                 if (!error) {
@@ -732,6 +731,7 @@ app.controller('ContestTimerCtrl', ['$scope', '$timeout', '$interval', function(
         angular.element(document.getElementById('touchArea')).addClass('hide');
     };*/
 
+}); // onAuthStateChange
 }
 
 }]);

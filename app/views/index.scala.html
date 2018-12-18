@@ -200,14 +200,13 @@
 @authjs(redirectLogin="", redirectLogout="", checkFirst=true)
 <script>
 app.controller('IndexCtrl', ['$scope', '$timeout', function($scope, $timeout) {
+firebase.auth().onAuthStateChanged(function(authData) {
     $scope.events = null;
     $scope.inProgress = null;
     $scope.inProgressContest = null;
     $scope.participants = null;
     $scope.eventsDone = {};
     $scope.indexLoaded = false;
-
-    var authData = firebase.auth().currentUser;
 
     // 全競技リスト、開催中コンテスト、開催中コンテストのデータ、ログイン時にユーザの開催中コンテストの結果データ
     contestRef.child('events').once('value', function(snapEvents) {
@@ -315,6 +314,8 @@ app.controller('IndexCtrl', ['$scope', '$timeout', function($scope, $timeout) {
     };
     modalOverlayElem.onclick = closeModal;
     modalLogoutCloseElem.onclick = closeModal;
+
+}); // onAuthStateChange
 }]);
 </script>
 

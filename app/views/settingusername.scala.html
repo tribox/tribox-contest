@@ -31,11 +31,11 @@ app.controller('AuthUsernameCtrl', ['$scope', '$timeout', 'Auth', function($scop
     $scope.changeUsername = function() {
         $scope.message = null;
         $scope.error = null;
-        var authData = firebase.auth().currentUser;
 
         var _oldUsername = $scope.oldUsername;
         var _newUsername = $scope.newUsername;
 
+        firebase.auth().onAuthStateChanged(function(authData) {
         if (authData) {
             if (_oldUsername == _newUsername) {
                 $scope.error = '現在のユーザIDと新しいユーザIDが同じです。';
@@ -152,6 +152,7 @@ app.controller('AuthUsernameCtrl', ['$scope', '$timeout', 'Auth', function($scop
         } else {
             location.href = '@routes.HomeController.index?logout=1';
         }
+        }); // onAuthStateChange
     };
 }]);
 </script>

@@ -15,7 +15,7 @@ app.controller('VerifyClickCtrl', ['$scope', '$timeout', function($scope, $timeo
     $scope.verifyClickLoaded = false;
 
     @if(message != "") {
-        var authData = firebase.auth().currentUser;
+        firebase.auth().onAuthStateChanged(function(authData) {
         if (authData) {
             if (authData.uid == '@{userId}') {
                 // 認証アカウントをセットする
@@ -51,6 +51,7 @@ app.controller('VerifyClickCtrl', ['$scope', '$timeout', function($scope, $timeo
                 $scope.verifyClickLoaded = true;
             });
         }
+        }); // onAuthStateChange
     } else {
         $timeout(function() {
             $scope.verifyClickLoaded = true;

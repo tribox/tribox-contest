@@ -195,6 +195,7 @@
 @contestjs(cid=cid, eid=eid, fetchScrambles=false, fetchResultsTop3=false, fetchResultsAll=false)
 <script>
 app.controller('ContestConfirmCtrl', ['$scope', '$timeout', function($scope, $timeout) {
+firebase.auth().onAuthStateChanged(function(authData) {
     $scope.result = null;
     $scope.resultsData = null;
     $scope.resultsDetail = null;
@@ -224,7 +225,6 @@ app.controller('ContestConfirmCtrl', ['$scope', '$timeout', function($scope, $ti
             });
 
     // Read personal results
-    var authData = firebase.auth().currentUser;
     if (authData) {
         // パズル選択の初期値
         contestRef.child('users').child(authData.uid).child('lastUsedPuzzles').child('e@{eid}').once('value', function(snapLastUsedPuzzle) {
@@ -310,7 +310,7 @@ app.controller('ContestConfirmCtrl', ['$scope', '$timeout', function($scope, $ti
     };
 
     $scope.submitResult = function() {
-        var authData = firebase.auth().currentUser;
+        firebase.auth().onAuthStateChanged(function(authData) {
         if (authData) {
             if (!($scope.puzzle) || !($scope.puzzle.type)) {
                 $scope.error = '使用キューブを選択してください。';
@@ -379,7 +379,9 @@ app.controller('ContestConfirmCtrl', ['$scope', '$timeout', function($scope, $ti
         } else {
             location.href = '@routes.HomeController.index?logout=1';
         }
+        }); // onAuthStateChange
     };
+}); // onAuthStateChange
 }]);
 </script>
 
