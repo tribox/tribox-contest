@@ -27,10 +27,6 @@ app.controller('AuthLoginCtrl', ['$scope', '$timeout', 'Auth', function($scope, 
         $scope.error = null;
 
         Auth.$signInWithEmailAndPassword($scope.email, $scope.password).then(function(authData) {
-        @* //firebase.auth().signInWithEmailAndPassword($scope.email, $scope.password).then(function(authData) { *@
-            console.log(authData);
-            console.log(authData.uid);
-            console.log(authData.user.uid);
             // Get users list from DB
             contestRef.child('users').child(authData.user.uid).on('value', function(snapshot) {
                 if (snapshot.exists()) {
@@ -51,10 +47,10 @@ app.controller('AuthLoginCtrl', ['$scope', '$timeout', 'Auth', function($scope, 
                     console.log('Logged in as: ' + authData.user.uid + ' (first login)');
                     location.href = '@routes.SettingController.settingfirst';
                 }
-            }/*, function(error) {
+            }, function(error) {
                 Auth.$signOut();
                 $scope.error = error;
-            }*/);
+            });
         }).catch(function(error) {
             $scope.error = TriboxContest.convErrorCodes(error.code);
         });
