@@ -20,10 +20,8 @@ app.controller('AuthForgotCtrl', ['$scope', 'Auth', function($scope, Auth) {
             $scope.error = 'メールアドレスを入力してください。';
         } else {
             Auth.$signOut();
-            Auth.$resetPassword({
-                email: $scope.email
-            }).then(function() {
-                $scope.resetMessage = '新しいパスワードを電子メールで送信しました。';
+            Auth.$sendPasswordResetEmail($scope.email).then(function() {
+                $scope.resetMessage = 'パスワードを再設定するリンクを電子メールで送信しました。';
             }).catch(function(error) {
                 $scope.error = TriboxContest.convErrorCodesAlt(error.code);
             });
