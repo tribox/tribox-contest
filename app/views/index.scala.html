@@ -270,18 +270,24 @@ app.controller('IndexCtrl', ['$scope', '$timeout', function($scope, $timeout) {
                 $scope.justLogout = true;
                 // うまくDOMのサイズが取得できないときがあるので何回か呼ぶ
                 showModal();
-                $timeout(showModal, 200);
-                $timeout(showModal, 1000);
-                $timeout(showModal, 10000);
+                for (var delay = 1; delay <= 20; delay++) {
+                    $timeout(showModal, delay * 50);
+                }
+                for (var delay = 2; delay <= 10; delay++) {
+                    $timeout(showModal, delay * 1000);
+                }
             });
         } else if (vars.please) {
             $timeout(function() {
                 $scope.pleaseLogin = true;
                 // うまくDOMのサイズが取得できないときがあるので何回か呼ぶ
                 showModal();
-                $timeout(showModal, 200);
-                $timeout(showModal, 1000);
-                $timeout(showModal, 10000);
+                for (var delay = 1; delay <= 20; delay++) {
+                    $timeout(showModal, delay * 50);
+                }
+                for (var delay = 2; delay <= 10; delay++) {
+                    $timeout(showModal, delay * 1000);
+                }
             });
         }
     }
