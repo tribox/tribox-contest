@@ -10,7 +10,7 @@
 @basejs(firebaseappContest)
 <script>
 app.factory('Auth', ['$firebaseAuth', function($firebaseAuth) {
-    return $firebaseAuth(contestRef);
+    return $firebaseAuth();
 }]);
 
 app.controller('AuthCtrl', ['$scope', '$firebaseObject', 'Auth', function($scope, $firebaseObject, Auth) {
