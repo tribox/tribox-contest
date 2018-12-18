@@ -71,7 +71,7 @@ app.controller('AuthUsernameCtrl', ['$scope', '$timeout', 'Auth', function($scop
                         // 新しいユーザIDなので usernames に追加して users + usersecrets を書き換える
                         contestRef.child('usernames').child(_newUsername).set({
                             'uid': authData.uid,
-                            'createdAt': Firebase.ServerValue.TIMESTAMP,
+                            'createdAt': firebase.database.ServerValue.TIMESTAMP,
                             'disabledAt': null
                         }, function(error) {
                             if (error) {
@@ -85,13 +85,13 @@ app.controller('AuthUsernameCtrl', ['$scope', '$timeout', 'Auth', function($scop
                                     } else {
                                         // 旧ユーザ名を無効にする
                                         contestRef.child('usernames').child(_oldUsername).update({
-                                            'disabledAt': Firebase.ServerValue.TIMESTAMP
+                                            'disabledAt': firebase.database.ServerValue.TIMESTAMP
                                         }, function(error) {
                                             if (error) {
                                                 console.error(error);
                                             } else {
                                                 contestRef.child('usersecrets').child(authData.uid).update({
-                                                    'usernameChangedAt': Firebase.ServerValue.TIMESTAMP
+                                                    'usernameChangedAt': firebase.database.ServerValue.TIMESTAMP
                                                 }, function(error) {
                                                     if (error) {
                                                         console.error(error);
@@ -124,13 +124,13 @@ app.controller('AuthUsernameCtrl', ['$scope', '$timeout', 'Auth', function($scop
                                     } else {
                                         // 旧ユーザ名を無効にする
                                         contestRef.child('usernames').child(_oldUsername).update({
-                                            'disabledAt': Firebase.ServerValue.TIMESTAMP
+                                            'disabledAt': firebase.database.ServerValue.TIMESTAMP
                                         }, function(error) {
                                             if (error) {
                                                 console.error(error);
                                             } else {
                                                 contestRef.child('usersecrets').child(authData.uid).update({
-                                                    'usernameChangedAt': Firebase.ServerValue.TIMESTAMP
+                                                    'usernameChangedAt': firebase.database.ServerValue.TIMESTAMP
                                                 }, function(error) {
                                                     if (error) {
                                                         console.error(error);

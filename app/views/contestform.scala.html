@@ -108,7 +108,7 @@ app.controller('ContestFormCtrl', ['$scope', '$timeout', function($scope, $timeo
         contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).once('value', function(snapResult) {
             if (!(snapResult.exists())) {
                 contestRef.child('results').child('c@{cid}').child('e@{eid}').child(authData.uid).set({
-                    'beginAt': Firebase.ServerValue.TIMESTAMP,
+                    'beginAt': firebase.database.ServerValue.TIMESTAMP,
                     'type': 'form'
                 }, function(error) {
                     if (error) {

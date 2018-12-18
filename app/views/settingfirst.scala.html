@@ -103,14 +103,14 @@ app.controller('AuthFirstSettingCtrl', ['$scope', 'Auth', function($scope, Auth)
                                 // Set new data to usernames DB and users DB
                                 contestRef.child('usernames').child(_username).set({
                                     'uid': authData.uid,
-                                    'createdAt': Firebase.ServerValue.TIMESTAMP
+                                    'createdAt': firebase.database.ServerValue.TIMESTAMP
                                 }, function(error) {
                                     if (error) {
                                         console.error(error);
                                         Auth.$signOut();
                                     } else {
                                         contestRef.child('users').child(authData.uid).set({
-                                            'createdAt': Firebase.ServerValue.TIMESTAMP,
+                                            'createdAt': firebase.database.ServerValue.TIMESTAMP,
                                             'username': _username,
                                             'displayname': _displayname,
                                             'organization': _organization
@@ -120,7 +120,7 @@ app.controller('AuthFirstSettingCtrl', ['$scope', 'Auth', function($scope, Auth)
                                                 Auth.$signOut();
                                             } else {
                                                 contestRef.child('usersecrets').child(authData.uid).set({
-                                                    'loggedinAt': Firebase.ServerValue.TIMESTAMP
+                                                    'loggedinAt': firebase.database.ServerValue.TIMESTAMP
                                                 }, function(error) {
                                                     if (error) {
                                                         console.error(error);
