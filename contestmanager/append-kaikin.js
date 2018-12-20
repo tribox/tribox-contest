@@ -1,8 +1,8 @@
 /**
- * append-points.js
+ * append-kaikin.js
  *
- * 毎週コンテストが終わるごとに実行する。
- * MySQL の lottery_log テーブルに存在する待ちレコードに対して、実際にストアポイントを追加する。
+ * シーズンが終わるごとに実行する。
+ * MySQL の kaikin テーブルに存在する待ちレコードに対して、実際にストアポイントを追加する。
  */
 
 var async = require('async');
@@ -10,18 +10,8 @@ var mysql = require('mysql');
 var exec = require('child_process').exec;
 
 var Config = require('./config.js');
-var fmcchecker = require('./fmcchecker.js');
 
-var Firebase = require('firebase');
-var contestRef = new Firebase('https://' + Config.CONTESTAPP + '.firebaseio.com/');
-
-// Create admin user
-var FirebaseTokenGenerator = require('firebase-token-generator');
-var tokenGenerator = new FirebaseTokenGenerator(Config.CONTESTAPP_SECRET);
-var token = tokenGenerator.createToken(
-    { uid: '1', some: 'arbitrary', data: 'here' },
-    { admin: true, debug: true }
-);
+var contestRef = require('./contestref.js').ref;
 
 var Contests, Events;
 
@@ -45,19 +35,44 @@ connectionStore.connect();
 // MySQL lottery_log テーブルの待ちレコードを対象にして、抽選ポイント加算
 var appendPoints = function() {
     // ポイント加算履歴を検索して、未加算のものを対象とする。
-    connection.query('SELECT id, contest_id, event_id, customer_type, customer_id, point, point_type FROM lottery_log WHERE appended_at IS NULL', function(error, results, fields) {
+    connection.query('SELECT id, user_id, season, event_id, customer_type, customer_id, point FROM kaikin WHERE appended_at IS NULL', function(error, results, fields) {
         if (error) {
             console.error(error);
         } else {
-            //console.dir(results);
+            console.dir(results);
+
+            // ユーザごと
+            var Ready = {};
+            async.eachSeries(results, function(result, next) {
+                if (!(result.user_id in Ready)) {
+                    Ready[result.user_id] = result;
+                    Ready[result.user_id]['events'] = [result.event_id];
+                    Ready[result.user_id]['events_name'] = [Events[result.event_id].name];
+                    Ready[result.user_id]['point_total'] = result.point;
+                } else {
+                    Ready[result.user_id]['events'].push(result.event_id);
+                    Ready[result.user_id]['events_name'].push(Events[result.event_id].name);
+                    Ready[result.user_id]['point_total'] += result.point;
+                }
+                next();
+            }, function(err) {
+                if (!err) {
+                    console.dir(results);
+                } else {
+                    console.log(err);
+                    process.exit(1);
+                }
+            });
+            console.dir(Ready);
+
             connectionStore.query('SET NAMES utf8', function() {
 
             var count = 0;
-            async.eachSeries(results, function(result, next) {
+            async.eachSeries(Ready, function(r, next) {
                 // ポイント加算処理・メール送信
-                if (result.customer_type == 0) { // store
+                if (r.customer_type == 0) { // store
                     connectionStore.query('SELECT name01, name02, email FROM dtb_customer WHERE customer_id = ?', [
-                        result.customer_id
+                        r.customer_id
                     ], function(error, results, fields) {
                         if (error) {
                             console.error(error);
@@ -68,9 +83,9 @@ var appendPoints = function() {
                             var name = results[0].name01 + ' ' + results[0].name02;
                             var email = results[0].email;
 
-                            console.log('UPDATE (id = ' + result.id + ')');
+                            console.log('UPDATE (id = ' + r.id + ')');
                             connectionStore.query('UPDATE dtb_customer SET point = point + ? WHERE customer_id = ?', [
-                                result.point, result.customer_id
+                                r.point_total, r.customer_id
                             ], function(error, results, fields) {
                                 if (error) {
                                     console.error(error);
@@ -78,8 +93,8 @@ var appendPoints = function() {
                                     process.exit(1);
                                 } else {
                                     console.log('Succeeded updating point!');
-                                    connection.query('UPDATE lottery_log SET appended_at = NOW() WHERE id = ?', [
-                                        result.id
+                                    connection.query('UPDATE kaikin SET appended_at = NOW() WHERE appended_at IS NULL AND user_id = ?', [
+                                        r.user_id
                                     ], function(error, results, fields) {
                                         if (error) {
                                             console.error(error);
@@ -87,18 +102,17 @@ var appendPoints = function() {
                                         } else {
                                             count++;
                                             // メール送信
-                                            //console.log(name);
-                                            //console.log(email);
-                                            //console.log(Contests[result.contest_id].contestName);
-                                            //console.log(Events[result.event_id].name);
-                                            //console.log(result.point);
-                                            //console.log(result.point_type);
-                                            var command = '/usr/bin/php ' + __dirname + '/send-pointemail.php'
+                                            console.log(name);
+                                            console.log(email);
+                                            console.log(r.season);
+                                            console.log(r.events_name.join('-'));
+                                            console.log(r.point_total);
+                                            var command = '/usr/bin/php ' + __dirname + '/send-kaikin.php'
                                                         + ' "' + email + '"'
                                                         + ' "' + name + '"'
-                                                        + ' "' + Contests[result.contest_id].contestName + '"'
-                                                        + ' "' + Events[result.event_id].name + '"'
-                                                        + ' ' + result.point + ' ' + result.point_type;
+                                                        + ' "' + r.season + '"'
+                                                        + ' "' + r.events_name.join('-') + '"'
+                                                        + ' ' + r.point_total;
                                             exec(command, function(err, stdout, stderr) {
                                                 if (err) {
                                                     console.error(err);
@@ -134,27 +148,15 @@ var appendPoints = function() {
     });
 };
 
-var getContestInfo = function() {
-    // admin 権限でログインしてから操作する
-    contestRef.authWithCustomToken(token, function(error, authData) {
-        if (error) {
-            console.error('Authentication Failed!', error);
-        } else {
-            //console.log('Authenticated successfully with payload:', authData);
+var getEventsInfo = function() {
+            contestRef.child('events').once('value', function(snapEvents) {
+                Events = snapEvents.val();
 
-            contestRef.child('contests').once('value', function(snapContests) {
-                Contests = snapContests.val();
-                contestRef.child('events').once('value', function(snapEvents) {
-                    Events = snapEvents.val();
-
-                    appendPoints();
-                });
+                appendPoints();
             });
-        }
-    });
 };
 
 var main = function() {
-    getContestInfo();
+    getEventsInfo();
 };
 main();
