@@ -10,7 +10,7 @@ URL: https://contest.tribox.com
 
 * Java 8
 * Scala 2.11.8
-* Node.js v0.10.42
+* Node.js v8.14.0
 * [TNoodle](https://github.com/cubing/tnoodle) v0.11.1
 * [Sarumawashi](https://github.com/kotarot/Sarumawashi)
 * [wca-importer](https://github.com/kotarot/wca-importer)
@@ -21,7 +21,7 @@ URL: https://contest.tribox.com
 Install required node modules:
 ```
 cd contestmanager
-npm install firebase@2.4.2 firebase-token-generator@2.0.0 alg async argv mysql nanoid request twitter
+npm install alg@0.2.0 argv@0.0.2 async@2.0.0 firebase@5.7.0 firebase-admin@6.4.0 mysql@2.11.1 nanoid@2.0.0 request@2.72.0 twitter@1.3.0
 ```
 
 コンフィグファイルを設定する:
