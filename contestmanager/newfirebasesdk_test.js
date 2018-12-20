@@ -9,6 +9,11 @@
 
 var contestRef = require('./contestref.js').ref;
 
+console.log(Config); // undefined のはず
+
+var Config = require('./config.js');
+console.log(Config); // 実体があるはず
+
 var justTest = function() {
     contestRef.child('participants').child('c2018225').once('value', function(snap) {
         var participants = snap.val();
@@ -35,61 +40,3 @@ var justTest = function() {
     });
 };
 justTest();
-
-/*
-    // admin 権限でログインしてから操作する
-    //contestRef.authWithCustomToken(token, function(error, authData) {
-    //    if (error) {
-    //        console.error('Authentication Failed!', error);
-    //    } else {
-    //        //console.log('Authenticated successfully with payload:', authData);
-
-            contestRef.child('users').once('value', function(snapUsers) {
-                var users = snapUsers.val();
-            contestRef.child('usernames').once('value', function(snapUsernames) {
-                var usernames = snapUsernames.val();
-                var counts = {};
-                var usernamesMoreThanOne = {};
-                Object.keys(usernames).forEach(function(username) {
-                    username = username.toLowerCase();
-                    if (username in counts) {
-                        counts[username]++;
-                    } else {
-                        counts[username] = 1;
-                    }
-                });
-                Object.keys(counts).forEach(function(username) {
-                    if (1 < counts[username]) {
-                        usernamesMoreThanOne[username] = counts[username];
-                    }
-                });
-                console.dir(counts);
-                console.dir(usernamesMoreThanOne);
-
-                // ユーザ名チェック
-                Object.keys(users).forEach(function(uid) {
-                    var user = users[uid];
-                    if (user._dummy) {
-                        return;
-                    }
-
-                    if (!('username' in user)) {
-                        console.error(uid + ' has no username');
-                        process.exit(1);
-                    } else {
-                        var username = user.username;
-                        if ('disabledAt' in usernames[username]) {
-                            console.error(username + ' has disabledAt');
-                            process.exit(1);
-                        }
-                    }
-                });
-
-                process.exit(0);
-            });
-            });
-
-    //    }
-    //});
-};
-checkUsernames();*/
