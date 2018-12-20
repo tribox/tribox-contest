@@ -2,7 +2,7 @@
  * 結果投稿ページ（タイム手入力）
  *@
 
-@(cid: String, eid: String, contestName: String, contestDescription: String, contestUrl: String, firebaseappContest: String)
+@(cid: String, eid: String, contestName: String, contestDescription: String, contestUrl: String, firebaseappContest: String, firebaseappContestApikey: String, firebaseappContestMessagingsenderid: String)
 
 @defining("Contest Form " + cid + " (" + eid + ")") { title =>
 @defining(contestUrl + "/contest/" + cid + "/" + eid + "/form") { pageUrl =>
@@ -12,7 +12,7 @@
 <head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
     @header(title=title, description=contestDescription, sitename=contestName, url=pageUrl, contestUrl=contestUrl)
 
-@basejs(firebaseappContest)
+@basejs(firebaseappContest, firebaseappContestApikey, firebaseappContestMessagingsenderid)
 </head>
 <body><div class="container">
     @bodyheader(title, contestName, cid=cid, eid=eid)

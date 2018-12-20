@@ -2,7 +2,7 @@
  * 結果投稿ページ（FMC用）
  *@
 
-@(cid: String, eid: String, contestName: String, contestDescription: String, contestUrl: String, firebaseappContest: String)
+@(cid: String, eid: String, contestName: String, contestDescription: String, contestUrl: String, firebaseappContest: String, firebaseappContestApikey: String, firebaseappContestMessagingsenderid: String)
 
 @defining("Contest Solution " + cid + " (" + eid + ")") { title =>
 @defining(contestUrl + "/contest/" + cid + "/" + eid + "/solution") { pageUrl =>
@@ -12,7 +12,7 @@
 <head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
     @header(title=title, description=contestDescription, sitename=contestName, url=pageUrl, contestUrl=contestUrl)
 
-@basejs(firebaseappContest)
+@basejs(firebaseappContest, firebaseappContestApikey, firebaseappContestMessagingsenderid)
 
 <style>
 textarea.form-control {

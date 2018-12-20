@@ -1,4 +1,4 @@
-@(contestName: String, contestDescription: String, contestUrl: String, firebaseappContest: String)
+@(contestName: String, contestDescription: String, contestUrl: String, firebaseappContest: String, firebaseappContestApikey: String, firebaseappContestMessagingsenderid: String)
 
 @defining("First Setting") { title =>
 
@@ -7,7 +7,7 @@
 <head>
     @header(title=title, description=contestDescription, sitename=contestName)
 
-@basejs(firebaseappContest)
+@basejs(firebaseappContest, firebaseappContestApikey, firebaseappContestMessagingsenderid)
 <script>
 app.factory('Auth', ['$firebaseAuth', function($firebaseAuth) {
     return $firebaseAuth();

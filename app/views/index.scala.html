@@ -1,4 +1,4 @@
-@(contestName: String, contestDescription: String, contestUrl: String, firebaseappContest: String, googleVerification: String)
+@(contestName: String, contestDescription: String, contestUrl: String, firebaseappContest: String, firebaseappContestApikey: String, firebaseappContestMessagingsenderid: String, googleVerification: String)
 
 @defining("") { title =>
 @defining(contestUrl + "/") { pageUrl =>
@@ -9,7 +9,7 @@
     @header(title=title, description=contestDescription, sitename=contestName, url=pageUrl, contestUrl=contestUrl, googleVerification=googleVerification)
     <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/modal.css")">
 
-@basejs(firebaseappContest)
+@basejs(firebaseappContest, firebaseappContestApikey, firebaseappContestMessagingsenderid)
 </head>
 <body><div class="container">
     @bodyheader(title, contestName)

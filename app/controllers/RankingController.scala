@@ -14,20 +14,20 @@ import play.api.Play.current
 class RankingController @Inject() extends HomeController {
 
     def rankingdefault = Action {
-        Ok(views.html.rankingdefault(getFirebaseappContest))
+        Ok(views.html.rankingdefault(getFirebaseappContest, getFirebaseappContestApikey, getFirebaseappContestMessagingsenderid))
     }
     def ranking(sid: String) = Action {
-        Ok(views.html.ranking(sid, getContestName, getContestDescription, getContestUrl, getFirebaseappContest, getFirebaseappWca))
+        Ok(views.html.ranking(sid, getContestName, getContestDescription, getContestUrl, getFirebaseappContest, getFirebaseappContestApikey, getFirebaseappContestMessagingsenderid, getFirebaseappWca))
     }
 
     def rankingpuzzledefault = Action {
-        Ok(views.html.rankingpuzzledefault(getFirebaseappContest))
+        Ok(views.html.rankingpuzzledefault(getFirebaseappContest, getFirebaseappContestApikey, getFirebaseappContestMessagingsenderid))
     }
     def rankingpuzzle(sid: String) = Action {
-        Ok(views.html.rankingpuzzle(sid, getContestName, getContestDescription, getContestUrl, getFirebaseappContest))
+        Ok(views.html.rankingpuzzle(sid, getContestName, getContestDescription, getContestUrl, getFirebaseappContest, getFirebaseappContestApikey, getFirebaseappContestMessagingsenderid))
     }
     def rankingpuzzleall(sid: String) = Action {
-        Ok(views.html.rankingpuzzleall(sid, getContestName, getContestDescription, getContestUrl, getFirebaseappContest))
+        Ok(views.html.rankingpuzzleall(sid, getContestName, getContestDescription, getContestUrl, getFirebaseappContest, getFirebaseappContestApikey, getFirebaseappContestMessagingsenderid))
     }
 
 }
