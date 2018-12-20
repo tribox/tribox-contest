@@ -7,18 +7,7 @@
 
 var async = require('async');
 
-var Config = require('./config.js');
-
-var Firebase = require('firebase');
-var contestRef = new Firebase('https://' + Config.CONTESTAPP + '.firebaseio.com/');
-
-// Create admin user
-var FirebaseTokenGenerator = require('firebase-token-generator');
-var tokenGenerator = new FirebaseTokenGenerator(Config.CONTESTAPP_SECRET);
-var token = tokenGenerator.createToken(
-    { uid: '1', some: 'arbitrary', data: 'here' },
-    { admin: true, debug: true }
-);
+var contestRef = require('./contestref.js').ref;
 
 var argv = require('argv');
 argv.option([
@@ -52,13 +41,6 @@ var cid;
 
 
 var countParticipants = function() {
-    // admin 権限でログインしてから操作する
-    contestRef.authWithCustomToken(token, function(error, authData) {
-        if (error) {
-            console.error('Authentication Failed!', error);
-        } else {
-            //console.log('Authenticated successfully with payload:', authData);
-
             contestRef.child('events').once('value', function(snapEvents) {
                 var Events = snapEvents.val();
                 //console.dir(Events);
@@ -96,8 +78,6 @@ var countParticipants = function() {
 
             });
             });
-        }
-    });
 };
 
 var main = function() {
