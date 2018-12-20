@@ -35,6 +35,8 @@ cp contestmanager/config.sample.js contestmanager/config.js  # and edit contestm
 TODO
 ```
 
+Firebase Admin SDK サービスアカウントの秘密鍵をダウンロードして `contestmanager/secret/serviceAccountKey.json` に保存する。
+
 
 ## Run
 

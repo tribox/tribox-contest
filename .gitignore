@@ -15,8 +15,9 @@ target
 /conf/prod.conf
 
 # Contest Manager
-/contestmanager/node_modules
+/contestmanager/node_modules*
 /contestmanager/config.js
+/contestmanager/secret/serviceAccountKey.json
 
 # FMC images
 /public/333fm/*.png
