@@ -17,16 +17,7 @@ var mysql = require('mysql');
 
 var Config = require('./config.js');
 
-var Firebase = require('firebase');
-var contestRef = new Firebase('https://' + Config.CONTESTAPP + '.firebaseio.com/');
-
-// Create admin user
-var FirebaseTokenGenerator = require('firebase-token-generator');
-var tokenGenerator = new FirebaseTokenGenerator(Config.CONTESTAPP_SECRET);
-var token = tokenGenerator.createToken(
-    { uid: '1', some: 'arbitrary', data: 'here' },
-    { admin: true, debug: true }
-);
+var contestRef = require('./contestref.js').ref;
 
 // ユーザテーブル、ユーザシークレットテーブル
 var Users, Usersecrets;
@@ -103,13 +94,6 @@ var writeDB = function(Kaikin100) {
 
 // 皆勤賞を調べる
 var checkKaikin100 = function() {
-    // admin 権限でログインしてから操作する
-    contestRef.authWithCustomToken(token, function(error, authData) {
-        if (error) {
-            console.error('Authentication Failed!', error);
-        } else {
-            //console.log('Authenticated successfully with payload:', authData);
-
     contestRef.child('users').once('value', function(snapUsers) {
     contestRef.child('usersecrets').once('value', function(snapUsersecrets) {
     contestRef.child('events').once('value', function(snapEvents) {
@@ -190,9 +174,6 @@ var checkKaikin100 = function() {
     });
     });
     });
-    });
-
-        }
     });
 };
 

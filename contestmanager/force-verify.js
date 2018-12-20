@@ -10,16 +10,7 @@ var mysql = require('mysql');
 
 var Config = require('./config.js');
 
-var Firebase = require('firebase');
-var contestRef = new Firebase('https://' + Config.CONTESTAPP + '.firebaseio.com/');
-
-// Create admin user
-var FirebaseTokenGenerator = require('firebase-token-generator');
-var tokenGenerator = new FirebaseTokenGenerator(Config.CONTESTAPP_SECRET);
-var token = tokenGenerator.createToken(
-    { uid: '1', some: 'arbitrary', data: 'here' },
-    { admin: true, debug: true }
-);
+var contestRef = require('./contestref.js').ref;
 
 var connection = mysql.createConnection({
     host: Config.MYSQL_HOST,
@@ -31,13 +22,6 @@ connection.connect();
 
 
 var main = function() {
-    // admin 権限でログインしてから操作する
-    contestRef.authWithCustomToken(token, function(error, authData) {
-        if (error) {
-            console.error('Authentication Failed!', error);
-        } else {
-            //console.log('Authenticated successfully with payload:', authData);
-
     var UsersClicked = [];
     connection.query('SELECT * FROM verifying WHERE created_at IS NOT NULL AND verified_at IS NOT NULL AND unverified_at IS NULL', function(error, results, fields) {
         if (error) {
@@ -98,9 +82,6 @@ var main = function() {
 
             });
             });
-        }
-    });
-
         }
     });
 };

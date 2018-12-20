@@ -17,16 +17,7 @@ var Twitter = require('twitter');
 var Config = require('./config.js');
 var fmcchecker = require('./fmcchecker.js');
 
-var Firebase = require('firebase');
-var contestRef = new Firebase('https://' + Config.CONTESTAPP + '.firebaseio.com/');
-
-// Create admin user
-var FirebaseTokenGenerator = require('firebase-token-generator');
-var tokenGenerator = new FirebaseTokenGenerator(Config.CONTESTAPP_SECRET);
-var token = tokenGenerator.createToken(
-    { uid: '1', some: 'arbitrary', data: 'here' },
-    { admin: true, debug: true }
-);
+var contestRef = require('./contestref.js').ref;
 
 var argv = require('argv');
 argv.option([
@@ -456,13 +447,6 @@ var writeResults = function() {
 // 順位、SP、当選の記録をリセットする
 // ただし、当選のリセットは当選リセットのオプションがあるときのみ
 var resetResults = function() {
-    // admin 権限でログインしてから操作する
-    contestRef.authWithCustomToken(token, function(error, authData) {
-        if (error) {
-            console.error('Authentication Failed!', error);
-        } else {
-            //console.log('Authenticated successfully with payload:', authData);
-
             contestRef.child('results').child(targetContest).once('value', function(snapResults) {
                 var results = snapResults.val();
 
@@ -510,19 +494,10 @@ var resetResults = function() {
                 });
 
             });
-        }
-    });
 };
 
 // コンテストの結果を集計（整形）する
 var collectResults = function() {
-    // admin 権限でログインしてから操作する
-    contestRef.authWithCustomToken(token, function(error, authData) {
-        if (error) {
-            console.error('Authentication Failed!', error);
-        } else {
-            //console.log('Authenticated successfully with payload:', authData);
-
             contestRef.child('users').once('value', function(snapUsers) {
             contestRef.child('usersecrets').once('value', function(snapUsersecrets) {
                 Users = snapUsers.val();
@@ -624,19 +599,10 @@ var collectResults = function() {
                 });
             });
             });
-        }
-    });
 };
 
 // FMC の解答チェック
 var checkFMC = function() {
-    // admin 権限でログインしてから操作する
-    contestRef.authWithCustomToken(token, function(error, authData) {
-        if (error) {
-            console.error('Authentication Failed!', error);
-        } else {
-            //console.log('Authenticated successfully with payload:', authData);
-
             contestRef.child('scrambles').child(targetContest).once('value', function(snapScrambles) {
                 var scrambles = snapScrambles.val();
 
@@ -721,19 +687,10 @@ var checkFMC = function() {
                 collectResults();
             }
             });
-        }
-    });
 };
 
 // 結果 (average と best) の再計算
 var checkResults = function() {
-    // admin 権限でログインしてから操作する
-    contestRef.authWithCustomToken(token, function(error, authData) {
-        if (error) {
-            console.error('Authentication Failed!', error);
-        } else {
-            //console.log('Authenticated successfully with payload:', authData);
-
             // コンテスト結果を再計算するとき
             if (argvrun.options.check) {
                 contestRef.child('events').once('value', function(snapEvents) {
@@ -803,8 +760,6 @@ var checkResults = function() {
             else {
                 checkFMC();
             }
-        }
-    });
 };
 
 // 存在するコンテストか調べる

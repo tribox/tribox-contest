@@ -7,18 +7,7 @@
 var async = require('async');
 var exec = require('child_process').exec;
 
-var Config = require('./config.js');
-
-var Firebase = require('firebase');
-var contestRef = new Firebase('https://' + Config.CONTESTAPP + '.firebaseio.com/');
-
-// Create admin user
-var FirebaseTokenGenerator = require('firebase-token-generator');
-var tokenGenerator = new FirebaseTokenGenerator(Config.CONTESTAPP_SECRET);
-var token = tokenGenerator.createToken(
-    { uid: '1', some: 'arbitrary', data: 'here' },
-    { admin: true, debug: true }
-);
+var contestRef = require('./contestref.js').ref;
 
 var argv = require('argv');
 argv.option([
@@ -64,13 +53,6 @@ var Users, Usersecrets;
 
 // 記録を削除する
 var deleteRecord = function() {
-    // admin 権限でログインしてから操作する
-    contestRef.authWithCustomToken(token, function(error, authData) {
-        if (error) {
-            console.error('Authentication Failed!', error);
-        } else {
-            //console.log('Authenticated successfully with payload:', authData);
-
             var targetEmail = argvrun.options.email;
             var targetUsername = argvrun.options.username;
             var targetEvent = argvrun.options.event;
@@ -131,14 +113,11 @@ var deleteRecord = function() {
                 });
             //});
             });
-        }
-    });
 };
 
 
 // 存在するコンテストか調べる
 var checkExists = function() {
-    // コンテストから検索 (認証不要)
     contestRef.child('contests').child(targetContest).once('value', function(snap) {
         if (snap.exists()) {
             targetContestObj = snap.val();

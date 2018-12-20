@@ -5,16 +5,8 @@
 var Twitter = require('twitter');
 
 var Config = require('./config.js');
-var Firebase = require('firebase');
-var contestRef = new Firebase('https://' + Config.CONTESTAPP + '.firebaseio.com/');
 
-// Create admin user
-var FirebaseTokenGenerator = require('firebase-token-generator');
-var tokenGenerator = new FirebaseTokenGenerator(Config.CONTESTAPP_SECRET);
-var token = tokenGenerator.createToken(
-    { uid: '1', some: 'arbitrary', data: 'here' },
-    { admin: true, debug: true }
-);
+var contestRef = require('./contestref.js').ref;
 
 var argv = require('argv');
 argv.option([
@@ -126,13 +118,6 @@ var update = function() {
         console.log('last contest:', lastFounds[0]);
 
         // 書き込む (admin権限で)
-        contestRef.authWithCustomToken(token, function(error, authData) {
-            if (error) {
-                console.error('Authentication Failed!', error);
-                process.exit(1);
-            } else {
-                console.log('Authentication successfully with payload:', authData);
-
                 contestRef.child('inProgress').set({
                     'contest': founds[0],
                     'lastContest': lastFounds[0]
@@ -145,8 +130,6 @@ var update = function() {
                         tweetNotice();
                     }
                 });
-            }
-        });
     });
 };
 update();
