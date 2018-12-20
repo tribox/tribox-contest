@@ -1,10 +1,16 @@
 /**
- * tabulate-winners.js
+ * check-kaikin.js
  *
- * 指定シーズンの入賞者を調べる。
+ * 指定シーズンの皆勤賞を調べる。
+ * 皆勤賞の条件等:
+ *   - 種目ごと
+ *   - 全種目
+ *   - 全て参加
+ *   - DNF3回以下
+ *   - 認証アカウントであること
  *
  * 以下を更新する:
- *   - 入賞ポイント (MySQL) ただし待ちレコードを生成するだけで実際にポイントは加算されない
+ *   - 皆勤ポイント (MySQL) ただし待ちレコードを生成するだけで実際にポイントは加算されない
  */
 
 var async = require('async');
@@ -12,16 +18,7 @@ var mysql = require('mysql');
 
 var Config = require('./config.js');
 
-var Firebase = require('firebase');
-var contestRef = new Firebase('https://' + Config.CONTESTAPP + '.firebaseio.com/');
-
-// Create admin user
-var FirebaseTokenGenerator = require('firebase-token-generator');
-var tokenGenerator = new FirebaseTokenGenerator(Config.CONTESTAPP_SECRET);
-var token = tokenGenerator.createToken(
-    { uid: '1', some: 'arbitrary', data: 'here' },
-    { admin: true, debug: true }
-);
+var contestRef = require('./contestref.js').ref;
 
 var argv = require('argv');
 argv.option([
@@ -30,7 +27,7 @@ argv.option([
         short: 's',
         type: 'string',
         description: 'Target season',
-        example: "'tabulate-winners.js --season=20161' or 'tabulate-winners.js -s 20161'"
+        example: "'check-kaikin.js --season=20161' or 'check-kaikin.js -s 20161'"
     }
 ]);
 var argvrun = argv.run();
@@ -73,43 +70,36 @@ var connection = mysql.createConnection({
 connection.connect();
 
 
-// 入賞者の結果を MySQL に書き込む
-var writeDB = function(Winners, Events) {
+// 皆勤賞の結果を MySQL に書き込む
+var writeDB = function(Kaikin) {
 
-    // 配列にする
-    var WinnersArr = [];
-    Object.keys(Events).forEach(function(eventId) {
-        for (var i = 0; i < 3; i++) {
-            WinnersArr.push({ 'eventId': eventId, 'place': (i + 1), 'winner': Winners[eventId][i] });
-        }
-    });
-
-    var countWinners = 0;
-    async.each(WinnersArr, function(r, next) {
+    var countKaikin = 0;
+    async.each(Kaikin, function(r, next) {
         //console.dir(r);
 
         // 待ちレコードとして登録する
-        connection.query('INSERT INTO winners SET ?', {
-            'user_id': r.winner.userId,
-            'username': r.winner.userdata.username,
+        connection.query('INSERT INTO kaikin SET ?', {
+            'user_id': r.userId,
+            'username': r.username,
             'season': targetSeason,
             'event_id': r.eventId,
-            'place': r.place,
             'customer_type': 0,
-            'customer_id': r.winner.usersecretdata.triboxStoreCustomerId,
-            'point': r.winner.point
+            'customer_id': r.triboxStoreCustomerId,
+            'point': r.point,
+            'count_completed': r.countCompleted,
+            'count_completed_success': r.countCompletedSuccess
         }, function(error, results, fields) {
             if (error) {
                 console.error(error);
             } else {
-                countWinners++;
+                countKaikin++;
                 next();
             }
         });
 
     }, function(err) {
         if (!err) {
-            console.log('Completed creating ready records of Winners! (' + countWinners + ' records)');
+            console.log('Completed creating ready records of Kaikin! (' + countKaikin + ' records)');
             process.exit(0);
         } else {
             console.error(err);
@@ -119,15 +109,8 @@ var writeDB = function(Winners, Events) {
 
 };
 
-// 入賞者を調べる
-var checkWinners = function() {
-    // admin 権限でログインしてから操作する
-    contestRef.authWithCustomToken(token, function(error, authData) {
-        if (error) {
-            console.error('Authentication Failed!', error);
-        } else {
-            //console.log('Authenticated successfully with payload:', authData);
-
+// 皆勤賞を調べる
+var checkKaikin = function() {
     contestRef.child('users').once('value', function(snapUsers) {
     contestRef.child('usersecrets').once('value', function(snapUsersecrets) {
     contestRef.child('events').once('value', function(snapEvents) {
@@ -150,16 +133,8 @@ var checkWinners = function() {
         });
         console.log(countTargetContests + ' contests in the target season.');
 
-        // 入賞者のリスト
-        var Winners = {};
-        Object.keys(Events).forEach(function(eventId) {
-            Winners[eventId] = [];
-            Object.keys(Users).forEach(function(userId) {
-                if (!(Users[userId]._dummy) && Users[userId].isTriboxCustomer) {
-                    Winners[eventId].push({ 'userId': userId, 'userdata': Users[userId], 'usersecretdata': Usersecrets[userId], 'seasonPoint': 0 });
-                }
-            });
-        });
+        // 皆勤賞のリスト
+        var Kaikin = {};
 
         // ユーザごと
         Object.keys(Users).forEach(function(userId) {
@@ -171,74 +146,52 @@ var checkWinners = function() {
 
                     // イベントごとに調べる
                     Object.keys(Events).forEach(function(eventId) {
+                        var countCompleted = 0;
+                        var countCompletedSuccess = 0;
                         Object.keys(targetContests).forEach(function(contestId) {
                             if (Results[contestId][eventId] !== undefined) {
                                 if (Results[contestId][eventId][userId]) {
-                                    if ('seasonPoint' in Results[contestId][eventId][userId]) {
-                                        if (0 < Results[contestId][eventId][userId].seasonPoint) {
-                                            for (var i = 0; i < Winners[eventId].length; i++) {
-                                                if (Winners[eventId][i].userId == userId) {
-                                                    Winners[eventId][i].seasonPoint += Results[contestId][eventId][userId].seasonPoint;
-                                                    break;
-                                                }
-                                            }
+                                    if ('endAt' in Results[contestId][eventId][userId]) {
+                                        countCompleted++;
+                                        if (Results[contestId][eventId][userId]['result']['condition'] != 'DNF') {
+                                            countCompletedSuccess++;
                                         }
                                     }
                                 }
                             }
                         });
+                        // 全部終わっているかつDNF規定回数以内
+                        if (countCompleted == countTargetContests && countTargetContests - 3 <= countCompletedSuccess) {
+                            //console.log(eventId + ' ' + countCompleted);
+                            Kaikin[userId + eventId] = {
+                                'userId': userId,
+                                'username': Users[userId].username,
+                                'displayname': Users[userId].displayname,
+                                'triboxStoreCustomerId': Usersecrets[userId].triboxStoreCustomerId,
+                                'eventId': eventId,
+                                'eventName': Events[eventId].name,
+                                'countCompleted': countCompleted,
+                                'countCompletedSuccess': countCompletedSuccess,
+                                'point': 300
+                            };
+                        }
                     });
                 }
             }
         });
 
-        // ソートする
-        Object.keys(Events).forEach(function(eventId) {
-            Winners[eventId].sort(function(a, b) {
-                if (a.seasonPoint < b.seasonPoint) return 1;
-                if (a.seasonPoint > b.seasonPoint) return -1;
-                return 0;
-            });
+        // 皆勤賞リストの表示
+        Object.keys(Kaikin).forEach(function(id) {
+            console.log(Kaikin[id].username + ' '/* + Kaikin[id].displayname + ' '*/
+                + Kaikin[id].eventId + ' '/* + Kaikin[id].eventName + ' '*/
+                + Kaikin[id].countCompletedSuccess + '/' + Kaikin[id].countCompleted + ' ' + Kaikin[id].point);
         });
-        //console.dir(Winners);
-
-        // 入賞ポイントの追加
-        var EventsPoints = {
-            'e333': [30000, 15000, 5000],
-            'e444': [10000, 5000, 3000],
-            'e555': [10000, 5000, 3000],
-            'e222': [10000, 5000, 3000],
-            'e666': [5000, 2000, 1000],
-            'e777': [5000, 2000, 1000],
-            'e333bf': [5000, 2000, 1000],
-            'e333oh': [5000, 2000, 1000],
-            'e333fm': [5000, 2000, 1000],
-            'eminx':  [5000, 2000, 1000],
-            'epyram': [5000, 2000, 1000],
-            'esq1':   [5000, 2000, 1000]
-        };
-        Object.keys(Events).forEach(function(eventId) {
-            for (var i = 0; i < 3; i++) {
-                Winners[eventId][i].point = EventsPoints[eventId][i];
-            }
-        });
-
-        // 入賞者の表示
-        Object.keys(Events).forEach(function(eventId) {
-            for (var i = 0; i < 3; i++) {
-                console.log(eventId + ' ' + (i + 1) + ' ' + Winners[eventId][i].userdata.username + ' '
-                    + Winners[eventId][i].point);
-            }
-        });
-        writeDB(Winners, Events);
+        writeDB(Kaikin);
 
     });
     });
     });
     });
-    });
-
-        }
     });
 };
 
@@ -247,7 +200,7 @@ var checkExists = function() {
     // コンテストから検索 (認証不要)
     contestRef.child('contests').child('c' + targetSeason + '01').once('value', function(snap) {
         if (snap.exists()) {
-            checkWinners();
+            checkKaikin();
         } else {
             console.error('Season does not exist');
             process.exit(1);
