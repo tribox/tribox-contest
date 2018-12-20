@@ -17,27 +17,27 @@ class ContestController @Inject() extends HomeController {
      * Contest pages
      */
     def contestdefault = Action {
-        Ok(views.html.contestdefault(getFirebaseappContest))
+        Ok(views.html.contestdefault(getFirebaseappContest, getFirebaseappContestApikey, getFirebaseappContestMessagingsenderid))
     }
 
     def contest(cid: String) = Action {
-        Ok(views.html.contest(cid, getContestName, getContestDescription, getContestUrl, getFirebaseappContest, getFirebaseappWca))
+        Ok(views.html.contest(cid, getContestName, getContestDescription, getContestUrl, getFirebaseappContest, getFirebaseappContestApikey, getFirebaseappContestMessagingsenderid, getFirebaseappWca))
     }
 
     def choose(cid: String, eid: String) = Action {
-        Ok(views.html.contestchoose(cid, eid, getContestName, getContestDescription, getContestUrl, getFirebaseappContest))
+        Ok(views.html.contestchoose(cid, eid, getContestName, getContestDescription, getContestUrl, getFirebaseappContest, getFirebaseappContestApikey, getFirebaseappContestMessagingsenderid))
     }
 
     def form(cid: String, eid: String) = Action {
-        Ok(views.html.contestform(cid, eid, getContestName, getContestDescription, getContestUrl, getFirebaseappContest))
+        Ok(views.html.contestform(cid, eid, getContestName, getContestDescription, getContestUrl, getFirebaseappContest, getFirebaseappContestApikey, getFirebaseappContestMessagingsenderid))
     }
 
     def timer(cid: String, eid: String) = Action {
-        Ok(views.html.contesttimer(cid, eid, getContestName, getContestDescription, getContestUrl, getFirebaseappContest))
+        Ok(views.html.contesttimer(cid, eid, getContestName, getContestDescription, getContestUrl, getFirebaseappContest, getFirebaseappContestApikey, getFirebaseappContestMessagingsenderid))
     }
 
     def solution(cid: String, eid: String) = Action {
-        Ok(views.html.contestsolution(cid, eid, getContestName, getContestDescription, getContestUrl, getFirebaseappContest))
+        Ok(views.html.contestsolution(cid, eid, getContestName, getContestDescription, getContestUrl, getFirebaseappContest, getFirebaseappContestApikey, getFirebaseappContestMessagingsenderid))
     }
 
     def confirm(cid: String, eid: String) = Action {
@@ -121,7 +121,7 @@ class ContestController @Inject() extends HomeController {
             puzzleBrandsMap += puzzleBrand.category_id -> puzzleBrand.category_name;
         }
 
-        Ok(views.html.contestconfirm(cid, eid,  brandsPuzzles, puzzleBrands, puzzleBrandsMap, getContestName, getContestDescription, getContestUrl, getFirebaseappContest))
+        Ok(views.html.contestconfirm(cid, eid,  brandsPuzzles, puzzleBrands, puzzleBrandsMap, getContestName, getContestDescription, getContestUrl, getFirebaseappContest, getFirebaseappContestApikey, getFirebaseappContestMessagingsenderid))
     }
 
     def resultindex(cid: String) = Action {
@@ -129,7 +129,7 @@ class ContestController @Inject() extends HomeController {
     }
 
     def result(cid: String, eid: String) = Action {
-        Ok(views.html.contestresult(cid, eid, getContestName, getContestDescription, getContestUrl, getFirebaseappContest, getFirebaseappWca))
+        Ok(views.html.contestresult(cid, eid, getContestName, getContestDescription, getContestUrl, getFirebaseappContest, getFirebaseappContestApikey, getFirebaseappContestMessagingsenderid, getFirebaseappWca))
     }
 
 }

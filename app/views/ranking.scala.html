@@ -1,4 +1,4 @@
-@(sid: String, contestName: String, contestDescription: String, contestUrl: String, firebaseappContest: String, firebaseappWca: String)
+@(sid: String, contestName: String, contestDescription: String, contestUrl: String, firebaseappContest: String, firebaseappContestApikey: String, firebaseappContestMessagingsenderid: String, firebaseappWca: String)
 
 @defining("Ranking " + sid.slice(0, 4) + " " + sid.slice(4, 5) + "H") { title =>
 @defining(contestUrl + "/ranking/" + sid) { pageUrl =>
@@ -8,7 +8,7 @@
 <head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
     @header(title=title, description=contestDescription, sitename=contestName, url=pageUrl, contestUrl=contestUrl)
 
-@basejs(firebaseappContest=firebaseappContest, firebaseappWca=firebaseappWca)
+@basejs(firebaseappContest, firebaseappContestApikey, firebaseappContestMessagingsenderid, firebaseappWca)
 
 <style>
 h3, h4 {

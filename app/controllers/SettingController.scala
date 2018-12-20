@@ -23,23 +23,23 @@ class SettingController @Inject() extends HomeController {
      * Setting: Setting / First setting / Other settings
      */
     def setting = Action {
-        Ok(views.html.setting(getContestName, getContestDescription, getContestUrl, getFirebaseappContest))
+        Ok(views.html.setting(getContestName, getContestDescription, getContestUrl, getFirebaseappContest, getFirebaseappContestApikey, getFirebaseappContestMessagingsenderid))
     }
 
     def settingfirst = Action {
-        Ok(views.html.settingfirst(getContestName, getContestDescription, getContestUrl, getFirebaseappContest))
+        Ok(views.html.settingfirst(getContestName, getContestDescription, getContestUrl, getFirebaseappContest, getFirebaseappContestApikey, getFirebaseappContestMessagingsenderid))
     }
 
     def settingemail = Action {
-        Ok(views.html.settingemail(getContestName, getContestDescription, getContestUrl, getFirebaseappContest))
+        Ok(views.html.settingemail(getContestName, getContestDescription, getContestUrl, getFirebaseappContest, getFirebaseappContestApikey, getFirebaseappContestMessagingsenderid))
     }
 
     def settingpassword = Action {
-        Ok(views.html.settingpassword(getContestName, getContestDescription, getContestUrl, getFirebaseappContest))
+        Ok(views.html.settingpassword(getContestName, getContestDescription, getContestUrl, getFirebaseappContest, getFirebaseappContestApikey, getFirebaseappContestMessagingsenderid))
     }
 
     def settingusername = Action {
-        Ok(views.html.settingusername(getContestName, getContestDescription, getContestUrl, getFirebaseappContest))
+        Ok(views.html.settingusername(getContestName, getContestDescription, getContestUrl, getFirebaseappContest, getFirebaseappContestApikey, getFirebaseappContestMessagingsenderid))
     }
 
     // トークンを生成
@@ -104,7 +104,7 @@ class SettingController @Inject() extends HomeController {
             }
         }
 
-        Ok(views.html.verify(getContestName, getContestDescription, getContestUrl, getFirebaseappContest, message, errorMessage))
+        Ok(views.html.verify(getContestName, getContestDescription, getContestUrl, getFirebaseappContest, getFirebaseappContestApikey, getFirebaseappContestMessagingsenderid, message, errorMessage))
     }
 
     def unverify = Action { request =>
@@ -122,7 +122,7 @@ class SettingController @Inject() extends HomeController {
         }
         Verifying.makeUnverify(userId, customerId)
 
-        Ok(views.html.unverify(getContestName, getContestDescription, getContestUrl, getFirebaseappContest, userId, customerId))
+        Ok(views.html.unverify(getContestName, getContestDescription, getContestUrl, getFirebaseappContest, getFirebaseappContestApikey, getFirebaseappContestMessagingsenderid, userId, customerId))
     }
 
     def verifyclick(token: String) = Action {
@@ -145,7 +145,7 @@ class SettingController @Inject() extends HomeController {
             message = "認証が完了しました。"
         }
 
-        Ok(views.html.verifyclick(userId, customerId, getContestName, getContestDescription, getContestUrl, getFirebaseappContest, message, errorMessage))
+        Ok(views.html.verifyclick(userId, customerId, getContestName, getContestDescription, getContestUrl, getFirebaseappContest, getFirebaseappContestApikey, getFirebaseappContestMessagingsenderid, message, errorMessage))
     }
 
 }

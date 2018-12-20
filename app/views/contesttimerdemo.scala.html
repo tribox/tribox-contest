@@ -3,7 +3,7 @@
  * Javascript コンテストタイマー
  *@
 
-@(contestName: String, contestDescription: String, contestUrl: String, firebaseappContest: String)
+@(contestName: String, contestDescription: String, contestUrl: String, firebaseappContest: String, firebaseappContestApikey: String, firebaseappContestMessagingsenderid: String)
 
 @defining("Demo Timer") { title =>
 @defining(contestUrl + "/demo/timer") { pageUrl =>
@@ -15,7 +15,7 @@
     <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/timer.css")">
     <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/toggle.css")">
 
-@basejs(firebaseappContest)
+@basejs(firebaseappContest, firebaseappContestApikey, firebaseappContestMessagingsenderid)
 
     <script src="/assets/audiojs/audiojs/audio.tribox.js" type="text/javascript"></script>
 </head>

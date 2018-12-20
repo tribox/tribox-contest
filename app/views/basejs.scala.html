@@ -1,4 +1,4 @@
-@(firebaseappContest: String, firebaseappWca: String = "")
+@(firebaseappContest: String, firebaseappContestApikey: String, firebaseappContestMessagingsenderid: String, firebaseappWca: String = "")
 
 <script>
 window.TriboxContest = {};
@@ -209,12 +209,12 @@ var fadeIn = function(el, ms, fn) {
  */
 var app = angular.module('contestApp', ['firebase', 'ngSanitize']);
 var config = {
-    apiKey: "AIzaSyABXPV-4zWNWQabh2yA19p8IUTqHSOLyC4",
+    apiKey: "@{firebaseappContestApikey}",
     authDomain: "@{firebaseappContest}.firebaseapp.com",
     databaseURL: "https://@{firebaseappContest}.firebaseio.com",
     projectId: "@{firebaseappContest}",
     storageBucket: "@{firebaseappContest}.appspot.com",
-    messagingSenderId: "465497610065"
+    messagingSenderId: "@{firebaseappContestMessagingsenderid}"
 };
 firebase.initializeApp(config);
 var contestRef = firebase.database().ref();
