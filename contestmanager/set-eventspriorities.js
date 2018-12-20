@@ -6,17 +6,7 @@
 
 var async = require('async');
 
-var Config = require('./config.js');
-var Firebase = require('firebase');
-var contestRef = new Firebase('https://' + Config.CONTESTAPP + '.firebaseio.com/');
-
-// Create admin user
-var FirebaseTokenGenerator = require('firebase-token-generator');
-var tokenGenerator = new FirebaseTokenGenerator(Config.CONTESTAPP_SECRET);
-var token = tokenGenerator.createToken(
-    { uid: '1', some: 'arbitrary', data: 'here' },
-    { admin: true, debug: true }
-);
+var contestRef = require('./contestref.js').ref;
 
 // 競技と優先度のリスト
 var EventsPriorities = {
@@ -35,13 +25,6 @@ var EventsPriorities = {
 };
 
 var setEventsPriorities = function() {
-    // admin 権限でログインしてから操作する
-    contestRef.authWithCustomToken(token, function(error, authData) {
-        if (error) {
-            console.error('Authentication Failed!', error);
-        } else {
-            //console.log('Authenticated successfully with payload:', authData);
-
             async.each(Object.keys(EventsPriorities), function(eid, next) {
                 var priority = EventsPriorities[eid];
                 contestRef.child('events').child(eid).setPriority(priority, function(error) {
@@ -60,8 +43,5 @@ var setEventsPriorities = function() {
                     process.exit(0);
                 }
             });
-
-        }
-    });
 };
 setEventsPriorities();
