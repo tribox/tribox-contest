@@ -140,8 +140,7 @@ var appendPoints = function() {
                 if (!err) {
                     console.log('Completed! (' + count + ' records)');
                     console.log(append_log);
-                    var filename = new Date().toFormat('./appendlogs/YYYYMMDD_HH24MISS.log');
-                    //console.log(JSON.stringify(append_log, null, '    '));
+                    var filename = new Date().toFormat(Config.PATH_TO_APPENDLOGS + '/YYYYMMDD_HH24MISS.log');
                     fs.writeFileSync(filename, JSON.stringify(append_log, null, '    '));
                     process.exit(0);
                 } else {
