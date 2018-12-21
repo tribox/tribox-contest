@@ -54,3 +54,5 @@ exports.TRIBOXTEAM_POINT = TODO;
 exports.DUMMY_USERS = [
     'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'
 ];
+
+exports.PATH_TO_APPENDLOGS = '/path/to/appendlogs';
