@@ -14,6 +14,9 @@ var fmcchecker = require('./fmcchecker.js');
 
 var contestRef = require('./contestref.js').ref;
 
+require('date-utils');
+var fs = require('fs');
+
 var Contests, Events;
 
 
@@ -44,10 +47,13 @@ var appendPoints = function() {
             connectionStore.query('SET NAMES utf8', function() {
 
             var count = 0;
+            var append_log = {};
             async.eachSeries(results, function(result, next) {
+                var logging_key = result.contest_id + '-' + result.event_id + '-' + result.customer_id;
+                append_log[logging_key] = {};
                 // ポイント加算処理・メール送信
                 if (result.customer_type == 0) { // store
-                    connectionStore.query('SELECT name01, name02, email FROM dtb_customer WHERE customer_id = ?', [
+                    connectionStore.query('SELECT name01, name02, email, point FROM dtb_customer WHERE customer_id = ?', [
                         result.customer_id
                     ], function(error, results, fields) {
                         if (error) {
@@ -58,6 +64,10 @@ var appendPoints = function() {
                             // ポイント加算顧客情報
                             var name = results[0].name01 + ' ' + results[0].name02;
                             var email = results[0].email;
+                            console.log(email);
+
+                            // 進呈前ポイント数 (参考値でログに残すだけ)
+                            append_log[logging_key]['point_before'] = results[0].point;
 
                             console.log('UPDATE (id = ' + result.id + ')');
                             connectionStore.query('UPDATE dtb_customer SET point = point + ? WHERE customer_id = ?', [
@@ -96,6 +106,20 @@ var appendPoints = function() {
                                                 } else {
                                                     //console.log(stdout);
                                                     console.error(stderr);
+
+                                                    // ポイント進呈後のポイント数をログしておく (参考値)
+                                                    connectionStore.query('SELECT point FROM dtb_customer WHERE customer_id = ?', [
+                                                        result.customer_id
+                                                    ], function(error, results, fields) {
+                                                        if (error) {
+                                                            console.error(error);
+                                                            console.error('Failed getting point (after)!');
+                                                            process.exit(1);
+                                                        } else {
+                                                            append_log[logging_key]['point_after'] = results[0].point;
+                                                        }
+                                                    });
+
                                                     setTimeout(function() {
                                                         next();
                                                     }, 1000);
@@ -115,6 +139,10 @@ var appendPoints = function() {
             }, function(err) {
                 if (!err) {
                     console.log('Completed! (' + count + ' records)');
+                    console.log(append_log);
+                    var filename = new Date().toFormat('./appendlogs/YYYYMMDD_HH24MISS.log');
+                    //console.log(JSON.stringify(append_log, null, '    '));
+                    fs.writeFileSync(filename, JSON.stringify(append_log, null, '    '));
                     process.exit(0);
                 } else {
                     console.error(err);
