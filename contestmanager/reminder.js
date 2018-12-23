@@ -8,6 +8,7 @@ var Twitter = require('twitter');
 
 var Config = require('./config.js');
 
+var contestRef = require('./contestref.js').ref;
 
 // 対象のコンテスト
 var targetContest;
