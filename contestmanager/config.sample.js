@@ -55,4 +55,5 @@ exports.DUMMY_USERS = [
     'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx'
 ];
 
+exports.PATH_TO_CONTEST = '/path/to/contest';
 exports.PATH_TO_APPENDLOGS = '/path/to/appendlogs';
