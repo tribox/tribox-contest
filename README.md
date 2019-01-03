@@ -11,7 +11,7 @@ URL: https://contest.tribox.com
 * Java 8
 * Scala 2.11.8
 * Node.js v8.14.0
-* [TNoodle](https://github.com/cubing/tnoodle) v0.11.1
+* [TNoodle](https://github.com/cubing/tnoodle) v0.14.0
 * [Sarumawashi](https://github.com/kotarot/Sarumawashi)
 * [wca-importer](https://github.com/kotarot/wca-importer)
 
@@ -120,6 +120,7 @@ java -jar wca/dist/TNoodle-WCA.jar
 引数は、シーズン。例えば、20161 (2016年前半期)、20162 (2016年後半期)、20171 (2017年前半期)、......
 ```
 node contestmanager/create-season.js 20162
+node contestmanager/generate-fmcimages.js -s 20162
 ```
 
 また、`app/views/user.scala.html` を変更して、シーズン用のボタンを付ける。
