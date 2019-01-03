@@ -96,6 +96,8 @@ node contestmanager/append-points.js
 上の `collect-results.js` スクリプトを実行して該当者を待ちレコードに記録した後に実行する。
 本当に対象者が正しいことを目視で確認した後、このスクリプトを実行して実際に抽選ポイントをストアポイントに加算する。
 
+2019年1月から: 自動で実行して事後にチェックすることにした。
+
 ### :alarm_clock: 1週間に1回 -- 土曜日午後9時 (JST) 自動実行
 
 #### リマインダ
@@ -209,6 +211,9 @@ node contestmanager/update-wcaapp.js
 
 # Count participants
 5,15,25,35,45,55 * * * * /usr/bin/node /path/to/contestapp/contestmanager/count-participants.js --inprogress -save
+
+# Points
+2 22 * * 0 /usr/bin/node /path/to/contestapp/contestmanager/append-points.js
 
 # Backup
 2 0 * * * curl "https://##firebaseapp##.firebaseio.com//.json?print=pretty&auth=##AUTHTOKEN##" -o /path/to/contestapp/backup/contestapp-curl.`date +\%Y\%m\%d`.json
