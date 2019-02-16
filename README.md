@@ -107,6 +107,19 @@ node contestmanager/append-points.js
 node contestmanager/reminder.js
 ```
 
+### :alarm_clock: 1月に1回 -- 月はじめに実行 (これはcron化したい)
+
+#### バックアップのアーカイブ
+
+例えば、今が2019年2月の月はじめだとする。1月分のバックアップのアーカイブを作成する。
+```
+mkdir backup.archives/201901
+mv backup/tribox-contest-curl.201901* backup.archives/201901/
+cd backup.archives
+tar czf 201901.tar.gz 201901
+rm -rf 201901
+```
+
 ### :alarm_clock: 半年に1回程度 -- 実行
 
 一応、シーズン開始の少し前に実行する想定だが、いつやっても大丈夫。
