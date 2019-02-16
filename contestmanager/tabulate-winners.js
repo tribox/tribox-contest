@@ -199,7 +199,8 @@ var checkWinners = function() {
             'e333fm': [5000, 2000, 1000],
             'eminx':  [5000, 2000, 1000],
             'epyram': [5000, 2000, 1000],
-            'esq1':   [5000, 2000, 1000]
+            'esq1':   [5000, 2000, 1000],
+            'eskewb': [5000, 2000, 1000]
         };
         Object.keys(Events).forEach(function(eventId) {
             for (var i = 0; i < 3; i++) {
