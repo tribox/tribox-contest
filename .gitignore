@@ -18,6 +18,7 @@ target
 /contestmanager/node_modules*
 /contestmanager/config.js
 /contestmanager/secret/serviceAccountKey.json
+/contestmanager/secret/wca/serviceAccountKey.json
 /contestmanager/appendlogs/*.log
 
 # FMC images
