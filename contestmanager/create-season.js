@@ -114,7 +114,8 @@ contestRef.child('events').once('value', function(snap) {
             contest.events.forEach(function(eventId) {
                 url += '&' + eventId + '=' + Events[eventId].scramblePuzzle + '*' + Events[eventId].attempts;
             });
-            //console.log(url);
+            console.log('Creating scrambles for ' + contestId + ' ...');
+            console.log('  ' + url);
 
             var options = {
                 'url': url,
@@ -133,6 +134,7 @@ contestRef.child('events').once('value', function(snap) {
                         var _scrambles = result.scrambles;
                         scrambles[contestId][_title] = _scrambles;
                     });
+                    console.log('done for ' + contestId);
                     next();
                 } else {
                     console.error(error);
@@ -147,7 +149,7 @@ contestRef.child('events').once('value', function(snap) {
                 saveScrambles(scrambles, scramblesIndexes, function() {
                     // ダミー結果を生成
                     saveResults(contests, contestsIndexes, function() {
-                        console.log('Completed');
+                        console.log('Completed ALL!');
                         process.exit(0);
                     });
                 });
@@ -176,10 +178,10 @@ var saveContests = function(contests, contestsIndexes, callback) {
                     } else {
                         contestRef.child('contests').child(contestId).set(contests[contestId], function(error) {
                             if (error) {
-                                console.error('Set failed');
+                                console.error('Set failed... contest: ' + contestId);
                                 process.exit(1);
                             } else {
-                                console.log('Set succeeded');
+                                console.log('Set succeeded... contest: ' + contestId);
                                 next();
                             }
                         });
@@ -220,10 +222,10 @@ var saveScrambles = function(scrambles, scramblesIndexes, callback) {
                     } else {
                         contestRef.child('scrambles').child(contestId).set(scrambles[contestId], function(error) {
                             if (error) {
-                                console.error('Set failed');
+                                console.error('Set failed... scramble: ' + contestId);
                                 process.exit(1);
                             } else {
-                                console.log('Set succeeded');
+                                console.log('Set succeeded... scramble: ' + contestId);
                                 next();
                             }
                         });
@@ -272,10 +274,10 @@ var saveResults = function(contests, contestsIndexes, callback) {
                         });
                         contestRef.child('results').child(contestId).set(dummyResults, function(error) {
                             if (error) {
-                                console.error('Set failed');
+                                console.error('Set failed; result: ' + contestId);
                                 process.exit(1);
                             } else {
-                                console.log('Set succeeded');
+                                console.log('Set succeeded; result: ' + contestId);
                                 next();
                             }
                         });

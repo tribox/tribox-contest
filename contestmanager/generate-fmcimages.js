@@ -87,7 +87,7 @@ var getScrambles = function() {
         });
         console.log(countContests + ' contests in the target season.');
 
-        // 画像の取得とFirebaseへの書き込みが多分非同期に実行されるので待つ (時間ないので無理やり実装)
+        // 画像の取得とFirebaseへの書き込みが非同期に実行されるので待つ (時間ないので無理やり実装)
         setTimeout(function() {
             process.exit(0);
         }, 30000);
