@@ -25,27 +25,61 @@ var Persons = null;
 
 // Persons と Countries をアップデート
 var update = function() {
-            var CountriesData = {};
-            Countries.forEach(function(data) {
-                CountriesData[data.id] = data;
-            });
-            var PersonsData = {};
-            Persons.forEach(function(data) {
-                PersonsData[data.id] = data;
-            });
+    // Countries
+    var CountriesData = {};
+    Countries.forEach(function(data) {
+        CountriesData[data.id] = data;
+    });
 
-            wcaRef.set({
-                'countries': CountriesData,
-                'persons': PersonsData
-            }, function(error) {
-                if (error) {
-                    console.error(error);
+    // Persons はまとめて入れてしまうとデータサイズが大きすぎてエラーとなってしまうから適当に分割させる
+    var PersonsData = [];
+    var personIndex = 0;
+    var batchIndex = -1;
+    Persons.forEach(function(data) {
+        if ((personIndex % 10000) == 0) {
+            batchIndex++;
+            PersonsData[batchIndex] = {};
+        }
+        PersonsData[batchIndex][data.id] = data;
+        personIndex++;
+    });
+    console.log(personIndex + ' persons are divided into ' + (batchIndex + 1) + ' batches.');
+
+    // Countries をセット
+    wcaRef.child('countries').set(CountriesData, function(error) {
+        if (error) {
+            console.error(error);
+            process.exit(1);
+        } else {
+            console.log('Completed setting countries!');
+
+            // Persons をセット
+            var batchNum = 1;
+            async.eachSeries(PersonsData, function(batchPersonsData, next) {
+                wcaRef.child('persons').update(batchPersonsData, function(error) {
+                    if (error) {
+                        console.error(error);
+                        process.exit(1);
+                    } else {
+                        console.log('Completed updating persons... batch ' + batchNum);
+                        batchNum++;
+                        next();
+                    }
+                });
+
+            }, function(err) {
+                if (err) {
+                    console.error(err);
                     process.exit(1);
                 } else {
-                    console.log('Completed updating!');
+                    console.log('Completed updating all persons!');
                     process.exit(0);
                 }
             });
+
+        }
+    });
+
 };
 
 // Persons と Countries を取得
