@@ -581,7 +581,7 @@ var collectResults = function() {
                         // 当選者抽選
                         else if (argvrun.options.lotteryall || argvrun.options.lottery) {
                             shuffle(lotteryTargets);
-                            for (var i = 0, l = Math.min(Config.NUM_LOTTERY, lotteryTargets.length); i < l; i++) {
+                            for (var i = 0, l = Math.min(Config.NUM_LOTTERY_EVENT[eventId], lotteryTargets.length); i < l; i++) {
                                 ready[eventId][lotteryTargets[i]]['lottery'] = true;
                             }
                         }

@@ -44,8 +44,24 @@ exports.PATH_TO_SARUMAWASHI = '/path/to/Sarumawashi';
 exports.SP = {
     1: 20, 2: 15, 3: 12, 4: 10, 5: 8, 6: 7, 7: 6, 8: 5, 9: 4, 10: 3, 11: 2, 12: 1
 };
-// 各競技ごとの当選者数
+// 当選者数
 exports.NUM_LOTTERY = 3;
+// 各種目ごとの当選者数
+exports.NUM_LOTTERY_EVENT = {
+    'e333': 22,
+    'e444': 12,
+    'e555': 8,
+    'e666': 5,
+    'e777': 4,
+    'e222': 12,
+    'e333bf': 4,
+    'e333oh': 8,
+    'e333fm': 3,
+    'eminx': 5,
+    'epyram': 8,
+    'eskewb': 5,
+    'esq1': 4
+};
 // 抽選ポイント数
 exports.LOTTERY_POINT = 100;
 // 契約アカウントへ加算するポイント数

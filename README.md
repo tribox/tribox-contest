@@ -190,6 +190,7 @@ node contestmanager/update-wcaapp.js
 (3) `contestmanager/create-season.js` のデフォルトの競技を変更（追加）する。  
 (4) `app/controllers/ContestController.scala` のパズルのカテゴリを変更（追加）する。  
 (5) `contestmanager/create-season.js` を実行する（詳細なやり方は上の方に書いてある）。  
+(6) `contentmanager/config.js` (sampleも) の当選者数を設定する。
 
 
 ## Abuse 関係
