@@ -21,7 +21,7 @@ URL: https://contest.tribox.com
 Install required node modules:
 ```
 cd contestmanager
-npm install alg@0.2.0 argv@0.0.2 async@2.0.0 date-utils@1.2.21 firebase@5.7.0 firebase-admin@6.4.0 mysql@2.11.1 nanoid@2.0.0 request@2.72.0 twitter@1.3.0
+npm install
 ```
 
 コンフィグファイルを設定する:
