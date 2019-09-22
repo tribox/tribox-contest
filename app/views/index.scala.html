@@ -119,7 +119,10 @@
             </thead>
             <tbody>
                 <tr ng-repeat="e in inProgressContest.events">
-                    <td>{{ events[e].name }}</td>
+                    <td>
+                        <span class="cubing-icon event-{{ e | removeHead }}" style="vertical-align: baseline; font-size: 18px;"></span>
+                        {{ events[e].name }}
+                    </td>
                     <td>{{ events[e].method | uppercaseHead }} of {{ events[e].attempts }}</td>
                     <td>
                         <a class="font-bold" href="/contest/{{ inProgressContest.contestId }}/{{ e | removeHead }}" ng-if="authData != null && eventsDone[e] == false"><i class="fa fa-play-circle"></i> 参加する</a>
