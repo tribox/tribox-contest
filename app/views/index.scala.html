@@ -106,7 +106,8 @@
         <h4><a href="/contest/{{ inProgressContest.contestId }}">{{ inProgressContest.contestName }}</a></h4>
 
         <p>
-            <i class="fa fa-calendar"></i> 開催期間: <b>{{ inProgressContest.beginAt | toDate }}</b> ~ <b>{{ inProgressContest.endAt | toDate }}</b>
+            <i class="fa fa-calendar"></i> 開催期間: <b>{{ inProgressContest.beginAt | toDate }}</b> ~ <b>{{ inProgressContest.endAt | toDate }}</b><br>
+            <i class="fa fa-clock-o"></i> 残り時間: <span>{{ remainingTime }}</span>
         </p>
 
         <table class="table table-bordered tribox-contest">
@@ -119,7 +120,10 @@
             </thead>
             <tbody>
                 <tr ng-repeat="e in inProgressContest.events">
-                    <td>{{ events[e].name }}</td>
+                    <td>
+                        <span class="cubing-icon event-{{ e | removeHead }}" style="vertical-align: baseline; font-size: 18px;"></span>
+                        {{ events[e].name }}
+                    </td>
                     <td>{{ events[e].method | uppercaseHead }} of {{ events[e].attempts }}</td>
                     <td>
                         <a class="font-bold" href="/contest/{{ inProgressContest.contestId }}/{{ e | removeHead }}" ng-if="authData != null && eventsDone[e] == false"><i class="fa fa-play-circle"></i> 参加する</a>
@@ -201,7 +205,7 @@
 
 @authjs(redirectLogin="", redirectLogout="", checkFirst=true)
 <script>
-app.controller('IndexCtrl', ['$scope', '$timeout', function($scope, $timeout) {
+app.controller('IndexCtrl', ['$scope', '$timeout', '$interval', function($scope, $timeout, $interval) {
 firebase.auth().onAuthStateChanged(function(authData) {
     $scope.events = null;
     $scope.inProgress = null;
@@ -254,6 +258,29 @@ firebase.auth().onAuthStateChanged(function(authData) {
                 $scope.indexLoaded = true;
             });
         }
+        $interval(function() {
+            var nowDate = new Date();
+            var nowTime = nowDate.getTime();
+            var remainingTime = Math.floor((inProgressContest.endAt - nowTime) / 1000);
+            if (remainingTime > 0) {
+                var remainingSeconds = remainingTime % 60;
+                var remainingMinutes = Math.floor(remainingTime / 60) % 60;
+                var remainingHours = Math.floor(remainingTime / 3600) % 24;
+                var remainingDays = Math.floor(remainingTime / 86400);
+                var remainingStr = '';
+                if (remainingDays > 0) {
+                    remainingStr += remainingDays + '日 ';
+                }
+                if (remainingDays > 0 || remainingHours > 0) {
+                    remainingStr += remainingHours + '時間 ';
+                }
+                remainingStr += remainingMinutes + '分 ';
+                remainingStr += remainingSeconds + '秒';
+                $scope.remainingTime = remainingStr;
+            } else {
+                $scope.remainingTime = '終了しています';
+            }
+        }, 1000);
     });
     });
     }, function(error) {
