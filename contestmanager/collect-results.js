@@ -365,7 +365,8 @@ var writeResults = function() {
             console.log('Completed updating user histories! (' + count + ' records)');
 
             var readyForMysql = [];
-            if (argvrun.options.lottery || argvrun.options.lotteryall) {
+            // 通常の抽選
+            if (argvrun.options.lottery) {
                 // 抽選ポイントを加算するための待ちレコードを作成する
                 Object.keys(ready).forEach(function(eventId) {
                     Object.keys(ready[eventId]).forEach(function(userId) {
@@ -379,8 +380,31 @@ var writeResults = function() {
                     });
                 });
             }
+            // 全員当選
+            if (argvrun.options.lotteryall) {
+                // 抽選ポイントを加算するための待ちレコードを作成する
+                Object.keys(ready).forEach(function(eventId) {
+                    Object.keys(ready[eventId]).forEach(function(userId) {
+                        if (ready[eventId][userId].lottery) {
+                            if (eventId == 'e333') {
+                                readyForMysql.push({
+                                    'eventId': eventId, 'userId': userId,
+                                    'customerId': Usersecrets[userId].triboxStoreCustomerId,
+                                    'point': Config.LOTTERY_POINT_SP, 'pointType': 0
+                                });
+                            } else {
+                                readyForMysql.push({
+                                    'eventId': eventId, 'userId': userId,
+                                    'customerId': Usersecrets[userId].triboxStoreCustomerId,
+                                    'point': Config.LOTTERY_POINT, 'pointType': 0
+                                });
+                            }
+                        }
+                    });
+                });
+            }
+            // 契約アカウント当選
             if (argvrun.options.triboxteam) {
-                // 契約アカウント用
                 Object.keys(readyTriboxTeam).forEach(function(eventId) {
                     Object.keys(readyTriboxTeam[eventId]).forEach(function(userId) {
                         if (readyTriboxTeam[eventId][userId]) {
@@ -568,11 +592,17 @@ var collectResults = function() {
                                         lotteryTargets.push(userId);
                                     }
                                 }
+
+                                // 現在の当選を保存する場合
+                                //if (results[eventId][userId]['lottery']) {
+                                //    ready[eventId][userId]['lottery'] = true;
+                                //}
+
                             }
 
                         });
 
-                        // 当選者全員
+                        // 当選者全員 (3x3x3)
                         if (argvrun.options.lotteryall && eventId == 'e333') {
                             for (var i = 0, l = lotteryTargets.length; i < l; i++) {
                                 ready[eventId][lotteryTargets[i]]['lottery'] = true;
