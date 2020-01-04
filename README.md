@@ -138,7 +138,7 @@ node contestmanager/create-season.js 20162
 node contestmanager/generate-fmcimages.js -s 20162
 ```
 
-また、`app/views/index.scala.html` と `app/views/user.scala.html` を変更して、シーズンリンク用のボタンを付ける。
+また、`app/views/index.scala.html` と `app/views/user.scala.html` と `app/views/ranking.scala.html` を変更して、シーズンリンク用のボタンを付ける。
 
 編集後、再コンパイル (jarの再生成) が必要。
 
