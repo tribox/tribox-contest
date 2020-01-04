@@ -4,7 +4,7 @@
 
 var fmcchecker = require('./fmcchecker.js');
 
-/*var scramble = "F' D2 F D2 F2 R2 B' R2 U2 F' D B L' F2 D U2 L B2 F' L";
+var scramble = "F' D2 F D2 F2 R2 B' R2 U2 F' D B L' F2 D U2 L B2 F' L";
 var solutions = [
     "B2 L D2 R U R D' B L2 B D2 L D' L' D L D L D2 F D' B' D F' D' L B F'",
     "B2 L D2 R U R D’ B L2 B D2 L D’ L’ D L D L D2 F D’ B’ D F’ D’ L B F’",
@@ -14,12 +14,14 @@ var solutions = [
     "xxxxB2LD2RURD'BL2BD2LD'L'DLDLD2FD'B'DF'D'LBF'FFFFxyz",
     "UwD'y'B2LD2RURD'BL2BD2LD'L'DLDLD2FD'B'DF'D'LBF'FFFFxyz",
     "UwD'[u']B2LD2RURD'BL2BD2LD'L'DLDLD2FD'B'DF'D'LBF'FFFFxyz     あかさたな\n\n",
+    "UwD'[u']yyyB2LD2RURD'BL2BD2LD'L'DLDLD2FD'B'DF'D'LBF'FFFFxyz     あかさたな\n\n",
+    "UwD'yyyB2LD2RURD'BL2BD2LD'L'DLDLD2FD'B'DF'D'LBF'FFFFxyz     あかさたな\n\n",
     "DNF",
     "DNF\n\n\n\n",
     "関係ない文字だけ",
     "x",
     "逆スクランブル L' F B2 L' U2 D' F2 L B' D' F U2 R2 B R2 F2 D2 F' D2 F"
-];*/
+];
 
 // 2016後半期第1節のデータ
 /*var scramble = "R' U' F U' F2 U2 L2 U' R2 U2 L2 F2 R2 U2 F' L F2 U B2 F2 L2 B' R U' R' U' F"
@@ -88,10 +90,10 @@ var solutions = [
 ];*/
 
 // 2016後半期第2節で揃うけどDNFになったやつ
-var scramble = "R' U' F U2 F2 U R2 B2 L2 F2 D' U' B' F' L B2 F' R' B' R' U L2 F' R' U' F";
+/*var scramble = "R' U' F U2 F2 U R2 B2 L2 F2 D' U' B' F' L B2 F' R' B' R' U L2 F' R' U' F";
 var solutions = [
 "U F2 U F2 D F' U L2 U2 L U L' F2 L U' F U2 L' U' Fw L Fw' F L F' L' Fw L' Fw' F U' F D2 F' U F D2 F2 L"
-];
+];*/
 
 //var alg = require('alg');
 //var metric = { metric: "obtm" };

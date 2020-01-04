@@ -13,18 +13,12 @@ var Config = require('./config.js');
 //   * 改行             -> 空文字列
 //   * "’"             -> "'"
 //   * " "              -> 空文字列
-//   * "[u]"            -> "y" etc.
+//   * "[u]"            -> "y" etc. -> 2020年から廃止
 //   * 使用されない文字 -> 空文字列
 var replaceAlg = function(str) {
     str = str.replace(/\\n/g, '').replace(/\\r/g, '');
     str = str.replace(/ /g, '');
     str = str.replace(/’/g, "'");
-    str = str.replace(/\[r\]/g, "x").replace(/\[r'\]/g, "x'").replace(/\[r2\]/g, "x2")
-             .replace(/\[l\]/g, "x'").replace(/\[l'\]/g, "x").replace(/\[l2\]/g, "x2")
-             .replace(/\[u\]/g, "y").replace(/\[u'\]/g, "y'").replace(/\[u2\]/g, "y2")
-             .replace(/\[d\]/g, "y'").replace(/\[d'\]/g, "y").replace(/\[d2\]/g, "y2")
-             .replace(/\[f\]/g, "z").replace(/\[f'\]/g, "z'").replace(/\[f2\]/g, "z2")
-             .replace(/\[b\]/g, "z'").replace(/\[b'\]/g, "z").replace(/\[b2\]/g, "z2");
     str = str.replace(/[^FBRLUDxyz'2w]/g, '');
     return str;
 };
