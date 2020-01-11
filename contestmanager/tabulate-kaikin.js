@@ -172,7 +172,7 @@ var checkKaikin = function() {
                                 'eventName': Events[eventId].name,
                                 'countCompleted': countCompleted,
                                 'countCompletedSuccess': countCompletedSuccess,
-                                'point': 300
+                                'point': 500
                             };
                         }
                     });
