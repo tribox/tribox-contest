@@ -42,7 +42,7 @@ app.controller('AuthEmailCtrl', ['$scope', 'Auth', function($scope, Auth) {
             location.href = '@routes.SettingController.setting';
         }).catch(function(error) {
             //console.error(error);
-            $scope.error = 'メールアドレス変更できません。';
+            $scope.error = TriboxContest.convErrorCodesAlt(error.code);
         });
 
     };
