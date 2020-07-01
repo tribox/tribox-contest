@@ -57,7 +57,7 @@ var getScrambles = function() {
                 var savePath = Config.PATH_TO_CONTEST + '/public/333fm/' + scrambleId + '.png';
 
                 // TNoodle でスクランブル画像を生成して取得
-                var url = 'http://localhost:2014/view/333.png?scramble=' + scrambleEscaped;
+                var url = 'http://' + Config.TNOODLE_HOST + ':2014/view/333.png?scramble=' + scrambleEscaped;
                 var options = {
                     'url': url,
                     'method': 'GET',

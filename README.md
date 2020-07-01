@@ -124,11 +124,11 @@ rm -rf 201901
 
 一応、シーズン開始の少し前に実行する想定だが、いつやっても大丈夫。
 
-まず、別のシェルでtnoodleを立ち上げる。
+まず、別のシェルもしくは別のホストでtnoodleを立ち上げる。
 ```
 cd /path/to/tnoodle
-./tmt make dist -p wca
-java -jar wca/dist/TNoodle-WCA.jar
+./tmt make dist -p wca  # これはビルドコマンドなので不必要なら省略
+java -jar wca/dist/TNoodle-WCA.jar  # TNoodle起動
 ```
 
 スクランブルデータ生成して、firebaseデータベースに書き込む。
