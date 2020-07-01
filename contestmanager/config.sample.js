@@ -37,6 +37,9 @@ exports.ACCESS_TOKEN_SECRET = 'xxxxxxxx';
 // スクランブル用のシード値
 exports.SEED = 'xxxxxxxx';
 
+// TNoodleサーバー
+exports.TNOODLE_HOST = 'localhost';
+
 // Sarumawashi のパス (FMC の解答チェック用)
 exports.PATH_TO_SARUMAWASHI = '/path/to/Sarumawashi';
 

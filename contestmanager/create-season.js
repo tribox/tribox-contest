@@ -110,7 +110,7 @@ contestRef.child('events').once('value', function(snap) {
         async.eachSeries(contestsIndexes, function(contestId, next) {
             var contest = contests[contestId];
 
-            var url = 'http://localhost:2014/scramble/.json?seed=' + contestId + Config.SEED;
+            var url = 'http://' + Config.TNOODLE_HOST + ':2014/scramble/.json?seed=' + contestId + Config.SEED;
             contest.events.forEach(function(eventId) {
                 url += '&' + eventId + '=' + Events[eventId].scramblePuzzle + '*' + Events[eventId].attempts;
             });
