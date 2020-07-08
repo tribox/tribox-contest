@@ -51,19 +51,19 @@ exports.SP = {
 exports.NUM_LOTTERY = 3;
 // 各種目ごとの当選者数
 exports.NUM_LOTTERY_EVENT = {
-    'e333': 22,
-    'e444': 12,
-    'e555': 8,
-    'e666': 5,
-    'e777': 4,
-    'e222': 12,
-    'e333bf': 4,
-    'e333oh': 8,
-    'e333fm': 3,
-    'eminx': 5,
-    'epyram': 8,
-    'eskewb': 5,
-    'esq1': 4
+    'e333': 40,
+    'e444': 18,
+    'e555': 13,
+    'e666': 6,
+    'e777': 5,
+    'e222': 20,
+    'e333bf': 5,
+    'e333oh': 14,
+    'e333fm': 4,
+    'eminx': 9,
+    'epyram': 13,
+    'eskewb': 8,
+    'esq1': 6
 };
 // 抽選ポイント数
 exports.LOTTERY_POINT = 100;
