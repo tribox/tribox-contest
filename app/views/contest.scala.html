@@ -117,15 +117,15 @@
                     <thead>
                         <tr>
                             <th>順位</th>
-                            <th>獲得SP</th>
+                            <th>SP</th>
                             <th>名前</th>
                             <th class="mb-hide">所属</th>
-                            <th ng-if="e != 'e333fm' && (events[e].method == 'average' || events[e].method == 'mean')">平均記録</th>
-                            <th ng-if="e != 'e333fm' && events[e].method == 'best'">最高記録</th>
+                            <th ng-if="e != 'e333fm' && (events[e].method == 'average' || events[e].method == 'mean')">記録</th>
+                            <th ng-if="e != 'e333fm' && events[e].method == 'best'">記録</th>
                             <th ng-if="e == 'e333fm'">記録</th>
-                            <th class="mb-hide" ng-if="e != 'e333fm'">個々の記録</th>
-                            <th class="mb-hide" ng-if="e == 'e333fm'">解答・解説コメント</th>
-                            <th>使用キューブ</th>
+                            <th class="mb-hide" ng-if="e != 'e333fm'"></th>
+                            <th class="mb-hide" ng-if="e == 'e333fm'"></th>
+                            <th>パズル</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -140,7 +140,8 @@
                             <td class="mb-hide">{{ r.user.organization }}</td>
                             <td class="mb-hide"><b>{{ r.resultF }}</b></td>
                             <td class="tb-hide pc-hide"><a class="cursor-pointer" ng-click="showDetail(e, $index)"><b style="color: rgb(85, 85, 85);">{{ r.resultF }}</b></a></td>
-                            <td class="mb-hide" id="{{ e }}-{{ $index }}-show"><a class="cursor-pointer" ng-click="showDetail(e, $index)">表示</a></td>
+                            <td class="mb-hide" id="{{ e }}-{{ $index }}-show" ng-if="e != 'e333fm'"><a class="cursor-pointer" ng-click="showDetail(e, $index)">詳細</a></td>
+                            <td class="mb-hide" id="{{ e }}-{{ $index }}-show" ng-if="e == 'e333fm'"><a class="cursor-pointer" ng-click="showDetail(e, $index)">解答</a></td>
                             <td ng-show="r.puzzle.type == 'database'">
                                 <a href="http://store.tribox.com/products/detail.php?product_id={{ r.puzzle.product }}" target="_blank">{{ r.puzzleF }}</a>
                             </td>
