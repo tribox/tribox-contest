@@ -182,7 +182,7 @@ var drawChart = function(dataall, data) {
                         <img src="@routes.Assets.versioned("flags/flags-iso/shiny/24")/{{ r.user.iso2 }}.png" height="24" style="vertical-align: middle;" ng-show="r.user.iso2">
                         <a href="/user/{{ r.user.username }}">{{ r.user.displayname }}</a>
                     </td>
-                    <td class="mb-hide">{{ r.user.organization }}</td>
+                    <td class="mb-hide ellipsis">{{ r.user.organization }}</td>
                     <td class="mb-hide"><b>{{ r.resultF }}</b></td>
                     <td class="tb-hide pc-hide"><a class="cursor-pointer" ng-click="showDetail($index)"><b style="color: rgb(85, 85, 85);">{{ r.resultF }}</b></a></td>
                     @if(eid != "333fm") {
