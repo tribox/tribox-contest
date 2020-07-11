@@ -41,16 +41,16 @@
             <a href="@routes.HomeController.about">トリコンとは</a>
         </div>
         <div id="main-menu-2" class="col sm-3">
-            <a href="/contest/{{ inProgress.lastContest | removeHead }}" ng-show="inProgress.lastContest != 'cxxxxxxx'">最新コンテスト結果</a>
-            <a href="#" ng-show="inProgress.lastContest == 'cxxxxxxx'">最新コンテスト結果</a>
+            <a href="/contest/{{ inProgress.lastContest | removeHead }}" ng-show="inProgress.lastContest != 'cxxxxxxx'">リザルト</a>
+            <a href="#" ng-show="inProgress.lastContest == 'cxxxxxxx'">リザルト</a>
         </div>
         <div id="main-menu-3" class="col sm-3">
-            <a href="/ranking/{{ inProgressContest.year }}{{ inProgressContest.season }}" ng-show="inProgress.lastContest != 'cxxxxxxx'">シーズンランキング</a>
-            <a href="#" ng-show="inProgress.lastContest == 'cxxxxxxx'">シーズンランキング</a>
+            <a href="/ranking/{{ inProgressContest.year }}{{ inProgressContest.season }}" ng-show="inProgress.lastContest != 'cxxxxxxx'">SPランキング</a>
+            <a href="#" ng-show="inProgress.lastContest == 'cxxxxxxx'">SPランキング</a>
         </div>
         <div id="main-menu-4" class="col sm-3">
-            <a href="/ranking/{{ inProgressContest.year }}{{ inProgressContest.season }}/puzzle" ng-show="inProgress.lastContest != 'cxxxxxxx'">パズル使用率ランキング</a>
-            <a href="#" ng-show="inProgress.lastContest == 'cxxxxxxx'">パズル使用率ランキング</a>
+            <a href="/ranking/{{ inProgressContest.year }}{{ inProgressContest.season }}/puzzle" ng-show="inProgress.lastContest != 'cxxxxxxx'">パズルシェア</a>
+            <a href="#" ng-show="inProgress.lastContest == 'cxxxxxxx'">パズルシェア</a>
         </div>
     </div>
 <script>
