@@ -161,14 +161,8 @@ var drawChart = function(dataall, data) {
                     <th>SP</th>
                     <th>名前</th>
                     <th class="mb-hide">所属</th>
-                    @if(eid != "333fm") {
-                        <th ng-if="events.e@{eid}.method == 'average' || events.e@{eid}.method == 'mean'">記録</th>
-                        <th ng-if="events.e@{eid}.method == 'best'">記録</th>
-                        <th class="mb-hide"></th>
-                    } else {
-                        <th>記録</th>
-                        <th class="mb-hide"></th>
-                    }
+                    <th>記録</th>
+                    <th class="mb-hide"></th>
                     <th>パズル</th>
                     <th><i class="fa fa-video-camera"></i></th>
                 </tr>
