@@ -36,7 +36,8 @@ $subject = '[tribox Contest] 不正記録判断のため記録削除のお知ら
 $body = $to_name . " 様\n\n"
       . "tribox Contest " . $contest_year . " ". $contest_season . " "
       . $contest_num . "節 " . $event_name . "種目 "
-      . "におけるあなたの記録が不正と判断されたため、削除されました。\n\n"
+      . "におけるあなたの記録が不正と判断されたため、削除されました。\n"
+      . "参加者本人が小さなお子様である場合、保護者の皆様にはその監督をお願いいたします。\n\n"
       . "triboxコンテスト\n"
       . "https://contest.tribox.com\n";
 $res = mb_send_mail($to_email, $subject, $body, $header);
