@@ -369,6 +369,13 @@ tr.row-detail {
     color: #E3CF7A;
 }
 
+td.ellipsis {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 30%;
+    max-width: 0;
+}
 
 /**
  * Profile table
