@@ -1,12 +1,12 @@
-@(contestName: String, contestDescription: String, contestUrl: String, firebaseappContest: String, firebaseappContestApikey: String, firebaseappContestMessagingsenderid: String, googleVerification: String)
+@(contestName: String, contestDescription: String, contestUrl: String, firebaseappContest: String, firebaseappContestApikey: String, firebaseappContestMessagingsenderid: String, googleVerification: String, uri: String, event: String)
 
 @defining("") { title =>
-@defining(contestUrl + "/") { pageUrl =>
+@defining(contestUrl + uri) { pageUrl =>
 
 <!DOCTYPE html>
 <html lang="ja" ng-app="contestApp">
 <head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
-    @header(title=title, description=contestDescription, sitename=contestName, url=pageUrl, contestUrl=contestUrl, googleVerification=googleVerification)
+    @header(title=title, description=contestDescription, sitename=contestName, url=pageUrl, contestUrl=contestUrl, googleVerification=googleVerification, event=event)
     <link rel="stylesheet" media="screen" href="@routes.Assets.versioned("stylesheets/modal.css")">
 
 @basejs(firebaseappContest, firebaseappContestApikey, firebaseappContestMessagingsenderid)
@@ -345,6 +345,7 @@ firebase.auth().onAuthStateChanged(function(authData) {
     };
     modalOverlayElem.onclick = closeModal;
     modalLogoutCloseElem.onclick = closeModal;
+
 
 }); // onAuthStateChange
 }]);
