@@ -43,8 +43,10 @@ class HomeController @Inject() extends Controller {
     /**
      * Home
      */
-    def index = Action {
-        Ok(views.html.index(getContestName, getContestDescription, getContestUrl, getFirebaseappContest, getFirebaseappContestApikey, getFirebaseappContestMessagingsenderid, getGoogleVerification))
+    def index = Action { request =>
+        var event = "";
+        if(request.queryString.contains("e")) event = request.queryString("e")(0);
+        Ok(views.html.index(getContestName, getContestDescription, getContestUrl, getFirebaseappContest, getFirebaseappContestApikey, getFirebaseappContestMessagingsenderid, getGoogleVerification, request.uri, event))
     }
 
     /**
