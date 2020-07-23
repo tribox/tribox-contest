@@ -291,10 +291,7 @@ firebase.auth().onAuthStateChanged(function(authData) {
                 if (snapEvents.exists() && (snapEvents.val())[qe]) {
                     $timeout(function() {
                         $scope.justDone = (snapEvents.val())[qe].name;
-                        $scope.justDoneText = encodeURIComponent(
-                            'tribox Contest 第' + contest.number + '節 (' + contest.year + season + ') の ' +
-                            (snapEvents.val())[qe].name + ' に参加しました! 参加締切は毎週日曜21時です。'
-                        );
+                        $scope.justDoneText = (snapEvents.val())[qe].name + ' に参加しました！%0a' + contest.contestName + '%0a' + '締め切りは毎週日曜21時です。';
                         // うまくDOMのサイズが取得できないときがあるので何回か呼ぶ
                         showModalDone();
                         for (var delay = 1; delay <= 20; delay++) {
