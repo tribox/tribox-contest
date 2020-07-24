@@ -1,4 +1,4 @@
-@(title: String = "", description: String = "", sitename: String = "", url: String = "", contestUrl: String = "", userScalable: Boolean = true, googleVerification: String = "")
+@(title: String = "", description: String = "", sitename: String = "", url: String = "", contestUrl: String = "", userScalable: Boolean = true, googleVerification: String = "", event: String = "")
 
     <meta charset="UTF-8">
     @if(userScalable) {
@@ -34,16 +34,20 @@
         <meta property="og:description" content="@description">
         <meta property="og:locale" content="ja_JP">
 
-        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:card" content="summary">
         <meta name="twitter:site" content="@sitename">
         <meta name="twitter:creator" content="@@triboxContest">
         @if(title.isEmpty) {
-            <meta name="twitter:title" content="@sitename">
+            <meta name="twitter:title" content="トリコン: tribox Contest">
         } else {
             <meta name="twitter:title" content="@title">
         }
-        <meta name="twitter:description" content="@description">
-        <meta name="twitter:image:src" content="@{contestUrl}@routes.Assets.versioned("images/triboxContest_image.png")">
+        <meta name="twitter:description" content="スピードキューブのオンラインコンテスト「トリコン」へようこそ！">
+        @if(event != ""){
+            <meta name="twitter:image:src" content="@{contestUrl}@routes.Assets.versioned("images/twitter_card/"+{{event}}+".png")">
+        } else {
+            <meta name="twitter:image:src" content="@{contestUrl}@routes.Assets.versioned("images/triboxContest_image_202007.png")">
+        }
 
         <link rel="canonical" href="@url">
     }

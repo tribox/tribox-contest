@@ -31,7 +31,7 @@
                 <i class="fa fa-check"></i>
                 "{{ justDone }}" の結果送信が完了しました。<br>
                 結果発表まではタイムの公開をお控えください。<br>
-                <a href="http://twitter.com/share?url=@{contestUrl}%2F&text={{ justDoneText }}&related=triboxContest" class="btn btn-tweet" target="_blank">
+                <a href="http://twitter.com/share?url=@{contestUrl}%2F%3Fe%3D{{ justDoneEvent }}&text={{ justDoneText }}&related=triboxContest" class="btn btn-tweet" target="_blank">
                     <i class="fa fa-twitter"></i> Tweet</a>
             </p>
             <p>
@@ -196,6 +196,8 @@ firebase.auth().onAuthStateChanged(function(authData) {
     $scope.justSuspended = null;
     $scope.justDone = null;
     $scope.justDoneText = '';
+    $scope.justDoneEvent = '';
+
     $scope.contestIndexLoaded = true;
 
     $scope.currentContest = '@{cid}';
@@ -276,6 +278,7 @@ firebase.auth().onAuthStateChanged(function(authData) {
 
         } else if (vars.done) {
             var qe = 'e' + vars.done;
+            $scope.justDoneEvent = vars.done;
             contestRef.child('contests').child('c@{cid}').once('value', function(snapContest) {
                 var contest = snapContest.val();
                 var season = '';
@@ -288,10 +291,7 @@ firebase.auth().onAuthStateChanged(function(authData) {
                 if (snapEvents.exists() && (snapEvents.val())[qe]) {
                     $timeout(function() {
                         $scope.justDone = (snapEvents.val())[qe].name;
-                        $scope.justDoneText = encodeURIComponent(
-                            'tribox Contest 第' + contest.number + '節 (' + contest.year + season + ') の ' +
-                            (snapEvents.val())[qe].name + ' に参加しました! 参加締切は毎週日曜21時です。'
-                        );
+                        $scope.justDoneText = (snapEvents.val())[qe].name + ' に参加しました！%0a' + contest.contestName + '%0a' + '締め切りは毎週日曜21時です。';
                         // うまくDOMのサイズが取得できないときがあるので何回か呼ぶ
                         showModalDone();
                         for (var delay = 1; delay <= 20; delay++) {
