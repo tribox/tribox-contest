@@ -56,8 +56,14 @@ argv.option([
     {
         name: 'lotteryall',
         type: 'boolean',
-        description: 'Set lottery to all verified users in 333',
+        description: 'Set lottery to all verified users who participate in 333',
         example: "'collect-results.js --lotteryall'"
+    },
+    {
+        name: 'lottery444',
+        type: 'boolean',
+        description: 'Set lottery to all verified users who participate in 444',
+        example: "'collect-results.js --lottery444'"
     },
     {
         name: 'resetlottery',
@@ -380,13 +386,36 @@ var writeResults = function() {
                     });
                 });
             }
-            // 全員当選
+            // 全員当選 (333)
             if (argvrun.options.lotteryall) {
                 // 抽選ポイントを加算するための待ちレコードを作成する
                 Object.keys(ready).forEach(function(eventId) {
                     Object.keys(ready[eventId]).forEach(function(userId) {
                         if (ready[eventId][userId].lottery) {
                             if (eventId == 'e333') {
+                                readyForMysql.push({
+                                    'eventId': eventId, 'userId': userId,
+                                    'customerId': Usersecrets[userId].triboxStoreCustomerId,
+                                    'point': Config.LOTTERY_POINT_SP, 'pointType': 0
+                                });
+                            } else {
+                                readyForMysql.push({
+                                    'eventId': eventId, 'userId': userId,
+                                    'customerId': Usersecrets[userId].triboxStoreCustomerId,
+                                    'point': Config.LOTTERY_POINT, 'pointType': 0
+                                });
+                            }
+                        }
+                    });
+                });
+            }
+            // 全員当選 (444)
+            if (argvrun.options.lottery444) {
+                // 抽選ポイントを加算するための待ちレコードを作成する
+                Object.keys(ready).forEach(function(eventId) {
+                    Object.keys(ready[eventId]).forEach(function(userId) {
+                        if (ready[eventId][userId].lottery) {
+                            if (eventId == 'e444') {
                                 readyForMysql.push({
                                     'eventId': eventId, 'userId': userId,
                                     'customerId': Usersecrets[userId].triboxStoreCustomerId,
@@ -418,7 +447,7 @@ var writeResults = function() {
                 });
             }
 
-            if (argvrun.options.lottery || argvrun.options.lotteryall || argvrun.options.triboxteam) {
+            if (argvrun.options.lottery || argvrun.options.lotteryall || argvrun.options.lottery444 || argvrun.options.triboxteam) {
                 console.dir(readyForMysql);
 
                 var countLottery = 0;
@@ -586,8 +615,14 @@ var collectResults = function() {
                                     }
                                 }
                             }
-                            // 当選者候補 (全員当選・DNFも含む)
+                            // 333当選者候補 (全員当選・DNFも含む)
                             if (argvrun.options.lotteryall) {
+                                if (Users[userId].isTriboxCustomer) {
+                                    lotteryTargets.push(userId);
+                                }
+                            }
+                            // 444当選者候補 (全員当選・DNFも含む)
+                            if (argvrun.options.lottery444) {
                                 if (Users[userId].isTriboxCustomer) {
                                     lotteryTargets.push(userId);
                                 }
@@ -604,6 +639,12 @@ var collectResults = function() {
 
                     // 当選者全員 (3x3x3)
                     if (argvrun.options.lotteryall && eventId == 'e333') {
+                        for (var i = 0, l = lotteryTargets.length; i < l; i++) {
+                            ready[eventId][lotteryTargets[i]]['lottery'] = true;
+                        }
+                    }
+                    // 当選者全員 (4x4x4)
+                    else if (argvrun.options.lottery444 && eventId == 'e444') {
                         for (var i = 0, l = lotteryTargets.length; i < l; i++) {
                             ready[eventId][lotteryTargets[i]]['lottery'] = true;
                         }
