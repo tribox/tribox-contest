@@ -56,8 +56,14 @@ argv.option([
     {
         name: 'lotteryall',
         type: 'boolean',
-        description: 'Set lottery to all verified users in 333',
+        description: 'Set lottery to all verified users who participate in 333',
         example: "'collect-results.js --lotteryall'"
+    },
+    {
+        name: 'lottery444',
+        type: 'boolean',
+        description: 'Set lottery to all verified users who participate in 444',
+        example: "'collect-results.js --lottery444'"
     },
     {
         name: 'resetlottery',
@@ -380,13 +386,36 @@ var writeResults = function() {
                     });
                 });
             }
-            // 全員当選
+            // 全員当選 (333)
             if (argvrun.options.lotteryall) {
                 // 抽選ポイントを加算するための待ちレコードを作成する
                 Object.keys(ready).forEach(function(eventId) {
                     Object.keys(ready[eventId]).forEach(function(userId) {
                         if (ready[eventId][userId].lottery) {
                             if (eventId == 'e333') {
+                                readyForMysql.push({
+                                    'eventId': eventId, 'userId': userId,
+                                    'customerId': Usersecrets[userId].triboxStoreCustomerId,
+                                    'point': Config.LOTTERY_POINT_SP, 'pointType': 0
+                                });
+                            } else {
+                                readyForMysql.push({
+                                    'eventId': eventId, 'userId': userId,
+                                    'customerId': Usersecrets[userId].triboxStoreCustomerId,
+                                    'point': Config.LOTTERY_POINT, 'pointType': 0
+                                });
+                            }
+                        }
+                    });
+                });
+            }
+            // 全員当選 (444)
+            if (argvrun.options.lottery444) {
+                // 抽選ポイントを加算するための待ちレコードを作成する
+                Object.keys(ready).forEach(function(eventId) {
+                    Object.keys(ready[eventId]).forEach(function(userId) {
+                        if (ready[eventId][userId].lottery) {
+                            if (eventId == 'e444') {
                                 readyForMysql.push({
                                     'eventId': eventId, 'userId': userId,
                                     'customerId': Usersecrets[userId].triboxStoreCustomerId,
@@ -418,7 +447,7 @@ var writeResults = function() {
                 });
             }
 
-            if (argvrun.options.lottery || argvrun.options.lotteryall || argvrun.options.triboxteam) {
+            if (argvrun.options.lottery || argvrun.options.lotteryall || argvrun.options.lottery444 || argvrun.options.triboxteam) {
                 console.dir(readyForMysql);
 
                 var countLottery = 0;
@@ -471,46 +500,323 @@ var writeResults = function() {
 // 順位、SP、当選の記録をリセットする
 // ただし、当選のリセットは当選リセットのオプションがあるときのみ
 var resetResults = function() {
+    contestRef.child('results').child(targetContest).once('value', function(snapResults) {
+        var results = snapResults.val();
+
+        var resets = [];
+        Object.keys(results).forEach(function(eid) {
+            Object.keys(results[eid]).forEach(function(uid) {
+                if (!(results[eid][uid]._dummy)) {
+                    resets.push({ 'eid': eid, 'uid': uid });
+                }
+            });
+        });
+        //console.dir(resets);
+
+        // 実行
+        async.each(resets, function(r, next) {
+            var updateData;
+            if (argvrun.options.resetlottery) {
+                updateData = {
+                    'place': null,
+                    'seasonPoint': null,
+                    'lottery': null
+                };
+            } else {
+                updateData = {
+                    'place': null,
+                    'seasonPoint': null
+                };
+            }
+            contestRef.child('results').child(targetContest).child(r.eid).child(r.uid).update(updateData, function(error) {
+                if (error) {
+                    console.error(error);
+                    process.exit(1);
+                } else {
+                    next();
+                }
+            });
+        }, function(err) {
+            if (!err) {
+                console.log('Completed reset!');
+                writeResults();
+            } else {
+                console.error(err);
+                process.exit(1);
+            }
+        });
+
+    });
+};
+
+// コンテストの結果を集計（整形）する
+var collectResults = function() {
+    contestRef.child('users').once('value', function(snapUsers) {
+        contestRef.child('usersecrets').once('value', function(snapUsersecrets) {
+            Users = snapUsers.val();
+            Usersecrets = snapUsersecrets.val();
+
             contestRef.child('results').child(targetContest).once('value', function(snapResults) {
                 var results = snapResults.val();
 
-                var resets = [];
-                Object.keys(results).forEach(function(eid) {
-                    Object.keys(results[eid]).forEach(function(uid) {
-                        if (!(results[eid][uid]._dummy)) {
-                            resets.push({ 'eid': eid, 'uid': uid });
-                        }
-                    });
-                });
-                //console.dir(resets);
+                ready = {};
+                Object.keys(results).forEach(function(eventId) {
+                    ready[eventId] = {};
+                    readyTriboxTeam[eventId] = {};
 
-                // 実行
-                async.each(resets, function(r, next) {
-                    var updateData;
-                    if (argvrun.options.resetlottery) {
-                        updateData = {
-                            'place': null,
-                            'seasonPoint': null,
-                            'lottery': null
-                        };
-                    } else {
-                        updateData = {
-                            'place': null,
-                            'seasonPoint': null
-                        };
+                    var place = 1;
+                    var placePrev = -1;
+                    var priorityPrev = "";
+                    var lotteryTargets = [];
+                    var triboxTeamTargets = [];
+                    Object.keys(results[eventId]).forEach(function(userId) {
+                        if (results[eventId][userId]._dummy == true) {
+                            return;
+                        }
+                        ready[eventId][userId] = {};
+
+                        var priority = snapResults.child(eventId).child(userId).getPriority();
+
+                        // 計測が完了していない場合は無視する
+                        if ('endAt' in results[eventId][userId]) {
+                            // ツイート用に winner を保存しておく
+                            if (!winner && eventId == 'e333' && place == 1) {
+                                winner = userId;
+                            }
+
+                            if (results[eventId][userId]['result']['condition'] == 'DNF') {
+                                ready[eventId][userId]['place'] = place;
+                            } else {
+                                if (priority == priorityPrev) {
+                                    ready[eventId][userId]['place'] = placePrev;
+                                } else {
+                                    ready[eventId][userId]['place'] = place;
+                                    placePrev = place;
+                                }
+                                // ここで、placePrev に順位が入っている
+                                if (placePrev in Config.SP) {
+                                    ready[eventId][userId]['seasonPoint'] = Config.SP[placePrev];
+                                }
+
+                                priorityPrev = priority;
+                                place++;
+
+                                // 当選者候補 (3人選ぶやつ)
+                                if (argvrun.options.lottery) {
+                                    if (Users[userId].isTriboxCustomer) {
+                                        lotteryTargets.push(userId);
+                                    }
+                                }
+
+                                // 契約アカウント (333のみ)
+                                if (argvrun.options.triboxteam) {
+                                    if (Users[userId].isTriboxTeam && eventId == 'e333') {
+                                        triboxTeamTargets.push(userId);
+                                    }
+                                }
+                            }
+                            // 333当選者候補 (全員当選・DNFも含む)
+                            if (argvrun.options.lotteryall) {
+                                if (Users[userId].isTriboxCustomer) {
+                                    lotteryTargets.push(userId);
+                                }
+                            }
+                            // 444当選者候補 (全員当選・DNFも含む)
+                            if (argvrun.options.lottery444) {
+                                if (Users[userId].isTriboxCustomer) {
+                                    lotteryTargets.push(userId);
+                                }
+                            }
+
+                            // 現在の当選を保存する場合
+                            //if (results[eventId][userId]['lottery']) {
+                            //    ready[eventId][userId]['lottery'] = true;
+                            //}
+
+                        }
+
+                    });
+
+                    // 当選者全員 (3x3x3)
+                    if (argvrun.options.lotteryall && eventId == 'e333') {
+                        for (var i = 0, l = lotteryTargets.length; i < l; i++) {
+                            ready[eventId][lotteryTargets[i]]['lottery'] = true;
+                        }
                     }
-                    contestRef.child('results').child(targetContest).child(r.eid).child(r.uid).update(updateData, function(error) {
+                    // 当選者全員 (4x4x4)
+                    else if (argvrun.options.lottery444 && eventId == 'e444') {
+                        for (var i = 0, l = lotteryTargets.length; i < l; i++) {
+                            ready[eventId][lotteryTargets[i]]['lottery'] = true;
+                        }
+                    }
+                    // 当選者抽選
+                    else if (argvrun.options.lotteryall || argvrun.options.lottery444 || argvrun.options.lottery) {
+                        shuffle(lotteryTargets);
+                        for (var i = 0, l = Math.min(Config.NUM_LOTTERY_EVENT[eventId], lotteryTargets.length); i < l; i++) {
+                            ready[eventId][lotteryTargets[i]]['lottery'] = true;
+                        }
+                    }
+
+                    // 契約アカウント
+                    if (argvrun.options.triboxteam) {
+                        for (var i = 0, l = triboxTeamTargets.length; i < l; i++) {
+                            readyTriboxTeam[eventId][triboxTeamTargets[i]] = true;
+                        }
+                    }
+
+                });
+                resetResults();
+
+            });
+        });
+    });
+};
+
+// FMC の解答チェック
+var checkFMC = function() {
+    contestRef.child('scrambles').child(targetContest).once('value', function(snapScrambles) {
+        var scrambles = snapScrambles.val();
+
+        // コンテストにFMC競技がある、かつFMCチェックを実行するとき
+        if ('e333fm' in scrambles && argvrun.options.checkfmc) {
+            contestRef.child('results').child(targetContest).child('e333fm').once('value', function(snapResults) {
+                var results = snapResults.val();
+                var fmcResults = {};
+
+                async.each(Object.keys(results), function(userId, next) {
+                    if (results[userId]._dummy == true || !(results[userId].endAt)) {
+                        next();
+                    } else {
+                        fmcResults[userId] = {};
+
+                        var solution = results[userId]['details'][0]['solution'];
+
+                        fmcchecker.checkSolution(scrambles['e333fm'][0], solution, function(moves) {
+                            console.log(scrambles['e333fm'][0]);
+                            console.log(solution + ' --> ' + moves);
+                            fmcResults[userId]['result'] = {};
+                            if (moves < 0) {
+                                fmcResults[userId]['result']['condition'] = 'DNF';
+                                fmcResults[userId]['result']['record'] = 9999;
+                                fmcResults[userId]['.priority'] = '999000+999000';
+                            } else {
+                                fmcResults[userId]['result']['condition'] = 'OK';
+                                fmcResults[userId]['result']['record'] = moves;
+                                var p = ('000' + moves).slice(-3) + '000';
+                                fmcResults[userId]['.priority'] = p + '+' + p;
+                            }
+                            next();
+                        });
+                    }
+
+                }, function(err) {
+                    if (!err) {
+                        //console.dir(fmcResults);
+
+                        // FMC結果の書き込み
+                        async.each(Object.keys(fmcResults), function(userId, next) {
+                            contestRef.child('results').child(targetContest).child('e333fm').child(userId).update({
+                                'result': {
+                                    'condition': fmcResults[userId]['result']['condition'],
+                                    'record': fmcResults[userId]['result']['record']
+                                },
+                                'priority': fmcResults[userId]['.priority']
+                            }, function(error) {
+                                if (error) {
+                                    console.error(error);
+                                    process.exit(1);
+                                } else {
+                                    contestRef.child('results').child(targetContest).child('e333fm').child(userId).setPriority(fmcResults[userId]['.priority'], function(error) {
+                                        if (error) {
+                                            console.error(error);
+                                            process.exit(1);
+                                        } else {
+                                            next();
+                                        }
+                                    });
+                                }
+                            });
+                        }, function(err) {
+                            if (!err) {
+                                collectResults();
+                            } else {
+                                console.error(err);
+                                process.exit(1);
+                            }
+                        });
+
+                    } else {
+                        console.error(err);
+                        process.exit(1);
+                    }
+                });
+            });
+        }
+
+        // コンテストにFMC競技がないとき、またはFMCチェックしないとき
+        else {
+            collectResults();
+        }
+    });
+};
+
+// 結果 (average と best) の再計算
+var checkResults = function() {
+    // コンテスト結果を再計算するとき
+    if (argvrun.options.check) {
+        contestRef.child('events').once('value', function(snapEvents) {
+            var Events = snapEvents.val();
+            contestRef.child('results').child(targetContest).once('value', function(snapResults) {
+                var results = snapResults.val();
+                var readyResults = []; // 更新するデータ
+                //console.dir(results);
+
+                Object.keys(results).forEach(function(eid) {
+                    if (eid != 'e333fm') {
+                        Object.keys(results[eid]).forEach(function(uid) {
+                            if (!(results[eid][uid]._dummy) && results[eid][uid].endAt) {
+                                //console.dir(results[eid][uid]);
+                                var result = calcResult(Events[eid].method, Events[eid].format, results[eid][uid].details.slice(0, Events[eid].attempts));
+                                //console.dir(result);
+
+                                var _ready = {
+                                    'eid': eid,
+                                    'uid': uid,
+                                    'data': {
+                                        'result': result,
+                                        '.priority': toFixedForPriority(result.record) + '+' + toFixedForPriority(results[eid][uid].details[result.best].record)
+                                    }
+                                };
+                                //console.dir(_ready);
+                                readyResults.push(_ready);
+                            }
+                        });
+                    }
+                });
+
+                // 結果の更新書き込み
+                async.each(readyResults, function(_ready, next) {
+                    contestRef.child('results').child(targetContest).child(_ready.eid).child(_ready.uid).update({
+                        'result': _ready['data']['result'],
+                        'priority': _ready['data']['.priority']
+                    }, function(error) {
                         if (error) {
                             console.error(error);
                             process.exit(1);
                         } else {
-                            next();
+                            contestRef.child('results').child(targetContest).child(_ready.eid).child(_ready.uid).setPriority(_ready['data']['.priority'], function(error) {
+                                if (error) {
+                                    console.error(error);
+                                    process.exit(1);
+                                } else {
+                                    next();
+                                }
+                            });
                         }
                     });
                 }, function(err) {
                     if (!err) {
-                        console.log('Completed reset!');
-                        writeResults();
+                        checkFMC();
                     } else {
                         console.error(err);
                         process.exit(1);
@@ -518,278 +824,13 @@ var resetResults = function() {
                 });
 
             });
-};
+        });
+    }
 
-// コンテストの結果を集計（整形）する
-var collectResults = function() {
-            contestRef.child('users').once('value', function(snapUsers) {
-            contestRef.child('usersecrets').once('value', function(snapUsersecrets) {
-                Users = snapUsers.val();
-                Usersecrets = snapUsersecrets.val();
-
-                contestRef.child('results').child(targetContest).once('value', function(snapResults) {
-                    var results = snapResults.val();
-
-                    ready = {};
-                    Object.keys(results).forEach(function(eventId) {
-                        ready[eventId] = {};
-                        readyTriboxTeam[eventId] = {};
-
-                        var place = 1;
-                        var placePrev = -1;
-                        var priorityPrev = "";
-                        var lotteryTargets = [];
-                        var triboxTeamTargets = [];
-                        Object.keys(results[eventId]).forEach(function(userId) {
-                            if (results[eventId][userId]._dummy == true) {
-                                return;
-                            }
-                            ready[eventId][userId] = {};
-
-                            var priority = snapResults.child(eventId).child(userId).getPriority();
-
-                            // 計測が完了していない場合は無視する
-                            if ('endAt' in results[eventId][userId]) {
-                                // ツイート用に winner を保存しておく
-                                if (!winner && eventId == 'e333' && place == 1) {
-                                    winner = userId;
-                                }
-
-                                if (results[eventId][userId]['result']['condition'] == 'DNF') {
-                                    ready[eventId][userId]['place'] = place;
-                                } else {
-                                    if (priority == priorityPrev) {
-                                        ready[eventId][userId]['place'] = placePrev;
-                                    } else {
-                                        ready[eventId][userId]['place'] = place;
-                                        placePrev = place;
-                                    }
-                                    // ここで、placePrev に順位が入っている
-                                    if (placePrev in Config.SP) {
-                                        ready[eventId][userId]['seasonPoint'] = Config.SP[placePrev];
-                                    }
-
-                                    priorityPrev = priority;
-                                    place++;
-
-                                    // 当選者候補 (3人選ぶやつ)
-                                    if (argvrun.options.lottery) {
-                                        if (Users[userId].isTriboxCustomer) {
-                                            lotteryTargets.push(userId);
-                                        }
-                                    }
-
-                                    // 契約アカウント (333のみ)
-                                    if (argvrun.options.triboxteam) {
-                                        if (Users[userId].isTriboxTeam && eventId == 'e333') {
-                                            triboxTeamTargets.push(userId);
-                                        }
-                                    }
-                                }
-                                // 当選者候補 (全員当選・DNFも含む)
-                                if (argvrun.options.lotteryall) {
-                                    if (Users[userId].isTriboxCustomer) {
-                                        lotteryTargets.push(userId);
-                                    }
-                                }
-
-                                // 現在の当選を保存する場合
-                                //if (results[eventId][userId]['lottery']) {
-                                //    ready[eventId][userId]['lottery'] = true;
-                                //}
-
-                            }
-
-                        });
-
-                        // 当選者全員 (3x3x3)
-                        if (argvrun.options.lotteryall && eventId == 'e333') {
-                            for (var i = 0, l = lotteryTargets.length; i < l; i++) {
-                                ready[eventId][lotteryTargets[i]]['lottery'] = true;
-                            }
-                        }
-                        // 当選者抽選
-                        else if (argvrun.options.lotteryall || argvrun.options.lottery) {
-                            shuffle(lotteryTargets);
-                            for (var i = 0, l = Math.min(Config.NUM_LOTTERY_EVENT[eventId], lotteryTargets.length); i < l; i++) {
-                                ready[eventId][lotteryTargets[i]]['lottery'] = true;
-                            }
-                        }
-
-                        // 契約アカウント
-                        if (argvrun.options.triboxteam) {
-                            for (var i = 0, l = triboxTeamTargets.length; i < l; i++) {
-                                readyTriboxTeam[eventId][triboxTeamTargets[i]] = true;
-                            }
-                        }
-
-                    });
-                    resetResults();
-
-                });
-            });
-            });
-};
-
-// FMC の解答チェック
-var checkFMC = function() {
-            contestRef.child('scrambles').child(targetContest).once('value', function(snapScrambles) {
-                var scrambles = snapScrambles.val();
-
-            // コンテストにFMC競技がある、かつFMCチェックを実行するとき
-            if ('e333fm' in scrambles && argvrun.options.checkfmc) {
-                contestRef.child('results').child(targetContest).child('e333fm').once('value', function(snapResults) {
-                    var results = snapResults.val();
-                    var fmcResults = {};
-
-                    async.each(Object.keys(results), function(userId, next) {
-                        if (results[userId]._dummy == true || !(results[userId].endAt)) {
-                            next();
-                        } else {
-                            fmcResults[userId] = {};
-
-                            var solution = results[userId]['details'][0]['solution'];
-
-                            fmcchecker.checkSolution(scrambles['e333fm'][0], solution, function(moves) {
-                                console.log(scrambles['e333fm'][0]);
-                                console.log(solution + ' --> ' + moves);
-                                fmcResults[userId]['result'] = {};
-                                if (moves < 0) {
-                                    fmcResults[userId]['result']['condition'] = 'DNF';
-                                    fmcResults[userId]['result']['record'] = 9999;
-                                    fmcResults[userId]['.priority'] = '999000+999000';
-                                } else {
-                                    fmcResults[userId]['result']['condition'] = 'OK';
-                                    fmcResults[userId]['result']['record'] = moves;
-                                    var p = ('000' + moves).slice(-3) + '000';
-                                    fmcResults[userId]['.priority'] = p + '+' + p;
-                                }
-                                next();
-                            });
-                        }
-
-                    }, function(err) {
-                        if (!err) {
-                            //console.dir(fmcResults);
-
-                            // FMC結果の書き込み
-                            async.each(Object.keys(fmcResults), function(userId, next) {
-                                contestRef.child('results').child(targetContest).child('e333fm').child(userId).update({
-                                    'result': {
-                                        'condition': fmcResults[userId]['result']['condition'],
-                                        'record': fmcResults[userId]['result']['record']
-                                    },
-                                    'priority': fmcResults[userId]['.priority']
-                                }, function(error) {
-                                    if (error) {
-                                        console.error(error);
-                                        process.exit(1);
-                                    } else {
-                                        contestRef.child('results').child(targetContest).child('e333fm').child(userId).setPriority(fmcResults[userId]['.priority'], function(error) {
-                                            if (error) {
-                                                console.error(error);
-                                                process.exit(1);
-                                            } else {
-                                                next();
-                                            }
-                                        });
-                                    }
-                                });
-                            }, function(err) {
-                                if (!err) {
-                                    collectResults();
-                                } else {
-                                    console.error(err);
-                                    process.exit(1);
-                                }
-                            });
-
-                        } else {
-                            console.error(err);
-                            process.exit(1);
-                        }
-                    });
-                });
-            }
-
-            // コンテストにFMC競技がないとき、またはFMCチェックしないとき
-            else {
-                collectResults();
-            }
-            });
-};
-
-// 結果 (average と best) の再計算
-var checkResults = function() {
-            // コンテスト結果を再計算するとき
-            if (argvrun.options.check) {
-                contestRef.child('events').once('value', function(snapEvents) {
-                    var Events = snapEvents.val();
-                contestRef.child('results').child(targetContest).once('value', function(snapResults) {
-                    var results = snapResults.val();
-                    var readyResults = []; // 更新するデータ
-                    //console.dir(results);
-
-                    Object.keys(results).forEach(function(eid) {
-                        if (eid != 'e333fm') {
-                            Object.keys(results[eid]).forEach(function(uid) {
-                                if (!(results[eid][uid]._dummy) && results[eid][uid].endAt) {
-                                    //console.dir(results[eid][uid]);
-                                    var result = calcResult(Events[eid].method, Events[eid].format, results[eid][uid].details.slice(0, Events[eid].attempts));
-                                    //console.dir(result);
-
-                                    var _ready = {
-                                        'eid': eid,
-                                        'uid': uid,
-                                        'data': {
-                                            'result': result,
-                                            '.priority': toFixedForPriority(result.record) + '+' + toFixedForPriority(results[eid][uid].details[result.best].record)
-                                        }
-                                    };
-                                    //console.dir(_ready);
-                                    readyResults.push(_ready);
-                                }
-                            });
-                        }
-                    });
-
-                    // 結果の更新書き込み
-                    async.each(readyResults, function(_ready, next) {
-                        contestRef.child('results').child(targetContest).child(_ready.eid).child(_ready.uid).update({
-                            'result': _ready['data']['result'],
-                            'priority': _ready['data']['.priority']
-                        }, function(error) {
-                            if (error) {
-                                console.error(error);
-                                process.exit(1);
-                            } else {
-                                contestRef.child('results').child(targetContest).child(_ready.eid).child(_ready.uid).setPriority(_ready['data']['.priority'], function(error) {
-                                    if (error) {
-                                        console.error(error);
-                                        process.exit(1);
-                                    } else {
-                                        next();
-                                    }
-                                });
-                            }
-                        });
-                    }, function(err) {
-                        if (!err) {
-                            checkFMC();
-                        } else {
-                            console.error(err);
-                            process.exit(1);
-                        }
-                    });
-
-                });
-                });
-            }
-
-            // コンテスト結果を再計算しないとき
-            else {
-                checkFMC();
-            }
+    // コンテスト結果を再計算しないとき
+    else {
+        checkFMC();
+    }
 };
 
 // 存在するコンテストか調べる
