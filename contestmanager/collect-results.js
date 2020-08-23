@@ -650,7 +650,7 @@ var collectResults = function() {
                         }
                     }
                     // 当選者抽選
-                    else if (argvrun.options.lotteryall || argvrun.options.lottery) {
+                    else if (argvrun.options.lotteryall || argvrun.options.lottery444 || argvrun.options.lottery) {
                         shuffle(lotteryTargets);
                         for (var i = 0, l = Math.min(Config.NUM_LOTTERY_EVENT[eventId], lotteryTargets.length); i < l; i++) {
                             ready[eventId][lotteryTargets[i]]['lottery'] = true;
