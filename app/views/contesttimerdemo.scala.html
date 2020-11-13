@@ -540,7 +540,7 @@ firebase.auth().onAuthStateChanged(function(authData) {
     document.addEventListener('keydown', function(e) {
         //document.getElementById('keydown').innerHTML = e.keyCode + ':' + e.code + ' (' + Date.now() + ')';
         hasInspection = window.TriboxContest.hasInspection;
-        if (isRunning) {
+        if (isRunning && REJECTING_STOPTIMER_TH < Date.now() - startTime) {
             stopTimer();
             unShowOnlyTimer();
             isTouchingStop = true;
