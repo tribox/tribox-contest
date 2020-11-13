@@ -412,6 +412,7 @@ firebase.auth().onAuthStateChanged(function(authData) {
     var TOUCHING_TH = 350;      @* /* 0.35秒長押しでタイマースタート */ *@
     var LIMIT_SECOND = 600;     @* /* 10分でDNF */ *@
     var FREEZING_TH = 1000;     @* /* タイマーストップ後1秒はタイマースタートできない */ *@
+    var REJECTING_STOPTIMER_TH = 200;   @* /* 計測開始後0.2秒はタッチ操作で計測終了できない */ *@
 
     //var startButton = document.getElementById('start');
     //var stopButton = document.getElementById('stop');
@@ -576,7 +577,7 @@ firebase.auth().onAuthStateChanged(function(authData) {
     document.addEventListener('keydown', function(e) {
         //document.getElementById('keydown').innerHTML = e.keyCode + ':' + e.code + ' (' + Date.now() + ')';
         hasInspection = window.TriboxContest.hasInspection;
-        if (isRunning) {
+        if (isRunning && REJECTING_STOPTIMER_TH < Date.now() - startTime) {
             stopTimer();
             unShowOnlyTimer();
             isTouchingStop = true;
@@ -623,7 +624,7 @@ firebase.auth().onAuthStateChanged(function(authData) {
             touchX = e.changedTouches[0].pageX;
             touchY = e.changedTouches[0].pageY;
             hasInspection = window.TriboxContest.hasInspection;
-            if (isRunning) {
+            if (isRunning && REJECTING_STOPTIMER_TH < Date.now() - startTime) {
                 stopTimer();
                 unShowOnlyTimer();
                 isTouchingStop = true;
