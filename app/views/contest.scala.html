@@ -90,7 +90,10 @@
             </thead>
             <tbody>
                 <tr ng-repeat="e in contestData.events">
-                    <td>{{ events[e].name }}</td>
+                    <td>
+                        <span class="cubing-icon event-{{ e | removeHead }}" style="vertical-align: baseline; font-size: 18px;"></span>
+                        {{ events[e].name }}
+                    </td>
                     <td>{{ events[e].method | uppercaseHead }} of {{ events[e].attempts }}</td>
                     <td>
                         <a class="font-bold" href="/contest/@cid/{{ e | removeHead }}" ng-if="countdown == 0 && authData != null && eventsDone[e] == false"><i class="fa fa-play-circle"></i> 参加する</a>
@@ -108,7 +111,7 @@
 
         <div ng-if="countdown < 0">
             <div ng-repeat="e in contestData.events">
-                <h3>{{ events[e].name }}</h3>
+                <h3><span class="cubing-icon event-{{ e | removeHead }}" style="vertical-align: baseline;"></span> {{ events[e].name }}</h3>
                 <p>
                     計測方法: {{ events[e].method | uppercaseHead }} of {{ events[e].attempts }}<br>
                     参加人数: {{ resultsPersons[e] }} 人

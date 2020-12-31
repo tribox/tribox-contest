@@ -55,7 +55,7 @@ h3, h4 {
         </p>
 
         <div ng-repeat="(eid, e) in events">
-            <h4 id="{{ eid | removeHead }}">{{ events[eid].name }}</h4>
+            <h4 id="{{ eid | removeHead }}"><span class="cubing-icon event-{{ eid | removeHead }}" style="vertical-align: baseline;"></span> {{ events[eid].name }}</h4>
 
             <table class="table table-bordered tribox-contest ranking">
                 <thead>
@@ -91,14 +91,15 @@ h3, h4 {
     @* <!-- 過去シーズン --> *@
     <hr>
     <h3>過去のシーズンのランキング</h3>
+    <a class="cursor-pointer btn btn-empty btn-success" href="/ranking/20202">2020 後半期</a>
     <a class="cursor-pointer btn btn-empty" href="/ranking/20201">2020 前半期</a>
-    <a class="cursor-pointer btn btn-empty" href="/ranking/20192">2019 後半期</a>
+    <a class="cursor-pointer btn btn-empty btn-success" href="/ranking/20192">2019 後半期</a>
     <a class="cursor-pointer btn btn-empty" href="/ranking/20191">2019 前半期</a>
-    <a class="cursor-pointer btn btn-empty" href="/ranking/20182">2018 後半期</a>
+    <a class="cursor-pointer btn btn-empty btn-success" href="/ranking/20182">2018 後半期</a>
     <a class="cursor-pointer btn btn-empty" href="/ranking/20181">2018 前半期</a>
-    <a class="cursor-pointer btn btn-empty" href="/ranking/20172">2017 後半期</a>
+    <a class="cursor-pointer btn btn-empty btn-success" href="/ranking/20172">2017 後半期</a>
     <a class="cursor-pointer btn btn-empty" href="/ranking/20171">2017 前半期</a>
-    <a class="cursor-pointer btn btn-empty" href="/ranking/20162">2016 後半期</a>
+    <a class="cursor-pointer btn btn-empty btn-success" href="/ranking/20162">2016 後半期</a>
 
     </div></div></div>
 

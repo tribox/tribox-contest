@@ -114,7 +114,7 @@ a.video-url {
         </p>
 
         <div ng-repeat="(eid, e) in events"><div ng-if="(authData.uid == thisUsername.uid) || (authData.uid != thisUsername.uid && history[eid])">
-            <h4 id="{{ eid | removeHead }}">{{ events[eid].name }}</h4>
+            <h4 id="{{ eid | removeHead }}"><span class="cubing-icon event-{{ eid | removeHead }}" style="vertical-align: baseline;"></span> {{ events[eid].name }}</h4>
 
             <p>
                 合計獲得シーズンポイント: <b>{{ sumSeasonPoint[eid] }}</b> ポイント
@@ -208,14 +208,15 @@ a.video-url {
         @* <!-- 過去シーズン --> *@
         <hr>
         <h3>過去のシーズンのコンテスト参加履歴</h3>
+        <a class="cursor-pointer btn btn-empty btn-success" id="show-past-20202" ng-click="showPastSeason(20202)">2020 後半期</a>
         <a class="cursor-pointer btn btn-empty" id="show-past-20201" ng-click="showPastSeason(20201)">2020 前半期</a>
-        <a class="cursor-pointer btn btn-empty" id="show-past-20192" ng-click="showPastSeason(20192)">2019 後半期</a>
+        <a class="cursor-pointer btn btn-empty btn-success" id="show-past-20192" ng-click="showPastSeason(20192)">2019 後半期</a>
         <a class="cursor-pointer btn btn-empty" id="show-past-20191" ng-click="showPastSeason(20191)">2019 前半期</a>
-        <a class="cursor-pointer btn btn-empty" id="show-past-20182" ng-click="showPastSeason(20182)">2018 後半期</a>
+        <a class="cursor-pointer btn btn-empty btn-success" id="show-past-20182" ng-click="showPastSeason(20182)">2018 後半期</a>
         <a class="cursor-pointer btn btn-empty" id="show-past-20181" ng-click="showPastSeason(20181)">2018 前半期</a>
-        <a class="cursor-pointer btn btn-empty" id="show-past-20172" ng-click="showPastSeason(20172)">2017 後半期</a>
+        <a class="cursor-pointer btn btn-empty btn-success" id="show-past-20172" ng-click="showPastSeason(20172)">2017 後半期</a>
         <a class="cursor-pointer btn btn-empty" id="show-past-20171" ng-click="showPastSeason(20171)">2017 前半期</a>
-        <a class="cursor-pointer btn btn-empty" id="show-past-20162" ng-click="showPastSeason(20162)">2016 後半期</a>
+        <a class="cursor-pointer btn btn-empty btn-success" id="show-past-20162" ng-click="showPastSeason(20162)">2016 後半期</a>
 
         <div ng-show="isShownPastSeason">
         <h4>競技一覧</h4>
@@ -231,7 +232,7 @@ a.video-url {
         </p>
 
         <div ng-repeat="(eid, e) in events"><div ng-if="historyPast[eid]">
-            <h4 id="past-{{ eid | removeHead }}">{{ events[eid].name }}</h4>
+            <h4 id="past-{{ eid | removeHead }}"><span class="cubing-icon event-{{ eid | removeHead }}" style="vertical-align: baseline;"></span> {{ events[eid].name }}</h4>
 
             <p>
                 合計獲得シーズンポイント: <b>{{ sumSeasonPointPast[eid] }}</b> ポイント
