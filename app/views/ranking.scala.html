@@ -55,7 +55,7 @@ h3, h4 {
         </p>
 
         <div ng-repeat="(eid, e) in events">
-            <h4 id="{{ eid | removeHead }}">{{ events[eid].name }}</h4>
+            <h4 id="{{ eid | removeHead }}"><span class="cubing-icon event-{{ eid | removeHead }}" style="vertical-align: baseline;"></span> {{ events[eid].name }}</h4>
 
             <table class="table table-bordered tribox-contest ranking">
                 <thead>

@@ -114,7 +114,7 @@ a.video-url {
         </p>
 
         <div ng-repeat="(eid, e) in events"><div ng-if="(authData.uid == thisUsername.uid) || (authData.uid != thisUsername.uid && history[eid])">
-            <h4 id="{{ eid | removeHead }}">{{ events[eid].name }}</h4>
+            <h4 id="{{ eid | removeHead }}"><span class="cubing-icon event-{{ eid | removeHead }}" style="vertical-align: baseline;"></span> {{ events[eid].name }}</h4>
 
             <p>
                 合計獲得シーズンポイント: <b>{{ sumSeasonPoint[eid] }}</b> ポイント
@@ -231,7 +231,7 @@ a.video-url {
         </p>
 
         <div ng-repeat="(eid, e) in events"><div ng-if="historyPast[eid]">
-            <h4 id="past-{{ eid | removeHead }}">{{ events[eid].name }}</h4>
+            <h4 id="past-{{ eid | removeHead }}"><span class="cubing-icon event-{{ eid | removeHead }}" style="vertical-align: baseline;"></span> {{ events[eid].name }}</h4>
 
             <p>
                 合計獲得シーズンポイント: <b>{{ sumSeasonPointPast[eid] }}</b> ポイント
