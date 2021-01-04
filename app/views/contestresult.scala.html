@@ -74,7 +74,7 @@ h4 {
             </select>
         </p>
 
-        <h3><span class="cubing-icon event-{{ @{eid} }}" style="vertical-align: baseline;"></span> {{ events.e@{eid}.name }}</h3>
+        <h3><span class="cubing-icon event-@{eid}" style="vertical-align: baseline;"></span> {{ events.e@{eid}.name }}</h3>
         <p>
             計測方法: {{ events.e@{eid}.method | uppercaseHead }} of {{ events.e@{eid}.attempts }}<br>
             参加人数: {{ resultsPersons.e@{eid} }} 人
