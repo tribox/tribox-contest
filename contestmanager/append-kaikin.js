@@ -122,7 +122,7 @@ var appendPoints = function() {
                                                             + ' "' + email + '"'
                                                             + ' "' + name + '"'
                                                             + ' "' + r.season + '"'
-                                                            + ' "' + r.events_name.join('-') + '"'
+                                                            + ' "' + r.events_name.join('_') + '"'
                                                             + ' ' + point_with_upper_limit;
                                                 exec(command, function(err, stdout, stderr) {
                                                     if (err) {

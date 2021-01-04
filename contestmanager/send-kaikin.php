@@ -40,7 +40,7 @@ $body = $to_name . " 様\n\n"
       . "https://store.tribox.com/mypage/\n\n"
       . "なお皆勤賞は種目ごとに設定されており、1種目につき500ポイント（上限2000ポイント）を進呈しています。\n\n"
       . $to_name . " 様が皆勤賞を受賞された種目\n"
-      . str_replace('-', "\n", $events_name)
+      . str_replace('_', "\n", $events_name)
       . "\n"
       . "合計進呈ポイント: " . $point . "\n\n"
       . "皆勤賞の条件: 対象の種目において全ての節に何らかの記録を残している かつ DNFが3回以下\n"
