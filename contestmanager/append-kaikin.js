@@ -83,9 +83,14 @@ var appendPoints = function() {
                                 var name = results[0].name01 + ' ' + results[0].name02;
                                 var email = results[0].email;
 
+                                var point_with_upper_limit = r.point_total;
+                                if (2000 < point_with_upper_limit) {
+                                    point_with_upper_limit = 2000;
+                                }
+
                                 console.log('UPDATE (id = ' + r.id + ')');
                                 connectionStore.query('UPDATE dtb_customer SET point = point + ? WHERE customer_id = ?', [
-                                    r.point_total, r.customer_id
+                                    point_with_upper_limit, r.customer_id
                                 ], function(error, results, fields) {
                                     if (error) {
                                         console.error(error);
@@ -101,18 +106,24 @@ var appendPoints = function() {
                                                 process.exit(1);
                                             } else {
                                                 count++;
+
+                                                if (point_with_upper_limit == 2000) {
+                                                    point_with_upper_limit = '2000（上限）';
+                                                }
+
                                                 // メール送信
                                                 console.log(name);
                                                 console.log(email);
                                                 console.log(r.season);
                                                 console.log(r.events_name.join('-'));
                                                 console.log(r.point_total);
+                                                console.log(point_with_upper_limit);
                                                 var command = '/usr/bin/php ' + __dirname + '/send-kaikin.php'
                                                             + ' "' + email + '"'
                                                             + ' "' + name + '"'
                                                             + ' "' + r.season + '"'
                                                             + ' "' + r.events_name.join('-') + '"'
-                                                            + ' ' + r.point_total;
+                                                            + ' ' + point_with_upper_limit;
                                                 exec(command, function(err, stdout, stderr) {
                                                     if (err) {
                                                         console.error(err);
