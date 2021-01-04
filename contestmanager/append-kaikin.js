@@ -67,93 +67,93 @@ var appendPoints = function() {
 
             connectionStore.query('SET NAMES utf8', function() {
 
-            var count = 0;
-            async.eachSeries(Ready, function(r, next) {
-                // ポイント加算処理・メール送信
-                if (r.customer_type == 0) { // store
-                    connectionStore.query('SELECT name01, name02, email FROM dtb_customer WHERE customer_id = ?', [
-                        r.customer_id
-                    ], function(error, results, fields) {
-                        if (error) {
-                            console.error(error);
-                            console.error('Failed getting email address!');
-                            process.exit(1);
-                        } else {
-                            // ポイント加算顧客情報
-                            var name = results[0].name01 + ' ' + results[0].name02;
-                            var email = results[0].email;
+                var count = 0;
+                async.eachSeries(Ready, function(r, next) {
+                    // ポイント加算処理・メール送信
+                    if (r.customer_type == 0) { // store
+                        connectionStore.query('SELECT name01, name02, email FROM dtb_customer WHERE customer_id = ?', [
+                            r.customer_id
+                        ], function(error, results, fields) {
+                            if (error) {
+                                console.error(error);
+                                console.error('Failed getting email address!');
+                                process.exit(1);
+                            } else {
+                                // ポイント加算顧客情報
+                                var name = results[0].name01 + ' ' + results[0].name02;
+                                var email = results[0].email;
 
-                            console.log('UPDATE (id = ' + r.id + ')');
-                            connectionStore.query('UPDATE dtb_customer SET point = point + ? WHERE customer_id = ?', [
-                                r.point_total, r.customer_id
-                            ], function(error, results, fields) {
-                                if (error) {
-                                    console.error(error);
-                                    console.error('Failed updating point!');
-                                    process.exit(1);
-                                } else {
-                                    console.log('Succeeded updating point!');
-                                    connection.query('UPDATE kaikin SET appended_at = NOW() WHERE appended_at IS NULL AND user_id = ?', [
-                                        r.user_id
-                                    ], function(error, results, fields) {
-                                        if (error) {
-                                            console.error(error);
-                                            process.exit(1);
-                                        } else {
-                                            count++;
-                                            // メール送信
-                                            console.log(name);
-                                            console.log(email);
-                                            console.log(r.season);
-                                            console.log(r.events_name.join('-'));
-                                            console.log(r.point_total);
-                                            var command = '/usr/bin/php ' + __dirname + '/send-kaikin.php'
-                                                        + ' "' + email + '"'
-                                                        + ' "' + name + '"'
-                                                        + ' "' + r.season + '"'
-                                                        + ' "' + r.events_name.join('-') + '"'
-                                                        + ' ' + r.point_total;
-                                            exec(command, function(err, stdout, stderr) {
-                                                if (err) {
-                                                    console.error(err);
-                                                } else {
-                                                    //console.log(stdout);
-                                                    console.error(stderr);
-                                                    setTimeout(function() {
-                                                        next();
-                                                    }, 1000);
-                                                }
-                                            });
-                                        }
-                                    });
-                                }
-                            });
-                        }
-                    });
-                } else {
-                    // triboxstickers
-                    console.error('Not implemented yet! (triboxstickers)');
-                    process.exit(1);
-                }
-            }, function(err) {
-                if (!err) {
-                    console.log('Completed! (' + count + ' records)');
-                    process.exit(0);
-                } else {
-                    console.error(err);
-                }
-            });
+                                console.log('UPDATE (id = ' + r.id + ')');
+                                connectionStore.query('UPDATE dtb_customer SET point = point + ? WHERE customer_id = ?', [
+                                    r.point_total, r.customer_id
+                                ], function(error, results, fields) {
+                                    if (error) {
+                                        console.error(error);
+                                        console.error('Failed updating point!');
+                                        process.exit(1);
+                                    } else {
+                                        console.log('Succeeded updating point!');
+                                        connection.query('UPDATE kaikin SET appended_at = NOW() WHERE appended_at IS NULL AND user_id = ?', [
+                                            r.user_id
+                                        ], function(error, results, fields) {
+                                            if (error) {
+                                                console.error(error);
+                                                process.exit(1);
+                                            } else {
+                                                count++;
+                                                // メール送信
+                                                console.log(name);
+                                                console.log(email);
+                                                console.log(r.season);
+                                                console.log(r.events_name.join('-'));
+                                                console.log(r.point_total);
+                                                var command = '/usr/bin/php ' + __dirname + '/send-kaikin.php'
+                                                            + ' "' + email + '"'
+                                                            + ' "' + name + '"'
+                                                            + ' "' + r.season + '"'
+                                                            + ' "' + r.events_name.join('-') + '"'
+                                                            + ' ' + r.point_total;
+                                                exec(command, function(err, stdout, stderr) {
+                                                    if (err) {
+                                                        console.error(err);
+                                                    } else {
+                                                        //console.log(stdout);
+                                                        console.error(stderr);
+                                                        setTimeout(function() {
+                                                            next();
+                                                        }, 1000);
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    }
+                                });
+                            }
+                        });
+                    } else {
+                        // triboxstickers
+                        console.error('Not implemented yet! (triboxstickers)');
+                        process.exit(1);
+                    }
+                }, function(err) {
+                    if (!err) {
+                        console.log('Completed! (' + count + ' records)');
+                        process.exit(0);
+                    } else {
+                        console.error(err);
+                    }
+                });
             });
         }
     });
 };
 
 var getEventsInfo = function() {
-            contestRef.child('events').once('value', function(snapEvents) {
-                Events = snapEvents.val();
+    contestRef.child('events').once('value', function(snapEvents) {
+        Events = snapEvents.val();
 
-                appendPoints();
-            });
+        appendPoints();
+    });
 };
 
 var main = function() {
