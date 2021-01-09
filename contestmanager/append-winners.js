@@ -105,13 +105,13 @@ var appendPoints = function() {
                                                 console.log(name);
                                                 console.log(email);
                                                 console.log(r.season);
-                                                console.log(r.events_name.join('-'));
+                                                console.log(r.events_name.join('+'));
                                                 console.log(r.point_total);
                                                 var command = '/usr/bin/php ' + __dirname + '/send-winners.php'
                                                             + ' "' + email + '"'
                                                             + ' "' + name + '"'
                                                             + ' "' + r.season + '"'
-                                                            + ' "' + r.events_name.join('-') + '"'
+                                                            + ' "' + r.events_name.join('+') + '"'
                                                             + ' ' + r.point_total;
                                                 exec(command, function(err, stdout, stderr) {
                                                     if (err) {

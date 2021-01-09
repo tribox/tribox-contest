@@ -115,14 +115,14 @@ var appendPoints = function() {
                                                 console.log(name);
                                                 console.log(email);
                                                 console.log(r.season);
-                                                console.log(r.events_name.join('-'));
+                                                console.log(r.events_name.join('+'));
                                                 console.log(r.point_total);
                                                 console.log(point_with_upper_limit);
                                                 var command = '/usr/bin/php ' + __dirname + '/send-kaikin.php'
                                                             + ' "' + email + '"'
                                                             + ' "' + name + '"'
                                                             + ' "' + r.season + '"'
-                                                            + ' "' + r.events_name.join('_') + '"'
+                                                            + ' "' + r.events_name.join('+') + '"'
                                                             + ' ' + point_with_upper_limit;
                                                 exec(command, function(err, stdout, stderr) {
                                                     if (err) {
