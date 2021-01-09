@@ -28,7 +28,7 @@ if (substr($season, 4, 1) === '1') {
     $seasonstr .= '後半期';
 }
 
-$winnerslist = str_replace('-', "\n", $events_name);
+$winnerslist = str_replace('+', "\n", $events_name);
 $winnerslist = str_replace('_', ' ', $winnerslist);
 
 $header = 'From:' . mb_encode_mimeheader('tribox Contest') . '<support@tribox.jp>' . "\n"

@@ -104,12 +104,12 @@ var appendPoints = function() {
                                             // メール送信
                                             console.log(name);
                                             console.log(email);
-                                            console.log(r.events_name.join('-'));
+                                            console.log(r.events_name.join('+'));
                                             console.log(r.point_total);
                                             var command = '/usr/bin/php ' + __dirname + '/send-kaikin100.php'
                                                         + ' "' + email + '"'
                                                         + ' "' + name + '"'
-                                                        + ' "' + r.events_name.join('-') + '"'
+                                                        + ' "' + r.events_name.join('+') + '"'
                                                         + ' ' + r.point_total;
                                             exec(command, function(err, stdout, stderr) {
                                                 if (err) {
