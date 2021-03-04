@@ -31,18 +31,18 @@ if (substr($season, 4, 1) === '1') {
 $winnerslist = str_replace('+', "\n", $events_name);
 $winnerslist = str_replace('_', ' ', $winnerslist);
 
-$header = 'From:' . mb_encode_mimeheader('tribox Contest') . '<support@tribox.jp>' . "\n"
+$header = 'From:' . mb_encode_mimeheader('TORIBO Contest') . '<support@tribox.jp>' . "\n"
                   . 'Cc: support@tribox.jp' . "\n"
                   . 'Reply-to: support@tribox.jp';
-$subject = '[tribox Contest] 入賞賞金 (triboxポイント) 進呈のお知らせ';
+$subject = '[TORIBO Contest] 入賞賞金 (TORIBOポイント) 進呈のお知らせ';
 $body = $to_name . " 様\n\n"
-      . "トライボックスコンテストにご参加頂き、誠にありがとうございます。\n"
-      . $seasonstr . "のシーズンランキング入賞者のみなさまに、入賞賞金 (triboxポイント) についてお知らせ致します。\n\n"
+      . "トリボコンテストにご参加頂き、誠にありがとうございます。\n"
+      . $seasonstr . "のシーズンランキング入賞者のみなさまに、入賞賞金 (TORIBOポイント) についてお知らせ致します。\n\n"
       . $winnerslist . "\n"
       . "合計進呈ポイント: " . $point . "\n\n"
       . "https://contest.tribox.com/ranking/" . $season . "\n\n"
       . "おめでとうございます！\n"
-      . "triboxポイントは、みなさまのtriboxストアアカウントに既に付与されています。\n"
+      . "TORIBOポイントは、みなさまのTORIBOストアアカウントに既に付与されています。\n"
       . "最新のパズル購入などにご利用ください。\n\n"
       . "今シーズンもぜひよろしくお願い致します。\n"
       . "https://contest.tribox.com/\n"

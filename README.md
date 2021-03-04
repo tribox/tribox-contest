@@ -1,6 +1,6 @@
-# tribox Contest
+# TORIBO Contest
 
-tribox Contest is an Online Speed-Solving Competition organized by [Tribox Inc](http://tribox.com).
+TORIBO Contest is an Online Speed-Solving Competition organized by [Tribox Inc](http://tribox.com).
 The application is based on [Play Framework](https://www.playframework.com) and [Firebase](https://www.firebase.com).
 
 URL: https://contest.tribox.com
@@ -214,7 +214,7 @@ node contestmanager/update-wcaapp.js
 
 ```
 ################################
-# tribox Contest
+# TORIBO Contest
 ################################
 
 # Play application

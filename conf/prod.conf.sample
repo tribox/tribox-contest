@@ -29,8 +29,8 @@ db {
 }
 
 # 3) Change contest info.
-contest.name = "tribox Contest トリコン"
-contest.description = "triboxコンテストは、誰でも参加可能。毎週開催のお得なネットコンテストです。"
+contest.name = "TORIBO Contest トリコン"
+contest.description = "TORIBOコンテストは、誰でも参加可能。毎週開催のお得なネットコンテストです。"
 contest.url = "https://contest.tribox.com"
 contest.playpath = "/path/to/playapp"
 

@@ -28,15 +28,15 @@ if (substr($season, 4, 1) === '1') {
     $seasonstr .= '後半期';
 }
 
-$header = 'From:' . mb_encode_mimeheader('tribox Contest') . '<support@tribox.jp>' . "\n"
+$header = 'From:' . mb_encode_mimeheader('TORIBO Contest') . '<support@tribox.jp>' . "\n"
                   . 'Cc: support@tribox.jp' . "\n"
                   . 'Reply-to: support@tribox.jp';
-$subject = '[tribox Contest] 皆勤賞ポイント進呈のお知らせ';
+$subject = '[TORIBO Contest] 皆勤賞ポイント進呈のお知らせ';
 $body = $to_name . " 様\n\n"
-      . "トライボックスコンテストにご参加頂き、誠にありがとうございます。\n"
+      . "トリボコンテストにご参加頂き、誠にありがとうございます。\n"
       . $seasonstr . "の皆勤賞についてのお知らせです。\n\n"
-      . "ささやかではありますが、皆勤賞としてtriboxポイントを進呈させて頂きました。\n"
-      . "triboxストアのマイページよりご確認ください。\n"
+      . "ささやかではありますが、皆勤賞としてTORIBOポイントを進呈させて頂きました。\n"
+      . "TORIBOストアのマイページよりご確認ください。\n"
       . "https://store.tribox.com/mypage/\n\n"
       . "なお皆勤賞は種目ごとに設定されており、1種目につき500ポイント（上限2000ポイント）を進呈しています。\n\n"
       . $to_name . " 様が皆勤賞を受賞された種目\n"
@@ -44,7 +44,7 @@ $body = $to_name . " 様\n\n"
       . "\n"
       . "合計進呈ポイント: " . $point . "\n\n"
       . "皆勤賞の条件: 対象の種目において全ての節に何らかの記録を残している かつ DNFが3回以下\n"
-      . "※非認証アカウント (triboxストアと連携していないアカウント) は対象外です。\n\n"
+      . "※非認証アカウント (TORIBOストアと連携していないアカウント) は対象外です。\n\n"
       . "今シーズンもぜひよろしくお願い致します。\n"
       . "https://contest.tribox.com/\n"
       . "株式会社トライボックス\n";

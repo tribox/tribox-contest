@@ -17,11 +17,11 @@ mb_internal_encoding('UTF-8');
 
 $to = $argv[1];
 
-$header = 'From:' . mb_encode_mimeheader('tribox Contest') . '<support@tribox.jp>' . "\n"
+$header = 'From:' . mb_encode_mimeheader('TORIBO Contest') . '<support@tribox.jp>' . "\n"
                   . 'Cc: support@tribox.jp' . "\n"
                   . 'Reply-to: support@tribox.jp';
 $subject = 'サーバーからのテストメール';
 $body = $to . " 様\n\n"
       . "サーバーからのテストメールです。\n\n"
-      . "triboxコンテスト\n";
+      . "TORIBOコンテスト\n";
 $res = mb_send_mail($to, $subject, $body, $header);

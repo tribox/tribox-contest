@@ -90,7 +90,7 @@ contestRef.child('events').once('value', function(snap) {
             'contestId': parseInt(contestId),
             'beginAt': beginTimestamp,
             'endAt': nextTimestamp,
-            'contestName': 'tribox Contest ' + year + ' ' + seasonName + ' 第' + i + '節',
+            'contestName': 'TORIBO Contest ' + year + ' ' + seasonName + ' 第' + i + '節',
             'year': parseInt(year),
             'season': parseInt(season),
             'number': i

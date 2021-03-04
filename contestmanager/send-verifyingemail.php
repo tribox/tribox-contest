@@ -19,13 +19,13 @@ $to = $argv[1];
 $token = $argv[2];
 $domain = $argv[3];
 
-$header = 'From:' . mb_encode_mimeheader('tribox Contest') . '<support@tribox.jp>' . "\n"
+$header = 'From:' . mb_encode_mimeheader('TORIBO Contest') . '<support@tribox.jp>' . "\n"
                   . 'Cc: support@tribox.jp' . "\n"
                   . 'Reply-to: support@tribox.jp';
 $subject = 'アカウント認証のためのメールアドレス確認';
 $body = $to . " 様\n\n"
-      . "アカウント認証を完了するためにtriboxコンテストにログイン済みのデバイス・Webブラウザで以下のURLにアクセスしてください。\n"
+      . "アカウント認証を完了するためにTORIBOコンテストにログイン済みのデバイス・Webブラウザで以下のURLにアクセスしてください。\n"
       . $domain . "/setting/verify/" . $token . "\n\n"
-      . "triboxコンテスト\n"
+      . "TORIBOコンテスト\n"
       . $domain . "\n";
 $res = mb_send_mail($to, $subject, $body, $header);
