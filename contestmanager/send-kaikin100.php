@@ -21,19 +21,19 @@ $events_name = $argv[3];
 $point = $argv[4];
 
 
-$header = 'From:' . mb_encode_mimeheader('tribox Contest') . '<support@tribox.jp>' . "\n"
+$header = 'From:' . mb_encode_mimeheader('TORIBO Contest') . '<support@tribox.jp>' . "\n"
                   . 'Cc: support@tribox.jp' . "\n"
                   . 'Reply-to: support@tribox.jp';
-$subject = '[tribox Contest] 通算100節記念皆勤賞ポイント進呈のお知らせ';
+$subject = '[TORIBO Contest] 通算100節記念皆勤賞ポイント進呈のお知らせ';
 $body = $to_name . " 様\n\n"
-      . "いつもトライボックスコンテストにご参加頂き、誠にありがとうございます。\n"
+      . "いつもトリボコンテストにご参加頂き、誠にありがとうございます。\n"
       . "通算100節記念皆勤賞についてのお知らせです。\n\n"
-      . "皆勤賞としてtriboxポイントを進呈させて頂きました。\n"
-      . "triboxストアのマイページよりご確認ください。\n"
+      . "皆勤賞としてTORIBOポイントを進呈させて頂きました。\n"
+      . "TORIBOストアのマイページよりご確認ください。\n"
       . "https://store.tribox.com/mypage/\n\n"
       . "進呈ポイント: " . $point . "\n\n"
       . "皆勤賞の条件: 通算100節目 (2018年前半期第21節) 終了時までに3×3×3で90回以上記録を残している方\n"
-      . "※非認証アカウント (triboxストアと連携していないアカウント) は対象外です。\n\n"
+      . "※非認証アカウント (TORIBOストアと連携していないアカウント) は対象外です。\n\n"
       . "今後ともぜひよろしくお願い致します。\n"
       . "https://contest.tribox.com/\n"
       . "株式会社トライボックス\n";

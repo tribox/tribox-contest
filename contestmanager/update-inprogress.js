@@ -29,8 +29,8 @@ var targetContest;
 var tweetNotice = function() {
     if (argvrun.options.tweet) {
         // ツイートテキスト
-        // 例 "tribox Contest Week 2 (2016, 2H) started. https://contest.tribox.com/"
-        var status = 'tribox Contest Week ' + targetContest.number + ' (' + targetContest.year + ', ' + targetContest.season + 'H) started.'
+        // 例 "TORIBO Contest Week 2 (2016, 2H) started. https://contest.tribox.com/"
+        var status = 'TORIBO Contest Week ' + targetContest.number + ' (' + targetContest.year + ', ' + targetContest.season + 'H) started.'
                    + ' https://contest.tribox.com/';
 
         var client = new Twitter({

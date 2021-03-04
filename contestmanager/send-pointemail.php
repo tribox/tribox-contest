@@ -22,22 +22,22 @@ $event_name = $argv[4];
 $point = $argv[5];
 $point_type = $argv[6];
 
-$text = "おめでとうございます！\ntriboxコンテストの抽選にて当選されましたので、\nお客様のtriboxストアアカウントにポイントを進呈致しました。\n\n";
+$text = "おめでとうございます！\nTORIBOコンテストの抽選にて当選されましたので、\nお客様のTORIBOストアアカウントにポイントを進呈致しました。\n\n";
 if ($point_type == 1) {
     $text = "参加ありがとうございます。\n契約アカウントの皆様に、ポイント進呈のお知らせです。\n\n";
 }
 
-$header = 'From:' . mb_encode_mimeheader('tribox Contest') . '<support@tribox.jp>' . "\n"
+$header = 'From:' . mb_encode_mimeheader('TORIBO Contest') . '<support@tribox.jp>' . "\n"
                   . 'Cc: support@tribox.jp' . "\n"
                   . 'Reply-to: support@tribox.jp';
-$subject = '[tribox Contest] ポイント進呈のお知らせ';
+$subject = '[TORIBO Contest] ポイント進呈のお知らせ';
 $body = $to_name . " 様\n\n"
       . $text
       . "コンテスト名: " . $contest_name . "\n"
       . "種目名: " . $event_name . "\n"
       . "進呈ポイント: " . $point . "\n\n"
-      . "triboxストアのマイページよりご確認ください。\n"
+      . "TORIBOストアのマイページよりご確認ください。\n"
       . "https://store.tribox.com/mypage/\n\n"
-      . "triboxコンテスト\n"
+      . "TORIBOコンテスト\n"
       . "https://contest.tribox.com\n";
 $res = mb_send_mail($to_email, $subject, $body, $header);
