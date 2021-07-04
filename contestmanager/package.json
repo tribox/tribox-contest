@@ -2,14 +2,14 @@
     "name": "tribox-contest",
     "version": "0.0.1",
     "dependencies": {
-        "alg": "^0.9.23",
+        "alg": "0.2.0",
         "argv": "^0.0.2",
         "async": "^3.2.0",
         "date-utils": "^1.2.21",
         "firebase": "^8.7.0",
         "firebase-admin": "^9.10.0",
         "mysql": "^2.18.1",
-        "nanoid": "^2.1.11",
+        "nanoid": "2.1.11",
         "twitter": "^1.7.1"
     }
 }
