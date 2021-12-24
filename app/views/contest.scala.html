@@ -58,6 +58,16 @@
 
         <h2>{{ contestData.contestName }}</h2>
 
+        <p ng-if="contestData.videoBonusStatus && (countdown >= 0)">
+          <i class="em em-tada"></i> <b>ビデオボーナス節</b> <i class="em em-tada"></i>
+        </p>
+        <p ng-if="(contestData.videoBonusStatus == 'checking') && (countdown < 0)">
+          <i class="em em-tada"></i> <b>ビデオボーナス節（ビデオチェック中）</b> <i class="em em-tada"></i>
+        </p>
+        <p ng-if="(contestData.videoBonusStatus == 'done') && (countdown < 0)">
+          <i class="em em-tada"></i> <b>ビデオボーナス節（ビデオチェック完了）</b> <i class="em em-tada"></i>
+        </p>
+
         <p>
             <i class="fa fa-calendar"></i> 開催期間: <b>{{ contestData.beginAt | toDate }}</b> ~ <b>{{ contestData.endAt | toDate }}</b>
         </p>
@@ -131,8 +141,9 @@
                     <tbody>
                         <tr id="{{ e }}-{{ $index }}" ng-repeat="r in resultsTop3[e]">
                             <td>{{ r.place }}</td>
-                            <td ng-if="r.seasonPoint && r.seasonPoint != 0">{{ r.seasonPoint }}</td>
-                            <td ng-if="!(r.seasonPoint) || r.seasonPoint == 0"></td>
+                            <td>
+                                <span ng-if="(r.seasonPoint || r.seasonPointVideoBonus) && (r.seasonPoint + r.seasonPointVideoBonus) > 0">{{ r.seasonPoint + r.seasonPointVideoBonus }}</span>
+                            </td>
                             <td>
                                 <img src="@routes.Assets.versioned("flags/flags-iso/shiny/24")/{{ r.user.iso2 }}.png" height="24" style="vertical-align: middle;" ng-show="r.user.iso2">
                                 <a href="/user/{{ r.user.username }}">{{ r.user.displayname }}</a>

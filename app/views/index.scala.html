@@ -105,6 +105,10 @@
         <p>開催中のコンテスト</p>
         <h4><a href="/contest/{{ inProgressContest.contestId }}">{{ inProgressContest.contestName }}</a></h4>
 
+        <p ng-if="inProgressContest.videoBonusStatus">
+            <i class="em em-tada"></i> <b>ビデオボーナス節</b> <i class="em em-tada"></i>
+        </p>
+
         <p>
             <i class="fa fa-calendar"></i> 開催期間: <b>{{ inProgressContest.beginAt | toDate }}</b> ~ <b>{{ inProgressContest.endAt | toDate }}</b><br>
             <i class="fa fa-clock-o"></i> 残り時間: <span>{{ remainingTime }}</span>
