@@ -102,11 +102,13 @@
 
         <div ng-show="!(inProgressContest._dummy)">
 
-        <p>開催中のコンテスト</p>
+        <p><b>開催中のコンテスト</b></p>
         <h4><a href="/contest/{{ inProgressContest.contestId }}">{{ inProgressContest.contestName }}</a></h4>
 
         <p ng-if="inProgressContest.videoBonusStatus">
-            <i class="em em-tada"></i> <b>ビデオボーナス節</b> <i class="em em-tada"></i>
+            <i class="em em-tada"></i><i class="em em-tada"></i><i class="em em-tada"></i> <b>ビデオボーナス節 (3×3×3のみ)</b> <i class="em em-tada"></i><i class="em em-tada"></i><i class="em em-tada"></i><br>
+            要件を満たすビデオを提出いただいた方のうち上位5名に追加のSP（シーズンポイント）が与えられます！<br>
+            ビデオボーナス節についての詳細は <b><a href="@routes.HomeController.regulations">参加方法とルール</a></b> をご覧ください。
         </p>
 
         <p>
