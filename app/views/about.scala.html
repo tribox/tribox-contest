@@ -59,28 +59,33 @@ p {
         <h2>トリコン: TORIBOコンテストとは</h2>
 
         <p>
-            スピードキューブのオンラインコンテスト「トリコン」へようこそ!<br>
+            スピードキューブのオンラインコンテスト「トリコン」へようこそ！<br>
             10分以内にキューブを解ける方なら誰でも参加可能です。<br>
-            参加費は無料。しかもお得な特典がたっぷりです。皆さまのご参加をお待ちしています。<br>
-            <a href="@routes.HomeController.join">新規会員登録ページ</a><br>
-            <a href="@routes.HomeController.regulations">参加方法とルール</a>
+            参加費は無料。しかもお得な特典がたっぷりです。皆さまのご参加をお待ちしています。
         </p>
+        <ul>
+            <li><b><a href="@routes.HomeController.join">新規会員登録ページ</a></b></li>
+            <li><b><a href="@routes.HomeController.regulations">参加方法とルール</a></b></li>
+        </ul>
 
         <hr>
 
         <h4>ポイントが当たる「ストア&コンテスト連携」</h4>
         <p>
-            トリコンアカウントは、<a href="https://store.tribox.com/">TORIBOストア</a>アカウントと結びつけることができます。<br>
-            以下の特典を受け取るには「<a href="@routes.SettingController.verify">ストア&コンテスト連携</a>」が必要です。<br>
+            トリコンアカウントは、<b><a href="https://store.tribox.com/">TORIBOストア</a></b>アカウントと結びつけることができます。<br>
+            以下の特典を受け取るには「<b><a href="@routes.SettingController.verify">ストア&コンテスト連携</a></b>」が必要です。<br>
             &#x1f4b0;抽選ポイント (毎週161名)<br>
             &#x1f4b0;皆勤賞 (半年ごと)<br>
-            &#x1f4b0;入賞賞金 (半年ごと)<br>
-            <a href="@routes.SettingController.verify">ストア&コンテスト連携設定ページ</a>
+            &#x1f4b0;入賞賞金 (半年ごと)
+        </p>
+        <p>
+            <b><a href="@routes.SettingController.verify">ストア&コンテスト連携設定ページ</a></b>
         </p>
 
         <h4>コンテストとシーズン</h4>
         <p>
             「コンテスト (節) 」は毎週日曜21時に始まり、1週間後に終了します。つまり、コンテストは常に開催されています。<br>
+            SNSについて: 皆様の記録やスクランブルの特徴などは、毎週日曜21時の結果発表まで公表しないようお願いいたします。<br>
             半年間（およそ26週間）で「シーズン」が切り替わります。1〜6月が前半期、7〜12月が後半期です。
         </p>
 
@@ -89,16 +94,16 @@ p {
         <h4>&#x1f4b0;抽選ポイント</h4>
         <p>
             毎週抽選で161名様に100ポイントが進呈されます。<br>
-            ポイントは<a href="https://store.tribox.com/">TORIBOストア</a>アカウントに自動進呈され、1ポイント=1円としてご使用頂けます。<br>
+            ポイントは<b><a href="https://store.tribox.com/">TORIBOストア</a></b>アカウントに自動進呈され、1ポイント=1円としてご使用頂けます。<br>
             複数の種目に参加すると、同時に複数当選する可能性もあります!<br>
-            抽選ポイントを受け取るには「<a href="@routes.SettingController.verify">ストア&コンテスト連携</a>」が必要です。
+            抽選ポイントを受け取るには「<b><a href="@routes.SettingController.verify">ストア&コンテスト連携</a></b>」が必要です。
         </p>
 
         <h4>&#x1f4b0;皆勤賞</h4>
         <p>
             各種目に毎週参加された方には、最大4種目まで皆勤賞 (500ポイント) が進呈されます。<br>
             皆勤賞の条件: 対象の種目において全ての節に何らかの記録を残している かつ DNFが3回以下<br>
-            皆勤賞を受け取るには「<a href="@routes.SettingController.verify">ストア&コンテスト連携</a>」が必要です。
+            皆勤賞を受け取るには「<b><a href="@routes.SettingController.verify">ストア&コンテスト連携</a></b>」が必要です。
         </p>
 
         <h4>&#x1f4b0;入賞賞金</h4>

@@ -27,32 +27,8 @@ argv.option([
 var argvrun = argv.run();
 console.log(argvrun);
 
-// 対象シーズン (20161)
-var targetSeason, targetSeasonObj;
-// ユーザテーブル、ユーザシークレットテーブル
-var Users, Usersecrets;
-
-// 書き込むデータ (順位、シーズンポイント、当選)
-//var ready = {};
-// 契約アカウント用
-//var readyTriboxTeam = {};
-
-
-// 配列のシャッフル
-//  * http://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array-in-javascript
-// 
-// Fisher–Yates Shuffle というらしい
-//  * https://bost.ocks.org/mike/shuffle/
-//  * https://bost.ocks.org/mike/shuffle/compare.html
-/*var shuffle = function(a) {
-    var j, x, i;
-    for (i = a.length; i; i -= 1) {
-        j = Math.floor(Math.random() * i);
-        x = a[i - 1];
-        a[i - 1] = a[j];
-        a[j] = x;
-    }
-};*/
+// 対象シーズン (例: 20161)
+var targetSeason;
 
 
 var connection = mysql.createConnection({
@@ -158,11 +134,23 @@ var checkWinners = function() {
                         Object.keys(targetContests).forEach(function(contestId) {
                             if (Results[contestId][eventId] !== undefined) {
                                 if (Results[contestId][eventId][userId]) {
+                                    // シーズンポイント
                                     if ('seasonPoint' in Results[contestId][eventId][userId]) {
                                         if (0 < Results[contestId][eventId][userId].seasonPoint) {
                                             for (var i = 0; i < Winners[eventId].length; i++) {
                                                 if (Winners[eventId][i].userId == userId) {
                                                     Winners[eventId][i].seasonPoint += Results[contestId][eventId][userId].seasonPoint;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                    // シーズンポイント（ビデオボーナス）
+                                    if ('seasonPointVideoBonus' in Results[contestId][eventId][userId]) {
+                                        if (0 < Results[contestId][eventId][userId].seasonPointVideoBonus) {
+                                            for (var i = 0; i < Winners[eventId].length; i++) {
+                                                if (Winners[eventId][i].userId == userId) {
+                                                    Winners[eventId][i].seasonPoint += Results[contestId][eventId][userId].seasonPointVideoBonus;
                                                     break;
                                                 }
                                             }

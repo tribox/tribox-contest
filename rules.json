@@ -226,6 +226,10 @@
                         }
                     }
                 },
+                // ビデオボーナス節
+                "videoBonusStatus": {
+                    ".validate": "newData.isString() && (newData.val() == 'checking' || newData.val() == 'done')"
+                },
                 "$other": {
                     ".validate": false
                 }
@@ -362,6 +366,10 @@
                         },
                         // シーズンポイント (SP)
                         "seasonPoint": {
+                            ".validate": "newData.isNumber() && 0 <= newData.val()"
+                        },
+                        // シーズンポイント (SP) ビデオボーナス
+                        "seasonPointVideoBonus": {
                             ".validate": "newData.isNumber() && 0 <= newData.val()"
                         },
                         // ランダム抽選

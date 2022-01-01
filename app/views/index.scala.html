@@ -102,8 +102,14 @@
 
         <div ng-show="!(inProgressContest._dummy)">
 
-        <p>開催中のコンテスト</p>
+        <p><b>開催中のコンテスト</b></p>
         <h4><a href="/contest/{{ inProgressContest.contestId }}">{{ inProgressContest.contestName }}</a></h4>
+
+        <p ng-if="inProgressContest.videoBonusStatus">
+            <i class="em em-tada"></i><i class="em em-tada"></i><i class="em em-tada"></i> <b>ビデオボーナス節 (3×3×3のみ)</b> <i class="em em-tada"></i><i class="em em-tada"></i><i class="em em-tada"></i><br>
+            要件を満たすビデオを提出いただいた方のうち上位5名に追加のSP（シーズンポイント）が与えられます！<br>
+            ビデオボーナス節についての詳細は <b><a href="@routes.HomeController.regulations">参加方法とルール</a></b> をご覧ください。
+        </p>
 
         <p>
             <i class="fa fa-calendar"></i> 開催期間: <b>{{ inProgressContest.beginAt | toDate }}</b> ~ <b>{{ inProgressContest.endAt | toDate }}</b><br>
@@ -145,30 +151,6 @@
 
         <p>
             <a class="twitter-timeline" data-width="480" data-height="480" data-theme="light" href="https://twitter.com/triboxContest?ref_src=twsrc%5Etfw">Tweets by triboxContest</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-        </p>
-
-        <p>
-            <b>2018-12-09 News!</b><br>
-            2018年クリスマスアップデートです！Skewbの追加、FMCスクランブル画像の表示、インスペクション時のジャッジコールを追加しました！<br>
-            詳細は<a href="/release-notes/christmas-2018">リリースノート</a>をご覧ください。
-        </p>
-
-        <p>
-            <b>2018-05-27 News!</b><br>
-            2018年後半期 (7月1日スタート) から「6×6×6」と「7×7×7」が開催種目として追加されます！<br>
-        </p>
-
-        <p>
-            <b>2018-01-01 News!</b><br>
-            2018年前半期 (1月7日スタート) から「メガミンクス」と「Square-1」が開催種目として追加されます！<br>
-        </p>
-
-        <p>
-            <b>2017-06-18 News!</b><br>
-            2017年後半期 (7月2日スタート) から「ピラミンクス」が開催種目として追加されます！<br>
-            <!-- それに伴い2017年前半期第25節、26節も「ピラミンクス」を開催します。
-            2017年前半期の「ピラミンクス」はシーズンランキングには反映されませんのでご了承ください (オープン戦扱いです)。<br>
-            ※後半期から「ピラミンクス」は正式なシーズンランキング集計対象種目です。 -->
         </p>
 
         <h5>コンテストタイマー体験</h5>

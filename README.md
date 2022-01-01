@@ -170,6 +170,13 @@ node contestmanager/append-winners.js
 
 ### :alarm_clock: 不定期 -- 必要時に実行する
 
+#### ビデオボーナス
+
+ビデオボーナス節に設定したい節は、`$.contests.<contest_id>.videoBonusStatus` のステータス文字列を `checking` に設定する。
+ビデオチェックが完了したらこの項目を `done` に設定する。
+
+ビデオボーナスのポイントは、`$.results.<contest_id>.<event_id>.<user_id>.seasonPointVideoBonus` に数値を設定する。
+
 #### 参加済み人数の更新
 
 参加済み人数を表示するために、適当な間隔でポーリングする。カウント結果はfirebaseデータベースに書き込まれる。

@@ -194,8 +194,15 @@ app.controller('RankingCtrl', ['$scope', '$timeout', function($scope, $timeout) 
                                         if (!(uid in lastUsedPuzzles[eid])) {
                                             lastUsedPuzzles[eid][uid] = 0;
                                         }
-                                        if (results[cid][eid][uid].seasonPoint) {
-                                            seasonPoints[eid][uid] += results[cid][eid][uid].seasonPoint;
+                                        if (results[cid][eid][uid].seasonPoint || results[cid][eid][uid].seasonPointVideoBonus) {
+                                            // シーズンポイント
+                                            if (results[cid][eid][uid].seasonPoint) {
+                                                seasonPoints[eid][uid] += results[cid][eid][uid].seasonPoint;
+                                            }
+                                            // シーズンポイント（ビデオボーナス）
+                                            if (results[cid][eid][uid].seasonPointVideoBonus) {
+                                                seasonPoints[eid][uid] += results[cid][eid][uid].seasonPointVideoBonus;
+                                            }
                                             if (results[cid][eid][uid].puzzle && results[cid][eid][uid].puzzle.type == 'database') {
                                                 var productId = results[cid][eid][uid].puzzle.product;
                                                 if (!(productId in usedPuzzles[eid][uid])) {
