@@ -52,7 +52,8 @@ activator run -Dconfig.resource=dev.conf
 
 本番サーバでは、cron で定期的にチェック＆再起動のスクリプトが実行されるため、
 まず1つ目のコマンドでコンパイルして，次に2つ目のコマンドでプロセスを落とす。
-すると、あとは放置してればそのうち play が再起動する．
+すると、あとは放置してればそのうち play が再起動する。  
+本当はコンパイル済みのjarをデプロイしたいけど、まだできてない。
 
 ```
 activator clean stage
@@ -206,6 +207,11 @@ node contestmanager/update-wcaapp.js
 #### ユーザーを凍結する
 
 (1) Firebase の Database で `users.<UID>.isSuspended` を `true` に設定する。  
+(2) Firebase の Authentication で「アカウントを無効にする」を設定する (忘れがちなので注意！)。  
+
+#### ユーザーを削除する（論理削除）
+
+(1) Firebase の Database で `users.<UID>.isDeleted` を `true` に設定する。  
 (2) Firebase の Authentication で「アカウントを無効にする」を設定する (忘れがちなので注意！)。  
 
 #### 記録を削除する

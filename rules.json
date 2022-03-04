@@ -63,6 +63,9 @@
                 "isSuspended": {
                     ".validate": "newData.isBoolean()"
                 },
+                "isDeleted": {
+                    ".validate": "newData.isBoolean()"
+                },
                 "lastUsedPuzzles": {
                     "$event_id": {
                         ".validate": "root.child('events').hasChild($event_id) && newData.hasChildren(['type'])",
