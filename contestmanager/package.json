@@ -9,7 +9,7 @@
         "firebase": "^8.7.0",
         "firebase-admin": "^9.10.0",
         "mysql": "^2.18.1",
-        "nanoid": "2.1.11",
+        "nanoid": "3.1.31",
         "twitter": "^1.7.1"
     }
 }

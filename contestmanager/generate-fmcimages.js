@@ -4,10 +4,11 @@
  * 指定シーズンのFMC画像を生成して public/333fm/ のディレクトリに保存する。
  */
 
-var async = require('async');
 var fs = require('fs');
-var generate = require('nanoid/generate');
 var request = require('request');
+
+var nanoid = require('nanoid');
+var nanoidCustom = nanoid.customAlphabet('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789', 21);
 
 var Config = require('./config.js');
 
@@ -53,7 +54,7 @@ var getScrambles = function() {
             if (contestId.slice(1, 6) == targetSeason) {
                 var scramble = Scrambles[contestId]['e333fm'][0];
                 var scrambleEscaped = scramble.replace(/'/g, '%27').replace(/ /g, '%20');
-                var scrambleId = generate('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789', 21);
+                var scrambleId = nanoidCustom();
                 var savePath = Config.PATH_TO_CONTEST + '/public/333fm/' + scrambleId + '.png';
 
                 // TNoodle でスクランブル画像を生成して取得
