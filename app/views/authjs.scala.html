@@ -26,7 +26,7 @@ app.controller('AuthCtrl', ['$scope', '$firebaseObject', 'Auth', function($scope
             $scope.userData = $firebaseObject(contestRef.child('users').child(authData.uid));
             $scope.userData.$loaded().then(function() {
                 @* Issue #32 凍結してたら強制ログアウトする *@
-                if ($scope.userData.isSuspended) {
+                if ($scope.userData.isSuspended || $scope.userData.isDeleted) {
                     Auth.$signOut();
                     location.href = '@routes.HomeController.index?logout=1';
                 }

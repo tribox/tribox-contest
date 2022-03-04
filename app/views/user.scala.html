@@ -42,7 +42,7 @@ a.video-url {
 
     <div ng-hide="existsUser">
         <p class="color-error">
-            存在しないユーザ名です。
+            存在しないユーザです。
         </p>
     </div>
 
@@ -51,8 +51,13 @@ a.video-url {
             このアカウントは一時停止中です。
         </p>
     </div>
+    <div ng-show="deletedUser">
+        <p class="color-error">
+            存在しないユーザです。
+        </p>
+    </div>
 
-    <div ng-show="existsUser && !suspendedUser">
+    <div ng-show="existsUser && !suspendedUser && !deletedUser">
 
         @authinfo()
 
@@ -336,6 +341,7 @@ app.controller('UserCtrl', ['$scope', '$timeout', function($scope, $timeout) {
     $scope.userLoaded = false;
     $scope.existsUser = false;
     $scope.suspendedUser = false;
+    $scope.deletedUser = false;
 
     $scope.events = null;
     $scope.inProgress = null;
@@ -452,6 +458,9 @@ app.controller('UserCtrl', ['$scope', '$timeout', function($scope, $timeout) {
 
                     if (snapUser.val().isSuspended) {
                         $scope.suspendedUser = true;
+                    }
+                    if (snapUser.val().isDeleted) {
+                        $scope.deletedUser = true;
                     }
                     $scope.existsUser = true;
                     $scope.userLoaded = true;
