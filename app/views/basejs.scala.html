@@ -73,6 +73,11 @@ TriboxContest.formatTime = function(input) {
 
 // Details を整形する
 TriboxContest.formatDetails = function(results, e, Events) {
+    // Work around: detailsがundefinedの場合は空文字列を返す
+    if (!(results.details)) {
+        return '';
+    }
+
     var arr = [];
     results.details.forEach(function(d, index) {
         var t = '';
