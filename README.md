@@ -136,9 +136,10 @@ java -jar wca/dist/TNoodle-WCA.jar  # TNoodle起動
 スクランブルデータ生成して、firebaseデータベースに書き込む。
 引数は、シーズン。例えば、20161 (2016年前半期)、20162 (2016年後半期)、20171 (2017年前半期)、......
 ```
-node contestmanager/create-season.js 20162
-node contestmanager/generate-fmcimages.js -s 20162
+node --max-old-space-size=3000 contestmanager/create-season.js 20162
+node --max-old-space-size=3000 contestmanager/generate-fmcimages.js -s 20162
 ```
+※ `create-season.js` の中でresultsのスナップショットを取得するので `--max-old-space-size` でヒープサイズを上げておく必要がある（根本を直したい）。
 
 また、`app/views/index.scala.html` と `app/views/user.scala.html` と `app/views/ranking.scala.html` を変更して、シーズンリンク用のボタンを付ける。
 
