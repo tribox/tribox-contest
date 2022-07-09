@@ -149,7 +149,7 @@ node --max-old-space-size=3000 contestmanager/generate-fmcimages.js -s 20162
 
 次のコマンドを実行して `kaikin` テーブルの内容をチェックする。
 ```
-node contestmanager/tabulate-kaikin.js --season=20162
+node --max-old-space-size=3000 contestmanager/tabulate-kaikin.js --season=20162
 ```
 
 よければ、次のコマンドでポイント加算とメール送信。
@@ -161,7 +161,7 @@ node contestmanager/append-kaikin.js
 
 次のコマンドを実行して `winners` テーブルの内容をチェックする。
 ```
-node contestmanager/tabulate-winners.js --season=20162
+node --max-old-space-size=3000 contestmanager/tabulate-winners.js --season=20162
 ```
 
 よければ、次のコマンドでポイント加算とメール送信。
