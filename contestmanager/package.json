@@ -7,7 +7,7 @@
         "async": "^3.2.0",
         "date-utils": "^1.2.21",
         "firebase": "^8.7.0",
-        "firebase-admin": "^9.10.0",
+        "firebase-admin": "^11.4.1",
         "mysql": "^2.18.1",
         "nanoid": "3.1.31",
         "twitter": "^1.7.1"
