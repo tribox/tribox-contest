@@ -1,27 +1,54 @@
 <?php
 
 /**
- * テストメールを送る
+ * テストメールを送る。ローカルのpostfix経由で送る。
+ * TODO: node.js 内のモジュールで送るようにしたい。
  *
  * Usage:
  *   php send-testemail.php foo@tribox.jp
  */
 
-//var_dump($argv);
 if (count($argv) != 2) {
     exit("Invalid arguments\n");
 }
 
+date_default_timezone_set('Asia/Tokyo');
 mb_language('ja');
 mb_internal_encoding('UTF-8');
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
+
+require_once('PHPMailer/src/Exception.php');
+require_once('PHPMailer/src/PHPMailer.php');
+require_once('PHPMailer/src/SMTP.php');
+
+$mailer = new PHPMailer(true);
+
 $to = $argv[1];
 
-$header = 'From:' . mb_encode_mimeheader('TORIBO Contest') . '<support@tribox.jp>' . "\n"
-                  . 'Cc: support@tribox.jp' . "\n"
-                  . 'Reply-to: support@tribox.jp';
-$subject = 'サーバーからのテストメール';
+$mailer->CharSet = 'UTF-8';
+$mailer->SMTPDebug = 0;
+$mailer->isSMTP();
+$mailer->Host = 'localhost';
+$mailer->Port = 25;
+
+$mailer->setFrom('support@tribox.jp', mb_encode_mimeheader('TORIBO Contest'));
+$mailer->addAddress($to);
+$mailer->addReplyTo('support@tribox.jp');
+$mailer->addCC('support@tribox.jp');
+
+$mailer->isHTML(false);
+$mailer->Subject = mb_encode_mimeheader('サーバーからのテストメール');
+
 $body = $to . " 様\n\n"
-      . "サーバーからのテストメールです。\n\n"
-      . "TORIBOコンテスト\n";
-$res = mb_send_mail($to, $subject, $body, $header);
+  . "サーバーからのテストメールです。\n\n"
+  . "TORIBOコンテスト\n";
+$mailer->Body = $body;
+
+if (!$mailer->send()) {
+    echo 'Mailer Error: ' . $mail->ErrorInfo;
+} else {
+    echo 'Message sent!';
+}
