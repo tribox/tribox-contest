@@ -24,9 +24,16 @@ require_once('PHPMailer/src/Exception.php');
 require_once('PHPMailer/src/PHPMailer.php');
 require_once('PHPMailer/src/SMTP.php');
 
-$mailer = new PHPMailer(true);
-
+// Prepare email contents
 $to = $argv[1];
+
+$subject = 'サーバーからのテストメール';
+$body = $to . " 様\n\n"
+      . "サーバーからのテストメールです。\n\n"
+      . "TORIBOコンテスト\n";
+
+// Send an email using PHPMailer
+$mailer = new PHPMailer(true);
 
 $mailer->CharSet = 'UTF-8';
 $mailer->SMTPDebug = 0;
@@ -40,11 +47,8 @@ $mailer->addReplyTo('support@tribox.jp');
 $mailer->addCC('support@tribox.jp');
 
 $mailer->isHTML(false);
-$mailer->Subject = mb_encode_mimeheader('サーバーからのテストメール');
+$mailer->Subject = mb_encode_mimeheader($subject);
 
-$body = $to . " 様\n\n"
-  . "サーバーからのテストメールです。\n\n"
-  . "TORIBOコンテスト\n";
 $mailer->Body = $body;
 
 if (!$mailer->send()) {
