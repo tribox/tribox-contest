@@ -7,14 +7,23 @@
  *   php send-verifyingemail.php foo@tribox.jp "名前" "コンテスト名" "種目名" ポイント数 ポイントタイプ(0/1)
  */
 
-//var_dump($argv);
 if (count($argv) != 7) {
     exit("Invalid arguments\n");
 }
 
+date_default_timezone_set('Asia/Tokyo');
 mb_language('ja');
 mb_internal_encoding('UTF-8');
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
+
+require_once('PHPMailer/src/Exception.php');
+require_once('PHPMailer/src/PHPMailer.php');
+require_once('PHPMailer/src/SMTP.php');
+
+// Prepare email contents
 $to_email = $argv[1];
 $to_name = $argv[2];
 $contest_name = $argv[3];
@@ -27,9 +36,6 @@ if ($point_type == 1) {
     $text = "参加ありがとうございます。\n契約アカウントの皆様に、ポイント進呈のお知らせです。\n\n";
 }
 
-$header = 'From:' . mb_encode_mimeheader('TORIBO Contest') . '<support@tribox.jp>' . "\n"
-                  . 'Cc: support@tribox.jp' . "\n"
-                  . 'Reply-to: support@tribox.jp';
 $subject = '[TORIBO Contest] ポイント進呈のお知らせ';
 $body = $to_name . " 様\n\n"
       . $text
@@ -40,4 +46,28 @@ $body = $to_name . " 様\n\n"
       . "https://store.tribox.com/mypage/\n\n"
       . "TORIBOコンテスト\n"
       . "https://contest.tribox.com\n";
-$res = mb_send_mail($to_email, $subject, $body, $header);
+
+// Send an email using PHPMailer
+$mailer = new PHPMailer(true);
+
+$mailer->CharSet = 'UTF-8';
+$mailer->SMTPDebug = 0;
+$mailer->isSMTP();
+$mailer->Host = 'localhost';
+$mailer->Port = 25;
+
+$mailer->setFrom('support@tribox.jp', mb_encode_mimeheader('TORIBO Contest'));
+$mailer->addAddress($to);
+$mailer->addReplyTo('support@tribox.jp');
+$mailer->addCC('support@tribox.jp');
+
+$mailer->isHTML(false);
+$mailer->Subject = mb_encode_mimeheader($subject);
+
+$mailer->Body = $body;
+
+if (!$mailer->send()) {
+    echo 'Mailer Error: ' . $mail->ErrorInfo;
+} else {
+    echo 'Message sent!';
+}

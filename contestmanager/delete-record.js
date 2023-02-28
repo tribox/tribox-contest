@@ -4,7 +4,6 @@
  * 不正等した記録を消去する
  */
 
-var async = require('async');
 var exec = require('child_process').exec;
 
 var contestRef = require('./contestref.js').ref;
@@ -53,66 +52,62 @@ var Users, Usersecrets;
 
 // 記録を削除する
 var deleteRecord = function() {
-            var targetEmail = argvrun.options.email;
-            var targetUsername = argvrun.options.username;
-            var targetEvent = argvrun.options.event;
+    var targetEmail = argvrun.options.email;
+    var targetUsername = argvrun.options.username;
+    var targetEvent = argvrun.options.event;
 
-            contestRef.child('users').once('value', function(snapUsers) {
-            //contestRef.child('usersecrets').once('value', function(snapUsersecrets) {
-                Users = snapUsers.val();
-                //Usersecrets = snapUsersecrets.val();
-                //console.log(Users);
-                //console.log(Usersecrets);
+    contestRef.child('users').once('value', function(snapUsers) {
+        Users = snapUsers.val();
+        //console.log(Users);
 
-                // UID を調べる
-                var targetUID = '';
-                Object.keys(Users).forEach(function(uid) {
-                    if (Users[uid].username == targetUsername) {
-                        targetUID = uid;
-                    }
+        // UID を調べる
+        var targetUID = '';
+        Object.keys(Users).forEach(function(uid) {
+            if (Users[uid].username == targetUsername) {
+                targetUID = uid;
+            }
+        });
+
+        contestRef.child('results').child(targetContest).child('e' + targetEvent).child(targetUID).once('value', function(snapResults) {
+            var targetResult = snapResults.val();
+
+            // 消す記録
+            console.log('');
+            console.log('** NOTICE -- about to delete **');
+            console.log('Email    : ' + targetEmail);
+            console.log('Username : ' + targetUsername);
+            console.log('Contest  : ' + targetContest);
+            console.log('UID      : ' + targetUID);
+            console.log('Event    : ' + targetEvent);
+            console.log(targetResult);
+            console.log('********************************');
+            console.log('');
+
+            if (argvrun.options.dryrun) {
+                console.log('dryrun!!!!');
+                process.exit(0);
+            } else {
+                contestRef.child('results').child(targetContest).child('e' + targetEvent).child(targetUID).remove(function() {
+                    console.log('delete success!!!!');
+                    // メール送信
+                    var command = '/usr/bin/php ' + __dirname + '/send-deleteemail.php'
+                                + ' "' + targetEmail + '"'
+                                + ' "' + targetUsername + '"'
+                                + ' "' + targetContest.substr(1) + '"'
+                                + ' "' + targetEvent + '"';
+                    exec(command, function(err, stdout, stderr) {
+                        if (err) {
+                            console.error(err);
+                        } else {
+                            console.error(stderr);
+                            process.exit(0);
+                        }
+                    });
                 });
+            }
 
-                contestRef.child('results').child(targetContest).child('e' + targetEvent).child(targetUID).once('value', function(snapResults) {
-                    var targetResult = snapResults.val();
-
-                    // 消す記録
-                    console.log('');
-                    console.log('** NOTICE -- about to delete **');
-                    console.log('Email    : ' + targetEmail);
-                    console.log('Username : ' + targetUsername);
-                    console.log('Contest  : ' + targetContest);
-                    console.log('UID      : ' + targetUID);
-                    console.log('Event    : ' + targetEvent);
-                    console.log(targetResult);
-                    console.log('********************************');
-                    console.log('');
-
-                    if (argvrun.options.dryrun) {
-                        console.log('dryrun!!!!');
-                        process.exit(0);
-                    } else {
-                        contestRef.child('results').child(targetContest).child('e' + targetEvent).child(targetUID).remove(function() {
-                            console.log('delete success!!!!');
-                            // メール送信
-                            var command = '/usr/bin/php ' + __dirname + '/send-deleteemail.php'
-                                        + ' "' + targetEmail + '"'
-                                        + ' "' + targetUsername + '"'
-                                        + ' "' + targetContest.substr(1) + '"'
-                                        + ' "' + targetEvent + '"';
-                            exec(command, function(err, stdout, stderr) {
-                                if (err) {
-                                    console.error(err);
-                                } else {
-                                    console.error(stderr);
-                                    process.exit(0);
-                                }
-                            });
-                        });
-                    }
-
-                });
-            //});
-            });
+        });
+    });
 };
 
 
