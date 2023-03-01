@@ -3,7 +3,7 @@
 TORIBO Contest is an Online Speed-Solving Competition organized by [Tribox Inc](http://tribox.com).
 The application is based on [Play Framework](https://www.playframework.com) and [Firebase](https://www.firebase.com).
 
-URL: https://contest.tribox.com
+URL: https://contest.tribox.com/
 
 
 ## Requirements
@@ -14,7 +14,7 @@ URL: https://contest.tribox.com
 * [TNoodle](https://github.com/cubing/tnoodle) v0.14.0
 * [Sarumawashi](https://github.com/kotarot/Sarumawashi)
 * [wca-importer](https://github.com/kotarot/wca-importer)
-
+* [PHPMailer](https://github.com/PHPMailer/PHPMailer) is needed in the `contestmanager` directory.
 
 ## Setup
 

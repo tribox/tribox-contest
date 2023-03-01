@@ -20,6 +20,7 @@ target
 /contestmanager/secret/serviceAccountKey.json
 /contestmanager/secret/wca/serviceAccountKey.json
 /contestmanager/appendlogs/*.log
+/contestmanager/PHPMailer
 
 # FMC images
 /public/333fm/*.png
