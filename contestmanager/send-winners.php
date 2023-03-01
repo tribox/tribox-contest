@@ -64,7 +64,7 @@ $mailer->Host = 'localhost';
 $mailer->Port = 25;
 
 $mailer->setFrom('support@tribox.jp', mb_encode_mimeheader('TORIBO Contest'));
-$mailer->addAddress($to);
+$mailer->addAddress($to_email);
 $mailer->addReplyTo('support@tribox.jp');
 $mailer->addCC('support@tribox.jp');
 
