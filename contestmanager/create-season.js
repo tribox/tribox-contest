@@ -164,140 +164,140 @@ contestRef.child('events').once('value', function(snap) {
 
 // Save contests to DB
 var saveContests = function(contests, contestsIndexes, callback) {
-            // read current data
-            contestRef.child('contests').once('value', function(snap) {
-                var current = snap.val();
-                //console.dir(current);
+    // read current data
+    contestRef.child('contests').once('value', function(snap) {
+        var current = snap.val();
+        //console.dir(current);
 
-                // write
-                async.eachSeries(contestsIndexes, function(contestId, next) {
-                    // 上書きはしない
-                    if (current[contestId] !== undefined) {
-                        console.error('Already exists:', contestId);
-                        next();
-                    } else {
-                        contestRef.child('contests').child(contestId).set(contests[contestId], function(error) {
-                            if (error) {
-                                console.error('Set failed... contest: ' + contestId);
-                                process.exit(1);
-                            } else {
-                                console.log('Set succeeded... contest: ' + contestId);
-                                next();
-                            }
-                        });
-                    }
-                }, function(err) {
-                    if (!err) {
-                        // ダミーデータを削除する
-                        //contestRef.child('contests').child('cxxxxxxx').set(null, function(error) {
-                        //    if (error) {
-                        //        console.error('Remove failed');
-                        //        process.exit(1);
-                        //    } else {
-                        //        console.log('Remove succeeded');
-                                callback();
-                        //    }
-                        //});
-                    } else {
-                        console.error(err);
+        // write
+        async.eachSeries(contestsIndexes, function(contestId, next) {
+            // 上書きはしない
+            if (current[contestId] !== undefined) {
+                console.error('Already exists:', contestId);
+                next();
+            } else {
+                contestRef.child('contests').child(contestId).set(contests[contestId], function(error) {
+                    if (error) {
+                        console.error('Set failed... contest: ' + contestId);
                         process.exit(1);
+                    } else {
+                        console.log('Set succeeded... contest: ' + contestId);
+                        next();
                     }
                 });
-            });
+            }
+        }, function(err) {
+            if (!err) {
+                // ダミーデータを削除する
+                //contestRef.child('contests').child('cxxxxxxx').set(null, function(error) {
+                //    if (error) {
+                //        console.error('Remove failed');
+                //        process.exit(1);
+                //    } else {
+                //        console.log('Remove succeeded');
+                        callback();
+                //    }
+                //});
+            } else {
+                console.error(err);
+                process.exit(1);
+            }
+        });
+    });
 };
 
 // Save scrambles to DB
 var saveScrambles = function(scrambles, scramblesIndexes, callback) {
-            // read current data
-            contestRef.child('scrambles').once('value', function(snap) {
-                var current = snap.val();
-                //console.dir(current);
+    // read current data
+    contestRef.child('scrambles').once('value', function(snap) {
+        var current = snap.val();
+        //console.dir(current);
 
-                // write
-                async.eachSeries(scramblesIndexes, function(contestId, next) {
-                    // 上書きはしない
-                    if (current[contestId] !== undefined) {
-                        console.error('Already exists:', contestId);
-                        next();
-                    } else {
-                        contestRef.child('scrambles').child(contestId).set(scrambles[contestId], function(error) {
-                            if (error) {
-                                console.error('Set failed... scramble: ' + contestId);
-                                process.exit(1);
-                            } else {
-                                console.log('Set succeeded... scramble: ' + contestId);
-                                next();
-                            }
-                        });
-                    }
-                }, function(err) {
-                    if (!err) {
-                        // ダミーデータを削除する
-                        //contestRef.child('scrambles').child('cxxxxxxx').set(null, function(error) {
-                        //    if (error) {
-                        //        console.error('Remove failed');
-                        //        process.exit(1);
-                        //    } else {
-                        //        console.log('Remove succeeded');
-                                callback();
-                        //    }
-                        //});
-                    } else {
-                        console.error(err);
+        // write
+        async.eachSeries(scramblesIndexes, function(contestId, next) {
+            // 上書きはしない
+            if (current[contestId] !== undefined) {
+                console.error('Already exists:', contestId);
+                next();
+            } else {
+                contestRef.child('scrambles').child(contestId).set(scrambles[contestId], function(error) {
+                    if (error) {
+                        console.error('Set failed... scramble: ' + contestId);
                         process.exit(1);
+                    } else {
+                        console.log('Set succeeded... scramble: ' + contestId);
+                        next();
                     }
                 });
-            });
+            }
+        }, function(err) {
+            if (!err) {
+                // ダミーデータを削除する
+                //contestRef.child('scrambles').child('cxxxxxxx').set(null, function(error) {
+                //    if (error) {
+                //        console.error('Remove failed');
+                //        process.exit(1);
+                //    } else {
+                //        console.log('Remove succeeded');
+                        callback();
+                //    }
+                //});
+            } else {
+                console.error(err);
+                process.exit(1);
+            }
+        });
+    });
 };
 
 // Save dummy results to DB
 var saveResults = function(contests, contestsIndexes, callback) {
-            // read current data
-            contestRef.child('results').once('value', function(snap) {
-                var current = snap.val();
-                //console.dir(current);
+    // read current data
+    contestRef.child('results').once('value', function(snap) {
+        var current = snap.val();
+        //console.dir(current);
 
-                // write
-                async.eachSeries(contestsIndexes, function(contestId, next) {
-                    // 上書きはしない
-                    if (current[contestId] !== undefined) {
-                        console.error('Already exists:', contestId);
-                        next();
-                    } else {
-                        var dummyResults = {};
-                        contests[contestId].events.forEach(function(e) {
-                            dummyResults[e] = {
-                                'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx': {
-                                    '_dummy' : true
-                                }
-                            };
-                        });
-                        contestRef.child('results').child(contestId).set(dummyResults, function(error) {
-                            if (error) {
-                                console.error('Set failed; result: ' + contestId);
-                                process.exit(1);
-                            } else {
-                                console.log('Set succeeded; result: ' + contestId);
-                                next();
-                            }
-                        });
-                    }
-                }, function(err) {
-                    if (!err) {
-                        // ダミーデータを削除する
-                        //contestRef.child('results').child('cxxxxxxx').set(null, function(error) {
-                        //    if (error) {
-                        //        console.error('Remove failed');
-                        //        process.exit(1);
-                        //    } else {
-                        //        console.log('Remove succeeded');
-                                callback();
-                        //    }
-                        //});
-                    } else {
-                        console.error(err);
+        // write
+        async.eachSeries(contestsIndexes, function(contestId, next) {
+            // 上書きはしない
+            if (current[contestId] !== undefined) {
+                console.error('Already exists:', contestId);
+                next();
+            } else {
+                var dummyResults = {};
+                contests[contestId].events.forEach(function(e) {
+                    dummyResults[e] = {
+                        'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx': {
+                            '_dummy' : true
+                        }
+                    };
+                });
+                contestRef.child('results').child(contestId).set(dummyResults, function(error) {
+                    if (error) {
+                        console.error('Set failed; result: ' + contestId);
                         process.exit(1);
+                    } else {
+                        console.log('Set succeeded; result: ' + contestId);
+                        next();
                     }
                 });
-            });
+            }
+        }, function(err) {
+            if (!err) {
+                // ダミーデータを削除する
+                //contestRef.child('results').child('cxxxxxxx').set(null, function(error) {
+                //    if (error) {
+                //        console.error('Remove failed');
+                //        process.exit(1);
+                //    } else {
+                //        console.log('Remove succeeded');
+                        callback();
+                //    }
+                //});
+            } else {
+                console.error(err);
+                process.exit(1);
+            }
+        });
+    });
 };
