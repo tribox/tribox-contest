@@ -52,7 +52,7 @@ h4 {
         </p>
     </div>
     <div ng-hide="0 <= countdown || contestData.resultsStatus == 'public' || usersecretData.isAdmin">
-        <p class="color-error">
+        <p class="color-error notice-error">
             記録を集計中です。集計完了後に結果が公開されます。公開までしばらくお待ちください。
         </p>
     </div>
@@ -224,7 +224,7 @@ var drawChart = function(dataall, data) {
         <table class="table table-striped">
             <tbody>
                 <tr ng-repeat="s in scramblesData.e@{eid}">
-                    <td>{{ $index + 1}}</td>
+                    <td>{{ $index + 1 }}</td>
                     <td ng-bind-html="s"></td>
                 </tr>
             </tbody>

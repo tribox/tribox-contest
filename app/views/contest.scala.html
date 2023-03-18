@@ -82,7 +82,7 @@
         <p class="color-error" ng-if="countdown > 0">
             このコンテストはまだ開始されていません。
         </p>
-        <p class="color-error" ng-if="(countdown < 0) && !(contestData.resultsStatus == 'public' || usersecretData.isAdmin)">
+        <p class="color-error notice-error" ng-if="(countdown < 0) && !(contestData.resultsStatus == 'public' || usersecretData.isAdmin)">
             記録を集計中です。集計完了後に結果が公開されます。公開までしばらくお待ちください。
         </p>
 
