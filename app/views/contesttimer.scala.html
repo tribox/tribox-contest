@@ -499,7 +499,7 @@ firebase.auth().onAuthStateChanged(function(authData) {
             alert("インスペクションタイムを超過しました。");
             alert("インスペクションタイムを超過したためDNFです。");
         }, (inspectionCountdown + 2) * 1000);
-     };
+    };
 
     var startTimer = function() {
         if ((hasInspection && isInspecting) || (!hasInspection && isIdling)) {
