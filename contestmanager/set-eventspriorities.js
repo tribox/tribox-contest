@@ -25,23 +25,23 @@ var EventsPriorities = {
 };
 
 var setEventsPriorities = function() {
-            async.each(Object.keys(EventsPriorities), function(eid, next) {
-                var priority = EventsPriorities[eid];
-                contestRef.child('events').child(eid).setPriority(priority, function(error) {
-                    if (error) {
-                        console.error(error);
-                    } else {
-                        console.log(eid + ': ' + priority);
-                        next();
-                    }
-                });
-            }, function (err) {
-                if (err) {
-                    console.error(err);
-                } else {
-                    console.log('Complete!');
-                    process.exit(0);
-                }
-            });
+    async.each(Object.keys(EventsPriorities), function(eid, next) {
+        var priority = EventsPriorities[eid];
+        contestRef.child('events').child(eid).setPriority(priority, function(error) {
+            if (error) {
+                console.error(error);
+            } else {
+                console.log(eid + ': ' + priority);
+                next();
+            }
+        });
+    }, function (err) {
+        if (err) {
+            console.error(err);
+        } else {
+            console.log('Complete!');
+            process.exit(0);
+        }
+    });
 };
 setEventsPriorities();

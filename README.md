@@ -109,7 +109,20 @@ node contestmanager/append-points.js
 node contestmanager/reminder.js
 ```
 
-### :alarm_clock: 1月に1回 -- 月はじめに実行 (これはcron化したい)
+### :alarm_clock: 1週間に1回 -- 日曜日午後9時 (JST) 以降に手動実行 (※自動化するまで手動実行する)
+
+Adminアカウントでログインして、最新コンテストの結果を確認する。Adminアカウントでログインしないと「集計中」ステータスとなり、結果が閲覧できない。
+結果が問題なければ以下のデータを更新し、結果ページを集計中から公開にする。
+```
+$.contests.<contest_id>.resultsStatus = "public"
+```
+
+参考: Adminアカウントにするには以下のデータを設定する。
+```
+$.usersecrets.<UID>.isAdmin = true
+```
+
+### :alarm_clock: 1か月に1回 -- 月はじめに実行 (これはcron化したい)
 
 #### バックアップのアーカイブ
 

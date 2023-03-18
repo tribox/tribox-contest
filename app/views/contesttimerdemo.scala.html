@@ -154,7 +154,7 @@ firebase.auth().onAuthStateChanged(function(authData) {
         var audios = document.getElementsByClassName('judgecall-audio');
         var vol = (state == true)? 1 : 0;
         for (var i = 0; i < audios.length; i++) {
-              audios[i].volume = vol;
+            audios[i].volume = vol;
         }
     };
     setJudgecallVolume(false);
@@ -462,7 +462,7 @@ firebase.auth().onAuthStateChanged(function(authData) {
             alert("インスペクションタイムを超過しました。");
             alert("インスペクションタイムを超過したためDNFです。");
         }, (inspectionCountdown + 2) * 1000);
-     };
+    };
 
     var startTimer = function() {
         if ((hasInspection && isInspecting) || (!hasInspection && isIdling)) {

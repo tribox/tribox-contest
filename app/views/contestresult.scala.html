@@ -51,8 +51,13 @@ h4 {
             終了していないコンテストです。結果を表示できません。
         </p>
     </div>
+    <div ng-hide="0 <= countdown || contestData.resultsStatus == 'public' || usersecretData.isAdmin">
+        <p class="color-error notice-error">
+            記録を集計中です。集計完了後に結果が公開されます。公開までしばらくお待ちください。
+        </p>
+    </div>
 
-    <div ng-show="existsContest && existsEvent && countdown < 0">
+    <div ng-show="existsContest && existsEvent && countdown < 0 && (contestData.resultsStatus == 'public' || usersecretData.isAdmin)">
 
         <h2>{{ contestData.contestName }}</h2>
 
@@ -180,10 +185,10 @@ var drawChart = function(dataall, data) {
             <tbody>
                 <tr id="e@{eid}-{{ $index }}" ng-repeat="r in resultsAll.e@{eid}">
                     <td>
-                      {{ r.place }}
-                      <span class="lottery" ng-show="r.lottery">
-                        <i class="fa fa-star color-star"></i>
-                      </span>
+                        {{ r.place }}
+                        <span class="lottery" ng-show="r.lottery">
+                            <i class="fa fa-star color-star"></i>
+                        </span>
                     </td>
                     <td>
                         <span ng-if="(r.seasonPoint || r.seasonPointVideoBonus) && (r.seasonPoint + r.seasonPointVideoBonus) > 0">{{ r.seasonPoint + r.seasonPointVideoBonus }}</span>
@@ -219,11 +224,17 @@ var drawChart = function(dataall, data) {
         <table class="table table-striped">
             <tbody>
                 <tr ng-repeat="s in scramblesData.e@{eid}">
-                    <td>{{ $index + 1}}</td>
+                    <td>{{ $index + 1 }}</td>
                     <td ng-bind-html="s"></td>
                 </tr>
             </tbody>
         </table>
+
+        @* <!--<p>usersecretData:</p>
+        <pre>{{ usersecretData | json }}</pre>--> *@
+
+        @* <!--<p>@cid -> contestData:</p>
+        <pre>{{ contestData | json }}</pre>--> *@
 
         @* <!--<pre>{{ resultsAll.e@{eid} | json }}</pre>--> *@
         @* <!--<pre>{{ resultsPuzzles.e@{eid} | json }}</pre>--> *@
