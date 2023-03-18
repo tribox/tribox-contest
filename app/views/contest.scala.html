@@ -59,15 +59,15 @@
         <h2>{{ contestData.contestName }}</h2>
 
         <p ng-if="contestData.videoBonusStatus && (countdown >= 0)">
-          <i class="em em-tada"></i><i class="em em-tada"></i><i class="em em-tada"></i> <b>ビデオボーナス節 (3×3×3のみ)</b> <i class="em em-tada"></i><i class="em em-tada"></i><i class="em em-tada"></i><br>
-          要件を満たすビデオを提出いただいた方のうち上位5名に追加のSP（シーズンポイント）が与えられます！<br>
-          ビデオボーナス節についての詳細は <b><a href="@routes.HomeController.regulations">参加方法とルール</a></b> をご覧ください。
+            <i class="em em-tada"></i><i class="em em-tada"></i><i class="em em-tada"></i> <b>ビデオボーナス節 (3×3×3のみ)</b> <i class="em em-tada"></i><i class="em em-tada"></i><i class="em em-tada"></i><br>
+            要件を満たすビデオを提出いただいた方のうち上位5名に追加のSP（シーズンポイント）が与えられます！<br>
+            ビデオボーナス節についての詳細は <b><a href="@routes.HomeController.regulations">参加方法とルール</a></b> をご覧ください。
         </p>
         <p ng-if="(contestData.videoBonusStatus == 'checking') && (countdown < 0)">
-          <i class="em em-tada"></i> <b>ビデオボーナス節（ビデオチェック中）</b> <i class="em em-tada"></i>
+            <i class="em em-tada"></i> <b>ビデオボーナス節（ビデオチェック中）</b> <i class="em em-tada"></i>
         </p>
         <p ng-if="(contestData.videoBonusStatus == 'done') && (countdown < 0)">
-          <i class="em em-tada"></i> <b>ビデオボーナス節（ビデオチェック完了）</b> <i class="em em-tada"></i>
+            <i class="em em-tada"></i> <b>ビデオボーナス節（ビデオチェック完了）</b> <i class="em em-tada"></i>
         </p>
 
         <p>
@@ -81,6 +81,9 @@
         </p>
         <p class="color-error" ng-if="countdown > 0">
             このコンテストはまだ開始されていません。
+        </p>
+        <p class="color-error" ng-if="(countdown < 0) && !(contestData.resultsStatus == 'public' || usersecretData.isAdmin)">
+            記録を集計中です。集計完了後に結果が公開されます。公開までしばらくお待ちください。
         </p>
 
         <p ng-show="countdown < 0">
@@ -121,7 +124,7 @@
             </tbody>
         </table>
 
-        <div ng-if="countdown < 0">
+        <div ng-if="(countdown < 0) && (contestData.resultsStatus == 'public' || usersecretData.isAdmin)">
             <div ng-repeat="e in contestData.events">
                 <h3><span class="cubing-icon event-{{ e | removeHead }}" style="vertical-align: baseline;"></span> {{ events[e].name }}</h3>
                 <p>
@@ -177,11 +180,11 @@
             </div>
         </div>
 
-        <p>usersecretData:</p>
-        <pre>{{ usersecretData | json }}</pre>
+        @* <!--<p>usersecretData:</p>
+        <pre>{{ usersecretData | json }}</pre>--> *@
 
-        <p>@cid -> contestData:</p>
-        <pre>{{ contestData | json }}</pre>
+        @* <!--<p>@cid -> contestData:</p>
+        <pre>{{ contestData | json }}</pre>--> *@
 
         @* <!--<p>inProgress / countdown:</p>
         <pre>{{ inProgress | json }}</pre>
