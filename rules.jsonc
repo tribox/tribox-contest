@@ -121,6 +121,9 @@
                 "prefJudgecall": {
                     ".validate": "newData.isBoolean()"
                 },
+                "isAdmin": {
+                    ".validate": "newData.isBoolean()"
+                },
                 "$other": {
                     ".validate": false
                 }
@@ -232,6 +235,10 @@
                 // ビデオボーナス節
                 "videoBonusStatus": {
                     ".validate": "newData.isString() && (newData.val() == 'checking' || newData.val() == 'done')"
+                },
+                // 結果ページの公開ステータス
+                "resultsStatus": {
+                    ".validate": "newData.isString() && (newData.val() == 'public')"
                 },
                 "$other": {
                     ".validate": false
