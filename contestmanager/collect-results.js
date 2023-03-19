@@ -97,7 +97,7 @@ var readyTriboxTeam = {};
 
 // 配列のシャッフル
 //  * http://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array-in-javascript
-// 
+//
 // Fisher–Yates Shuffle というらしい
 //  * https://bost.ocks.org/mike/shuffle/
 //  * https://bost.ocks.org/mike/shuffle/compare.html
