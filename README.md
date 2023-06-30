@@ -237,12 +237,10 @@ node contestmanager/update-wcaapp.js
 
 #### 記録を削除する
 
-(1) Firebase のエクスポート機能で、データをエクスポートしておく (TODO もっとスマートにやりたい)。  
-(2) Firebase の Authentication で対象ユーザーのメールアドレスを探しておく (TODO 自動取得したい)。  
-(3) 次のコマンドで dryrun して削除対象を確認。例: `node contestmanager/delete-record.js --contest=2018120 --username=kotarot --email="kotaro@tribox.jp" --event=333fm --dryrun`  
-(4) (3)の dryrun オプションだけを外して、記録削除＆メール送信。  
-(5) 次のコマンドでランキング再集計する。例: `node contestmanager/collect-results.js --contest=2018120 --check --checkfmc`  
-(5)' ランキング再集計時に優勝者のツイートを同時にする場合。例: `node contestmanager/collect-results.js --contest=2018120 --check --checkfmc --tweet`  
+(1) 次のコマンドで dryrun して削除対象を確認。例: `node contestmanager/delete-record.js --contest=2018120 --username=kotarot --event=333fm --dryrun`  
+(2) (1)の dryrun オプションだけを外して、記録削除＆メール送信＆削除履歴をログに保存。  
+(3) 次のコマンドでランキング再集計する。例: `node contestmanager/collect-results.js --contest=2018120 --check --checkfmc`  
+(3)' ランキング再集計時に優勝者のツイートを同時にする場合。例: `node contestmanager/collect-results.js --contest=2018120 --check --checkfmc --tweet`  
 
 
 ## Crontab example
