@@ -220,8 +220,8 @@ node contestmanager/update-wcaapp.js
 
 #### ユーザーを凍結する
 
-(1) 対象ユーザー名に対して、次のコマンドを実行 `node contestmanager/user-mark-banned.js --username=kotarot`  
-(1)' 凍結を解除する場合は、次のコマンド `node contestmanager/user-mark-banned.js --username=kotarot --unban`  
+(1) 対象ユーザー名に対して、次のコマンドを実行 `node contestmanager/ban-user.js --username=kotarot`  
+(1)' 凍結を解除する場合は、次のコマンド `node contestmanager/ban-user.js --username=kotarot --unban`  
 
 ※スクリプトを使用せずに手動で実施する場合は、以下の手順を実施する。
 

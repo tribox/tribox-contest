@@ -1,5 +1,5 @@
 /**
- * user-mark-banned.js
+ * ban-user.js
  *
  * 指定したユーザをBAN (凍結) する。解除する場合もこのスクリプトのオプションで実行する。
  *
@@ -17,13 +17,13 @@ argv.option([
         name: 'username',
         type: 'string',
         description: 'Username to be banned',
-        example: "'user-mark-banned.js --username=kotarot'"
+        example: "'ban-user.js --username=kotarot'"
     },
     {
         name: 'unban',
         type: 'boolean',
         description: 'Unban the user instead of banning (default)',
-        example: "'user-mark-banned.js --unban'"
+        example: "'ban-user.js --unban'"
     },
 ]);
 var argvrun = argv.run();
