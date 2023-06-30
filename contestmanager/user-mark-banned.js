@@ -27,16 +27,23 @@ argv.option([
         type: 'boolean',
         description: 'Unban the user instead of banning (default)',
         example: "'user-mark-banned.js --unban'"
-    }
+    },
 ]);
 var argvrun = argv.run();
 console.log(argvrun);
 
 
 var disableUser = function(uid) {
-    console.log(uid);
-    contestAuth.getUser(uid, function(res) {
-        console.log(res);
+    // Note: node version 8 だとBigInt型のエラーにより以下は実行不可能
+    contestAuth.updateUser(uid, {
+        disabled: !argvrun.options.unban,
+    }).then(function(userRecord) {
+        console.log("Successfully updated user:");
+        console.log(userRecord.toJSON());
+        process.exit(0);
+    }).catch(function(error) {
+        console.error("Error updating user:", error);
+        process.exit(1);
     });
 };
 
@@ -53,17 +60,12 @@ var getUserId = function(username) {
             }
         });
 
-        console.log(foundUID);
         if (!foundUID) {
-            console.error('Username does not exist');
+            console.error("Username '" + username + "' does not exist");
             process.exit(1);
         }
 
-        setValue = 'true';
-        if (argvrun.options.unban) {
-            setValue = 'false';
-        }
-        contestRef.child('users').child(foundUID).child('isSuspended').set(setValue, function(error) {
+        contestRef.child('users').child(foundUID).child('isSuspended').set(!argvrun.options.unban, function(error) {
             if (error) {
                 console.error(error);
             } else {
