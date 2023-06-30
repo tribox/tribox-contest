@@ -8,9 +8,6 @@
  * (2) Firebase の Authentication で「アカウントを無効にする」を設定する。
  */
 
-var async = require('async');
-
-var Config = require('./config.js');
 var contestRef = require('./contestref.js').ref;
 var contestAuth = require('./contestref.js').auth;
 
