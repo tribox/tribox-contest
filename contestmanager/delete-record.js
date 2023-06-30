@@ -32,7 +32,7 @@ argv.option([
         name: 'email',
         type: 'string',
         description: 'Target email (TODO: To get this automatically)',
-        example: "'delete-record.js --email=kotarot'"
+        example: "'delete-record.js --email=kotaro@tribox.jp'"
     },
     {
         name: 'dryrun',
@@ -47,7 +47,7 @@ console.log(argvrun);
 // 対象コンテスト (c2016xxx)
 var targetContest, targetContestObj;
 // ユーザテーブル、ユーザシークレットテーブル
-var Users, Usersecrets;
+var Users;
 
 
 // 記録を削除する
@@ -58,7 +58,6 @@ var deleteRecord = function() {
 
     contestRef.child('users').once('value', function(snapUsers) {
         Users = snapUsers.val();
-        //console.log(Users);
 
         // UID を調べる
         var targetUID = '';
@@ -67,6 +66,11 @@ var deleteRecord = function() {
                 targetUID = uid;
             }
         });
+
+        if (!targetUID) {
+            console.error('Username does not exist');
+            process.exit(1);
+        }
 
         contestRef.child('results').child(targetContest).child('e' + targetEvent).child(targetUID).once('value', function(snapResults) {
             var targetResult = snapResults.val();
