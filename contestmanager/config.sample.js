@@ -78,3 +78,4 @@ exports.DUMMY_USERS = [
 
 exports.PATH_TO_CONTEST = '/path/to/contest';
 exports.PATH_TO_APPENDLOGS = '/path/to/appendlogs';
+exports.PATH_TO_DELETELOGS = '/path/to/deletelogs';

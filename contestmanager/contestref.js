@@ -19,5 +19,7 @@ admin.initializeApp({
 
 var db = admin.database();
 var contestRef = db.ref();
+var auth = admin.auth();
 
 exports.ref = contestRef;
+exports.auth = auth;

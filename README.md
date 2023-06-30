@@ -220,22 +220,27 @@ node contestmanager/update-wcaapp.js
 
 #### ユーザーを凍結する
 
-(1) Firebase の Database で `users.<UID>.isSuspended` を `true` に設定する。  
-(2) Firebase の Authentication で「アカウントを無効にする」を設定する (忘れがちなので注意！)。  
+(1) 対象ユーザー名に対して、次のコマンドを実行 `node contestmanager/ban-user.js --username=kotarot`  
+(1)' 凍結を解除する場合は、次のコマンド `node contestmanager/ban-user.js --username=kotarot --unban`  
+
+※スクリプトを使用せずに手動で実施する場合は、以下の手順を実施する。
+
+(i) Firebase の Database で `users.<UID>.isSuspended` を `true` に設定する。  
+(ii) Firebase の Authentication で「アカウントを無効にする」を設定する (忘れがちなので注意！)。  
 
 #### ユーザーを削除する（論理削除）
+
+※ユーザーを削除するケースはあまりないので、手動で実施する。
 
 (1) Firebase の Database で `users.<UID>.isDeleted` を `true` に設定する。  
 (2) Firebase の Authentication で「アカウントを無効にする」を設定する (忘れがちなので注意！)。  
 
 #### 記録を削除する
 
-(1) Firebase のエクスポート機能で、データをエクスポートしておく (TODO もっとスマートにやりたい)。  
-(2) Firebase の Authentication で対象ユーザーのメールアドレスを探しておく (TODO 自動取得したい)。  
-(3) 次のコマンドで dryrun して削除対象を確認。例: `node contestmanager/delete-record.js --contest=2018120 --username=kotarot --email="kotaro@tribox.jp" --event=333fm --dryrun`  
-(4) (3)の dryrun オプションだけを外して、記録削除＆メール送信。  
-(5) 次のコマンドでランキング再集計する。例: `node contestmanager/collect-results.js --contest=2018120 --check --checkfmc`  
-(5)' ランキング再集計時に優勝者のツイートを同時にする場合。例: `node contestmanager/collect-results.js --contest=2018120 --check --checkfmc --tweet`  
+(1) 次のコマンドで dryrun して削除対象を確認。例: `node contestmanager/delete-record.js --contest=2018120 --username=kotarot --event=333fm --dryrun`  
+(2) (1)の dryrun オプションだけを外して、記録削除＆メール送信＆削除履歴をログに保存。  
+(3) 次のコマンドでランキング再集計する。例: `node contestmanager/collect-results.js --contest=2018120 --check --checkfmc`  
+(3)' ランキング再集計時に優勝者のツイートを同時にする場合。例: `node contestmanager/collect-results.js --contest=2018120 --check --checkfmc --tweet`  
 
 
 ## Crontab example
