@@ -28,7 +28,7 @@ class AdminApiController @Inject() extends HomeController {
             BadRequest("Bad Request (username)")
         } else {
             execNodeScript(s"$getPlayAppPath/contestmanager/ban-user.js --username=$targetUsername")
-            Ok(s"ユーザー ($targetUsername) をBANしました。\n\n※このタブは閉じてください。")
+            Ok(s"ユーザー ($targetUsername) をBANしました。\n\n※このタブを閉じてください。")
         }
     }
 
@@ -40,7 +40,7 @@ class AdminApiController @Inject() extends HomeController {
             BadRequest("Bad Request (username)")
         } else {
             execNodeScript(s"$getPlayAppPath/contestmanager/ban-user.js --unban --username=$targetUsername")
-            Ok(s"ユーザー ($targetUsername) のBANを解除しました。\n\n※このタブは閉じてください。")
+            Ok(s"ユーザー ($targetUsername) のBANを解除しました。\n\n※このタブを閉じてください。")
         }
     }
 
@@ -59,7 +59,7 @@ class AdminApiController @Inject() extends HomeController {
         } else {
             execNodeScript(s"$getPlayAppPath/contestmanager/delete-record.js --contest=$targetContest --event=$targetEvent --username=$targetUsername")
             execNodeScript(s"$getPlayAppPath/contestmanager/collect-results.js --contest=$targetContest --check --checkfmc")
-            Ok(s"コンテスト ($targetContest) 種目 ($targetEvent) ユーザー ($targetContest) の記録を削除しました。削除メールも送信されました。\n\n※このタブは閉じてください。")
+            Ok(s"コンテスト ($targetContest) 種目 ($targetEvent) ユーザー ($targetContest) の記録を削除しました。削除メールも送信されました。\n\n※このタブを閉じてください。")
         }
     }
 
@@ -71,7 +71,7 @@ class AdminApiController @Inject() extends HomeController {
             BadRequest("Bad Request")
         } else {
             execNodeScript(s"$getPlayAppPath/contestmanager/publish-result.js --contest=$targetContest")
-            Ok(s"コンテスト結果ページ ($targetContest) が公開されました！\n\n※このタブは閉じてください。")
+            Ok(s"コンテスト結果ページ ($targetContest) が公開されました！\n\n※このタブを閉じてください。")
         }
     }
 
@@ -83,7 +83,7 @@ class AdminApiController @Inject() extends HomeController {
             BadRequest("Bad Request")
         } else {
             execNodeScript(s"$getPlayAppPath/contestmanager/publish-result.js --unpublish --contest=$targetContest")
-            Ok(s"コンテスト結果ページ ($targetContest) が非公開になりました。\n\n※このタブは閉じてください。")
+            Ok(s"コンテスト結果ページ ($targetContest) が非公開になりました。\n\n※このタブを閉じてください。")
         }
     }
 
@@ -95,7 +95,7 @@ class AdminApiController @Inject() extends HomeController {
             BadRequest("Bad Request")
         } else {
             execNodeScript(s"$getPlayAppPath/contestmanager/collect-results.js --contest=$targetContest --check --checkfmc --tweet")
-            Ok(s"コンテスト ($targetContest) の優勝者をツイートしました。\n\n※このタブは閉じてください。")
+            Ok(s"コンテスト ($targetContest) の優勝者をツイートしました。\n\n※このタブを閉じてください。")
         }
     }
 
