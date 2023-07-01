@@ -11,7 +11,7 @@ require('date-utils');
 var Config = require('./config.js');
 
 var contestRef = require('./contestref.js').ref;
-var contestAuth = require('./contestref.js').auth;
+var contestAdmin = require('./contestref.js').admin;
 
 var argv = require('argv');
 argv.option([
@@ -128,8 +128,8 @@ var getEmail = function() {
             process.exit(1);
         }
 
-        // Note: node version 8 だとBigInt型のエラーにより以下は実行不可能
-        contestAuth.getUser(foundUID).then(function(userRecord) {
+        // Note: node version 8 だとBigInt型のエラーにより以下の auth() が実行不可能
+        contestAdmin.auth().getUser(foundUID).then(function(userRecord) {
             console.log("Successfully getting user");
             deleteRecord(foundUID, userRecord.email);
         }).catch(function(error) {
