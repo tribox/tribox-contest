@@ -21,18 +21,26 @@ class AdminApiController @Inject() extends HomeController {
     }
 
     def banUser = Action { request =>
+        val targetUsername: String = request.getQueryString("u").getOrElse("")
         if (!request.queryString.contains("token") || !getAdminApiToken.equals(request.getQueryString("token").getOrElse(""))) {
             Forbidden("Forbidden")
+        } else if (!targetUsername.matches("""^[a-zA-Z0-9_]{1,15}$""")) {
+            BadRequest("Bad Request (username)")
         } else {
-            Ok("Not Implemented Yet")
+            execNodeScript(s"$getPlayAppPath/contestmanager/ban-user.js --username=$targetUsername")
+            Ok(s"ユーザー ($targetUsername) をBANしました。\n\n※このタブは閉じてください。")
         }
     }
 
     def unbanUser = Action { request =>
+        val targetUsername: String = request.getQueryString("u").getOrElse("")
         if (!request.queryString.contains("token") || !getAdminApiToken.equals(request.getQueryString("token").getOrElse(""))) {
             Forbidden("Forbidden")
+        } else if (!targetUsername.matches("""^[a-zA-Z0-9_]{1,15}$""")) {
+            BadRequest("Bad Request (username)")
         } else {
-            Ok("Not Implemented Yet")
+            execNodeScript(s"$getPlayAppPath/contestmanager/ban-user.js --unban --username=$targetUsername")
+            Ok(s"ユーザー ($targetUsername) のBANを解除しました。\n\n※このタブは閉じてください。")
         }
     }
 

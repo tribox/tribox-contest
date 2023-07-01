@@ -57,6 +57,25 @@ a.video-url {
         </p>
     </div>
 
+    <div ng-if="(usersecretData.isAdmin) && (existsUser) && (!suspendedUser) && (!deletedUser)">
+        <p>
+            <strong>運営用</strong><br>
+            <a class="btn btn-error" style="margin: 1em;" href="javascript:void(0);" ng-click="banUser('@{id}', '/admin-api/user/ban?u=@{id}&token=' + usersecretData.adminToken)">
+                <i class="fa fa-ban"></i> このユーザーをBANする
+            </a>
+        </p>
+        <hr>
+    </div>
+    <div ng-if="(usersecretData.isAdmin) && (existsUser) && (suspendedUser) && (!deletedUser)">
+        <p>
+            <strong>運営用</strong><br>
+            <a class="btn" style="margin: 1em;" href="javascript:void(0);" ng-click="unbanUser('@{id}', '/admin-api/user/unban?u=@{id}&token=' + usersecretData.adminToken)">
+                <i class="fa fa-check"></i> このユーザーのBANを解除する
+            </a>
+        </p>
+        <hr>
+    </div>
+
     <div ng-show="existsUser && !suspendedUser && !deletedUser">
 
         @authinfo()
@@ -694,6 +713,20 @@ app.controller('UserCtrl', ['$scope', '$timeout', function($scope, $timeout) {
             });
         }
         }); // onAuthStateChange
+    };
+
+    $scope.banUser = function(username, url) {
+        var ok = confirm('【確認】ユーザー名 (' + username + ') をBANしますか？');
+        if (ok) {
+            window.open(url, '_blank');
+        }
+    };
+
+    $scope.unbanUser = function(username, url) {
+        var ok = confirm('【確認】ユーザー名 (' + username + ') のBANを解除しますか？');
+        if (ok) {
+            window.open(url, '_blank');
+        }
     };
 }]);
 </script>
