@@ -17,7 +17,7 @@ class AdminApiController @Inject() extends HomeController {
 
     // Nodeスクリプト実行用メソッド
     def execNodeScript(arg: String) = {
-        Process(s"/usr/bin/node $arg") run
+        Process(s"/usr/bin/node $arg") !
     }
 
     def banUser = Action { request =>
@@ -37,10 +37,21 @@ class AdminApiController @Inject() extends HomeController {
     }
 
     def deleteResult = Action { request =>
+        val targetContest: String = request.getQueryString("c").getOrElse("")
+        val targetEvent: String = request.getQueryString("e").getOrElse("")
+        val targetUsername: String = request.getQueryString("u").getOrElse("")
         if (!request.queryString.contains("token") || !getAdminApiToken.equals(request.getQueryString("token").getOrElse(""))) {
             Forbidden("Forbidden")
+        } else if (!targetContest.matches("""^[0-9]{4}(1|2)[0-9]{2}$""")) {
+            BadRequest("Bad Request (contest)")
+        } else if (!targetEvent.matches("""^[a-zA-Z0-9]{1,15}$""")) {
+            BadRequest("Bad Request (event)")
+        } else if (!targetUsername.matches("""^[a-zA-Z0-9_]{1,15}$""")) {
+            BadRequest("Bad Request (username)")
         } else {
-            Ok("Not Implemented Yet")
+            execNodeScript(s"$getPlayAppPath/contestmanager/delete-record.js --contest=$targetContest --event=$targetEvent --username=$targetUsername")
+            execNodeScript(s"$getPlayAppPath/contestmanager/collect-results.js --contest=$targetContest --check --checkfmc")
+            Ok(s"コンテスト ($targetContest) 種目 ($targetEvent) ユーザー ($targetContest) の記録を削除しました。削除メールも送信されました。\n\n※このタブは閉じてください。")
         }
     }
 

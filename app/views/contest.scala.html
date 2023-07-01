@@ -89,7 +89,7 @@
         <div ng-if="(usersecretData.isAdmin) && (countdown < 0) && (contestData.resultsStatus != 'public')">
             <p>
                 <strong>運営用</strong><br>
-                <a class="btn" href="/admin-api/contest/publish?c=@{cid}&token={{ usersecretData.adminToken}}" target="_blank" style="margin: 1em;">
+                <a class="btn" href="/admin-api/contest/publish?c=@{cid}&token={{ usersecretData.adminToken }}" target="_blank" style="margin: 1em;">
                     <i class="fa fa-lock"></i> <i class="fa fa-arrow-right"></i> <i class="fa fa-globe"></i> 結果ページを公開にする
                 </a>
             </p>
@@ -98,10 +98,10 @@
         <div ng-if="(usersecretData.isAdmin) && (countdown < 0) && (contestData.resultsStatus == 'public')">
             <p>
                 <strong>運営用</strong><br>
-                <a class="btn" href="/admin-api/contest/tweet?c=@{cid}&token={{ usersecretData.adminToken}}" target="_blank" style="margin: 1em;">
+                <a class="btn" href="/admin-api/contest/tweet?c=@{cid}&token={{ usersecretData.adminToken }}" target="_blank" style="margin: 1em;">
                     <i class="fa fa-twitter"></i> 優勝者をツイートする
                 </a>
-                <a class="btn btn-light" href="/admin-api/contest/unpublish?c=@{cid}&token={{ usersecretData.adminToken}}" target="_blank" style="margin: 1em; color: #555;">
+                <a class="btn btn-light" href="/admin-api/contest/unpublish?c=@{cid}&token={{ usersecretData.adminToken }}" target="_blank" style="margin: 1em; color: #555;">
                     <i class="fa fa-globe"></i> <i class="fa fa-arrow-right"></i> <i class="fa fa-lock"></i> 結果ページを非公開にする
                 </a>
             </p>

@@ -180,6 +180,7 @@ var drawChart = function(dataall, data) {
                     <th class="mb-hide"></th>
                     <th>パズル</th>
                     <th class="mb-hide"><i class="fa fa-video-camera"></i></th>
+                    <th ng-if="usersecretData.isAdmin">運営用</th>
                 </tr>
             </thead>
             <tbody>
@@ -215,6 +216,11 @@ var drawChart = function(dataall, data) {
                         <a href="{{ r.videoUrl | encodeURI }}" target="_blank"><i class="fa fa-video-camera"></i></a>
                     </td>
                     <td class="mb-hide" ng-if="!(r.videoUrl)"></td>
+                    <td ng-if="usersecretData.isAdmin">
+                        <a class="btn btn-small btn-error" style="margin: 0;" href="javascript:void(0);" ng-click="deleteResult(r.user.username, r.user.displayname, '/admin-api/contest/result/delete?c=@{cid}&e=@{eid}&u=' + r.user.username + '&token=' + usersecretData.adminToken)">
+                            削除
+                        </a>
+                    </td>
                 </tr>
             </tbody>
         </table>
@@ -309,6 +315,13 @@ app.controller('ContestResultCtrl', ['$scope', function($scope) {
             }
         };
     }
+
+    $scope.deleteResult = function(username, displayname, url) {
+        var ok = confirm('【確認】' + displayname + ' (ユーザー名 ' + username + ') の記録を削除しますか？');
+        if (ok) {
+            window.open(url, '_blank');
+        }
+    };
 }]);
 </script>
 <script type="text/javascript" src="@routes.DynamicJsController.products"></script>
