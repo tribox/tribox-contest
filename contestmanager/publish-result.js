@@ -32,7 +32,7 @@ var targetContest;
 var publishResult = function() {
     resultsStatusVal = "public";
     if (argvrun.options.unpublish) {
-        resultsStatusVal = "unpublic";
+        resultsStatusVal = "review";
     }
 
     contestRef.child('contests').child(targetContest).child('resultsStatus').set(resultsStatusVal, function(error) {

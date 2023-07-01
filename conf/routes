@@ -55,6 +55,14 @@ GET     /ranking/default/puzzle                 controllers.RankingController.ra
 GET     /ranking/$sid<[0-9]{4}(1|2)>/puzzle     controllers.RankingController.rankingpuzzle(sid: String)
 GET     /ranking/$sid<[0-9]{4}(1|2)>/puzzle/all controllers.RankingController.rankingpuzzleall(sid: String)
 
+# Admin APIs
+GET     /admin-api/user/ban              controllers.AdminApiController.banUser
+GET     /admin-api/user/unban            controllers.AdminApiController.unbanUser
+GET     /admin-api/contest/result/delete controllers.AdminApiController.deleteResult
+GET     /admin-api/contest/publish       controllers.AdminApiController.publishContest
+GET     /admin-api/contest/unpublish     controllers.AdminApiController.unpublishContest
+GET     /admin-api/contest/tweet         controllers.AdminApiController.tweetContest
+
 # Demo timer
 GET     /demo/timer                 controllers.DemoController.timer
 

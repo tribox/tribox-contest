@@ -86,6 +86,28 @@
             記録を集計中です。集計完了後に結果が公開されます。公開までしばらくお待ちください。
         </p>
 
+        <div ng-if="(usersecretData.isAdmin) && (countdown < 0) && (contestData.resultsStatus != 'public')">
+            <p>
+                <strong>運営用</strong><br>
+                <a class="btn" href="/admin-api/contest/publish?c=@{cid}&token={{ usersecretData.adminToken}}" target="_blank" style="margin: 1em;">
+                    <i class="fa fa-lock"></i> <i class="fa fa-arrow-right"></i> <i class="fa fa-globe"></i> 結果ページを公開にする
+                </a>
+            </p>
+            <hr>
+        </div>
+        <div ng-if="(usersecretData.isAdmin) && (countdown < 0) && (contestData.resultsStatus == 'public')">
+            <p>
+                <strong>運営用</strong><br>
+                <a class="btn" href="/admin-api/contest/tweet?c=@{cid}&token={{ usersecretData.adminToken}}" target="_blank" style="margin: 1em;">
+                    <i class="fa fa-twitter"></i> 優勝者をツイートする
+                </a>
+                <a class="btn btn-light" href="/admin-api/contest/unpublish?c=@{cid}&token={{ usersecretData.adminToken}}" target="_blank" style="margin: 1em; color: #555;">
+                    <i class="fa fa-globe"></i> <i class="fa fa-arrow-right"></i> <i class="fa fa-lock"></i> 結果ページを非公開にする
+                </a>
+            </p>
+            <hr>
+        </div>
+
         <p ng-show="countdown < 0">
             別のコンテスト結果を見る<br>
             <select class="form-control" style="margin-bottom: 5px;" ng-model="currentContest" ng-change="currentContestChange()">
