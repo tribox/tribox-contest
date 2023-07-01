@@ -112,7 +112,13 @@ node contestmanager/reminder.js
 ### :alarm_clock: 1週間に1回 -- 日曜日午後9時 (JST) 以降に手動実行 (※自動化するまで手動実行する)
 
 Adminアカウントでログインして、最新コンテストの結果を確認する。Adminアカウントでログインしないと「集計中」ステータスとなり、結果が閲覧できない。
-結果が問題なければ以下のデータを更新し、結果ページを集計中から公開にする。
+結果が問題なければ次のスクリプトを実行し、結果ページを集計中から公開にする。
+```
+node contestmanager/publish-result.js --contest=2023101
+node contestmanager/publish-result.js --contest=2023101 --unpublish  # 公開したコンテスト結果を非公開にする場合
+```
+
+スクリプトではなく手動でデータを操作する場合は、以下のようにデータを変更する。
 ```
 $.contests.<contest_id>.resultsStatus = "public"
 ```
@@ -120,6 +126,7 @@ $.contests.<contest_id>.resultsStatus = "public"
 参考: Adminアカウントにするには以下のデータを設定する。
 ```
 $.usersecrets.<UID>.isAdmin = true
+$.usersecrets.<UID>.adminToken = "****"
 ```
 
 ### :alarm_clock: 1か月に1回 -- 月はじめに実行 (これはcron化したい)
@@ -218,7 +225,7 @@ node contestmanager/update-wcaapp.js
 
 ## Abuse 関係
 
-#### ユーザーを凍結する
+#### ユーザーを凍結する（BAN）
 
 (1) 対象ユーザー名に対して、次のコマンドを実行 `node contestmanager/ban-user.js --username=kotarot`  
 (1)' 凍結を解除する場合は、次のコマンド `node contestmanager/ban-user.js --username=kotarot --unban`  
