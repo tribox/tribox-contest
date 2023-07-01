@@ -59,7 +59,7 @@ class AdminApiController @Inject() extends HomeController {
         } else {
             execNodeScript(s"$getPlayAppPath/contestmanager/delete-record.js --contest=$targetContest --event=$targetEvent --username=$targetUsername")
             execNodeScript(s"$getPlayAppPath/contestmanager/collect-results.js --contest=$targetContest --check --checkfmc")
-            Ok(s"コンテスト ($targetContest) 種目 ($targetEvent) ユーザー ($targetContest) の記録を削除しました。削除メールも送信されました。\n\n※このタブを閉じてください。")
+            Ok(s"コンテスト ($targetContest) 種目 ($targetEvent) ユーザー ($targetUsername) の記録が削除されました。削除メールが送信されました。\n\n※このタブを閉じてください。")
         }
     }
 
