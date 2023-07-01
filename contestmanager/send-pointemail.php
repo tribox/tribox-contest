@@ -4,7 +4,7 @@
  * ポイント加算通知メールを送る
  *
  * Usage:
- *   php send-verifyingemail.php foo@tribox.jp "名前" "コンテスト名" "種目名" ポイント数 ポイントタイプ(0/1)
+ *   php send-pointemail.php foo@tribox.jp "名前" "コンテスト名" "種目名" ポイント数 ポイントタイプ(0/1)
  */
 
 if (count($argv) != 7) {
