@@ -9,7 +9,7 @@
  */
 
 var contestRef = require('./contestref.js').ref;
-var contestAuth = require('./contestref.js').auth;
+var contestAdmin = require('./contestref.js').admin;
 
 var argv = require('argv');
 argv.option([
@@ -31,8 +31,8 @@ console.log(argvrun);
 
 
 var disableUser = function(uid) {
-    // Note: node version 8 だとBigInt型のエラーにより以下は実行不可能
-    contestAuth.updateUser(uid, {
+    // Note: node version 8 だとBigInt型のエラーにより以下の auth() が実行不可能
+    contestAdmin.auth().updateUser(uid, {
         disabled: !argvrun.options.unban,
     }).then(function(userRecord) {
         console.log("Successfully updated user:");

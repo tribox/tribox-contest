@@ -36,6 +36,9 @@ class HomeController @Inject() extends Controller {
     def getPlayAppPath(): String = {
         return Play.application.configuration.getString("contest.playpath").getOrElse("/path/to/playapp")
     }
+    def getAdminApiToken(): String = {
+        return Play.application.configuration.getString("admin.api.token").getOrElse("")
+    }
     def getGoogleVerification(): String = {
         return Play.application.configuration.getString("google.verification").getOrElse("")
     }

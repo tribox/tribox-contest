@@ -124,6 +124,9 @@
                 "isAdmin": {
                     ".validate": "newData.isBoolean()"
                 },
+                "adminToken": {
+                    ".validate": "newData.isString() && newData.val().length <= 100"
+                },
                 "$other": {
                     ".validate": false
                 }
@@ -238,7 +241,7 @@
                 },
                 // 結果ページの公開ステータス
                 "resultsStatus": {
-                    ".validate": "newData.isString() && (newData.val() == 'public')"
+                    ".validate": "newData.isString() && (newData.val() == 'public' || newData.val() == 'review')"
                 },
                 "$other": {
                     ".validate": false

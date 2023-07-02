@@ -40,5 +40,8 @@ firebaseapp.contestapikey = "firebase-contest-app_apiKey"
 firebaseapp.contestmessagingsenderid = "firebase-contest-app_messagingSenderId"
 firebaseapp.wca = "firebase-wca-app"
 
-# 5) Google verification (optional)
+# 5) Admin API token
+admin.api.token = "****"
+
+# 6) Google verification (optional)
 google.verification = ""

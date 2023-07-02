@@ -86,6 +86,28 @@
             記録を集計中です。集計完了後に結果が公開されます。公開までしばらくお待ちください。
         </p>
 
+        <div ng-if="(usersecretData.isAdmin) && (countdown < 0) && (contestData.resultsStatus != 'public')">
+            <p>
+                <strong>運営用</strong><br>
+                <a class="btn" style="margin: 1em;" href="javascript:void(0);" ng-click="publishContest('@{cid}', '/admin-api/contest/publish?c=@{cid}&token=' + usersecretData.adminToken)">
+                    <i class="fa fa-lock"></i> <i class="fa fa-arrow-right"></i> <i class="fa fa-globe"></i> 結果ページを公開にする
+                </a>
+            </p>
+            <hr>
+        </div>
+        <div ng-if="(usersecretData.isAdmin) && (countdown < 0) && (contestData.resultsStatus == 'public')">
+            <p>
+                <strong>運営用</strong><br>
+                <a class="btn" style="margin: 1em;" href="javascript:void(0);" ng-click="tweetContest('@{cid}', '/admin-api/contest/tweet?c=@{cid}&token=' + usersecretData.adminToken)">
+                    <i class="fa fa-twitter"></i> 優勝者をツイートする
+                </a>
+                <a class="btn btn-light" style="margin: 1em; color: #555;" href="javascript:void(0);" ng-click="unpublishContest('@{cid}', '/admin-api/contest/unpublish?c=@{cid}&token=' + usersecretData.adminToken)">
+                    <i class="fa fa-globe"></i> <i class="fa fa-arrow-right"></i> <i class="fa fa-lock"></i> 結果ページを非公開にする
+                </a>
+            </p>
+            <hr>
+        </div>
+
         <p ng-show="countdown < 0">
             別のコンテスト結果を見る<br>
             <select class="form-control" style="margin-bottom: 5px;" ng-model="currentContest" ng-change="currentContestChange()">
@@ -408,6 +430,26 @@ firebase.auth().onAuthStateChanged(function(authData) {
     };
 
 }); // onAuthStateChange
+
+    $scope.publishContest = function(contest, url) {
+        var ok = confirm('【確認】コンテスト (' + contest + ') の結果ページを公開しますか？');
+        if (ok) {
+            window.open(url, '_blank');
+        }
+    };
+    $scope.unpublishContest = function(contest, url) {
+        var ok = confirm('【確認】コンテスト (' + contest + ') の結果ページを非公開にしますか？');
+        if (ok) {
+            window.open(url, '_blank');
+        }
+    };
+    $scope.tweetContest = function(contest, url) {
+        var ok = confirm('【確認】コンテスト (' + contest + ') の優勝者をツイートしますか？');
+        if (ok) {
+            window.open(url, '_blank');
+        }
+    };
+
 }]);
 </script>
 <script type="text/javascript" src="@routes.DynamicJsController.products"></script>
