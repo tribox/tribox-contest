@@ -19,31 +19,6 @@ var Config = require('./config.js');
 
 var contestRef = require('./contestref.js').ref;
 
-// ユーザテーブル、ユーザシークレットテーブル
-var Users, Usersecrets;
-
-// 書き込むデータ (順位、シーズンポイント、当選)
-//var ready = {};
-// 契約アカウント用
-//var readyTriboxTeam = {};
-
-
-// 配列のシャッフル
-//  * http://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array-in-javascript
-// 
-// Fisher–Yates Shuffle というらしい
-//  * https://bost.ocks.org/mike/shuffle/
-//  * https://bost.ocks.org/mike/shuffle/compare.html
-/*var shuffle = function(a) {
-    var j, x, i;
-    for (i = a.length; i; i -= 1) {
-        j = Math.floor(Math.random() * i);
-        x = a[i - 1];
-        a[i - 1] = a[j];
-        a[j] = x;
-    }
-};*/
-
 
 var connection = mysql.createConnection({
     host: Config.MYSQL_HOST,
