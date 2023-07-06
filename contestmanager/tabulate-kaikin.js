@@ -5,7 +5,7 @@
  * 皆勤賞の条件等:
  *   - 種目ごと
  *   - 全種目
- *   - 全て参加
+ *   - 不参加が2回以下
  *   - DNF3回以下
  *   - 認証アカウントであること
  *
@@ -34,31 +34,7 @@ var argvrun = argv.run();
 console.log(argvrun);
 
 // 対象シーズン (20161)
-var targetSeason, targetSeasonObj;
-// ユーザテーブル、ユーザシークレットテーブル
-var Users, Usersecrets;
-
-// 書き込むデータ (順位、シーズンポイント、当選)
-//var ready = {};
-// 契約アカウント用
-//var readyTriboxTeam = {};
-
-
-// 配列のシャッフル
-//  * http://stackoverflow.com/questions/6274339/how-can-i-shuffle-an-array-in-javascript
-// 
-// Fisher–Yates Shuffle というらしい
-//  * https://bost.ocks.org/mike/shuffle/
-//  * https://bost.ocks.org/mike/shuffle/compare.html
-/*var shuffle = function(a) {
-    var j, x, i;
-    for (i = a.length; i; i -= 1) {
-        j = Math.floor(Math.random() * i);
-        x = a[i - 1];
-        a[i - 1] = a[j];
-        a[j] = x;
-    }
-};*/
+var targetSeason;
 
 
 var connection = mysql.createConnection({
@@ -160,8 +136,8 @@ var checkKaikin = function() {
                                 }
                             }
                         });
-                        // 全部終わっているかつDNF規定回数以内
-                        if (countCompleted == countTargetContests && countTargetContests - 3 <= countCompletedSuccess) {
+                        // 不参加が2回以下、かつ、DNF規定回数以内
+                        if ((countTargetContests - 2 <= countCompleted) && (countTargetContests - 3 <= countCompletedSuccess)) {
                             //console.log(eventId + ' ' + countCompleted);
                             Kaikin[userId + eventId] = {
                                 'userId': userId,
