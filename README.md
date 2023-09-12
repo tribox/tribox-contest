@@ -13,7 +13,7 @@ URL: https://contest.tribox.com/
 * Node.js v8.14.0
 * [TNoodle](https://github.com/cubing/tnoodle) v0.14.0
 * [Sarumawashi](https://github.com/kotarot/Sarumawashi)
-* [wca-importer](https://github.com/kotarot/wca-importer)
+* wca-importer
 * [PHPMailer](https://github.com/PHPMailer/PHPMailer) is needed in the `contestmanager` directory.
 
 ## Setup
@@ -207,9 +207,9 @@ node contestmanager/count-participants.js --inprogress --save
 ```
 
 #### WCAデータベースインポートとWCA APPの更新
-[wca-importer](https://github.com/kotarot/wca-importer) を用いる。
+wca-importer を用いる。
 ```
-php -f /path/to/wca_importer/import.php
+php -f /path/to/wca-importer/import.php
 node contestmanager/update-wcaapp.js
 ```
 
