@@ -21,6 +21,9 @@ h1, h2, h3, h4, h5, h6 {
     h2 {
         font-size: 1.8em;
     }
+    body {
+        font-size: 15px;
+    }
 }
 
 
@@ -81,6 +84,7 @@ hr#header-line {
     #main-menu {
         margin-left: -5px;
         margin-right: -5px;
+        font-size: 13px;
     }
 }
 #main-menu div {
