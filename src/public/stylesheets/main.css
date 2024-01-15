@@ -1,0 +1,430 @@
+/**
+ * main.css
+ */
+
+@media screen and (max-width: 480px) {
+    .container {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+}
+
+body {
+    background-color: #fff;
+    font-family: 'ヒラギノ角ゴ Pro W3','Hiragino Kaku Gothic Pro','メイリオ',Meiryo,'ＭＳ Ｐゴシック',"Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'ヒラギノ角ゴ Pro W3','Hiragino Kaku Gothic Pro','メイリオ',Meiryo,'ＭＳ Ｐゴシック',"Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+@media screen and (max-width: 480px) {
+    h2 {
+        font-size: 1.8em;
+    }
+    body {
+        font-size: 15px;
+    }
+}
+
+
+/**
+ * Header
+ */
+#header {
+    margin-top: 22px;
+}
+
+@media screen and (max-width: 480px) {
+    #header-logo {
+        display: inline-block;
+        height: 20px;
+    }
+}
+@media screen and (min-width: 481px) {
+    #header-logo {
+        display: inline-block;
+        height: 30px;
+    }
+}
+#header-logo span {
+    display: none;
+}
+
+@media screen and (max-width: 480px) {
+    #header-menu {
+        display: inline-block;
+        height: auto;
+        margin-top: 5px;
+        float: right;
+    }
+}
+@media screen and (min-width: 481px) {
+    #header-menu {
+        display: inline-block;
+        height: 30px;
+        margin-top: 10px;
+        float: right;
+    }
+}
+
+#header-menu a {
+    color: #555;
+}
+
+hr#header-line {
+    margin-top: 22px;
+}
+
+#main-menu {
+    clear: both;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+@media screen and (max-width: 480px) {
+    #main-menu {
+        margin-left: -5px;
+        margin-right: -5px;
+        font-size: 13px;
+    }
+}
+#main-menu div {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    color: rgb(246, 246, 246);
+    background-color: rgb(117, 117, 117);
+    text-align: center;
+}
+#main-menu div a {
+    color: rgb(246, 246, 246);
+}
+@media screen and (max-width: 768px) {
+    #main-menu div {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+}
+
+/**
+ * Footer
+ */
+#footer {
+    font-size: 14px;
+    text-align: center;
+}
+
+
+/**
+ * Auth Info
+ */
+a.underlined {
+    color: #E74C3C;
+    text-decoration: underline;
+}
+
+
+/**
+ * Alert
+ */
+.notice-error {
+    padding: 10px;
+    background: none;
+    color: #E74C3C;
+    border: 2px solid #E74C3C;
+    border-top: 5px solid #E74C3C;
+    /*-webkit-border-radius: 5px;
+       -moz-border-radius: 5px;
+            border-radius: 5px;*/
+}
+.notice-success {
+    padding: 10px;
+    background: none;
+    color: #1BBC9B;
+    border: 2px solid #1BBC9B;
+    border-top: 5px solid #1BBC9B;
+    /*-webkit-border-radius: 5px;
+       -moz-border-radius: 5px;
+            border-radius: 5px;*/
+}
+.notice-normal {
+    padding: 10px;
+    background: none;
+    color: #555;
+    border: 2px solid #555;
+    border-top: 5px solid #555;
+    /*-webkit-border-radius: 5px;
+       -moz-border-radius: 5px;
+            border-radius: 5px;*/
+}
+
+
+/**
+ * Form
+ */
+input.form-control[type="text"],
+input.form-control[type="password"],
+input.form-control[type="email"],
+input.form-control[type="search"],
+input.form-control[type="url"],
+select.form-control,
+textarea.form-control {
+    max-width: 480px;
+}
+input.form-control[readonly="readonly"] {
+    background-color: #eee;
+}
+
+
+/**
+ * Setting
+ */
+table.setting {
+    margin-bottom: 20px;
+}
+table.setting tr {
+    line-height: 3em;
+}
+table.setting th {
+    vertical-align: middle;
+}
+@media screen and (max-width: 480px) {
+    table.setting th,
+    table.setting td {
+        padding: 0;
+    }
+}
+@media screen and (min-width: 481px) {
+    table.setting th,
+    table.setting td {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+}
+
+
+/**
+ * Scrambles
+ */
+table.scrambles {
+    font-size: 18px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 20px;
+}
+table.scrambles tr.scramble-done {
+    color: #DDD;
+}
+table.scrambles td,
+table.scrambles th {
+    padding-bottom: 10px;
+}
+table.scrambles td:first-child,
+table.scrambles th:first-child {
+    padding-right: 10px;
+}
+/*@media screen and (min-width: 481px) {
+    table.scrambles td:first-child,
+    table.scrambles th:first-child {
+        padding-left: 20px;
+    }
+}*/
+
+
+/**
+ * Result Form
+ */
+@media screen and (max-width: 768px) {
+    .timeform-wrap {
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+}
+@media screen and (min-width: 769px) {
+    .timeform-wrap {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+}
+
+.timeform {
+    border: 1px solid rgb(236, 236, 236);
+    -webkit-border-radius: 10px;
+       -moz-border-radius: 10;
+            border-radius: 10px;
+    margin-bottom : 10px;
+}
+
+.timeform-time {
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid rgb(236, 236, 236);
+    text-align: center;
+}
+
+.timeform-time input {
+    width: 100%;
+    font-size: 24px;
+    border: 2px solid #DDD;
+    -webkit-border-radius: 3px;
+       -moz-border-radius: 3px;
+            border-radius: 3px;
+    transition: border-color 0.25s, color 0.25s;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+.timeform-time input:focus {
+    border: 2px solid #3498DB;
+    outline: none;
+}
+.timeform-time input.format-error {
+    border: 2px solid #E74C3C;
+}
+.timeform-time span.result-detail {
+    font-size: 24px;
+}
+.timeform-time span.yet {
+    color: #DDD;
+}
+.timeform-time span.result-note {
+    font-size: 12px;
+}
+
+.timeform-cond {
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.timeform-cond-btn {
+    display: inline-block;
+    border: 1px solid rgb(236, 236, 236);
+    width: 40px;
+    height: 40px;
+    -webkit-border-radius: 20px;
+       -moz-border-radius: 20px;
+            border-radius: 20px;
+    line-height: 40px;
+    text-align: center;
+    margin-right: 6px;
+    cursor: pointer;
+}
+
+.cond-ok-on {
+    background-color: #1BBC9B;
+    color:#FFF;
+}
+.cond-penalty-on {
+    background-color: #F1C000;
+    color:#FFF;
+}
+.cond-dnf-on {
+    background-color: #E74C3C;
+    color:#FFF;
+}
+
+
+/**
+ * Table format
+ */
+table.tribox-contest {
+    border-left: 1px solid #DDD;
+}
+table.tribox-contest th,
+table.tribox-contest td {
+    border-left: none;
+}
+table.tribox-contest tr:first-child > th {
+    background-color: #f7f7f7;
+}
+
+
+/**
+ * Result table / inProgress / Ranking
+ */
+table.result {
+    font-size: 95%;
+}
+table.inProgress {
+    font-size: 95%;
+}
+table.inProgress {
+    border-left: 1px solid #DDD;
+}
+table.inProgress th,
+table.inProgress td {
+    border-left: none;
+}
+table.ranking {
+    font-size: 95%;
+}
+
+a.cursor-pointer {
+    cursor: pointer;
+}
+tr.row-detail {
+    background: #FFF !important; /*background: #F7F7F9;*/
+    border: 1px solid #E1E1E8;
+}
+
+.color-star {
+    color: #E3CF7A;
+}
+
+td.ellipsis {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 30%;
+    max-width: 0;
+}
+
+/**
+ * Profile table
+ */
+table.profile {
+    margin-bottom: 20px;
+}
+table.profile th {
+    font-weight: bold;
+    padding-right: 10px;
+}
+table.profile th,
+table.profile td {
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+
+/**
+ * 獲得ポイント
+ */
+.lottery {
+    position: relative;
+}
+.lottery-point {
+    position: absolute;
+    display: inline-block;
+    position: absolute;
+    font-size: 12px;
+    color: #c00;
+    top: 0;
+    left: -2px;
+    opacity: 0.5;
+}
+
+
+/**
+ * ツイートボタン（独自）
+ */
+.btn.btn-tweet {
+    background-color: #1b95e0;
+    color: #fff;
+
+    padding: 5px 15px;
+    min-width: 30px;
+    font-size: 0.8em;
+    line-height: 1.2em;
+}

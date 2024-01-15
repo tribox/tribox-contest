@@ -1,0 +1,48 @@
+/**
+ * modal.css
+ */
+
+/**
+ * モーダル
+ * https://syncer.jp/jquery-modal-window
+ */
+.modal-content {
+    z-index: 1001;
+    position: fixed;
+    max-width: 640px;
+    margin: 1.5em auto 0;
+    padding: 20px;
+    background: #fff;
+    border: 1px solid #aaa;
+    -webkit-border-radius: 5px;
+       -moz-border-radius: 5px;
+            border-radius: 5px;
+}
+@media screen and (max-width: 480px) {
+    .modal-content {
+        width: 80%;
+    }
+}
+@media screen and (min-width: 481px) {
+    .modal-content {
+        width: 50%;
+    }
+}
+
+#modal-overlay {
+    z-index: 1000;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 120%;
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+.modal-content p:last-child {
+    margin-bottom: 0;
+}
+
+.modal-content a {
+    cursor: pointer;
+}
