@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "tribox-contest"
+version = "0.0.1"
+description = "tribox Contest is an Online Speed-Solving Competition organized by Tribox Inc."
+license = "Apache-2.0"
+authors = ["Kotaro Terada <kotarot@tribox.jp>"]
+readme = "README.md"
+repository = "https://github.com/tribox/tribox-contest"
+packages = [{include = "src"}]
+
+[tool.poetry.dependencies]
+python = ">=3.12.0,<3.13"
+Flask = "^3.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
