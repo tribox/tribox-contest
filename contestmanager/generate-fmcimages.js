@@ -1,7 +1,7 @@
 /**
  * generate-fmcimages.js
  *
- * 指定シーズンのFMC画像を生成して public/333fm/ のディレクトリに保存する。
+ * 指定シーズンのFMC画像を生成して src/public/333fm/ のディレクトリに保存する。
  */
 
 var fs = require('fs');
@@ -55,7 +55,7 @@ var getScrambles = function() {
                 var scramble = Scrambles[contestId]['e333fm'][0];
                 var scrambleEscaped = scramble.replace(/'/g, '%27').replace(/ /g, '%20');
                 var scrambleId = nanoidCustom();
-                var savePath = Config.PATH_TO_CONTEST + '/public/333fm/' + scrambleId + '.png';
+                var savePath = Config.PATH_TO_CONTEST + '/src/public/333fm/' + scrambleId + '.png';
 
                 // TNoodle でスクランブル画像を生成して取得
                 var url = 'http://' + Config.TNOODLE_HOST + ':2014/view/333.png?scramble=' + scrambleEscaped;
