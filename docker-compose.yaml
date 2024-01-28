@@ -9,7 +9,7 @@ services:
       context: .
       dockerfile: ./docker/db/Dockerfile
     env_file:
-      - .env.docker
+      - .env
     volumes:
       - ./docker/db/my.cnf:/etc/mysql/conf.d/my.cnf
       - ./log/db:/var/log/mysql
@@ -33,7 +33,7 @@ services:
     depends_on:
       - db
     env_file:
-      - .env.docker
+      - .env
     working_dir: /app
     # flask コマンドで起動 (開発向け)
     command: "flask run --host=0.0.0.0 --port=5000"
