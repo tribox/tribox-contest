@@ -12,6 +12,7 @@ packages = [{include = "src"}]
 python = ">=3.12.0,<3.13"
 Flask = "^3.0.0"
 gunicorn = "^21.2.0"
+python-dotenv = "^1.0.1"
 
 [build-system]
 requires = ["poetry-core"]
