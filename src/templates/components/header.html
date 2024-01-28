@@ -1,0 +1,77 @@
+[% macro print(title='', description='', sitename='', contest_url='', page_url='', event='', user_scalable=True, google_verification='') -%]
+
+<meta charset="UTF-8">
+
+[% if user_scalable %]
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+[% else %]
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+[% endif %]
+
+[% if google_verification %]
+    <meta name="google-site-verification" content="[[ google_verification ]]" />
+[% endif %]
+
+[% if title %]
+    <title>[[ title ]] # [[ sitename ]]</title>
+[% else %]
+    <title>[[ sitename ]]</title>
+[% endif %]
+
+<meta name="description" content="[[ description ]]">
+<meta name="format-detection" content="telephone=no">
+
+<!-- OGP and Twitter card -->
+[% if (contest_url != '') and (page_url != '') %]
+    <meta property="og:url" content="[[ page_url ]]">
+    <meta property="og:type" content="website">
+    [% if not title %]
+        <meta property="og:title" content="[[ sitename ]]">
+    [% else %]
+        <meta property="og:title" content="[[ title ]]">
+    [% endif %]
+    <meta property="og:image" content="[[ contest_url | trim('/') ]][[ url_for('static', filename='images/triboxContest_image.png') ]]">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1600">
+    <meta property="og:image:height" content="900">
+    <meta property="og:site_name" content="[[ sitename ]]">
+    <meta property="og:description" content="[[ description ]]">
+    <meta property="og:locale" content="ja_JP">
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:site" content="[[ sitename ]]">
+    <meta name="twitter:creator" content="@triboxContest">
+    [% if not title %]
+        <meta name="twitter:title" content="トリコン: TORIBO Contest">
+    [% else %]
+        <meta name="twitter:title" content="[[ title ]]">
+    [% endif %]
+    <meta name="twitter:description" content="スピードキューブのオンラインコンテスト「トリコン」へようこそ！">
+    [% if event %]
+        <meta name="twitter:image:src" content="[[ contest_url | trim('/') ]][[ url_for('static', filename='images/twitter_card/' + event + '.png') ]]">
+    [% else %]
+        <meta name="twitter:image:src" content="[[ contest_url | trim('/') ]][[ url_for('static', filename='images/triboxContest_image_202007.png') ]]">
+    [% endif %]
+
+    <link rel="canonical" href="[[ page_url ]]">
+[% endif %]
+
+<link rel="shortcut icon" href="[[ url_for('static', filename='images/favicon.ico') ]]">
+<link rel="apple-touch-icon-precomposed" href="[[ url_for('static', filename='images/apple-touch-icon-precomposed.png') ]]">
+
+<link rel="stylesheet" media="screen" href="[[ url_for('static', filename='skyblue/css/skyblue.min.css') ]]">
+<link rel="stylesheet" media="screen" href="[[ url_for('static', filename='stylesheets/main.css') ]]">
+<link rel="stylesheet" media="screen" href="[[ url_for('static', filename='stylesheets/skyblue-alt.css') ]]">
+<link rel="stylesheet" media="screen" href="[[ url_for('static', filename='stylesheets/device.css') ]]">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://emoji-css.afeld.me/emoji.css">
+<link rel="stylesheet" href="[[ url_for('static', filename='stylesheets/cubing-icons/cubing-icons.css') ]]">
+<!-- <link rel="shortcut icon" type="image/png" href="[[ url_for('static', filename='images/favicon.png') ]]"> -->
+<!-- <script type="text/javascript" src="[[ url_for('static', filename='javascripts/hello.js') ]]"></script> -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.5/angular.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.5/angular-sanitize.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/5.7.0/firebase.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angularFire/2.3.0/angularfire.min.js"></script>
+
+[%- endmacro %]

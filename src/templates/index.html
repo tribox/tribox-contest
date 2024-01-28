@@ -1,487 +1,21 @@
-{% raw %}
+[% set title = "" %]
+[# set page_url = contest_url + uri #]
+
 <!DOCTYPE html>
 <html lang="ja" ng-app="contestApp">
 <head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
-    
-
-    <meta charset="UTF-8">
-    
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    
-        <meta name="google-site-verification" content="B4WUatFsmpYaMVVroHE6HxwDKRP5adtp19V_JY2KNBE" />
-    
-
-    
-        <title>TORIBO Contest トリコン</title>
-    
-    <meta name="description" content="TORIBOコンテストは、誰でも参加可能。毎週開催のお得なネットコンテストです。">
-    <meta name="format-detection" content="telephone=no">
-
-    
-        <meta property="og:url" content="https://contest.tribox.com/">
-        <meta property="og:type" content="website">
-        
-            <meta property="og:title" content="TORIBO Contest トリコン">
-        
-        <meta property="og:image" content="https://contest.tribox.com/assets/images/triboxContest_image.png">
-        <meta property="og:image:type" content="image/png">
-        <meta property="og:image:width" content="1600">
-        <meta property="og:image:height" content="900">
-        <meta property="og:site_name" content="TORIBO Contest トリコン">
-        <meta property="og:description" content="TORIBOコンテストは、誰でも参加可能。毎週開催のお得なネットコンテストです。">
-        <meta property="og:locale" content="ja_JP">
-
-        <meta name="twitter:card" content="summary">
-        <meta name="twitter:site" content="TORIBO Contest トリコン">
-        <meta name="twitter:creator" content="@triboxContest">
-        
-            <meta name="twitter:title" content="トリコン: TORIBO Contest">
-        
-        <meta name="twitter:description" content="スピードキューブのオンラインコンテスト「トリコン」へようこそ！">
-        
-            <meta name="twitter:image:src" content="https://contest.tribox.com/assets/images/triboxContest_image_202007.png">
-        
-
-        <link rel="canonical" href="https://contest.tribox.com/">
-    
-
-    <link rel="shortcut icon" href="/assets/images/favicon.ico">
-    <link rel="apple-touch-icon-precomposed" href="/assets/images/apple-touch-icon-precomposed.png">
-
-    <link rel="stylesheet" media="screen" href="/assets/skyblue/css/skyblue.min.css">
-    <link rel="stylesheet" media="screen" href="/assets/stylesheets/main.css">
-    <link rel="stylesheet" media="screen" href="/assets/stylesheets/skyblue-alt.css">
-    <link rel="stylesheet" media="screen" href="/assets/stylesheets/device.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://emoji-css.afeld.me/emoji.css">
-    <link rel="stylesheet" href="/assets/stylesheets/cubing-icons/cubing-icons.css">
-    <!--<link rel="shortcut icon" type="image/png" href="/assets/images/favicon.png">-->
-    <!--<script src="/assets/javascripts/hello.js" type="text/javascript"></script>-->
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.5/angular.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.7.5/angular-sanitize.min.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/5.7.0/firebase.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/angularFire/2.3.0/angularfire.min.js"></script>
+    [% import "components/header.html" as header %]
+    [[ header.print(title=title, description=contest_description, sitename=contest_name, contest_url=contest_url, page_url=page_url, event=event, google_verification=google_verification) ]]
 
     <link rel="stylesheet" media="screen" href="/assets/stylesheets/modal.css">
 
-
-
-<script>
-window.TriboxContest = {};
-
-TriboxContest.ERROR_CODES = {
-    'EMAIL_TAKEN':               '入力されたメールアドレスは他のアカウントで既に登録済みのメールアドレスです',
-    'INVALID_EMAIL':             'メールアドレスまたはパスワードが間違っています',
-    'INVALID_PASSWORD':          'メールアドレスまたはパスワードが間違っています',
-    'INVALID_USER':              'メールアドレスまたはパスワードが間違っています',
-    'auth/email-already-in-use': '入力されたメールアドレスは他のアカウントで既に登録済みのメールアドレスです',
-    'auth/invalid-email':        'メールアドレスまたはパスワードが間違っています',
-    'auth/user-disabled':        'メールアドレスまたはパスワードが間違っています',
-    'auth/user-not-found':       'メールアドレスまたはパスワードが間違っています',
-    'auth/wrong-password':       'メールアドレスまたはパスワードが間違っています'
-};
-TriboxContest.convErrorCodes = function(code) {
-    if (code in TriboxContest.ERROR_CODES) {
-        return TriboxContest.ERROR_CODES[code];
-    } else {
-        return code;
-    }
-};
-
-TriboxContest.ERROR_CODES_ALT = {
-    'EMAIL_TAKEN':               '入力されたメールアドレスは他のアカウントで既に登録済みのメールアドレスです',
-    'INVALID_EMAIL':             'メールアドレスが間違っています',
-    'INVALID_PASSWORD':          'パスワードが間違っています',
-    'INVALID_USER':              'ユーザが間違っています',
-    'auth/email-already-in-use': '入力されたメールアドレスは他のアカウントで既に登録済みのメールアドレスです',
-    'auth/invalid-email':        'メールアドレスが間違っています',
-    'auth/user-disabled':        'ユーザが間違っています',
-    'auth/user-not-found':       'ユーザが間違っています',
-    'auth/wrong-password':       'パスワードが間違っています'
-};
-TriboxContest.convErrorCodesAlt = function(code) {
-    if (code in TriboxContest.ERROR_CODES_ALT) {
-        return TriboxContest.ERROR_CODES_ALT[code];
-    } else {
-        return code;
-    }
-};
-
-TriboxContest.INPUT_LENGTH = {
-    'puzzleName': {'min': 1, 'max': 50},
-    'videoUrl': {'min': 1, 'max': 1023}
-};
-
-// タイムを分・秒・小数点以下3桁にフォーマットする
-TriboxContest.formatTime = function(input) {
-    var post = '.000';
-    var second = input - 0;
-    if (String(input).indexOf('.') != -1) {
-        second = String(input).split('.')[0] - 0;
-        // 小数点以下が .31299999... みたいなときは .313 にしたいので4桁切り出して1桁目を四捨五入する
-        var decimal = (String(input).split('.')[1] + '0000').substr(0, 4) - 0;
-        post = '.' + ('000' + String(Math.round(decimal / 10))).slice(-3);
-    }
-    if (second < 10) {
-        return (second + post).substr(0, 5);
-    } else if (second < 60) {
-        return (second + post).substr(0, 6);
-    } else {
-        var minute = Math.floor(Math.floor(second) / 60);
-        var s = ('0' + (second - minute * 60)).slice(-2);
-        if (minute < 10) {
-            return (minute + ':' + s + post).substr(0, 8);
-        } else {
-            return (minute + ':' + s + post).substr(0, 9);
-        }
-    }
-};
-
-// Details を整形する
-TriboxContest.formatDetails = function(results, e, Events) {
-    // Work around: detailsがundefinedの場合は空文字列を返す
-    if (!(results.details)) {
-        return '';
-    }
-
-    var arr = [];
-    results.details.forEach(function(d, index) {
-        var t = '';
-        if (Events[e].method == 'average' && (results.result.best == index || results.result.worst == index)) {
-            t += '(';
-        }
-        if (d.condition == 'OK') {
-            if (Events[e].format == 'time') {
-                t += TriboxContest.formatTime(d.record);
-            } else if (Events[e].format == 'number') {
-                t += d.record;
-            }
-        } else if (d.condition == '+2') {
-            t += TriboxContest.formatTime(d.record + 2.000);
-        } else if (d.condition == 'DNF') {
-            t += 'DNF';
-        }
-        if (Events[e].method == 'average' && (results.result.best == index || results.result.worst == index)) {
-            t += ')';
-        }
-        arr.push(t);
-    });
-    return arr.join(' ');
-};
-
-// Result を整形する
-TriboxContest.formatResult = function(results, e, Events) {
-    if (results.result.condition != 'DNF') {
-        if (Events[e].format == 'time') {
-            return TriboxContest.formatTime(results.result.record);
-        } else {
-            return results.result.record;
-        }
-    } else {
-        return 'DNF';
-    }
-};
-
-// Puzzle を整形する
-TriboxContest.formatPuzzle = function(results) {
-    if (results.puzzle.type == 'database') {
-        return TriboxContest.Products[results.puzzle.product];
-    } else if (results.puzzle.type == 'nodatabase') {
-        return results.puzzle.input;
-    } else {
-        return 'その他・不明';
-    }
-};
-
-// HTML エスケープぽいやつ
-TriboxContest.escapeHTML = function(text) {
-    text = text.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    text = text.replace(/\n/g, '<br>').replace(/\r/g, '<br>');
-    return text;
-};
-
-
-/**
- * URL解析して、クエリ文字列を返す
- * http://qiita.com/ma_me/items/03aaebb5dc440b380244
- */
-var getUrlVars = function() {
-    var vars = {};
-    var url = window.location.search;
-    var hash = url.slice(1).split('&');
-    var max = hash.length;
-    for (var i = 0; i < max; i++) {
-        var array = hash[i].split('=');
-        vars[array[0]] = array[1];
-    }
-    return vars;
-};
-var getUrlHashes = function() {
-    var vars = {};
-    var url = window.location.hash;
-    var hash = url.slice(1).split('&');
-    var max = hash.length;
-    for (var i = 0; i < max; i++) {
-        var array = hash[i].split('=');
-        vars[array[0]] = array[1];
-    }
-    return vars;
-};
-
-/**
- * フェードイン・フェードアウト
- * http://baku.hateblo.jp/entry/2015/01/14/175601
- */
-var fadeOut = function(el, ms, fn) {
-    ms = ms || 400;             // duration in milliseconds
-    el.style.opacity = 1;
-    var interval = 100,           // frame interval 100ms -> 10fps
-        step = interval / ms;
-    function tick() {
-        el.style.opacity -= step;
-        if (+el.style.opacity > 0) {
-            setTimeout(tick, interval);
-        } else {
-            el.style.display = 'none';
-            if (typeof fn === 'function') {
-                fn();
-            }
-        }
-    }
-    tick();
-}
-var fadeIn = function(el, ms, fn) {
-    if (+el.style.opacity < 1) {
-        ms = ms || 400;         // duration in milliseconds
-        el.style.opacity = 0;
-        //el.style.display = 'block';
-        var interval = 100,       // frame interval 100ms -> 10fps
-            step = interval / ms;
-        function tick() {
-            el.style.opacity = +el.style.opacity + step;
-            if (+el.style.opacity < 1) {
-                setTimeout(tick, interval);
-            } else {
-                if (typeof fn === 'function') {
-                    fn();
-                }
-            }
-        }
-        tick();
-    } else {
-        //el.style.display = 'block'; // fallback IE8
-        if (typeof fn === 'function') {
-            fn();
-        }
-    }
-}
-
-
-/**
- * FIREBASE
- */
-var app = angular.module('contestApp', ['firebase', 'ngSanitize']);
-var config = {
-    apiKey: "AIzaSyCPUw1d16rKt2Zvo106ajkQFQGm5F4nv5M",
-    authDomain: "tribox-contest.firebaseapp.com",
-    databaseURL: "https://tribox-contest.firebaseio.com",
-    projectId: "tribox-contest",
-    storageBucket: "tribox-contest.appspot.com",
-    messagingSenderId: "437839015948"
-};
-firebase.initializeApp(config);
-var contestRef = firebase.database().ref();
-
-
-
-/**
- * Filter: toDate
- */
-var timestampToDate = function(timestamp) {
-    var weedDays = ['Sun.', 'Mon.', 'Tue.', 'Wed.', 'Thu.', 'Fri.', 'Sat.'];
-    var d = new Date(timestamp);
-    var year = d.getFullYear();
-    var month = ('0' + (d.getMonth() + 1)).slice(-2);
-    var day = ('0' + d.getDate()).slice(-2);
-    var hour = ('0' + d.getHours()).slice(-2);
-    var min = ('0' + d.getMinutes()).slice(-2);
-    var sec = ('0' + d.getSeconds()).slice(-2);
-    return year + '-' + month + '-' + day + ' (' + weedDays[d.getDay()] + ') ' + hour + ':' + min + ':' + sec;
-};
-app.filter('toDate', [function() {
-    return timestampToDate;
-}]);
-
-var timestampToDateShort = function(timestamp) {
-    var d = new Date(timestamp);
-    var year = d.getFullYear();
-    var month = ('0' + (d.getMonth() + 1)).slice(-2);
-    var day = ('0' + d.getDate()).slice(-2);
-    return year + '-' + month + '-' + day;
-};
-app.filter('toDateShort', [function() {
-    return timestampToDateShort;
-}]);
-
-/**
- * Filter: removeHead
- */
-var removeHead = function(str) {
-    if (str && 0 < str.length) {
-        return str.substr(1);
-    } else {
-        return str;
-    }
-};
-app.filter('removeHead', [function() {
-    return removeHead;
-}]);
-
-
-/**
- * Filter: Number to Ordinal
- */
-var toOrdinal = function(n) {
-    n = n - 0;
-    if (n == 1) {
-        return '1st';
-    } else if (n == 2) {
-        return '2nd';
-    } else if (n == 3) {
-        return '3rd';
-    } else {
-        return n + 'th';
-    }
-};
-app.filter('ordinal', [function() {
-    return toOrdinal;
-}]);
-
-
-/**
- * Filter: Uppercase the top letter
- */
-app.filter('uppercaseHead', [function() {
-    return function(str) {
-        if (str && 0 < str.length) {
-            return str.substr(0, 1).toUpperCase() + str.substr(1);
-        } else {
-            return '';
-        }
-    };
-}]);
-
-
-/**
- * Filter: Shorten the text
- */
-var shorten = function(text, n) {
-    if (!text) {
-        return '';
-    } else if (text.length <= n) {
-        return text;
-    } else {
-        return text.substr(0, n) + '...';
-    }
-};
-var _shorten10 = function(text) {
-    return shorten(text, 10);
-};
-app.filter('shorten10', [function() {
-    return _shorten10;
-}]);
-var _shorten20 = function(text) {
-    return shorten(text, 20);
-};
-app.filter('shorten20', [function() {
-    return _shorten20;
-}]);
-
-/**
- * Filter: encodeURI
- */
-app.filter('encodeURI', [function() {
-    return encodeURI;
-}]);
-
-</script>
+[% import "components/basejs.html" as basejs %]
+[[ basejs.print(firebaseapp_contest, firebaseapp_contest_apikey, firebaseapp_contest_messagingsenderid) ]]
 
 </head>
 <body><div class="container">
-    
-
-<div id="header">
-    <div id="header-logo">
-        <a href="/">
-            <img src="/assets/images/TORIBO-Contest_60x604.png" height="30" title="triboxContest" alt="triboxContest" class="mb-hide" />
-            <img src="/assets/images/TORIBO-Contest_60x604.png" height="20" title="triboxContest" alt="triboxContest" class="tb-hide pc-hide" />
-            <span>TORIBO Contest トリコン</span>
-        </a>
-    </div>
-    
-        <div id="header-menu" ng-controller="AuthCtrl">
-            <span ng-show="!isLoggingin && authLoaded">
-                <a href="/login">ログイン</a> /
-                <a href="/join">会員登録</a>
-            </span>
-            <span ng-show="isLoggingin && authLoaded && userData.username">
-                <a href="/user/{{ userData.username }}">マイページ</a> /
-                <a href="/setting">設定</a> /
-                <a href="/logout">ログアウト</a>
-            </span>
-            <span ng-show="isLoggingin && authLoaded && !(userData.username)">
-                <a href="/setting">設定</a> /
-                <a href="/logout">ログアウト</a>
-            </span>
-        </div>
-    
-</div>
-
-
-    <div id="main-menu" class="row" ng-controller="InProgressCtrl">
-        <div id="main-menu-1" class="col xs-3">
-            <a href="/about">トリコンとは</a>
-        </div>
-        <div id="main-menu-2" class="col xs-3">
-            <a href="/contest/{{ inProgress.lastContest | removeHead }}" ng-show="inProgress.lastContest != 'cxxxxxxx'">リザルト</a>
-            <a href="#" ng-show="inProgress.lastContest == 'cxxxxxxx'">リザルト</a>
-        </div>
-        <div id="main-menu-3" class="col xs-3">
-            <a href="/ranking/{{ inProgressContest.year }}{{ inProgressContest.season }}" ng-show="inProgress.lastContest != 'cxxxxxxx'">SPランキング</a>
-            <a href="#" ng-show="inProgress.lastContest == 'cxxxxxxx'">SPランキング</a>
-        </div>
-        <div id="main-menu-4" class="col xs-3">
-            <a href="/ranking/{{ inProgressContest.year }}{{ inProgressContest.season }}/puzzle" ng-show="inProgress.lastContest != 'cxxxxxxx'">パズルシェア</a>
-            <a href="#" ng-show="inProgress.lastContest == 'cxxxxxxx'">パズルシェア</a>
-        </div>
-    </div>
-<script>
-app.controller('InProgressCtrl', ['$scope', '$timeout', function($scope, $timeout) {
-    // 初期値はデフォルトページへ飛ばす値
-    $scope.inProgress = { 'lastContest': 'cdefault' };
-    $scope.inProgressContest = { 'year': 'default', 'season': '' };
-
-    contestRef.child('inProgress').once('value', function(snapInProgress) {
-        contestRef.child('contests').child(snapInProgress.val().contest).once('value', function(snapContest) {
-            $timeout(function() {
-                $scope.inProgress = snapInProgress.val();
-                $scope.inProgressContest = snapContest.val();
-            });
-        });
-    });
-
-    var refHeight = document.getElementById('main-menu-1').offsetHeight;
-    angular.element(document.getElementById('main-menu-1')).css('height', refHeight + 'px');
-    angular.element(document.getElementById('main-menu-2')).css('height', refHeight + 'px');
-    angular.element(document.getElementById('main-menu-3')).css('height', refHeight + 'px');
-    angular.element(document.getElementById('main-menu-4')).css('height', refHeight + 'px');
-}]);
-</script>
-
-
-
+    [% import "components/bodyheader.html" as bodyheader %]
+    [[ bodyheader.print(title=title, contest_name=contest_name) ]]
 
     <div ng-controller="AuthCtrl"><div ng-controller="IndexCtrl">
 
@@ -507,21 +41,12 @@ app.controller('InProgressCtrl', ['$scope', '$timeout', function($scope, $timeou
     </div>
     <div ng-show="authLoaded && indexLoaded">
 
-        
-
-  
-
-        <p id="auth-info" class="margin-bottom-30 hide" ng-show="isLoggingin">
-            {{ userData.displayname }}<span ng-show="userData.organization">, {{ userData.organization }}</span>
-            <span class="color-error" ng-show="isTemporaryPassword">
-                一時パスワードが変更されていません。<a href="/setting/password" class="underlined">パスワードを変更</a>してください。
-            </span>
-        </p>
-
+        [% import "components/authinfo.html" as authinfo %]
+        [[ authinfo.print() ]]
 
         <p>
             トリコンは誰でも参加可能。毎週開催の "お得な" ネットコンテストです。<br>
-            <a href="/about">もっと詳しく</a>
+            <a href="[[ url_for('about') ]]">もっと詳しく</a>
         </p>
 
         <hr>
@@ -539,12 +64,12 @@ app.controller('InProgressCtrl', ['$scope', '$timeout', function($scope, $timeou
 
             <h5>ステップ1 新規会員登録</h5>
             <p>
-                <a href="/join">無料新規登録ページ</a>
+                <a href="[[ url_for('join') ]]">無料新規登録ページ</a>
             </p>
 
             <h5>ステップ2 ログイン・初期設定</h5>
             <p>
-                <a href="/login">ログインページ</a><br>
+                <a href="[[ url_for('login') ]]">ログインページ</a><br>
                 ステップ1で登録したメールアドレスとパスワードを入力して、TORIBOコンテストにログインしてください。<br>
                 ログインが完了すると、初期設定ページへ移動します。ここでは、ユーザID、名前、所属 (任意) を登録します。<br>
                 初期設定が完了するとコンテストに参加することができます。
@@ -552,21 +77,21 @@ app.controller('InProgressCtrl', ['$scope', '$timeout', function($scope, $timeou
 
             <h5>ステップ3 アカウント認証</h5>
             <p>
-                <a href="/setting/verify">アカウントの認証設定ページ</a><br>
+                <a href="[[ url_for('setting_verify') ]]">アカウントの認証設定ページ</a><br>
                 TORIBOコンテストアカウントは、TORIBOストアアカウントに結びつけることができます。<br>
                 抽選ポイントや入賞賞金は認証アカウントにのみ付与されます。
             </p>
 
             <h5>ステップ4 会員情報編集</h5>
             <p>
-                <a href="/setting">アカウント設定ページ</a><br>
+                <a href="[[ url_for('setting') ]]">アカウント設定ページ</a><br>
                 所属、WCA ID、Twitter ID、自己紹介文を登録することができます。<br>
                 シーズンランキング1位〜3位に授与される賞金を受け取るには、WCA ID が必要です。
             </p>
 
             <h5>ステップ5 コンテストタイマー体験</h5>
             <p>
-                <a href="/demo/timer">練習用コンテストタイマー</a><br>
+                <a href="[[ url_for('demo_timer') ]]">練習用コンテストタイマー</a><br>
                 本番のコンテストで使用するコンテストタイマーを体験してみましょう。<br>
                 （※コンテストでは使い慣れたタイマーを使用してタイムを手入力して記録を送信することもできます。）
             </p>
@@ -587,7 +112,7 @@ app.controller('InProgressCtrl', ['$scope', '$timeout', function($scope, $timeou
         <p ng-if="inProgressContest.videoBonusStatus">
             <i class="em em-tada"></i><i class="em em-tada"></i><i class="em em-tada"></i> <b>ビデオボーナス節 (3×3×3のみ)</b> <i class="em em-tada"></i><i class="em em-tada"></i><i class="em em-tada"></i><br>
             要件を満たすビデオを提出いただいた方のうち上位5名に追加のSP（シーズンポイント）が与えられます！<br>
-            ビデオボーナス節についての詳細は <b><a href="/regulations">参加方法とルール</a></b> をご覧ください。
+            ビデオボーナス節についての詳細は <b><a href="[[ url_for('regulations') ]]">参加方法とルール</a></b> をご覧ください。
         </p>
 
         <p>
@@ -616,7 +141,7 @@ app.controller('InProgressCtrl', ['$scope', '$timeout', function($scope, $timeou
                         <a class="font-bold color-error" href="/contest/{{ inProgressContest.contestId }}/{{ e | removeHead }}/form" ng-if="authData != null && eventsDone[e] == 'form'"><i class="fa fa-play-circle"></i> 再開する</a>
                         <a class="font-bold color-error" href="/contest/{{ inProgressContest.contestId }}/{{ e | removeHead }}/solution" ng-if="authData != null && eventsDone[e] == 'solution'"><i class="fa fa-play-circle"></i> 再開する</a>
                         <span style="color: #ccc;" ng-if="authData != null && eventsDone[e] == true"><i class="fa fa-check-circle"></i> 参加済みです</span>
-                        <a href="/login" ng-if="authData == null"><i class="fa fa-sign-in"></i> ログインして参加してください</a>
+                        <a href="[[ url_for('login') ]]" ng-if="authData == null"><i class="fa fa-sign-in"></i> ログインして参加してください</a>
                         <span>({{ participants[e] }}名参加済)</span>
                     </td>
                 </tr>
@@ -634,7 +159,7 @@ app.controller('InProgressCtrl', ['$scope', '$timeout', function($scope, $timeou
 
         <h5>コンテストタイマー体験</h5>
         <p>
-            <a href="/demo/timer">練習用コンテストタイマー</a><br>
+            <a href="[[ url_for('demo_timer') ]]">練習用コンテストタイマー</a><br>
             本番のコンテストで使用するコンテストタイマーを体験してみましょう。<br>
             （※コンテストでは使い慣れたタイマーを使用してタイムを手入力して記録を送信することもできます。）
         </p>
@@ -660,239 +185,163 @@ app.controller('InProgressCtrl', ['$scope', '$timeout', function($scope, $timeou
             <li><a href="/ranking/20162">2016 後半期</a></li>
         </ul>
 
-        
+        <p>inProgressContest:</p>
+        <pre>{{ inProgressContest | json }}</pre>
+        <p>eventsDone:</p>
+        <pre>{{ eventsDone | json }}</pre>
 
         </div>
 
     </div></div></div>
 
-    
+    [% include "components/bodyfooter.html" %]
 
-    <hr id="footer-line">
-    <p id="footer">
-        TORIBO Contest トリコン<br>
-        Copyright &copy; 2016&ndash;2024 <a href="https://tribox.com/">Tribox Inc.</a> All Rights Reserved.<br>
-        <a href="https://github.com/tribox/tribox-contest">This software is distributed in the Apache License 2.0.</a>
-    </p>
-
-
-<style>
-.font-bold {
-    font-weight: bold;
-}
-</style>
-
-
-
-<script>
-// A process is an auth thing in progress or not.
-// When in progress, redirection is not disable.
-var authProcessing = false;
-
-app.factory('Auth', ['$firebaseAuth', function($firebaseAuth) {
-    return $firebaseAuth();
-}]);
-
-app.controller('AuthCtrl', ['$scope', '$firebaseObject', 'Auth', function($scope, $firebaseObject, Auth) {
-    $scope.message = null;
-    $scope.authData = null;
-    $scope.userData = null;
-    $scope.usersecretData = null;
-    $scope.isLoggingin = false;
-    $scope.isTemporaryPassword = false;
-    $scope.authLoaded = false;
-
-    Auth.$onAuthStateChanged(function(authData) {
-        if (authData) {
-            angular.element(document.getElementById('auth-info')).removeClass('hide');
-            $scope.message = 'Logged in as: ' + authData.uid + ' (' + authData.email + ')';
-            $scope.authData = authData;
-            $scope.userData = $firebaseObject(contestRef.child('users').child(authData.uid));
-            $scope.userData.$loaded().then(function() {
-                
-                if ($scope.userData.isSuspended || $scope.userData.isDeleted) {
-                    Auth.$signOut();
-                    location.href = '/?logout=1';
-                }
-                $scope.authLoaded = true;
-            });
-            $scope.usersecretData = $firebaseObject(contestRef.child('usersecrets').child(authData.uid));
-            $scope.isLoggingin = true;
-            
-            //$scope.isTemporaryPassword = authData.password.isTemporaryPassword;
-            $scope.isTemporaryPassword = false;
-            
-            
-                // Get users list from DB
-                contestRef.child('users').child(authData.uid).once('value', function(snapshot) {
-                    if (!(snapshot.exists())) {
-                        // First login because no user data yet
-                        console.log('Logged in as: ' + authData.uid + ' (first login)');
-                        location.href = '/setting/first';
-                    }
-                }, function(error) {
-                    Auth.$signOut();
-                    $scope.error = error;
-                });
-            
-        } else {
-            $scope.message = 'Logged out';
-            $scope.authData = null;
-            $scope.userData = null;
-            $scope.usersecretData = null;
-            $scope.isLoggingin = false;
-            $scope.authLoaded = true;
-            
-        }
-    });
-}]);
-</script>
+[% import "components/authjs.html" as authjs %]
+[[ authjs.print(redirect_login="", redirect_logout="", check_first=True) ]]
 
 <script>
 app.controller('IndexCtrl', ['$scope', '$timeout', '$interval', function($scope, $timeout, $interval) {
-firebase.auth().onAuthStateChanged(function(authData) {
-    $scope.events = null;
-    $scope.inProgress = null;
-    $scope.inProgressContest = null;
-    $scope.participants = null;
-    $scope.eventsDone = {};
-    $scope.indexLoaded = false;
+    firebase.auth().onAuthStateChanged(function(authData) {
+        $scope.events = null;
+        $scope.inProgress = null;
+        $scope.inProgressContest = null;
+        $scope.participants = null;
+        $scope.eventsDone = {};
+        $scope.indexLoaded = false;
 
-    // 全競技リスト、開催中コンテスト、開催中コンテストのデータ、ログイン時にユーザの開催中コンテストの結果データ
-    contestRef.child('events').once('value', function(snapEvents) {
-        var events = snapEvents.val();
-    contestRef.child('inProgress').child('contest').once('value', function(snapInProgress) {
-        var inProgress = snapInProgress.val();
-    contestRef.child('participants').child(inProgress).once('value', function(snapParticipants) {
-        var participants = snapParticipants.val();
-    contestRef.child('contests').child(inProgress).once('value', function(snapContest) {
-        var inProgressContest = snapContest.val();
-        if (!(inProgressContest._dummy) && authData) {
-            inProgressContest.events.forEach(function(e) {
-                contestRef.child('results').child(inProgress).child(e).child(authData.uid).once('value', function(snapResult) {
-                    var resultData = snapResult.val();
-                    var _eventsDone;
-                    if (!resultData) {
-                        _eventsDone = false;
-                    } else {
-                        if (resultData.endAt) {
-                            _eventsDone = true;
+        // 全競技リスト、開催中コンテスト、開催中コンテストのデータ、ログイン時にユーザの開催中コンテストの結果データ
+        contestRef.child('events').once('value', function(snapEvents) {
+            var events = snapEvents.val();
+            contestRef.child('inProgress').child('contest').once('value', function(snapInProgress) {
+                var inProgress = snapInProgress.val();
+                contestRef.child('participants').child(inProgress).once('value', function(snapParticipants) {
+                    var participants = snapParticipants.val();
+                    contestRef.child('contests').child(inProgress).once('value', function(snapContest) {
+                        var inProgressContest = snapContest.val();
+                        if (!(inProgressContest._dummy) && authData) {
+                            inProgressContest.events.forEach(function(e) {
+                                contestRef.child('results').child(inProgress).child(e).child(authData.uid).once('value', function(snapResult) {
+                                    var resultData = snapResult.val();
+                                    var _eventsDone;
+                                    if (!resultData) {
+                                        _eventsDone = false;
+                                    } else {
+                                        if (resultData.endAt) {
+                                            _eventsDone = true;
+                                        } else {
+                                            _eventsDone = resultData.type;
+                                        }
+                                    }
+                                    $timeout(function() {
+                                        $scope.events = events;
+                                        $scope.inProgress = inProgress;
+                                        $scope.inProgressContest = inProgressContest;
+                                        $scope.participants = participants;
+                                        $scope.eventsDone[e] = _eventsDone;
+                                        $scope.indexLoaded = true;
+                                    });
+                                }, function(error) {
+                                    console.error(error);
+                                });
+                            });
                         } else {
-                            _eventsDone = resultData.type;
+                            $timeout(function() {
+                                $scope.events = events;
+                                $scope.inProgress = inProgress;
+                                $scope.inProgressContest = inProgressContest;
+                                $scope.participants = participants;
+                                $scope.indexLoaded = true;
+                            });
                         }
-                    }
-                    $timeout(function() {
-                        $scope.events = events;
-                        $scope.inProgress = inProgress;
-                        $scope.inProgressContest = inProgressContest;
-                        $scope.participants = participants;
-                        $scope.eventsDone[e] = _eventsDone;
-                        $scope.indexLoaded = true;
+                        $interval(function() {
+                            var nowDate = new Date();
+                            var nowTime = nowDate.getTime();
+                            var remainingTime = Math.floor((inProgressContest.endAt - nowTime) / 1000);
+                            if (remainingTime > 0) {
+                                var remainingSeconds = remainingTime % 60;
+                                var remainingMinutes = Math.floor(remainingTime / 60) % 60;
+                                var remainingHours = Math.floor(remainingTime / 3600) % 24;
+                                var remainingDays = Math.floor(remainingTime / 86400);
+                                var remainingStr = '';
+                                if (remainingDays > 0) {
+                                    remainingStr += remainingDays + '日 ';
+                                }
+                                if (remainingDays > 0 || remainingHours > 0) {
+                                    remainingStr += remainingHours + '時間 ';
+                                }
+                                remainingStr += remainingMinutes + '分 ';
+                                remainingStr += remainingSeconds + '秒';
+                                $scope.remainingTime = remainingStr;
+                            } else {
+                                $scope.remainingTime = '終了しています';
+                            }
+                        }, 1000);
                     });
-                }, function(error) {
-                    console.error(error);
                 });
+            }, function(error) {
+                console.error(error);
             });
-        } else {
-            $timeout(function() {
-                $scope.events = events;
-                $scope.inProgress = inProgress;
-                $scope.inProgressContest = inProgressContest;
-                $scope.participants = participants;
-                $scope.indexLoaded = true;
-            });
-        }
-        $interval(function() {
-            var nowDate = new Date();
-            var nowTime = nowDate.getTime();
-            var remainingTime = Math.floor((inProgressContest.endAt - nowTime) / 1000);
-            if (remainingTime > 0) {
-                var remainingSeconds = remainingTime % 60;
-                var remainingMinutes = Math.floor(remainingTime / 60) % 60;
-                var remainingHours = Math.floor(remainingTime / 3600) % 24;
-                var remainingDays = Math.floor(remainingTime / 86400);
-                var remainingStr = '';
-                if (remainingDays > 0) {
-                    remainingStr += remainingDays + '日 ';
-                }
-                if (remainingDays > 0 || remainingHours > 0) {
-                    remainingStr += remainingHours + '時間 ';
-                }
-                remainingStr += remainingMinutes + '分 ';
-                remainingStr += remainingSeconds + '秒';
-                $scope.remainingTime = remainingStr;
-            } else {
-                $scope.remainingTime = '終了しています';
+        }, function(error) {
+            console.error(error);
+        });
+
+        $scope.justLogout = null;
+        if (!authData) {
+            var vars = getUrlVars();
+            if (vars.logout) {
+                $timeout(function() {
+                    $scope.justLogout = true;
+                    // うまくDOMのサイズが取得できないときがあるので何回か呼ぶ
+                    showModal();
+                    for (var delay = 1; delay <= 20; delay++) {
+                        $timeout(showModal, delay * 50);
+                    }
+                    for (var delay = 2; delay <= 10; delay++) {
+                        $timeout(showModal, delay * 1000);
+                    }
+                });
+            } else if (vars.please) {
+                $timeout(function() {
+                    $scope.pleaseLogin = true;
+                    // うまくDOMのサイズが取得できないときがあるので何回か呼ぶ
+                    showModal();
+                    for (var delay = 1; delay <= 20; delay++) {
+                        $timeout(showModal, delay * 50);
+                    }
+                    for (var delay = 2; delay <= 10; delay++) {
+                        $timeout(showModal, delay * 1000);
+                    }
+                });
             }
-        }, 1000);
-    });
-    });
-    }, function(error) {
-        console.error(error);
-    });
-    }, function(error) {
-        console.error(error);
-    });
-
-    $scope.justLogout = null;
-    if (!authData) {
-        var vars = getUrlVars();
-        if (vars.logout) {
-            $timeout(function() {
-                $scope.justLogout = true;
-                // うまくDOMのサイズが取得できないときがあるので何回か呼ぶ
-                showModal();
-                for (var delay = 1; delay <= 20; delay++) {
-                    $timeout(showModal, delay * 50);
-                }
-                for (var delay = 2; delay <= 10; delay++) {
-                    $timeout(showModal, delay * 1000);
-                }
-            });
-        } else if (vars.please) {
-            $timeout(function() {
-                $scope.pleaseLogin = true;
-                // うまくDOMのサイズが取得できないときがあるので何回か呼ぶ
-                showModal();
-                for (var delay = 1; delay <= 20; delay++) {
-                    $timeout(showModal, delay * 50);
-                }
-                for (var delay = 2; delay <= 10; delay++) {
-                    $timeout(showModal, delay * 1000);
-                }
-            });
         }
-    }
 
-    // Modal
-    var modalOverlayElem = document.getElementById('modal-overlay');
-    var modalLogoutElem = document.getElementById('modal-logout');
-    var modalLogoutCloseElem = document.getElementById('modal-logout-close');
-    var modalOverlayNgElem = angular.element(modalOverlayElem);
-    var modalLogoutNgElem = angular.element(modalLogoutElem);
-    modalOverlayNgElem.removeClass('hide');
-    modalLogoutNgElem.removeClass('hide');
-    var showModal = function() {
-        var windowW = window.innerWidth;
-        var windowH = window.innerHeight;
-        var modalW = modalLogoutElem.offsetWidth;
-        var modalH = modalLogoutElem.offsetHeight;
-        modalLogoutNgElem.css('left', ((windowW - modalW) / 2) + 'px');
-        modalLogoutNgElem.css('top', ((windowH - modalH) / 2) + 'px');
-    };
-    var closeModal = function() {
-        modalOverlayNgElem.addClass('hide');
-        modalLogoutNgElem.addClass('hide');
-        history.replaceState('', '', '/');
-    };
-    modalOverlayElem.onclick = closeModal;
-    modalLogoutCloseElem.onclick = closeModal;
+        // Modal
+        var modalOverlayElem = document.getElementById('modal-overlay');
+        var modalLogoutElem = document.getElementById('modal-logout');
+        var modalLogoutCloseElem = document.getElementById('modal-logout-close');
+        var modalOverlayNgElem = angular.element(modalOverlayElem);
+        var modalLogoutNgElem = angular.element(modalLogoutElem);
+        modalOverlayNgElem.removeClass('hide');
+        modalLogoutNgElem.removeClass('hide');
+        var showModal = function() {
+            var windowW = window.innerWidth;
+            var windowH = window.innerHeight;
+            var modalW = modalLogoutElem.offsetWidth;
+            var modalH = modalLogoutElem.offsetHeight;
+            modalLogoutNgElem.css('left', ((windowW - modalW) / 2) + 'px');
+            modalLogoutNgElem.css('top', ((windowH - modalH) / 2) + 'px');
+        };
+        var closeModal = function() {
+            modalOverlayNgElem.addClass('hide');
+            modalLogoutNgElem.addClass('hide');
+            history.replaceState('', '', '/');
+        };
+        modalOverlayElem.onclick = closeModal;
+        modalLogoutCloseElem.onclick = closeModal;
 
-
-}); // onAuthStateChange
+    }); // onAuthStateChange
 }]);
 </script>
 
 </div></body>
 </html>
-{% endraw %}
