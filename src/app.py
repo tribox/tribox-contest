@@ -68,12 +68,30 @@ def index():
 ########################################
 @app.route("/about")
 def about():
-    return render_template("about.html")
+    return render_template(
+        "about.html",
+        contest_name=CONTEST_NAME,
+        contest_description=CONTEST_DESCRIPTION,
+        contest_url=CONTEST_URL,
+        page_url=request.url,
+        firebaseapp_contest=FIREBASEAPP_CONTEST,
+        firebaseapp_contest_apikey=FIREBASEAPP_CONTEST_APIKEY,
+        firebaseapp_contest_senderid=FIREBASEAPP_CONTEST_SENDERID,
+    )
 
 
 @app.route("/regulations")
 def regulations():
-    return render_template("regulations.html")
+    return render_template(
+        "regulations.html",
+        contest_name=CONTEST_NAME,
+        contest_description=CONTEST_DESCRIPTION,
+        contest_url=CONTEST_URL,
+        page_url=request.url,
+        firebaseapp_contest=FIREBASEAPP_CONTEST,
+        firebaseapp_contest_apikey=FIREBASEAPP_CONTEST_APIKEY,
+        firebaseapp_contest_senderid=FIREBASEAPP_CONTEST_SENDERID,
+    )
 
 
 ########################################

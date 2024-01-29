@@ -1,0 +1,174 @@
+[% set title = "About" %]
+[# set page_url = contest_url + '/about' #]
+
+<!DOCTYPE html>
+<html lang="ja" ng-app="contestApp">
+<head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
+    [% import "components/header.html" as header %]
+    [[ header.print(title=title, description=contest_description, sitename=contest_name, contest_url=contest_url, page_url=page_url) ]]
+
+[% import "components/basejs.html" as basejs %]
+[[ basejs.print(firebaseapp_contest, firebaseapp_contest_apikey, firebaseapp_contest_messagingsenderid) ]]
+
+[% import "components/authjs.html" as authjs %]
+[[ authjs.print(redirect_login="", redirect_logout="", check_first=True) ]]
+
+<style>
+    h4 {
+        margin-top: 30px;
+    }
+
+    table {
+        width: auto !important;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    th.color-header, td.color-header {
+        background-color: #F7F7F7;
+    }
+    th.color-gold {
+        background-color: rgb(255, 255, 0);
+        /*background-color: #C98910;*/
+    }
+    th.color-silver {
+        background-color: rgb(217, 217, 217);
+        /*background-color: #A8A8A8;*/
+    }
+    th.color-bronze {
+        background-color: rgb(255, 153, 0);
+        /*background-color: #965A38;*/
+    }
+
+    p {
+        line-height: 1.6em;
+    }
+</style>
+
+</head>
+<body><div class="container">
+    [% import "components/bodyheader.html" as bodyheader %]
+    [[ bodyheader.print(title=title, contest_name=contest_name) ]]
+
+    <div ng-controller="AuthCtrl">
+        <div ng-hide="authLoaded">
+            <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+            <span class="sr-only">Loading...</span>
+            Loading...
+        </div>
+        <div ng-show="authLoaded">
+
+            [% import "components/authinfo.html" as authinfo %]
+            [[ authinfo.print() ]]
+
+            <h2>トリコン: TORIBOコンテストとは</h2>
+
+            <p>
+                スピードキューブのオンラインコンテスト「トリコン」へようこそ！<br>
+                10分以内にキューブを解ける方なら誰でも参加可能です。<br>
+                参加費は無料。しかもお得な特典がたっぷりです。皆さまのご参加をお待ちしています。
+            </p>
+            <ul>
+                <li><b><a href="[[ url_for('join') ]]">新規会員登録ページ</a></b></li>
+                <li><b><a href="[[ url_for('regulations') ]]">参加方法とルール</a></b></li>
+            </ul>
+
+            <hr>
+
+            <h4>ポイントが当たる「ストア&コンテスト連携」</h4>
+            <p>
+                トリコンアカウントは、<b><a href="https://store.tribox.com/">TORIBOストア</a></b>アカウントと結びつけることができます。<br>
+                以下の特典を受け取るには「<b><a href="[[ url_for('setting_verify') ]]">ストア&コンテスト連携</a></b>」が必要です。<br>
+                &#x1f4b0;抽選ポイント (毎週161名)<br>
+                &#x1f4b0;皆勤賞 (半年ごと)<br>
+                &#x1f4b0;入賞賞金 (半年ごと)
+            </p>
+            <p>
+                <b><a href="[[ url_for('setting_verify') ]]">ストア&コンテスト連携設定ページ</a></b>
+            </p>
+
+            <h4>コンテストとシーズン</h4>
+            <p>
+                「コンテスト (節) 」は毎週日曜21時に始まり、1週間後に終了します。つまり、コンテストは常に開催されています。<br>
+                SNSについて: 皆様の記録やスクランブルの特徴などは、毎週日曜21時の結果発表まで公表しないようお願いいたします。<br>
+                半年間（およそ26週間）で「シーズン」が切り替わります。1〜6月が前半期、7〜12月が後半期です。
+            </p>
+
+            <hr>
+
+            <h4>&#x1f4b0;抽選ポイント</h4>
+            <p>
+                毎週抽選で161名様に100ポイントが進呈されます。<br>
+                ポイントは<b><a href="https://store.tribox.com/">TORIBOストア</a></b>アカウントに自動進呈され、1ポイント=1円としてご使用頂けます。<br>
+                複数の種目に参加すると、同時に複数当選する可能性もあります!<br>
+                抽選ポイントを受け取るには「<b><a href="[[ url_for('setting_verify') ]]">ストア&コンテスト連携</a></b>」が必要です。
+            </p>
+
+            <h4>&#x1f4b0;皆勤賞</h4>
+            <p>
+                各種目に毎週参加された方には、最大4種目まで皆勤賞 (500ポイント) が進呈されます。<br>
+                皆勤賞の条件 (種目ごと) : 参加しなかった節が2回以下 かつ DNFが3回以下 (「個々の記録」のDNFはカウントされません)<br>
+                皆勤賞を受け取るには「<b><a href="[[ url_for('setting_verify') ]]">ストア&コンテスト連携</a></b>」が必要です。
+            </p>
+
+            <h4>&#x1f4b0;入賞賞金</h4>
+            <p>
+                シーズン終了後、SPランキングの1〜3位には、種目ごとに設定された賞金 (TORIBOポイント) が授与されます。<br>
+                このランキングの元となるSP (シーズンポイント) は、毎週のコンテストの入賞者 (1位〜12位) に以下の通り与えられます。<br>
+                1位: 20pts、2位: 15、3位: 12、4位: 10、5位: 8、6位: 7、7位: 6、8位: 5、9位: 4、10位: 3、11位: 2、12位: 1
+            </p>
+
+            <table class="table table-bordered">
+                <caption>各種目の賞金額 (総額32万ポイント)</caption>
+                <thead>
+                    <tr>
+                        <th class="color-header text-center">種目</th>
+                        <th class="color-gold text-center">1位</th>
+                        <th class="color-silver text-center">2位</th>
+                        <th class="color-bronze text-center">3位</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="color-header">
+                            <i class="cubing-icon event-333"></i>
+                        </td>
+                        <td class="text-right">30,000</td>
+                        <td class="text-right">15,000</td>
+                        <td class="text-right">8,000</td>
+                    </tr>
+                    <tr>
+                        <td class="color-header">
+                            <i class="cubing-icon event-222"></i>
+                            <i class="cubing-icon event-444"></i>
+                            <i class="cubing-icon event-555"></i>
+                            <i class="cubing-icon event-333oh"></i>
+                            <i class="cubing-icon event-pyram"></i>
+                            <i class="cubing-icon event-skewb"></i>
+                        </td>
+                        <td class="text-right">15,000</td>
+                        <td class="text-right">7,500</td>
+                        <td class="text-right">4,000</td>
+                    </tr>
+                    <tr>
+                        <td class="color-header">
+                            <i class="cubing-icon event-666"></i>
+                            <i class="cubing-icon event-777"></i>
+                            <i class="cubing-icon event-333bf"></i>
+                            <i class="cubing-icon event-333fm"></i>
+                            <i class="cubing-icon event-minx"></i>
+                            <i class="cubing-icon event-sq1"></i>
+                        </td>
+                        <td class="text-right">10,000</td>
+                        <td class="text-right">5,000</td>
+                        <td class="text-right">3,000</td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+    [% include "components/bodyfooter.html" %]
+
+</div></body>
+</html>
