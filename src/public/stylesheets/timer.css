@@ -1,0 +1,90 @@
+/**
+ * timer.css
+ */
+
+body {
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+}
+
+#timerArea {
+    font-family: Arial, sans-serif !important;
+    text-align: center;
+}
+
+@media screen and (max-width: 480px) {
+    #timerText {
+        font-size: 84px;
+        margin: 30px auto;
+        text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+    }
+}
+@media screen and (min-width: 481px) {
+    #timerText {
+        font-size: 120px;
+        margin: 50px auto;
+        text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+    }
+}
+@media screen and (max-width: 768px) {
+    .timerText-tall {
+        margin: 90px auto !important;
+    }
+}
+@media screen and (min-width: 769px) {
+    .timerText-tall {
+        margin: 180px auto !important;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    #timerNote, #timerNoteMb {
+        font-size: 14px;
+    }
+}
+@media screen and (max-width: 768px) {
+    #timerNote, #timerNoteMb {
+        padding-bottom: 20px;
+    }
+    #timerNote {
+        display: none;
+    }
+}
+@media screen and (min-width: 769px) {
+    #timerNote, #timerNoteMb {
+        padding-bottom: 40px;
+    }
+    #timerNoteMb {
+        display: none;
+    }
+}
+
+.wait {
+    color: #E74C3C !important;
+}
+.ready {
+    color: #1BBC9B !important;
+}
+
+
+/* モバイル環境で画面をかせぐため */
+@media screen and (max-width: 480px) {
+    hr#header-line {
+        margin: 5px !important;
+    }
+    p#auth-info {
+        margin-bottom: 10px !important;
+    }
+}
+
+
+/* タイマー時間のみを集中表示 */
+#touchArea.full-screen {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+}

@@ -1,0 +1,156 @@
+[% set title = "Regulations" %]
+[# set page_url = contest_url + '/about' #]
+
+<!DOCTYPE html>
+<html lang="ja" ng-app="contestApp">
+<head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
+    [% import "components/header.html" as header %]
+    [[ header.print(title=title, description=contest_description, sitename=contest_name, contest_url=contest_url, page_url=page_url) ]]
+
+[% import "components/basejs.html" as basejs %]
+[[ basejs.print(firebaseapp_contest, firebaseapp_contest_apikey, firebaseapp_contest_messagingsenderid) ]]
+
+[% import "components/authjs.html" as authjs %]
+[[ authjs.print(redirect_login="", redirect_logout="", check_first=True) ]]
+
+<style>
+    @media screen and (max-width: 480px) {
+        h2 {
+            font-size: 1.8em;
+        }
+    }
+    h4 {
+        margin-top: 30px;
+    }
+    ol.alpha,
+    ol.alpha li {
+        list-style-type: upper-alpha !important;
+    }
+
+    p {
+        line-height: 1.6em;
+    }
+</style>
+
+</head>
+<body><div class="container">
+    [% import "components/bodyheader.html" as bodyheader %]
+    [[ bodyheader.print(title=title, contest_name=contest_name) ]]
+
+    <div ng-controller="AuthCtrl">
+        <div ng-hide="authLoaded">
+            <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+            <span class="sr-only">Loading...</span>
+            Loading...
+        </div>
+        <div ng-show="authLoaded">
+
+            [% import "components/authinfo.html" as authinfo %]
+            [[ authinfo.print() ]]
+
+            <h2>参加方法とルール</h2>
+
+            <p>
+                ルールや賞金授与対象などはシーズン中に変更される可能性があります。<br>
+                重大な変更がある場合は <a href="https://twitter.com/triboxContest">Twitter (@triboxContest)</a> などで告知致します。
+            </p>
+
+            <hr>
+
+            <h4>競技が始まるまでの流れ</h4>
+            <p>
+                トップページの「参加する」から各種目に参加します。<br>
+                <br>
+                <b>・コンテストタイマーを使用して計測する</b><br>
+                　トリコンの内蔵タイマーでタイムを測定するモードです。<br>
+                　画面のタップまたはスペースキーのみで操作することができます。<br>
+                　※PCをお使いの場合、必ず半角入力モードでご利用ください。<br>
+                　※操作ミスにご注意ください。<a href="/demo/timer">練習用タイマー</a>で練習しておくと安心です。<br>
+                <br>
+                <b>・タイムを手入力する</b><br>
+                　別途、専用タイマーなどでタイムを測定し、トリコンに手入力するモードです。<br>
+                　初参加の際は手入力モードのほうが安心かもしれません。
+            </p>
+
+            <h4>競技の流れ</h4>
+            <p>
+                トリコンの競技の流れは、「スクランブル」→「インスペクション」→「ソルブ」です。<br>
+                <br>
+                <b>・スクランブル: パズルを崩す</b><br>
+                　白面を上、緑面を前にしてパズルを持ち、「回転記号」に従って崩します。<br>
+                　回転記号の読み方については <a href="https://tribox.com/3x3x3/solution/notation/">tribox.com</a> や <a href="https://www.worldcubeassociation.org/regulations/translations/japanese/#article-4-scrambling">WCA</a> でご確認ください。<br>
+                　公式大会とは異なり、トリコンでは参加者本人がスクランブルを行います。<br>
+                　もちろん、ご友人や保護者の方がスクランブルを行っても構いません。<br>
+                <br>
+                <b>・インスペクション: 最初の数手を読む</b><br>
+                　タイマースタートの前に、15秒間だけパズルを観察することができます。<br>
+                　ここで、たとえば「クロスの4パーツをどの順番で揃えるか」を考えます。<br>
+                <br>
+                <b>・ソルブ: パズルを揃える</b><br>
+                　これは皆さんにとっては簡単ですね。
+            </p>
+
+            <h4>ルールを守って楽しくトリコン &#x1f917;</h4>
+            <p>
+                トリコンでは、競技者本人がスクランブラとジャッジを兼任することができます。<br>
+                可能な限りWCA大会規則に則った計測を心がけつつ、気楽にお楽しみください。<br>
+                ペナルティなどについてわからないことがあるときは<a href="https://www.worldcubeassociation.org/regulations/translations/japanese/" target="_blank" rel="noopener noreferrer">WCA大会規則</a>をご参照ください。<br>
+                <br>
+                ただし、上位者の真剣な勝負を阻害しないよう、入賞者の記録については厳しく取り扱います。<br>
+                不正な記録で入賞した場合、記録は削除され、アカウントが抹消される場合があります。ご注意ください。
+            </p>
+
+            <h4>制限タイム</h4>
+            <p>
+                種目によって制限タイムが異なります。<br>
+                3×3×3 最少手数以外: 9:59.999 (およそ10分)<br>
+                3×3×3 最少手数: 1時間（制限タイム終了後、別途解答記述時間が与えられます。）
+            </p>
+
+            <hr>
+
+            <h4>ビデオ</h4>
+            <p>
+                開催中のコンテストのみ、マイページの「参加履歴」からビデオを登録することができます (任意)。<br>
+                YouTubeなどに計測の様子をアップロードして、URLをご登録ください。<br>
+                ビデオは非公開設定で投稿し、毎週日曜21時の結果発表以降に公開されるよう設定してください。<br>
+                登録されたビデオはリザルトページに掲載されます。なお過去のコンテストのビデオを登録することはできません。<br>
+                <br>
+                <b>ビデオの要件</b><br>
+                ソルブの様子とトリコンの画面が写るアングルで撮影してください。<br>
+                収録開始: トップページの「参加する」を押すところから収録してください。「再開する」の場合は要件を満たしません。<br>
+                収録終了: 「この内容で送信する」を押して、「〜の結果送信が完了しました。」というメッセージが表示されるまで収録してください。<br>
+                収録開始から収録終了までにカット編集がある場合は要件を満たしません。スクランブル中は倍速編集のみ可能です。<br>
+                <br>
+                SPランキングの上位者の実力を確認するため、ビデオの提出をお願いすることがあります。<br>
+                ビデオ提出の要望に返答がない場合、またはビデオ撮影時のみ著しく記録が悪い場合は、記録が削除され、アカウントが抹消される場合があります。ご注意ください。
+            </p>
+
+            <h4 id="video-bonus">ビデオボーナス節</h4>
+            <p>
+                シーズン中に何度か「ビデオボーナス節」が設定されます。現在開催されているビデオボーナス節は<a href="/" target="_blank" rel="noopener noreferrer">トップページ</a>に表示されます。<br>
+                ビデオボーナス節では、要件を満たすビデオの提出者のうち上位5名に追加のSP（シーズンポイント）が与えられます。
+            </p>
+
+            <hr>
+
+            <h4>入賞賞金の授与対象</h4>
+            <p>
+                シーズンランキング1位〜3位には、種目ごとに設定された賞金 (TORIBOポイント) が授与されます。<br>
+                ただしネットコンテストの性質上、以下の参加者はシーズン賞金の授与対象から除外されます。
+            </p>
+            <ol class="alpha">
+                <li>ストア＆コンテスト連携が完了していない参加者</li>
+                <li>WCA ID 未登録の参加者 (記録の検証ができないため)</li>
+                <li>WCA公式記録とトリコンでの記録の差異が大きいなどの理由で、不正が疑われると判断された参加者</li>
+                <li>連絡がつかない参加者</li>
+                <li>その他の理由で入賞者として不的確であると判断された参加者</li>
+            </ol>
+
+        </div>
+    </div>
+
+    [% include "components/bodyfooter.html" %]
+
+</div></body>
+</html>

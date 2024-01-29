@@ -1,0 +1,349 @@
+[% macro print(firebaseapp_contest, firebaseapp_contest_apikey, firebaseapp_contest_messagingsenderid, firebaseapp_wca='') -%]
+
+<script>
+    window.TriboxContest = {};
+
+    TriboxContest.ERROR_CODES = {
+        'EMAIL_TAKEN':               '入力されたメールアドレスは他のアカウントで既に登録済みのメールアドレスです',
+        'INVALID_EMAIL':             'メールアドレスまたはパスワードが間違っています',
+        'INVALID_PASSWORD':          'メールアドレスまたはパスワードが間違っています',
+        'INVALID_USER':              'メールアドレスまたはパスワードが間違っています',
+        'auth/email-already-in-use': '入力されたメールアドレスは他のアカウントで既に登録済みのメールアドレスです',
+        'auth/invalid-email':        'メールアドレスまたはパスワードが間違っています',
+        'auth/user-disabled':        'メールアドレスまたはパスワードが間違っています',
+        'auth/user-not-found':       'メールアドレスまたはパスワードが間違っています',
+        'auth/wrong-password':       'メールアドレスまたはパスワードが間違っています'
+    };
+    TriboxContest.convErrorCodes = function(code) {
+        if (code in TriboxContest.ERROR_CODES) {
+            return TriboxContest.ERROR_CODES[code];
+        } else {
+            return code;
+        }
+    };
+
+    TriboxContest.ERROR_CODES_ALT = {
+        'EMAIL_TAKEN':               '入力されたメールアドレスは他のアカウントで既に登録済みのメールアドレスです',
+        'INVALID_EMAIL':             'メールアドレスが間違っています',
+        'INVALID_PASSWORD':          'パスワードが間違っています',
+        'INVALID_USER':              'ユーザが間違っています',
+        'auth/email-already-in-use': '入力されたメールアドレスは他のアカウントで既に登録済みのメールアドレスです',
+        'auth/invalid-email':        'メールアドレスが間違っています',
+        'auth/user-disabled':        'ユーザが間違っています',
+        'auth/user-not-found':       'ユーザが間違っています',
+        'auth/wrong-password':       'パスワードが間違っています'
+    };
+    TriboxContest.convErrorCodesAlt = function(code) {
+        if (code in TriboxContest.ERROR_CODES_ALT) {
+            return TriboxContest.ERROR_CODES_ALT[code];
+        } else {
+            return code;
+        }
+    };
+
+    TriboxContest.INPUT_LENGTH = {
+        'puzzleName': {'min': 1, 'max': 50},
+        'videoUrl': {'min': 1, 'max': 1023}
+    };
+
+    // タイムを分・秒・小数点以下3桁にフォーマットする
+    TriboxContest.formatTime = function(input) {
+        var post = '.000';
+        var second = input - 0;
+        if (String(input).indexOf('.') != -1) {
+            second = String(input).split('.')[0] - 0;
+            // 小数点以下が .31299999... みたいなときは .313 にしたいので4桁切り出して1桁目を四捨五入する
+            var decimal = (String(input).split('.')[1] + '0000').substr(0, 4) - 0;
+            post = '.' + ('000' + String(Math.round(decimal / 10))).slice(-3);
+        }
+        if (second < 10) {
+            return (second + post).substr(0, 5);
+        } else if (second < 60) {
+            return (second + post).substr(0, 6);
+        } else {
+            var minute = Math.floor(Math.floor(second) / 60);
+            var s = ('0' + (second - minute * 60)).slice(-2);
+            if (minute < 10) {
+                return (minute + ':' + s + post).substr(0, 8);
+            } else {
+                return (minute + ':' + s + post).substr(0, 9);
+            }
+        }
+    };
+
+    // Details を整形する
+    TriboxContest.formatDetails = function(results, e, Events) {
+        // Work around: detailsがundefinedの場合は空文字列を返す
+        if (!(results.details)) {
+            return '';
+        }
+
+        var arr = [];
+        results.details.forEach(function(d, index) {
+            var t = '';
+            if (Events[e].method == 'average' && (results.result.best == index || results.result.worst == index)) {
+                t += '(';
+            }
+            if (d.condition == 'OK') {
+                if (Events[e].format == 'time') {
+                    t += TriboxContest.formatTime(d.record);
+                } else if (Events[e].format == 'number') {
+                    t += d.record;
+                }
+            } else if (d.condition == '+2') {
+                t += TriboxContest.formatTime(d.record + 2.000);
+            } else if (d.condition == 'DNF') {
+                t += 'DNF';
+            }
+            if (Events[e].method == 'average' && (results.result.best == index || results.result.worst == index)) {
+                t += ')';
+            }
+            arr.push(t);
+        });
+        return arr.join(' ');
+    };
+
+    // Result を整形する
+    TriboxContest.formatResult = function(results, e, Events) {
+        if (results.result.condition != 'DNF') {
+            if (Events[e].format == 'time') {
+                return TriboxContest.formatTime(results.result.record);
+            } else {
+                return results.result.record;
+            }
+        } else {
+            return 'DNF';
+        }
+    };
+
+    // Puzzle を整形する
+    TriboxContest.formatPuzzle = function(results) {
+        if (results.puzzle.type == 'database') {
+            return TriboxContest.Products[results.puzzle.product];
+        } else if (results.puzzle.type == 'nodatabase') {
+            return results.puzzle.input;
+        } else {
+            return 'その他・不明';
+        }
+    };
+
+    // HTML エスケープぽいやつ
+    TriboxContest.escapeHTML = function(text) {
+        text = text.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        text = text.replace(/\n/g, '<br>').replace(/\r/g, '<br>');
+        return text;
+    };
+
+    /**
+     * URL解析して、クエリ文字列を返す
+     * http://qiita.com/ma_me/items/03aaebb5dc440b380244
+     */
+    var getUrlVars = function() {
+        var vars = {};
+        var url = window.location.search;
+        var hash = url.slice(1).split('&');
+        var max = hash.length;
+        for (var i = 0; i < max; i++) {
+            var array = hash[i].split('=');
+            vars[array[0]] = array[1];
+        }
+        return vars;
+    };
+    var getUrlHashes = function() {
+        var vars = {};
+        var url = window.location.hash;
+        var hash = url.slice(1).split('&');
+        var max = hash.length;
+        for (var i = 0; i < max; i++) {
+            var array = hash[i].split('=');
+            vars[array[0]] = array[1];
+        }
+        return vars;
+    };
+
+    /**
+     * フェードイン・フェードアウト
+     * http://baku.hateblo.jp/entry/2015/01/14/175601
+     */
+    var fadeOut = function(el, ms, fn) {
+        ms = ms || 400;             // duration in milliseconds
+        el.style.opacity = 1;
+        var interval = 100,           // frame interval 100ms -> 10fps
+            step = interval / ms;
+        function tick() {
+            el.style.opacity -= step;
+            if (+el.style.opacity > 0) {
+                setTimeout(tick, interval);
+            } else {
+                el.style.display = 'none';
+                if (typeof fn === 'function') {
+                    fn();
+                }
+            }
+        }
+        tick();
+    }
+    var fadeIn = function(el, ms, fn) {
+        if (+el.style.opacity < 1) {
+            ms = ms || 400;         // duration in milliseconds
+            el.style.opacity = 0;
+            //el.style.display = 'block';
+            var interval = 100,       // frame interval 100ms -> 10fps
+                step = interval / ms;
+            function tick() {
+                el.style.opacity = +el.style.opacity + step;
+                if (+el.style.opacity < 1) {
+                    setTimeout(tick, interval);
+                } else {
+                    if (typeof fn === 'function') {
+                        fn();
+                    }
+                }
+            }
+            tick();
+        } else {
+            //el.style.display = 'block'; // fallback IE8
+            if (typeof fn === 'function') {
+                fn();
+            }
+        }
+    }
+
+    /**
+     * FIREBASE
+     */
+    var app = angular.module('contestApp', ['firebase', 'ngSanitize']);
+    var config = {
+        apiKey: "[[ firebaseapp_contest_apikey ]]",
+        authDomain: "[[ firebaseapp_contest ]].firebaseapp.com",
+        databaseURL: "https://[[ firebaseapp_contest ]].firebaseio.com",
+        projectId: "[[ firebaseapp_contest ]]",
+        storageBucket: "[[ firebaseapp_contest ]].appspot.com",
+        messagingSenderId: "[[ firebaseapp_contest_messagingsenderid ]]"
+    };
+    firebase.initializeApp(config);
+    var contestRef = firebase.database().ref();
+
+    [% if firebaseapp_wca != '' %]
+        var wcaConfig = {
+            apiKey: "AIzaSyAUq3WAGmhgkGscQPIwuICQuzV9KBrcxXo",
+            authDomain: "[[ firebaseapp_wca ]].firebaseapp.com",
+            databaseURL: "https://[[ firebaseapp_wca ]].firebaseio.com",
+            projectId: "[[ firebaseapp_wca ]]",
+            storageBucket: "[[ firebaseapp_wca ]].appspot.com",
+            messagingSenderId: "871724054787"
+        };
+        var wcaApp = firebase.initializeApp(wcaConfig, "wca");
+        var wcaRef = wcaApp.database().ref();
+    [% endif %]
+
+    /**
+     * Filter: toDate
+     */
+    var timestampToDate = function(timestamp) {
+        var weedDays = ['Sun.', 'Mon.', 'Tue.', 'Wed.', 'Thu.', 'Fri.', 'Sat.'];
+        var d = new Date(timestamp);
+        var year = d.getFullYear();
+        var month = ('0' + (d.getMonth() + 1)).slice(-2);
+        var day = ('0' + d.getDate()).slice(-2);
+        var hour = ('0' + d.getHours()).slice(-2);
+        var min = ('0' + d.getMinutes()).slice(-2);
+        var sec = ('0' + d.getSeconds()).slice(-2);
+        return year + '-' + month + '-' + day + ' (' + weedDays[d.getDay()] + ') ' + hour + ':' + min + ':' + sec;
+    };
+    app.filter('toDate', [function() {
+        return timestampToDate;
+    }]);
+
+    var timestampToDateShort = function(timestamp) {
+        var d = new Date(timestamp);
+        var year = d.getFullYear();
+        var month = ('0' + (d.getMonth() + 1)).slice(-2);
+        var day = ('0' + d.getDate()).slice(-2);
+        return year + '-' + month + '-' + day;
+    };
+    app.filter('toDateShort', [function() {
+        return timestampToDateShort;
+    }]);
+
+    /**
+     * Filter: removeHead
+     */
+    var removeHead = function(str) {
+        if (str && 0 < str.length) {
+            return str.substr(1);
+        } else {
+            return str;
+        }
+    };
+    app.filter('removeHead', [function() {
+        return removeHead;
+    }]);
+
+    /**
+     * Filter: Number to Ordinal
+     */
+    var toOrdinal = function(n) {
+        n = n - 0;
+        if (n == 1) {
+            return '1st';
+        } else if (n == 2) {
+            return '2nd';
+        } else if (n == 3) {
+            return '3rd';
+        } else {
+            return n + 'th';
+        }
+    };
+    app.filter('ordinal', [function() {
+        return toOrdinal;
+    }]);
+
+    /**
+     * Filter: Uppercase the top letter
+     */
+    app.filter('uppercaseHead', [function() {
+        return function(str) {
+            if (str && 0 < str.length) {
+                return str.substr(0, 1).toUpperCase() + str.substr(1);
+            } else {
+                return '';
+            }
+        };
+    }]);
+
+    /**
+     * Filter: Shorten the text
+     */
+    var shorten = function(text, n) {
+        if (!text) {
+            return '';
+        } else if (text.length <= n) {
+            return text;
+        } else {
+            return text.substr(0, n) + '...';
+        }
+    };
+    var _shorten10 = function(text) {
+        return shorten(text, 10);
+    };
+    app.filter('shorten10', [function() {
+        return _shorten10;
+    }]);
+    var _shorten20 = function(text) {
+        return shorten(text, 20);
+    };
+    app.filter('shorten20', [function() {
+        return _shorten20;
+    }]);
+
+    /**
+     * Filter: encodeURI
+     */
+    app.filter('encodeURI', [function() {
+        return encodeURI;
+    }]);
+
+</script>
+
+[%- endmacro %]
