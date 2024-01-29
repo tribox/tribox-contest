@@ -13,7 +13,7 @@ services:
     volumes:
       - ./docker/db/my.cnf:/etc/mysql/conf.d/my.cnf
       - ./log/db:/var/log/mysql
-      - mysql_volume:/var/lib/mysql
+      - mysql:/var/lib/mysql
     ports:
       - 3306:3306
     command: --default-authentication-plugin=mysql_native_password
@@ -43,4 +43,4 @@ services:
       - default
 
 volumes:
-  mysql_volume:
+  mysql:
