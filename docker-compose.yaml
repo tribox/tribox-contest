@@ -26,8 +26,8 @@ services:
     build:
       context: .
       dockerfile: ./docker/app/Dockerfile
-    # volumes:
-    #   - ./src:/app/src
+    volumes:
+      - ./src:/app/src
     ports:
       - 5000:5000
     depends_on:
