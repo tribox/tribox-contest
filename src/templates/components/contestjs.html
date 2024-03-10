@@ -190,7 +190,7 @@ fetch_results_all=False) -%]
                           $timeout(function() {
                               $scope.contestData = snapContest.val();
                               $scope.inProgress = snapInProgress.val();
-                              $scope.countdown = [[ cid ]] - parseInt(snapInProgress.val().contest.substr(1));
+                              $scope.countdown = '[[ cid ]]' - parseInt(snapInProgress.val().contest.substr(1));
 
                               $scope.existsContest = true;
                               [% if (eid != "") %]

@@ -1,4 +1,4 @@
-[% set title = "Contest " + cid %] [% set page_url = contest_url + 'contest/' +
+[% set title = "Contest" + cid %] [% set page_url = contest_url + '/contest/' +
 cid %]
 
 <!DOCTYPE html>
@@ -8,17 +8,14 @@ cid %]
   >
     [% import "components/header.html" as header %] [[ header.print(title=title,
     description=contest_description, sitename=contest_name,
-    contest_url=contest_url, page_url=page_url) ]]
-
-    <link
-      rel="stylesheet"
-      media="screen"
-      href="/assets/stylesheets/modal.css"
-    />
-
-    [% import "components/basejs.html" as basejs %] [[
-    basejs.print(firebaseapp_contest, firebaseapp_contest_apikey,
-    firebaseapp_contest_senderid, firebaseapp_wca) ]]
+    contest_url=contest_url, page_url=page_url) ]] [% import
+    "components/basejs.html" as basejs %] [[ basejs.print(firebaseapp_contest,
+    firebaseapp_contest_apikey, firebaseapp_contest_messagingsenderid) ]] [%
+    import "components/authjs.html" as authjs %] [[
+    authjs.print(redirect_login="", redirect_logout="", check_first=True) ]] [%
+    import "components/contestjs.html" as contestjs %] [[
+    contestjs.print(cid=cid, fetch_scrambles=false, fetch_results_top3=true,
+    fetch_results_all=false)]]
   </head>
   <body>
     <div class="container">
@@ -40,7 +37,7 @@ cid %]
             >
               <p>
                 <i class="fa fa-check"></i>
-                "[[ justSuspended ]]" が一時中断されました。
+                "{{ justSuspended }}" が一時中断されました。
               </p>
               <p>
                 <a id="modal-suspended-close" class="modal-close">閉じる</a>
@@ -53,10 +50,10 @@ cid %]
             >
               <p>
                 <i class="fa fa-check"></i>
-                "[[ justDone ]]" の結果送信が完了しました。<br />
+                "{{ justDone }}" の結果送信が完了しました。<br />
                 結果発表まではタイムの公開をお控えください。<br />
                 <a
-                  href="http://twitter.com/share?url=[[ contestUrl ]]%2F%3Fe%3D[[ justDoneEvent ]]&text=[[ justDoneText ]]&related=triboxContest"
+                  href="http://twitter.com/share?url=[[ contestUrl ]]%2F%3Fe%3D{{ justDoneEvent }}&text={{ justDoneText }}&related=triboxContest"
                   class="btn btn-tweet"
                   target="_blank"
                 >
@@ -78,7 +75,8 @@ cid %]
               class="hide"
               ng-show="authLoaded && contestLoaded && contestIndexLoaded"
             >
-              @authinfo()
+              [% import "components/authinfo.html" as authinfo %] [[
+              authinfo.print() ]]
 
               <div ng-hide="existsContest">
                 <p class="color-error">存在しないコンテストです。</p>
@@ -95,7 +93,7 @@ cid %]
                   要件を満たすビデオを提出いただいた方のうち上位5名に追加のSP（シーズンポイント）が与えられます！<br />
                   ビデオボーナス節についての詳細は
                   <b
-                    ><a href="[[ url_for('regulations') ]]"
+                    ><a href="@routes.HomeController.regulations"
                       >参加方法とルール</a
                     ></b
                   >
@@ -190,7 +188,7 @@ cid %]
                   >
                     <option
                       ng-repeat="c in contestsList"
-                      value="{{ c.id | removeHead }}"
+                      value="{{ c.id | removeHead}}"
                     >
                       {{ c.shortName }}
                     </option>
@@ -252,7 +250,7 @@ cid %]
                           ><i class="fa fa-check-circle"></i> 参加済みです</span
                         >
                         <a
-                          href="[[ url_for('login') ]]"
+                          href="@routes.HomeController.login"
                           ng-if="countdown == 0 && authData == null"
                           ><i class="fa fa-sign-in"></i>
                           ログインして参加してください</a
@@ -299,7 +297,7 @@ cid %]
                       </thead>
                       <tbody>
                         <tr
-                          id="[[ e ]]-[[ index ]]"
+                          id="{{ e }}-{{ $index }}"
                           ng-repeat="r in resultsTop3[e]"
                         >
                           <td>{{ r.place }}</td>
@@ -324,35 +322,35 @@ cid %]
                           <td class="mb-hide ellipsis">
                             {{ r.user.organization }}
                           </td>
-                          <td class="mb-hide"><b>{{r.resultF }}</b></td>
+                          <td class="mb-hide"><b>{{ r.resultF }}</b></td>
                           <td class="tb-hide pc-hide">
                             <a
                               class="cursor-pointer"
                               ng-click="showDetail(e, $index)"
                               ><b style="color: rgb(85, 85, 85)"
-                                >{{r.resultF }}</b
+                                >{{ r.resultF }}</b
                               ></a
                             >
                           </td>
                           <td
                             class="mb-hide"
-                            id="[[ e ]]-[[ index ]]-show"
+                            id="{{ e }}-{{ $index }}-show"
                             ng-if="e != 'e333fm'"
                           >
                             <a
                               class="cursor-pointer"
-                              ng-click="showDetail(e, index)"
+                              ng-click="showDetail(e, $index)"
                               >詳細</a
                             >
                           </td>
                           <td
                             class="mb-hide"
-                            id="[[ e ]]-[[ index ]]-show"
+                            id="{{ e }}-{{ $index }}-show"
                             ng-if="e == 'e333fm'"
                           >
                             <a
                               class="cursor-pointer"
-                              ng-click="showDetail(e, index)"
+                              ng-click="showDetail(e, $index)"
                               >解答</a
                             >
                           </td>
@@ -386,45 +384,38 @@ cid %]
                         {{ events[e].name }} すべての結果
                       </a>
                     </p>
-                    [#
+
                     <!--<pre>{{ resultsData[e] | json }}</pre>-->
-                    #] [#
+
                     <!--<pre>{{ resultsTop3[e] | json }}</pre>-->
-                    #]
                   </div>
                 </div>
 
-                [#
                 <!--<p>usersecretData:</p>
-      <pre>{{ usersecretData | json }}</pre>-->
-                #] [#
-                <!--<p>[[ cid ]] -> contestData:</p>
-      <pre>{[ contestData | json }}</pre>-->
-                #] [#
+        <pre>{{ usersecretData | json }}</pre>-->
+
+                <!--<p>@cid -> contestData:</p>
+        <pre>{{ contestData | json }}</pre>-->
+
                 <!--<p>inProgress / countdown:</p>
-      <pre>{{ inProgress | json }}</pre>
-      <pre>{{ countdown | json }}</pre>-->
-                #] [#
-                <!--<p>[[ cid ]] -> scramblesData:</p>
-      <pre>{{ scramblesData | json }}</pre>-->
-                #] [#
-                <!--<p>[[ cid ]] -> resultsData:</p>
-      <pre>{{ resultsData | json }}</pre>-->
-                #] [#
+        <pre>{{ inProgress | json }}</pre>
+        <pre>{{ countdown | json }}</pre>-->
+
+                <!--<p>@cid -> scramblesData:</p>
+        <pre>{{ scramblesData | json }}</pre>-->
+
+                <!--<p>@cid -> resultsData:</p>
+        <pre>{{ resultsData | json }}</pre>-->
+
                 <!--<p>events:</p>
-      <pre>{{ events | json }}</pre>-->
-                #]
+        <pre>{{ events | json }}</pre>-->
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      [% include "components/bodyfooter.html" %] [% import
-      "components/authjs.html" as authjs %] [[ authjs.print(redirect_login="",
-      redirect_logout="", check_first=True) ]] [% import
-      "components/contestjs.html" as contestjs %] [[ contestjs.print(cid=cid,
-      fetch_scrambles=False, fetch_results_top3=True, fetch_results_all=False)]]
+      [% include "components/bodyfooter.html" %]
 
       <script>
         app.controller("ContestIndexCtrl", [
@@ -734,8 +725,6 @@ cid %]
           },
         ]);
       </script>
-
-      <script type="text/javascript" src="/js/products.js"></script>
     </div>
   </body>
 </html>
