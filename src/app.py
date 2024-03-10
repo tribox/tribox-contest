@@ -93,6 +93,19 @@ def regulations():
         firebaseapp_contest_senderid=FIREBASEAPP_CONTEST_SENDERID,
     )
 
+@app.route("/contest/<cid>")
+def contest(cid):
+    return render_template(
+        "contest.html",
+        cid=cid,
+        contest_description=CONTEST_DESCRIPTION,
+        contest_name=CONTEST_NAME,
+        contest_url=CONTEST_URL,
+        firebaseapp_contest=FIREBASEAPP_CONTEST,
+        firebaseapp_contest_apikey=FIREBASEAPP_CONTEST_APIKEY,
+        firebaseapp_contest_senderid=FIREBASEAPP_CONTEST_SENDERID,
+    )
+
 
 ########################################
 # Release Notes
