@@ -28,7 +28,7 @@
                     [# Issue #32 凍結してたら強制ログアウトする #]
                     if ($scope.userData.isSuspended || $scope.userData.isDeleted) {
                         Auth.$signOut();
-                        location.href = '@routes.HomeController.index?logout=1';
+                        location.href = '[[ url_for("index") ]]?logout=1';
                     }
                     $scope.authLoaded = true;
                 });

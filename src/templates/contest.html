@@ -1,5 +1,5 @@
-[% set title = "Regulations" %]
-[# set page_url = contest_url + '/about' #]
+[% set title = "Contest " + cid %]
+[% set page_url = contest_url + 'contest/' + cid %]
 
 <!DOCTYPE html>
 <html lang="ja" ng-app="contestApp">
@@ -7,14 +7,10 @@
   [% import "components/header.html" as header %]
   [[ header.print(title=title, description=contest_description, sitename=contest_name, contest_url=contest_url, page_url=page_url) ]]
 
+  <link rel="stylesheet" media="screen" href="/assets/stylesheets/modal.css">
+
   [% import "components/basejs.html" as basejs %]
-  [[ basejs.print(firebaseapp_contest, firebaseapp_contest_apikey, firebaseapp_contest_messagingsenderid) ]]
-
-  [% import "components/authjs.html" as authjs %]
-  [[ authjs.print(redirect_login="", redirect_logout="", check_first=True) ]]
-
-  [% import "components/contestjs.html" as contestjs %]
-  [[ contestjs.print(cid=cid, fetch_scrambles=false, fetch_results_top3=true, fetch_results_all=false)]]
+  [[ basejs.print(firebaseapp_contest, firebaseapp_contest_apikey, firebaseapp_contest_senderid, firebaseapp_wca) ]]
 </head>
 <body>
   <div class="container">
@@ -32,6 +28,12 @@
     </div>
 
     [% include "components/bodyfooter.html" %]
+
+    [% import "components/authjs.html" as authjs %]
+    [[ authjs.print(redirect_login="", redirect_logout="", check_first=True) ]]
+
+    [% import "components/contestjs.html" as contestjs %]
+    [[ contestjs.print(cid=cid, fetch_scrambles=False, fetch_results_top3=True, fetch_results_all=False)]]
 
     <script>
       app.controller("ContestIndexCtrl", [
