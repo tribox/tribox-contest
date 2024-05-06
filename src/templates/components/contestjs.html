@@ -1,623 +1,624 @@
-[% macro print(cid='', eid='', fetch_scrambles=True, fetch_results_top3=False, fetch_results_all=False) -%]
+[% macro print(cid='', eid='', fetch_scrambles=True, fetch_results_top3=False,
+fetch_results_all=False) -%]
 
 <script>
-    var calcResult = function(method, format, data) {
-        method = method.toLowerCase();
-        format = format.toLowerCase();
+  var calcResult = function(method, format, data) {
+      method = method.toLowerCase();
+      format = format.toLowerCase();
 
-        // Average of X
-        if (method == 'average') {
-            var lowerIndex = -1, upperIndex = -1, dnfIndex = -1;
-            if (format == 'time') {
-                var sum = 0.000;
-                var count = 0, countDNF = 0;
-                var lower = 9999.999, upper = 0.000;
-                data.forEach(function(d, index) {
-                    if (d.condition == 'DNF') {
-                        countDNF++;
-                        dnfIndex = index;
-                        if (lowerIndex == -1) {
-                            lowerIndex = index;
-                        }
-                    } else {
-                        var t;
-                        if (d.condition == 'OK') {
-                            t = d.record;
-                        } else if (d.condition == '+2') {
-                            t = d.record + 2.000;
-                        } else {
-                            return null;
-                        }
+      // Average of X
+      if (method == 'average') {
+          var lowerIndex = -1, upperIndex = -1, dnfIndex = -1;
+          if (format == 'time') {
+              var sum = 0.000;
+              var count = 0, countDNF = 0;
+              var lower = 9999.999, upper = 0.000;
+              data.forEach(function(d, index) {
+                  if (d.condition == 'DNF') {
+                      countDNF++;
+                      dnfIndex = index;
+                      if (lowerIndex == -1) {
+                          lowerIndex = index;
+                      }
+                  } else {
+                      var t;
+                      if (d.condition == 'OK') {
+                          t = d.record;
+                      } else if (d.condition == '+2') {
+                          t = d.record + 2.000;
+                      } else {
+                          return null;
+                      }
 
-                        sum += t;
-                        count++;
-                        if (t < lower) {
-                            lower = t;
-                            lowerIndex = index;
-                        }
-                        if (upper < t) {
-                            upper = t;
-                            upperIndex = index;
-                        }
-                    }
-                });
-                if (countDNF == 0) {
-                    return {'record': (Math.round(((sum - lower - upper) / (count - 2)) * 1000)) / 1000,
-                            'best': lowerIndex, 'worst': upperIndex, 'condition': 'OK' };
-                } else if (countDNF == 1) {
-                    return {'record': (Math.round(((sum - lower) / (count - 1)) * 1000)) / 1000,
-                            'best': lowerIndex, 'worst': dnfIndex, 'condition': 'OK' };
-                } else {
-                    return {'record': 9999.999, 'best': lowerIndex, 'worst': dnfIndex, 'condition': 'DNF'};
-                }
-            } else {
-                return null;
-            }
-        }
+                      sum += t;
+                      count++;
+                      if (t < lower) {
+                          lower = t;
+                          lowerIndex = index;
+                      }
+                      if (upper < t) {
+                          upper = t;
+                          upperIndex = index;
+                      }
+                  }
+              });
+              if (countDNF == 0) {
+                  return {'record': (Math.round(((sum - lower - upper) / (count - 2)) * 1000)) / 1000,
+                          'best': lowerIndex, 'worst': upperIndex, 'condition': 'OK' };
+              } else if (countDNF == 1) {
+                  return {'record': (Math.round(((sum - lower) / (count - 1)) * 1000)) / 1000,
+                          'best': lowerIndex, 'worst': dnfIndex, 'condition': 'OK' };
+              } else {
+                  return {'record': 9999.999, 'best': lowerIndex, 'worst': dnfIndex, 'condition': 'DNF'};
+              }
+          } else {
+              return null;
+          }
+      }
 
-        // Mean of X
-        else if (method == 'mean') {
-            var lowerIndex = -1, upperIndex = -1, dnfIndex = -1;
-            if (format == 'time') {
-                var sum = 0.000;
-                var count = 0, countDNF = 0;
-                var lower = 9999.999, upper = 0.000;
-                data.forEach(function(d, index) {
-                    if (d.condition == 'DNF') {
-                        countDNF++;
-                        dnfIndex = index;
-                        if (lowerIndex == -1) {
-                            lowerIndex = index;
-                        }
-                    } else {
-                        var t;
-                        if (d.condition == 'OK') {
-                            t = d.record;
-                        } else if (d.condition == '+2') {
-                            t = d.record + 2.000;
-                        } else {
-                            return null;
-                        }
+      // Mean of X
+      else if (method == 'mean') {
+          var lowerIndex = -1, upperIndex = -1, dnfIndex = -1;
+          if (format == 'time') {
+              var sum = 0.000;
+              var count = 0, countDNF = 0;
+              var lower = 9999.999, upper = 0.000;
+              data.forEach(function(d, index) {
+                  if (d.condition == 'DNF') {
+                      countDNF++;
+                      dnfIndex = index;
+                      if (lowerIndex == -1) {
+                          lowerIndex = index;
+                      }
+                  } else {
+                      var t;
+                      if (d.condition == 'OK') {
+                          t = d.record;
+                      } else if (d.condition == '+2') {
+                          t = d.record + 2.000;
+                      } else {
+                          return null;
+                      }
 
-                        sum += t;
-                        count++;
-                        if (t < lower) {
-                            lower = t;
-                            lowerIndex = index;
-                        }
-                        if (upper < t) {
-                            upper = t;
-                            upperIndex = index;
-                        }
-                    }
-                });
-                if (countDNF == 0) {
-                    return {'record': (Math.round((sum / count) * 1000)) / 1000,
-                            'best': lowerIndex, 'worst': upperIndex, 'condition': 'OK' };
-                } else {
-                    return {'record': 9999.999, 'best': lowerIndex, 'worst': dnfIndex, 'condition': 'DNF'};
-                }
-            } else {
-                return null;
-            }
-        }
+                      sum += t;
+                      count++;
+                      if (t < lower) {
+                          lower = t;
+                          lowerIndex = index;
+                      }
+                      if (upper < t) {
+                          upper = t;
+                          upperIndex = index;
+                      }
+                  }
+              });
+              if (countDNF == 0) {
+                  return {'record': (Math.round((sum / count) * 1000)) / 1000,
+                          'best': lowerIndex, 'worst': upperIndex, 'condition': 'OK' };
+              } else {
+                  return {'record': 9999.999, 'best': lowerIndex, 'worst': dnfIndex, 'condition': 'DNF'};
+              }
+          } else {
+              return null;
+          }
+      }
 
-        // Best of X
-        else if (method == 'best') {
-            var bestIndex = -1;
-            if (format == 'time') {
-                var best = {'record': 9999.999, 'condition': 'DNF'};
-                data.forEach(function(d, index) {
-                    if (d.condition == 'DNF') {
-                        if (bestIndex == -1) {
-                            bestIndex = index;
-                        }
-                    } else {
-                        var t;
-                        if (d.condition == 'OK') {
-                            t = d.record;
-                        } else if (d.condition == '+2') {
-                            t = d.record + 2.000;
-                        } else {
-                            return null;
-                        }
-                        if (t < best.record) {
-                            best.record = t;
-                            best.condition = 'OK';
-                            bestIndex = index;
-                        }
-                    }
-                });
-                return {'record': best.record, 'best': bestIndex, 'condition': best.condition};
-            } else if (format == 'number') {
-                var best = {'record': 9999, 'condition': 'DNF'};
-                data.forEach(function(d, index) {
-                    if (d.condition == 'DNF') {
-                        if (bestIndex == -1) {
-                            bestIndex = index;
-                        }
-                    } else {
-                        if (d.record < best.record) {
-                            best = d;
-                            bestIndex = index;
-                        }
-                    }
-                });
-                return {'record': best.record, 'best': bestIndex, 'condition': best.condition};
-            } else {
-                return null;
-            }
-        } else {
-            return null;
-        }
-    };
+      // Best of X
+      else if (method == 'best') {
+          var bestIndex = -1;
+          if (format == 'time') {
+              var best = {'record': 9999.999, 'condition': 'DNF'};
+              data.forEach(function(d, index) {
+                  if (d.condition == 'DNF') {
+                      if (bestIndex == -1) {
+                          bestIndex = index;
+                      }
+                  } else {
+                      var t;
+                      if (d.condition == 'OK') {
+                          t = d.record;
+                      } else if (d.condition == '+2') {
+                          t = d.record + 2.000;
+                      } else {
+                          return null;
+                      }
+                      if (t < best.record) {
+                          best.record = t;
+                          best.condition = 'OK';
+                          bestIndex = index;
+                      }
+                  }
+              });
+              return {'record': best.record, 'best': bestIndex, 'condition': best.condition};
+          } else if (format == 'number') {
+              var best = {'record': 9999, 'condition': 'DNF'};
+              data.forEach(function(d, index) {
+                  if (d.condition == 'DNF') {
+                      if (bestIndex == -1) {
+                          bestIndex = index;
+                      }
+                  } else {
+                      if (d.record < best.record) {
+                          best = d;
+                          bestIndex = index;
+                      }
+                  }
+              });
+              return {'record': best.record, 'best': bestIndex, 'condition': best.condition};
+          } else {
+              return null;
+          }
+      } else {
+          return null;
+      }
+  };
 
-    app.controller('ContestCtrl', ['$scope', '$timeout', function($scope, $timeout) {
-        $scope.contestData = null;
-        $scope.events = null;
+  app.controller('ContestCtrl', ['$scope', '$timeout', function($scope, $timeout) {
+      $scope.contestData = null;
+      $scope.events = null;
 
-        $scope.existsContest = false;
-        $scope.existsEvent = false;
+      $scope.existsContest = false;
+      $scope.existsEvent = false;
 
-        $scope.contestLoaded = false;
-        $scope.loadedMain = false;
-        [% if fetch_scrambles %]
-            $scope.loadedScrambles = false;
-        [% else %]
-            $scope.loadedScrambles = true;
-        [% endif %]
-        [% if fetch_results_top3 or fetch_results_all %]
-            $scope.loadedResults = false;
-        [% else %]
-            $scope.loadedResults = true;
-        [% endif %]
+      $scope.contestLoaded = false;
+      $scope.loadedMain = false;
+      [% if fetch_scrambles %]
+          $scope.loadedScrambles = false;
+      [% else %]
+          $scope.loadedScrambles = true;
+      [% endif %]
+      [% if fetch_results_top3 or fetch_results_all %]
+          $scope.loadedResults = false;
+      [% else %]
+          $scope.loadedResults = true;
+      [% endif %]
 
-        [# /* コンテストが、進行中 (0) か、終了済み (負) か、これからやるやつ (正) か */ #]
-        $scope.inProgress = null;
-        $scope.countdown = null;
+      [# /* コンテストが、進行中 (0) か、終了済み (負) か、これからやるやつ (正) か */ #]
+      $scope.inProgress = null;
+      $scope.countdown = null;
 
-        // Fetch event data followed by contest data
-        contestRef.child('events').once('value', function(snapEvents) {
-            if (snapEvents.exists()) {
-                window.TriboxContest.events = snapEvents.val();
-                $timeout(function() {
-                    $scope.events = snapEvents.val();
-                });
-                contestRef.child('contests').child('c[[ cid ]]').once('value', function(snapContest) {
-                    if (snapContest.exists() && snapContest.val()._dummy == null) {
-                        contestRef.child('inProgress').once('value', function(snapInProgress) {
-                            $timeout(function() {
-                                $scope.contestData = snapContest.val();
-                                $scope.inProgress = snapInProgress.val();
-                                $scope.countdown = [[ cid ]] - parseInt(snapInProgress.val().contest.substr(1));
+      // Fetch event data followed by contest data
+      contestRef.child('events').once('value', function(snapEvents) {
+          if (snapEvents.exists()) {
+              window.TriboxContest.events = snapEvents.val();
+              $timeout(function() {
+                  $scope.events = snapEvents.val();
+              });
+              contestRef.child('contests').child('c[[ cid ]]').once('value', function(snapContest) {
+                  if (snapContest.exists() && snapContest.val()._dummy == null) {
+                      contestRef.child('inProgress').once('value', function(snapInProgress) {
+                          $timeout(function() {
+                              $scope.contestData = snapContest.val();
+                              $scope.inProgress = snapInProgress.val();
+                              $scope.countdown = [[ cid ]] - parseInt(snapInProgress.val().contest.substr(1));
 
-                                $scope.existsContest = true;
-                                [% if (eid != "") %]
-                                    if ((snapEvents.val())['e[[ eid ]]']) {
-                                        $scope.existsEvent = true;
-                                    }
-                                [% endif %]
-                                $scope.loadedMain = true;
-                                $scope.contestLoaded = $scope.loadedMain && $scope.loadedScrambles && $scope.loadedResults;
-                                if ($scope.contestLoaded) { angular.element(document.getElementById('main-content')).removeClass('hide'); }
-                            });
-                        });
-                    } else {
-                        console.error('Invalid contest: [[ cid ]]');
-                        $timeout(function() {
-                            $scope.loadedMain = true;
-                            $scope.contestLoaded = $scope.loadedMain && $scope.loadedScrambles && $scope.loadedResults;
-                            if ($scope.contestLoaded) { angular.element(document.getElementById('main-content')).removeClass('hide'); }
-                        });
-                    }
-                }, function(error) {
-                    console.error(error);
-                });
-            } else {
-                console.error('Undefined: events');
-            }
-        }, function(error) {
-            console.error(error);
-        });
+                              $scope.existsContest = true;
+                              [% if (eid != "") %]
+                                  if ((snapEvents.val())['e[[ eid ]]']) {
+                                      $scope.existsEvent = true;
+                                  }
+                              [% endif %]
+                              $scope.loadedMain = true;
+                              $scope.contestLoaded = $scope.loadedMain && $scope.loadedScrambles && $scope.loadedResults;
+                              if ($scope.contestLoaded) { angular.element(document.getElementById('main-content')).removeClass('hide'); }
+                          });
+                      });
+                  } else {
+                      console.error('Invalid contest: [[ cid ]]');
+                      $timeout(function() {
+                          $scope.loadedMain = true;
+                          $scope.contestLoaded = $scope.loadedMain && $scope.loadedScrambles && $scope.loadedResults;
+                          if ($scope.contestLoaded) { angular.element(document.getElementById('main-content')).removeClass('hide'); }
+                      });
+                  }
+              }, function(error) {
+                  console.error(error);
+              });
+          } else {
+              console.error('Undefined: events');
+          }
+      }, function(error) {
+          console.error(error);
+      });
 
-        // Fetch scrambles data
-        $scope.scramblesData = null;
-        [% if fetch_scrambles and (eid != "demo") %]
-            contestRef.child('scrambles').child('c[[ cid ]]').once('value', function(snapScrambles) {
-                if (snapScrambles.exists() && snapScrambles.val()._dummy == null) {
-                    $timeout(function() {
-                        var scramblesVal = snapScrambles.val();
-                        [% if (eid == "minx") %]
-                            Object.keys(scramblesVal.eminx).forEach(function(index) {
-                                scramblesVal.eminx[index] = scramblesVal.eminx[index].replace(/\n/g, '<br>');
-                            });
-                        [% endif %]
-                        $scope.scramblesData = scramblesVal;
-                    });
-                } else {
-                    console.error('Invalid: contest ([[ cid ]])');
-                }
-                $timeout(function() {
-                    $scope.loadedScrambles = true;
-                    $scope.contestLoaded = $scope.loadedMain && $scope.loadedScrambles && $scope.loadedResults;
-                    if ($scope.contestLoaded) { angular.element(document.getElementById('main-content')).removeClass('hide'); }
-                });
-            }, function(error) {
-                //console.error(error);
-                console.error('Cannot access scrambles ([[ cid ]])');
-                $timeout(function() {
-                    $scope.loadedScrambles = true;
-                    $scope.contestLoaded = $scope.loadedMain && $scope.loadedScrambles && $scope.loadedResults;
-                    if ($scope.contestLoaded) { angular.element(document.getElementById('main-content')).removeClass('hide'); }
-                });
-            });
-        [% endif %]
-        [% if fetch_scrambles and (eid == "demo") %]
-            $timeout(function() {
-                $scope.scramblesData = {
-                    'demo': [
-                        '1本番コンテストではここにスクランブルが表示されます',
-                        '2本番コンテストではここにスクランブルが表示されます',
-                        '3本番コンテストではここにスクランブルが表示されます',
-                        '4本番コンテストではここにスクランブルが表示されます',
-                        '5本番コンテストではここにスクランブルが表示されます'
-                    ]
-                };
-                $scope.loadedScrambles = true;
-                $scope.contestLoaded = $scope.loadedMain && $scope.loadedScrambles && $scope.loadedResults;
-                if ($scope.contestLoaded) { angular.element(document.getElementById('main-content')).removeClass('hide'); }
-            });
-        [% endif %]
+      // Fetch scrambles data
+      $scope.scramblesData = null;
+      [% if fetch_scrambles and (eid != "demo") %]
+          contestRef.child('scrambles').child('c[[ cid ]]').once('value', function(snapScrambles) {
+              if (snapScrambles.exists() && snapScrambles.val()._dummy == null) {
+                  $timeout(function() {
+                      var scramblesVal = snapScrambles.val();
+                      [% if (eid == "minx") %]
+                          Object.keys(scramblesVal.eminx).forEach(function(index) {
+                              scramblesVal.eminx[index] = scramblesVal.eminx[index].replace(/\n/g, '<br>');
+                          });
+                      [% endif %]
+                      $scope.scramblesData = scramblesVal;
+                  });
+              } else {
+                  console.error('Invalid: contest ([[ cid ]])');
+              }
+              $timeout(function() {
+                  $scope.loadedScrambles = true;
+                  $scope.contestLoaded = $scope.loadedMain && $scope.loadedScrambles && $scope.loadedResults;
+                  if ($scope.contestLoaded) { angular.element(document.getElementById('main-content')).removeClass('hide'); }
+              });
+          }, function(error) {
+              //console.error(error);
+              console.error('Cannot access scrambles ([[ cid ]])');
+              $timeout(function() {
+                  $scope.loadedScrambles = true;
+                  $scope.contestLoaded = $scope.loadedMain && $scope.loadedScrambles && $scope.loadedResults;
+                  if ($scope.contestLoaded) { angular.element(document.getElementById('main-content')).removeClass('hide'); }
+              });
+          });
+      [% endif %]
+      [% if fetch_scrambles and (eid == "demo") %]
+          $timeout(function() {
+              $scope.scramblesData = {
+                  'demo': [
+                      '1本番コンテストではここにスクランブルが表示されます',
+                      '2本番コンテストではここにスクランブルが表示されます',
+                      '3本番コンテストではここにスクランブルが表示されます',
+                      '4本番コンテストではここにスクランブルが表示されます',
+                      '5本番コンテストではここにスクランブルが表示されます'
+                  ]
+              };
+              $scope.loadedScrambles = true;
+              $scope.contestLoaded = $scope.loadedMain && $scope.loadedScrambles && $scope.loadedResults;
+              if ($scope.contestLoaded) { angular.element(document.getElementById('main-content')).removeClass('hide'); }
+          });
+      [% endif %]
 
-        // Fetch scrambles images data
-        $scope.scramblesImgData = null;
-        [% if fetch_scrambles and (eid == "333fm") %]
-            contestRef.child('scramblesimg').child('c[[ cid ]]').once('value', function(snapScramblesImg) {
-                if (snapScramblesImg.exists() && snapScramblesImg.val()._dummy == null) {
-                    $timeout(function() {
-                        var scramblesImgVal = snapScramblesImg.val();
-                        $scope.scramblesImgData = scramblesImgVal;
-                    });
-                } else {
-                    console.error('Invalid: contest ([[ cid ]])');
-                }
-            }, function(error) {
-                //console.error(error);
-                console.error('Cannot access scrambles ([[ cid ]])');
-            });
-        [% endif %]
+      // Fetch scrambles images data
+      $scope.scramblesImgData = null;
+      [% if fetch_scrambles and (eid == "333fm") %]
+          contestRef.child('scramblesimg').child('c[[ cid ]]').once('value', function(snapScramblesImg) {
+              if (snapScramblesImg.exists() && snapScramblesImg.val()._dummy == null) {
+                  $timeout(function() {
+                      var scramblesImgVal = snapScramblesImg.val();
+                      $scope.scramblesImgData = scramblesImgVal;
+                  });
+              } else {
+                  console.error('Invalid: contest ([[ cid ]])');
+              }
+          }, function(error) {
+              //console.error(error);
+              console.error('Cannot access scrambles ([[ cid ]])');
+          });
+      [% endif %]
 
-        // Fetch results data
-        $scope.resultsData = {};
-        $scope.resultsPersons = {};
-        $scope.resultsTop3 = {};
-        $scope.resultsAll = {};
-        $scope.resultsPuzzlesAll = {};
-        $scope.resultsPuzzles = {};
-        [% if fetch_results_top3 %]
-            contestRef.child('results').child('c[[ cid ]]').once('value', function(snapResults) {
-                if (snapResults.exists() && snapResults.val()._dummy == null) {
-                    contestRef.child('events').once('value', function(snapEvents) {
-                        var Events = snapEvents.val();
-                        contestRef.child('users').once('value', function(snapUsers) {
-                            var Users = snapUsers.val();
-                            $timeout(function() {
-                                $scope.resultsData = snapResults.val();
-                                Object.keys($scope.resultsData).forEach(function(e) {
-                                    $scope.resultsPersons[e] = 0;
-                                    $scope.resultsTop3[e] = [];
-                                    $scope.resultsAll[e] = [];
-                                    Object.keys($scope.resultsData[e]).forEach(function(uid) {
-                                        if (!($scope.resultsData[e][uid]._dummy) && $scope.resultsData[e][uid].endAt) {
-                                            ($scope.resultsPersons[e])++;
-                                            if ($scope.resultsData[e][uid].place <= 3) {
-                                                // 表示用にデータ加工
-                                                var results = $scope.resultsData[e][uid];
-                                                // User
-                                                $scope.resultsData[e][uid].user = Users[uid];
-                                                if (wcaRef && Users[uid].wcaId) {
-                                                    wcaRef.child('persons').child(Users[uid].wcaId).once('value', function(snapPerson) {
-                                                        if (snapPerson.exists()) {
-                                                            wcaRef.child('countries').child(snapPerson.val().countryId).once('value', function(snapCountry) {
-                                                                if (snapCountry.exists()) {
-                                                                    $timeout(function() {
-                                                                        $scope.resultsData[e][uid].user.iso2 = snapCountry.val().iso2;
-                                                                    });
-                                                                }
-                                                            });
-                                                        }
-                                                    });
-                                                }
-                                                // Result
-                                                $scope.resultsData[e][uid].resultF = TriboxContest.formatResult(results, e, Events);
-                                                // Details
-                                                $scope.resultsData[e][uid].detailsF = TriboxContest.formatDetails(results, e, Events);
-                                                // Puzzle
-                                                $scope.resultsData[e][uid].puzzleF = TriboxContest.formatPuzzle(results);
+      // Fetch results data
+      $scope.resultsData = {};
+      $scope.resultsPersons = {};
+      $scope.resultsTop3 = {};
+      $scope.resultsAll = {};
+      $scope.resultsPuzzlesAll = {};
+      $scope.resultsPuzzles = {};
+      [% if fetch_results_top3 %]
+          contestRef.child('results').child('c[[ cid ]]').once('value', function(snapResults) {
+              if (snapResults.exists() && snapResults.val()._dummy == null) {
+                  contestRef.child('events').once('value', function(snapEvents) {
+                      var Events = snapEvents.val();
+                      contestRef.child('users').once('value', function(snapUsers) {
+                          var Users = snapUsers.val();
+                          $timeout(function() {
+                              $scope.resultsData = snapResults.val();
+                              Object.keys($scope.resultsData).forEach(function(e) {
+                                  $scope.resultsPersons[e] = 0;
+                                  $scope.resultsTop3[e] = [];
+                                  $scope.resultsAll[e] = [];
+                                  Object.keys($scope.resultsData[e]).forEach(function(uid) {
+                                      if (!($scope.resultsData[e][uid]._dummy) && $scope.resultsData[e][uid].endAt) {
+                                          ($scope.resultsPersons[e])++;
+                                          if ($scope.resultsData[e][uid].place <= 3) {
+                                              // 表示用にデータ加工
+                                              var results = $scope.resultsData[e][uid];
+                                              // User
+                                              $scope.resultsData[e][uid].user = Users[uid];
+                                              if (wcaRef && Users[uid].wcaId) {
+                                                  wcaRef.child('persons').child(Users[uid].wcaId).once('value', function(snapPerson) {
+                                                      if (snapPerson.exists()) {
+                                                          wcaRef.child('countries').child(snapPerson.val().countryId).once('value', function(snapCountry) {
+                                                              if (snapCountry.exists()) {
+                                                                  $timeout(function() {
+                                                                      $scope.resultsData[e][uid].user.iso2 = snapCountry.val().iso2;
+                                                                  });
+                                                              }
+                                                          });
+                                                      }
+                                                  });
+                                              }
+                                              // Result
+                                              $scope.resultsData[e][uid].resultF = TriboxContest.formatResult(results, e, Events);
+                                              // Details
+                                              $scope.resultsData[e][uid].detailsF = TriboxContest.formatDetails(results, e, Events);
+                                              // Puzzle
+                                              $scope.resultsData[e][uid].puzzleF = TriboxContest.formatPuzzle(results);
 
-                                                $scope.resultsTop3[e].push($scope.resultsData[e][uid]);
-                                            }
-                                        }
-                                    });
-                                });
-                            });
-                        });
-                    });
-                } else {
-                    console.error('Invalid: contest ([[ cid ]])');
-                }
-                $timeout(function() {
-                    $scope.loadedResults = true;
-                    $scope.contestLoaded = $scope.loadedMain && $scope.loadedScrambles && $scope.loadedResults;
-                    if ($scope.contestLoaded) { angular.element(document.getElementById('main-content')).removeClass('hide'); }
-                });
-            }, function(error) {
-                //console.error(error);
-                console.error('Cannot access results ([[ cid ]])');
-                $timeout(function() {
-                    $scope.loadedResults = true;
-                    $scope.contestLoaded = $scope.loadedMain && $scope.loadedScrambles && $scope.loadedResults;
-                    if ($scope.contestLoaded) { angular.element(document.getElementById('main-content')).removeClass('hide'); }
-                });
-            });
-        [% endif %]
+                                              $scope.resultsTop3[e].push($scope.resultsData[e][uid]);
+                                          }
+                                      }
+                                  });
+                              });
+                          });
+                      });
+                  });
+              } else {
+                  console.error('Invalid: contest ([[ cid ]])');
+              }
+              $timeout(function() {
+                  $scope.loadedResults = true;
+                  $scope.contestLoaded = $scope.loadedMain && $scope.loadedScrambles && $scope.loadedResults;
+                  if ($scope.contestLoaded) { angular.element(document.getElementById('main-content')).removeClass('hide'); }
+              });
+          }, function(error) {
+              //console.error(error);
+              console.error('Cannot access results ([[ cid ]])');
+              $timeout(function() {
+                  $scope.loadedResults = true;
+                  $scope.contestLoaded = $scope.loadedMain && $scope.loadedScrambles && $scope.loadedResults;
+                  if ($scope.contestLoaded) { angular.element(document.getElementById('main-content')).removeClass('hide'); }
+              });
+          });
+      [% endif %]
 
-        [% if fetch_results_all %]
-            contestRef.child('results').child('c[[ cid ]]').child('e[[ eid ]]').once('value', function(snapResults) {
-                if (snapResults.exists() && snapResults.val()._dummy == null) {
-                    contestRef.child('events').once('value', function(snapEvents) {
-                        var Events = snapEvents.val();
-                        contestRef.child('users').once('value', function(snapUsers) {
-                            var Users = snapUsers.val();
-                            $timeout(function() {
-                                $scope.resultsData['e[[ eid ]]'] = snapResults.val();
-                                $scope.resultsPersons['e[[ eid ]]'] = 0;
-                                $scope.resultsAll['e[[ eid ]]'] = [];
-                                var _resultsPuzzlesAllObj = {};
-                                var _resultsPuzzlesObj = {};
-                                var _resultsPuzzlesAllSum = 0;
-                                var _resultsPuzzlesSum = 0;
-                                Object.keys($scope.resultsData['e[[ eid ]]']).forEach(function(uid) {
-                                    if (!($scope.resultsData['e[[ eid ]]'][uid]._dummy) && $scope.resultsData['e[[ eid ]]'][uid].endAt) {
-                                        ($scope.resultsPersons['e[[ eid ]]'])++;
+      [% if fetch_results_all %]
+          contestRef.child('results').child('c[[ cid ]]').child('e[[ eid ]]').once('value', function(snapResults) {
+              if (snapResults.exists() && snapResults.val()._dummy == null) {
+                  contestRef.child('events').once('value', function(snapEvents) {
+                      var Events = snapEvents.val();
+                      contestRef.child('users').once('value', function(snapUsers) {
+                          var Users = snapUsers.val();
+                          $timeout(function() {
+                              $scope.resultsData['e[[ eid ]]'] = snapResults.val();
+                              $scope.resultsPersons['e[[ eid ]]'] = 0;
+                              $scope.resultsAll['e[[ eid ]]'] = [];
+                              var _resultsPuzzlesAllObj = {};
+                              var _resultsPuzzlesObj = {};
+                              var _resultsPuzzlesAllSum = 0;
+                              var _resultsPuzzlesSum = 0;
+                              Object.keys($scope.resultsData['e[[ eid ]]']).forEach(function(uid) {
+                                  if (!($scope.resultsData['e[[ eid ]]'][uid]._dummy) && $scope.resultsData['e[[ eid ]]'][uid].endAt) {
+                                      ($scope.resultsPersons['e[[ eid ]]'])++;
 
-                                        // 表示用にデータ加工
-                                        var results = $scope.resultsData['e[[ eid ]]'][uid];
-                                        // User
-                                        $scope.resultsData['e[[ eid ]]'][uid].user = Users[uid];
-                                        if (wcaRef && Users[uid].wcaId) {
-                                            wcaRef.child('persons').child(Users[uid].wcaId).once('value', function(snapPerson) {
-                                                if (snapPerson.exists()) {
-                                                    wcaRef.child('countries').child(snapPerson.val().countryId).once('value', function(snapCountry) {
-                                                        if (snapCountry.exists()) {
-                                                            $timeout(function() {
-                                                                $scope.resultsData['e[[ eid ]]'][uid].user.iso2 = snapCountry.val().iso2;
-                                                            });
-                                                        }
-                                                    });
-                                                }
-                                            });
-                                        }
-                                        // Result
-                                        $scope.resultsData['e[[ eid ]]'][uid].resultF = TriboxContest.formatResult(results, 'e[[ eid ]]', Events);
-                                        // Details
-                                        $scope.resultsData['e[[ eid ]]'][uid].detailsF = TriboxContest.formatDetails(results, 'e[[ eid ]]', Events);
-                                        // Puzzle
-                                        $scope.resultsData['e[[ eid ]]'][uid].puzzleF = TriboxContest.formatPuzzle(results);
+                                      // 表示用にデータ加工
+                                      var results = $scope.resultsData['e[[ eid ]]'][uid];
+                                      // User
+                                      $scope.resultsData['e[[ eid ]]'][uid].user = Users[uid];
+                                      if (wcaRef && Users[uid].wcaId) {
+                                          wcaRef.child('persons').child(Users[uid].wcaId).once('value', function(snapPerson) {
+                                              if (snapPerson.exists()) {
+                                                  wcaRef.child('countries').child(snapPerson.val().countryId).once('value', function(snapCountry) {
+                                                      if (snapCountry.exists()) {
+                                                          $timeout(function() {
+                                                              $scope.resultsData['e[[ eid ]]'][uid].user.iso2 = snapCountry.val().iso2;
+                                                          });
+                                                      }
+                                                  });
+                                              }
+                                          });
+                                      }
+                                      // Result
+                                      $scope.resultsData['e[[ eid ]]'][uid].resultF = TriboxContest.formatResult(results, 'e[[ eid ]]', Events);
+                                      // Details
+                                      $scope.resultsData['e[[ eid ]]'][uid].detailsF = TriboxContest.formatDetails(results, 'e[[ eid ]]', Events);
+                                      // Puzzle
+                                      $scope.resultsData['e[[ eid ]]'][uid].puzzleF = TriboxContest.formatPuzzle(results);
 
-                                        $scope.resultsAll['e[[ eid ]]'].push($scope.resultsData['e[[ eid ]]'][uid]);
+                                      $scope.resultsAll['e[[ eid ]]'].push($scope.resultsData['e[[ eid ]]'][uid]);
 
-                                        // パズル集計用
-                                        if (results.puzzle.type == 'database') {
-                                            // 対象: 参加者全員
-                                            var productId = results.puzzle.product;
-                                            if (_resultsPuzzlesAllObj[productId]) {
-                                                (_resultsPuzzlesAllObj[productId].count)++;
-                                            } else {
-                                                var productName = '';
-                                                if (0 < productId) {
-                                                    productName = TriboxContest.Products[productId];
-                                                }
-                                                _resultsPuzzlesAllObj[productId] = {
-                                                    'productId': productId,
-                                                    'productName': productName,
-                                                    'count': 1
-                                                };
-                                            }
-                                            _resultsPuzzlesAllSum++;
+                                      // パズル集計用
+                                      if (results.puzzle.type == 'database') {
+                                          // 対象: 参加者全員
+                                          var productId = results.puzzle.product;
+                                          if (_resultsPuzzlesAllObj[productId]) {
+                                              (_resultsPuzzlesAllObj[productId].count)++;
+                                          } else {
+                                              var productName = '';
+                                              if (0 < productId) {
+                                                  productName = TriboxContest.Products[productId];
+                                              }
+                                              _resultsPuzzlesAllObj[productId] = {
+                                                  'productId': productId,
+                                                  'productName': productName,
+                                                  'count': 1
+                                              };
+                                          }
+                                          _resultsPuzzlesAllSum++;
 
-                                            // 対象: 入賞者
-                                            if (results.seasonPoint) {
-                                                if (_resultsPuzzlesObj[productId]) {
-                                                    (_resultsPuzzlesObj[productId].count)++;
-                                                } else {
-                                                    var productName = '';
-                                                    if (0 < productId) {
-                                                        productName = TriboxContest.Products[productId];
-                                                    }
-                                                    _resultsPuzzlesObj[productId] = {
-                                                        'productId': productId,
-                                                        'productName': productName,
-                                                        'count': 1
-                                                    };
-                                                }
-                                                _resultsPuzzlesSum++;
-                                            }
-                                        }
-                                    }
-                                });
+                                          // 対象: 入賞者
+                                          if (results.seasonPoint) {
+                                              if (_resultsPuzzlesObj[productId]) {
+                                                  (_resultsPuzzlesObj[productId].count)++;
+                                              } else {
+                                                  var productName = '';
+                                                  if (0 < productId) {
+                                                      productName = TriboxContest.Products[productId];
+                                                  }
+                                                  _resultsPuzzlesObj[productId] = {
+                                                      'productId': productId,
+                                                      'productName': productName,
+                                                      'count': 1
+                                                  };
+                                              }
+                                              _resultsPuzzlesSum++;
+                                          }
+                                      }
+                                  }
+                              });
 
-                                // パズル集計用 (使用人数でソート)
-                                // 対象: 参加者全員
-                                var _resultsPuzzlesAll = [];
-                                Object.keys(_resultsPuzzlesAllObj).forEach(function(productId) {
-                                    _resultsPuzzlesAll.push(_resultsPuzzlesAllObj[productId]);
-                                });
-                                _resultsPuzzlesAll.sort(function(a, b) {
-                                    if (a.count < b.count) return 1;
-                                    if (a.count > b.count) return -1;
-                                    if (a.productId < b.productId) return 1;
-                                    if (a.productId > b.productId) return -1;
-                                    return 0;
-                                });
-                                // 上位5パズル以外はその他にする
-                                var _resultsPuzzlesAllSummary = [];
-                                var jsdataall = [];
-                                var countOthersAll = 0;
-                                _resultsPuzzlesAll.forEach(function(puzzleObj, index) {
-                                    if (index < 5) {
-                                        puzzleObj.percentage = Math.round(puzzleObj.count / _resultsPuzzlesAllSum * 100);
-                                        _resultsPuzzlesAllSummary.push(puzzleObj);
-                                        jsdataall.push([puzzleObj.productName, puzzleObj.count]);
-                                    } else {
-                                        countOthersAll += puzzleObj.count;
-                                    }
-                                });
-                                if (0 < countOthersAll) {
-                                    _resultsPuzzlesAllSummary.push({
-                                        'productId': -1,
-                                        'productName': 'その他',
-                                        'count': countOthersAll,
-                                        'percentage': Math.round(countOthersAll / _resultsPuzzlesAllSum * 100)
-                                    });
-                                    jsdataall.push(['その他', countOthersAll]);
-                                }
-                                $scope.resultsPuzzlesAll['e[[ eid ]]'] = _resultsPuzzlesAllSummary;
+                              // パズル集計用 (使用人数でソート)
+                              // 対象: 参加者全員
+                              var _resultsPuzzlesAll = [];
+                              Object.keys(_resultsPuzzlesAllObj).forEach(function(productId) {
+                                  _resultsPuzzlesAll.push(_resultsPuzzlesAllObj[productId]);
+                              });
+                              _resultsPuzzlesAll.sort(function(a, b) {
+                                  if (a.count < b.count) return 1;
+                                  if (a.count > b.count) return -1;
+                                  if (a.productId < b.productId) return 1;
+                                  if (a.productId > b.productId) return -1;
+                                  return 0;
+                              });
+                              // 上位5パズル以外はその他にする
+                              var _resultsPuzzlesAllSummary = [];
+                              var jsdataall = [];
+                              var countOthersAll = 0;
+                              _resultsPuzzlesAll.forEach(function(puzzleObj, index) {
+                                  if (index < 5) {
+                                      puzzleObj.percentage = Math.round(puzzleObj.count / _resultsPuzzlesAllSum * 100);
+                                      _resultsPuzzlesAllSummary.push(puzzleObj);
+                                      jsdataall.push([puzzleObj.productName, puzzleObj.count]);
+                                  } else {
+                                      countOthersAll += puzzleObj.count;
+                                  }
+                              });
+                              if (0 < countOthersAll) {
+                                  _resultsPuzzlesAllSummary.push({
+                                      'productId': -1,
+                                      'productName': 'その他',
+                                      'count': countOthersAll,
+                                      'percentage': Math.round(countOthersAll / _resultsPuzzlesAllSum * 100)
+                                  });
+                                  jsdataall.push(['その他', countOthersAll]);
+                              }
+                              $scope.resultsPuzzlesAll['e[[ eid ]]'] = _resultsPuzzlesAllSummary;
 
-                                // パズル集計用 (使用人数でソート)
-                                // 対象: 入賞者
-                                var _resultsPuzzles = [];
-                                Object.keys(_resultsPuzzlesObj).forEach(function(productId) {
-                                    _resultsPuzzles.push(_resultsPuzzlesObj[productId]);
-                                });
-                                _resultsPuzzles.sort(function(a, b) {
-                                    if (a.count < b.count) return 1;
-                                    if (a.count > b.count) return -1;
-                                    if (a.productId < b.productId) return 1;
-                                    if (a.productId > b.productId) return -1;
-                                    return 0;
-                                });
-                                // 上位5パズル以外はその他にする
-                                var _resultsPuzzlesSummary = [];
-                                var jsdata = [];
-                                var countOthers = 0;
-                                _resultsPuzzles.forEach(function(puzzleObj, index) {
-                                    if (index < 5) {
-                                        puzzleObj.percentage = Math.round(puzzleObj.count / _resultsPuzzlesSum * 100);
-                                        _resultsPuzzlesSummary.push(puzzleObj);
-                                        jsdata.push([puzzleObj.productName, puzzleObj.count]);
-                                    } else {
-                                        countOthers += puzzleObj.count;
-                                    }
-                                });
-                                if (0 < countOthers) {
-                                    _resultsPuzzlesSummary.push({
-                                        'productId': -1,
-                                        'productName': 'その他',
-                                        'count': countOthers,
-                                        'percentage': Math.round(countOthers / _resultsPuzzlesSum * 100)
-                                    });
-                                    jsdata.push(['その他', countOthers]);
-                                }
-                                $scope.resultsPuzzles['e[[ eid ]]'] = _resultsPuzzlesSummary;
+                              // パズル集計用 (使用人数でソート)
+                              // 対象: 入賞者
+                              var _resultsPuzzles = [];
+                              Object.keys(_resultsPuzzlesObj).forEach(function(productId) {
+                                  _resultsPuzzles.push(_resultsPuzzlesObj[productId]);
+                              });
+                              _resultsPuzzles.sort(function(a, b) {
+                                  if (a.count < b.count) return 1;
+                                  if (a.count > b.count) return -1;
+                                  if (a.productId < b.productId) return 1;
+                                  if (a.productId > b.productId) return -1;
+                                  return 0;
+                              });
+                              // 上位5パズル以外はその他にする
+                              var _resultsPuzzlesSummary = [];
+                              var jsdata = [];
+                              var countOthers = 0;
+                              _resultsPuzzles.forEach(function(puzzleObj, index) {
+                                  if (index < 5) {
+                                      puzzleObj.percentage = Math.round(puzzleObj.count / _resultsPuzzlesSum * 100);
+                                      _resultsPuzzlesSummary.push(puzzleObj);
+                                      jsdata.push([puzzleObj.productName, puzzleObj.count]);
+                                  } else {
+                                      countOthers += puzzleObj.count;
+                                  }
+                              });
+                              if (0 < countOthers) {
+                                  _resultsPuzzlesSummary.push({
+                                      'productId': -1,
+                                      'productName': 'その他',
+                                      'count': countOthers,
+                                      'percentage': Math.round(countOthers / _resultsPuzzlesSum * 100)
+                                  });
+                                  jsdata.push(['その他', countOthers]);
+                              }
+                              $scope.resultsPuzzles['e[[ eid ]]'] = _resultsPuzzlesSummary;
 
-                                // 円グラフ描画
-                                drawChart(jsdataall, jsdata);
+                              // 円グラフ描画
+                              drawChart(jsdataall, jsdata);
 
-                            });
-                        });
-                    });
-                } else {
-                    console.error('Invalid: contest ([[ cid ]])');
-                }
-                $timeout(function() {
-                    $scope.loadedResults = true;
-                    $scope.contestLoaded = $scope.loadedMain && $scope.loadedScrambles && $scope.loadedResults;
-                    if ($scope.contestLoaded) { angular.element(document.getElementById('main-content')).removeClass('hide'); }
-                });
-            }, function(error) {
-                //console.error(error);
-                console.error('Cannot access results ([[ cid ]])');
-                $timeout(function() {
-                    $scope.loadedResults = true;
-                    $scope.contestLoaded = $scope.loadedMain && $scope.loadedScrambles && $scope.loadedResults;
-                    if ($scope.contestLoaded) { angular.element(document.getElementById('main-content')).removeClass('hide'); }
-                });
-            });
-        [% endif %]
+                          });
+                      });
+                  });
+              } else {
+                  console.error('Invalid: contest ([[ cid ]])');
+              }
+              $timeout(function() {
+                  $scope.loadedResults = true;
+                  $scope.contestLoaded = $scope.loadedMain && $scope.loadedScrambles && $scope.loadedResults;
+                  if ($scope.contestLoaded) { angular.element(document.getElementById('main-content')).removeClass('hide'); }
+              });
+          }, function(error) {
+              //console.error(error);
+              console.error('Cannot access results ([[ cid ]])');
+              $timeout(function() {
+                  $scope.loadedResults = true;
+                  $scope.contestLoaded = $scope.loadedMain && $scope.loadedScrambles && $scope.loadedResults;
+                  if ($scope.contestLoaded) { angular.element(document.getElementById('main-content')).removeClass('hide'); }
+              });
+          });
+      [% endif %]
 
-        // 参加人数
-        $scope.participants = null;
-        contestRef.child('participants').child('c[[ cid ]]').once('value', function(snapParticipants) {
-            $scope.participants = snapParticipants.val();
-        });
+      // 参加人数
+      $scope.participants = null;
+      contestRef.child('participants').child('c[[ cid ]]').once('value', function(snapParticipants) {
+          $scope.participants = snapParticipants.val();
+      });
 
-        $scope.turnOnButtons = function(format, data) {
-            var res = [];
-            data.forEach(function(d, index) {
-                if (format == 'time') {
-                    if (d.condition == 'OK') {
-                        res[index] = TriboxContest.formatTime(d.record);
-                        $scope.turnOnOK(index);
-                    } else if (d.condition == '+2') {
-                        res[index] = TriboxContest.formatTime(d.record + 2.000);
-                        $scope.turnOnPenalty(index);
-                    } else if (d.condition == 'DNF') {
-                        res[index] = 'DNF';
-                        $scope.turnOnDNF(index);
-                    } else {
-                        return null;
-                    }
-                } else if (format == 'number') {
-                    if (d.condition == 'OK') {
-                        res[index] = d.record;
-                        $scope.turnOnOK(index);
-                    } else if (d.condition == 'DNF') {
-                        res[index] = 'DNF';
-                        $scope.turnOnDNF(index);
-                    } else {
-                        return null;
-                    }
-                } else {
-                    return null;
-                }
-            });
-            return res;
-        };
+      $scope.turnOnButtons = function(format, data) {
+          var res = [];
+          data.forEach(function(d, index) {
+              if (format == 'time') {
+                  if (d.condition == 'OK') {
+                      res[index] = TriboxContest.formatTime(d.record);
+                      $scope.turnOnOK(index);
+                  } else if (d.condition == '+2') {
+                      res[index] = TriboxContest.formatTime(d.record + 2.000);
+                      $scope.turnOnPenalty(index);
+                  } else if (d.condition == 'DNF') {
+                      res[index] = 'DNF';
+                      $scope.turnOnDNF(index);
+                  } else {
+                      return null;
+                  }
+              } else if (format == 'number') {
+                  if (d.condition == 'OK') {
+                      res[index] = d.record;
+                      $scope.turnOnOK(index);
+                  } else if (d.condition == 'DNF') {
+                      res[index] = 'DNF';
+                      $scope.turnOnDNF(index);
+                  } else {
+                      return null;
+                  }
+              } else {
+                  return null;
+              }
+          });
+          return res;
+      };
 
-        // Condition buttons
-        $scope.turnOnOK = function(index) {
-            var btnOK = angular.element(document.getElementById('timeform-cond-ok-' + index));
-            var btnPenalty = angular.element(document.getElementById('timeform-cond-penalty-' + index));
-            var btnDNF = angular.element(document.getElementById('timeform-cond-dnf-' + index));
-            btnOK.addClass('cond-ok-on');
-            btnPenalty.removeClass('cond-penalty-on');
-            btnDNF.removeClass('cond-dnf-on');
-        };
-        $scope.turnOnPenalty = function(index) {
-            var btnOK = angular.element(document.getElementById('timeform-cond-ok-' + index));
-            var btnPenalty = angular.element(document.getElementById('timeform-cond-penalty-' + index));
-            var btnDNF = angular.element(document.getElementById('timeform-cond-dnf-' + index));
-            btnOK.removeClass('cond-ok-on');
-            btnPenalty.addClass('cond-penalty-on');
-            btnDNF.removeClass('cond-dnf-on');
-        };
-        $scope.turnOnDNF = function(index) {
-            var btnOK = angular.element(document.getElementById('timeform-cond-ok-' + index));
-            var btnPenalty = angular.element(document.getElementById('timeform-cond-penalty-' + index));
-            var btnDNF = angular.element(document.getElementById('timeform-cond-dnf-' + index));
-            btnOK.removeClass('cond-ok-on');
-            btnPenalty.removeClass('cond-penalty-on');
-            btnDNF.addClass('cond-dnf-on');
-        };
+      // Condition buttons
+      $scope.turnOnOK = function(index) {
+          var btnOK = angular.element(document.getElementById('timeform-cond-ok-' + index));
+          var btnPenalty = angular.element(document.getElementById('timeform-cond-penalty-' + index));
+          var btnDNF = angular.element(document.getElementById('timeform-cond-dnf-' + index));
+          btnOK.addClass('cond-ok-on');
+          btnPenalty.removeClass('cond-penalty-on');
+          btnDNF.removeClass('cond-dnf-on');
+      };
+      $scope.turnOnPenalty = function(index) {
+          var btnOK = angular.element(document.getElementById('timeform-cond-ok-' + index));
+          var btnPenalty = angular.element(document.getElementById('timeform-cond-penalty-' + index));
+          var btnDNF = angular.element(document.getElementById('timeform-cond-dnf-' + index));
+          btnOK.removeClass('cond-ok-on');
+          btnPenalty.addClass('cond-penalty-on');
+          btnDNF.removeClass('cond-dnf-on');
+      };
+      $scope.turnOnDNF = function(index) {
+          var btnOK = angular.element(document.getElementById('timeform-cond-ok-' + index));
+          var btnPenalty = angular.element(document.getElementById('timeform-cond-penalty-' + index));
+          var btnDNF = angular.element(document.getElementById('timeform-cond-dnf-' + index));
+          btnOK.removeClass('cond-ok-on');
+          btnPenalty.removeClass('cond-penalty-on');
+          btnDNF.addClass('cond-dnf-on');
+      };
 
-        $scope.range = function(n) {
-            var arr = [];
-            for (var i = 0; i < n; i++)
-                arr.push(i);
-            return arr;
-        };
-    }]);
-    </script>
+      $scope.range = function(n) {
+          var arr = [];
+          for (var i = 0; i < n; i++)
+              arr.push(i);
+          return arr;
+      };
+  }]);
+</script>
 
 [%- endmacro %]
