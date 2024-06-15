@@ -1,0 +1,292 @@
+[% set title = "Ranking" + sid[0:4] + " " + sid[4:5] + "H" %]
+[% set page_url = contest_url + "/ranking" + sid %]
+
+<!DOCTYPE html>
+<html lang="ja" ng-app="contestApp">
+  <head
+    prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#"
+  >
+    [% import "components/header.html" as header %]
+    [[ header.print(title=title, description=contest_description, sitename=contest_name, contest_url=contest_url, page_url=page_url) ]]
+    [% import "components/basejs.html" as basejs %]
+    [[ basejs.print(firebaseapp_contest, firebaseapp_contest_apikey, firebaseapp_contest_senderid) ]]
+    [% import "components/authjs.html" as authjs %]
+    [[ authjs.print(redirect_login="", redirect_logout="", check_first=True) ]]
+
+  </html>
+
+  <style>
+    h3,
+    h4 {
+      margin-top: 40px;
+    }
+  </style>
+
+
+
+
+</head>
+<body><div class="container">
+  [% import "components/bodyheader.html" as bodyheader %]
+  [[ bodyheader.print(title=title, contest_name=contest_name) ]]
+
+  <div ng-controller="AuthCtrl">
+    <div ng-controller="RankingCtrl">
+      <div ng-hide="authLoaded && rankingLoaded">
+        <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+        <span class="sr-only">Loading...</span>
+        Loading...
+      </div>
+    <div ng-show="authLoaded && rankingLoaded">
+      [% import "components/authinfo.html" as authinfo %]
+      [[ authinfo.print() ]]
+
+      <div ng-hide="existsSeason">
+        <p class="color-error">存在しないシーズンです。</p>
+      </div>
+
+      <div ng-show="existsSeason">
+        <h2>{{ seasonName }} SPランキング</h2>
+
+        <p>
+          集計対象コンテスト:<br />
+          <b>{{ targetContestFrom.contestName }}</b> ({{
+          targetContestFrom.beginAt | toDateShort }} 開始) ~
+          <b>{{ targetContestTo.contestName }}</b> ({{
+          targetContestTo.endAt | toDateShort }} 終了)
+        </p>
+    </div>
+  </div>
+
+  [% include "components/bodyfooter.html" %]
+
+<script>
+    app.controller('RankingCtrl', ['$scope', '$timeout', function($scope, $timeout) {
+        $scope.rankingLoaded = false;
+        $scope.existsSeason = false;
+
+        $scope.seasonName = null;
+        $scope.targetContestFrom = null;
+        $scope.targetContestTo = null;
+        $scope.events = null;
+        $scope.seasonPointsSorted = null;
+
+        contestRef.child('events').once('value', function(snapEvents) {
+            var events = snapEvents.val();
+
+        contestRef.child('users').once('value', function(snapUsers) {
+            var users = snapUsers.val();
+
+        contestRef.child('inProgress').once('value', function(snapInProgress) {
+            var inProgress = snapInProgress.val();
+
+        contestRef.child('contests').once('value', function(snapContests) {
+            var contests = snapContests.val();
+
+            var seasonName = '';
+            var targetContests = [];
+            var targetContestFrom = '';
+            var targetContestTo = '';
+            Object.keys(contests).forEach(function(cid) {
+                if ('' + contests[cid].year + contests[cid].season == '[[ cid ]]') {
+                    if (cid < inProgress.contest) {
+                        targetContests.push(cid);
+
+                        if (targetContestFrom == '' && targetContestTo == '') {
+                            targetContestFrom = cid;
+                            targetContestTo = cid;
+                        } else {
+                            if (cid < targetContestFrom) {
+                                targetContestFrom = cid;
+                            }
+                            if (targetContestTo < cid) {
+                                targetContestTo = cid;
+                            }
+                        }
+
+                        if (seasonName == '') {
+                            seasonName = contests[cid].year + '年';
+                            if (contests[cid].season == 1) {
+                                seasonName += ' 前半期';
+                            } else if (contests[cid].season == 2) {
+                                seasonName += ' 後半期';
+                            }
+                        }
+                    }
+                }
+            });
+            if (0 < targetContests.length) {
+
+                var results = {};
+                var numResultsFetched = 0;
+                targetContests.forEach(function(cid) {
+                    contestRef.child('results').child(cid).once('value', function(snapResult) {
+                        results[cid] = snapResult.val();
+                        numResultsFetched++;
+                        if (numResultsFetched == targetContests.length) {
+                            // Now, All results fetched
+
+                            // シーズンポイント・使用キューブ集計
+                            var seasonPoints = {};
+                            var usedPuzzles = {};
+                            var lastUsedPuzzles = {};
+                            Object.keys(events).forEach(function(eid) {
+                                seasonPoints[eid] = {};
+                                usedPuzzles[eid] = {};
+                                lastUsedPuzzles[eid] = {};
+                            });
+                            Object.keys(results).forEach(function(cid) {
+                                Object.keys(results[cid]).forEach(function(eid) {
+                                    Object.keys(results[cid][eid]).forEach(function(uid) {
+                                        if (!(results[cid][eid][uid]._dummy)) {
+                                            if (!(uid in seasonPoints[eid])) {
+                                                seasonPoints[eid][uid] = 0;
+                                                usedPuzzles[eid][uid] = {};
+                                            }
+                                            if (!(uid in lastUsedPuzzles[eid])) {
+                                                lastUsedPuzzles[eid][uid] = 0;
+                                            }
+                                            if (results[cid][eid][uid].seasonPoint || results[cid][eid][uid].seasonPointVideoBonus) {
+                                                // シーズンポイント
+                                                if (results[cid][eid][uid].seasonPoint) {
+                                                    seasonPoints[eid][uid] += results[cid][eid][uid].seasonPoint;
+                                                }
+                                                // シーズンポイント（ビデオボーナス）
+                                                if (results[cid][eid][uid].seasonPointVideoBonus) {
+                                                    seasonPoints[eid][uid] += results[cid][eid][uid].seasonPointVideoBonus;
+                                                }
+                                                if (results[cid][eid][uid].puzzle && results[cid][eid][uid].puzzle.type == 'database') {
+                                                    var productId = results[cid][eid][uid].puzzle.product;
+                                                    if (!(productId in usedPuzzles[eid][uid])) {
+                                                        usedPuzzles[eid][uid][productId] = 0;
+                                                    }
+                                                    (usedPuzzles[eid][uid][productId])++;
+                                                    lastUsedPuzzles[eid][uid] = productId;
+                                                }
+                                            }
+                                        }
+                                    });
+                                });
+                            });
+
+                            // 最も使用されたパズル
+                            // 同数の場合は productId が大きいパズル
+                            var bestUsedPuzzles = {};
+                            Object.keys(usedPuzzles).forEach(function(eid) {
+                                bestUsedPuzzles[eid] = {};
+                                Object.keys(usedPuzzles[eid]).forEach(function(uid) {
+                                    var bestProductId = -1;
+                                    var maxCount = -1;
+                                    Object.keys(usedPuzzles[eid][uid]).forEach(function(productId) {
+                                        if (maxCount <= usedPuzzles[eid][uid][productId] && bestProductId < productId) {
+                                            bestProductId = productId;
+                                            maxCount = usedPuzzles[eid][uid][productId];
+                                        }
+                                    });
+                                    bestUsedPuzzles[eid][uid] = bestProductId;
+                                });
+                            });
+
+                            // 配列化・ソート・ランク付け
+                            // 0 シーズンポイントのユーザを排除してユーザ情報を入れる
+                            var seasonPointsSorted = {};
+                            Object.keys(seasonPoints).forEach(function(eid) {
+                                // 配列化
+                                seasonPointsSorted[eid] = [];
+                                Object.keys(seasonPoints[eid]).forEach(function(uid) {
+                                    if (0 < seasonPoints[eid][uid]) {
+                                        var bestUsedPuzzleId = bestUsedPuzzles[eid][uid];
+                                        var bestUsedPuzzleName = '';
+                                        if (0 < bestUsedPuzzleId) {
+                                            bestUsedPuzzleName = TriboxContest.Products[bestUsedPuzzleId];
+                                        }
+                                        var lastUsedPuzzleId = lastUsedPuzzles[eid][uid];
+                                        var lastUsedPuzzleName = '';
+                                        if (0 < lastUsedPuzzleId) {
+                                            lastUsedPuzzleName = TriboxContest.Products[lastUsedPuzzleId];
+                                        }
+                                        seasonPointsSorted[eid].push({
+                                            'uid': uid, 'seasonPoint': seasonPoints[eid][uid],
+                                            'user': users[uid],
+                                            'bestUsedPuzzleId': bestUsedPuzzleId,
+                                            'bestUsedPuzzleName': bestUsedPuzzleName,
+                                            'lastUsedPuzzleId': lastUsedPuzzleId,
+                                            'lastUsedPuzzleName': lastUsedPuzzleName
+                                        });
+                                    }
+                                });
+
+                                // ソート
+                                seasonPointsSorted[eid].sort(function(a, b) {
+                                    if (a.seasonPoint < b.seasonPoint) return 1;
+                                    if (a.seasonPoint > b.seasonPoint) return -1;
+                                    return 0;
+                                });
+
+                                // ランク付け
+                                var prevSP = -1;
+                                var prevRank = -1;
+                                seasonPointsSorted[eid].forEach(function(data, index) {
+                                    if (data.seasonPoint != prevSP) {
+                                        seasonPointsSorted[eid][index].rank = index + 1;
+                                    } else {
+                                        seasonPointsSorted[eid][index].rank = prevRank;
+                                    }
+                                    prevSP = data.seasonPoint;
+                                    prevRank = seasonPointsSorted[eid][index].rank;
+                                });
+                            });
+
+                            $timeout(function() {
+                                $scope.rankingLoaded = true;
+                                $scope.existsSeason = true;
+
+                                $scope.seasonName = seasonName;
+                                $scope.targetContestFrom = contests[targetContestFrom];
+                                $scope.targetContestTo = contests[targetContestTo];
+
+                                $scope.events = events;
+                                $scope.seasonPointsSorted = seasonPointsSorted;
+                            });
+
+                            // ユーザの国籍を非同期に読み込む
+                            Object.keys(seasonPointsSorted).forEach(function(eid) {
+                                seasonPointsSorted[eid].forEach(function(data, index) {
+                                    if (wcaRef && data.user.wcaId) {
+                                        wcaRef.child('persons').child(data.user.wcaId).once('value', function(snapPerson) {
+                                            if (snapPerson.exists()) {
+                                                wcaRef.child('countries').child(snapPerson.val().countryId).once('value', function(snapCountry) {
+                                                    if (snapCountry.exists()) {
+                                                        seasonPointsSorted[eid][index].user.iso2 = snapCountry.val().iso2;
+                                                        $timeout(function() {
+                                                            $scope.seasonPointsSorted = seasonPointsSorted;
+                                                        });
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    }
+                                });
+                            });
+
+                        }
+                    });
+                });
+            } else {
+                $timeout(function() {
+                    $scope.rankingLoaded = true;
+                });
+            }
+
+        });
+        });
+        });
+        });
+    }]);
+    </script>
+    <script type="text/javascript" src="/js/products.js"></script>
+
+</div></body>
+</html>
+
+
