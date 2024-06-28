@@ -220,6 +220,27 @@ var saveScrambles = function(scrambles, scramblesIndexes, callback) {
                 console.error('Already exists:', contestId);
                 next();
             } else {
+                // Work around 処理
+                // TNoodle 0.14.0 で生成される「クロック」のスクランブルには末尾にピンのスクランブルが入っているが、今は不要なので削除する。
+                if (scrambles[contestId]['eclock']) {
+                    for (var i = 0; i < scrambles[contestId]['eclock'].length; i++) {
+                        // 末尾のピン情報のスクランブル文字列を削除
+                        // ピンは「UR DR DL UL」の順で入っているので、末尾の3文字がこの文字列に一致すれば順に削除する
+                        if (scrambles[contestId]['eclock'][i].slice(-3) === ' UL') {
+                            scrambles[contestId]['eclock'][i] = scrambles[contestId]['eclock'][i].slice(0, -3);
+                        }
+                        if (scrambles[contestId]['eclock'][i].slice(-3) === ' DL') {
+                            scrambles[contestId]['eclock'][i] = scrambles[contestId]['eclock'][i].slice(0, -3);
+                        }
+                        if (scrambles[contestId]['eclock'][i].slice(-3) === ' DR') {
+                            scrambles[contestId]['eclock'][i] = scrambles[contestId]['eclock'][i].slice(0, -3);
+                        }
+                        if (scrambles[contestId]['eclock'][i].slice(-3) === ' UR') {
+                            scrambles[contestId]['eclock'][i] = scrambles[contestId]['eclock'][i].slice(0, -3);
+                        }
+                    }
+                }
+
                 contestRef.child('scrambles').child(contestId).set(scrambles[contestId], function(error) {
                     if (error) {
                         console.error('Set failed... scramble: ' + contestId);
