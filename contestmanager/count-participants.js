@@ -41,9 +41,9 @@ var cid;
 
 
 var countParticipants = function() {
-            contestRef.child('events').once('value', function(snapEvents) {
-                var Events = snapEvents.val();
-                //console.dir(Events);
+    contestRef.child('events').once('value', function(snapEvents) {
+        var Events = snapEvents.val();
+        //console.dir(Events);
             contestRef.child('results').child(cid).once('value', function(snapResults) {
                 var Results = snapResults.val();
                 //console.dir(Results);
@@ -76,8 +76,8 @@ var countParticipants = function() {
                     }
                 });
 
-            });
-            });
+        });
+    });
 };
 
 var main = function() {
