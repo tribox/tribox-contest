@@ -14,7 +14,7 @@ var Config = require('./config.js');
 var contestRef = require('./contestref.js').ref;
 
 // デフォルトの競技
-var EventsDefault = ['e333', 'e222', 'e444', 'e555', 'e666', 'e777', 'e333bf', 'e333fm', 'e333oh', 'eminx', 'epyram', 'eskewb', 'esq1'];
+var EventsDefault = ['e333', 'e222', 'e444', 'e555', 'e666', 'e777', 'e333bf', 'e333fm', 'e333oh', 'eminx', 'epyram', 'eskewb', 'esq1', 'eclock'];
 
 
 var usage = function() {
