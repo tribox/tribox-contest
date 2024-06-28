@@ -7,41 +7,30 @@
 
 var contestRef = require('./contestref.js').ref;
 
-
 var updateEvents = function() {
-    // admin 権限でログインしてから操作する
-    contestRef.authWithCustomToken(token, function(error, authData) {
+    // 2024-07 用
+    // クロック追加
+    contestRef.child('events').child('eclock').set({
+        'attempts': 5,
+        'format': 'time',
+        'hasInspection': true,
+        'method': 'average',
+        'name': 'Clock',
+        'scramblePuzzle': 'clock'
+    }, function(error) {
         if (error) {
-            console.error('Authentication Failed!', error);
+            console.error(error);
+            process.exit(1);
         } else {
-            console.log('Authenticated successfully with payload:', authData);
-
-            // 2024-07 用
-            // クロック追加
-            contestRef.child('events').child('eclock').set({
-                'attempts': 5,
-                'format': 'time',
-                'hasInspection': true,
-                'method': 'average',
-                'name': 'Clock',
-                'scramblePuzzle': 'clock'
-            }, function(error) {
+            // WCAのランクは110であるが、末尾に追加するので190にする
+            contestRef.child('events').child('eclock').setPriority(190, function(error) {
                 if (error) {
                     console.error(error);
                     process.exit(1);
                 } else {
-                    // WCAのランクは110であるが、末尾に追加するので190にする
-                    contestRef.child('events').child('eclock').setPriority(190, function(error) {
-                        if (error) {
-                            console.error(error);
-                            process.exit(1);
-                        } else {
-                            process.exit(0);
-                        }
-                    });
+                    process.exit(0);
                 }
             });
-
         }
     });
 }
