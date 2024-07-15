@@ -1,0 +1,128 @@
+[% set title = "Join" %] [% set page_url = contest_url + 'join/' %]
+
+<!DOCTYPE html>
+<html lang="ja" ng-app="contestApp">
+  <head
+    prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#"
+  >
+    [% import "components/header.html" as header %] [[ header.print(title=title,
+    description=contest_description, sitename=contest_name,
+    contest_url=contest_url, page_url=page_url) ]]
+
+    <script>
+      // Random string for initial password
+      var getRandomStr = function (l) {
+        var c =
+          "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM1234567890";
+        var cl = c.length;
+        var r = "";
+        for (var i = 0; i < l; i++) {
+          r += c[Math.floor(Math.random() * cl)];
+        }
+        return r;
+      };
+    </script>
+    [% import "components/basejs.html" as basejs %] [[
+    basejs.print(firebaseapp_contest, firebaseapp_contest_apikey,
+    firebaseapp_contest_senderid, firebaseapp_wca) ]] [% import
+    "components/authjs.html" as authjs %] [[ authjs.print(redirect_login="",
+    redirect_logout="", check_first=True) ]]
+    <script>
+      app.controller("AuthJoinCtrl", [
+        "$scope",
+        "Auth",
+        function ($scope, Auth) {
+          $scope.createUser = function () {
+            $scope.joinMessage = null;
+            $scope.error = null;
+
+            var _email = $scope.email;
+            var _password = $scope.password;
+
+            if (!_email) {
+              $scope.error = "メールアドレスを入力してください。";
+              return;
+            }
+            if (!_password) {
+              $scope.error = "パスワードを入力してください。";
+              return;
+            }
+
+            Auth.$createUserWithEmailAndPassword(_email, _password)
+              .then(function (userData) {
+                //$scope.joinMessage = 'User created with uid: ' + userData.uid;
+                $scope.joinMessage = "ユーザ登録が完了しました。";
+                location.href = "@routes.HomeController.login?join=1";
+              })
+              .catch(function (error) {
+                $scope.error = TriboxContest.convErrorCodes(error.code);
+              });
+          };
+        },
+      ]);
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      [% import "components/bodyheader.html" as bodyheader %] [[
+      bodyheader.print(title=title, contest_name=contest_name) ]]
+
+      <div ng-controller="AuthCtrl">
+        <div ng-controller="AuthJoinCtrl">
+          <div ng-hide="authLoaded">
+            <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+            <span class="sr-only">Loading...</span>
+            Loading...
+          </div>
+          <div ng-show="authLoaded">
+            <h2>新規ユーザ登録</h2>
+
+            <div class="notice-success margin-bottom-20" ng-if="joinMessage">
+              <i class="fa fa-check"></i>
+              {{ joinMessage }}
+            </div>
+            <div class="color-error margin-bottom-20" ng-if="error">
+              エラー: {{ error }}
+            </div>
+
+            <p>
+              メールアドレスとパスワードを入力してください。<br />
+              すでにアカウントを作成済みの場合は、<a
+                href="@routes.HomeController.login"
+                >ログインページ</a
+              >からログインしてください。<br />
+              hotmailでは確認メールが受信できない場合があります。
+            </p>
+
+            <form name="joinForm" ng-submit="createUser()">
+              <div>
+                <label>メールアドレス</label>
+                <input
+                  class="form-control"
+                  type="email"
+                  name="email"
+                  ng-model="email"
+                />
+              </div>
+
+              <!--<span ng-show="joinForm.email.$error.email">Not valid email!</span>
+            <span ng-show="joinForm.email.$error.required">Required!</span><br>-->
+
+              <div>
+                <label>パスワード</label>
+                <input
+                  class="form-control"
+                  type="password"
+                  ng-model="password"
+                />
+              </div>
+              <input class="btn" type="submit" value="登録" />
+            </form>
+          </div>
+        </div>
+      </div>
+
+      [% include "components/bodyfooter.html" %]
+    </div>
+  </body>
+</html>

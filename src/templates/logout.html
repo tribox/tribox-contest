@@ -1,0 +1,57 @@
+[% set title = "Logout" %]
+
+<!DOCTYPE html>
+<html lang="ja" ng-app="contestApp">
+  <head
+    prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#"
+  >
+    [% import "components/header.html" as header %] [[ header.print(title=title,
+    description=contest_description, sitename=contest_name,
+    contest_url=contest_url, page_url=page_url) ]] [% import
+    "components/basejs.html" as basejs %] [[ basejs.print(firebaseapp_contest,
+    firebaseapp_contest_apikey, firebaseapp_contest_senderid) ]][% import
+    "components/authjs.html" as authjs %] [[ authjs.print(redirect_login="",
+    redirect_logout="", check_first=False) ]]
+
+    <script>
+      app.controller("AuthLogoutCtrl", [
+        "$scope",
+        "Auth",
+        function ($scope, Auth) {
+          $scope.logout = function () {
+            Auth.$signOut();
+            location.href = "[[ url_for('index') ]]?logout=1";
+          };
+        },
+      ]);
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      [% import "components/bodyheader.html" as bodyheader %] [[
+      bodyheader.print(title=title, contest_name=contest_name) ]]
+
+      <div ng-controller="AuthCtrl">
+        <div ng-controller="AuthLogoutCtrl">
+          <div ng-hide="authLoaded">
+            <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+            <span class="sr-only">Loading...</span>
+            Loading...
+          </div>
+          <div ng-show="authLoaded">
+            [% import "components/authinfo.html" as authinfo %] [[
+            authinfo.print() ]]
+
+            <h2>ログアウト</h2>
+
+            <form name="logoutForm" ng-submit="logout()">
+              <input class="btn" type="submit" value="ログアウト" />
+            </form>
+          </div>
+        </div>
+      </div>
+
+      [% include "components/bodyfooter.html" %]
+    </div>
+  </body>
+</html>
