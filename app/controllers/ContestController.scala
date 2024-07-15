@@ -106,7 +106,7 @@ class ContestController @Inject() extends HomeController {
         } else if (eid == "sq1") {
             targetCategory = 113;
         } else if (eid == "clock") {
-            targetCategory = 426;
+            targetCategory = 544;
         }
         var brandsPuzzles = Map.empty[Int, List[Puzzle]];
         for (puzzle:Puzzle <- puzzles) {
