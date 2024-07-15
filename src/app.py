@@ -123,17 +123,44 @@ def release_notes_christmas_2018():
 ########################################
 @app.route("/join")
 def join():
-    raise NotImplementedError()
+    return render_template(
+        "join.html",
+        contest_url=CONTEST_URL,
+        firebaseapp_contest=FIREBASEAPP_CONTEST,
+        firebaseapp_contest_apikey=FIREBASEAPP_CONTEST_APIKEY,
+        firebaseapp_contest_senderid=FIREBASEAPP_CONTEST_SENDERID,
+        firebaseapp_wca=FIREBASEAPP_WCA,
+        firebaseapp_wca_apikey=FIREBASEAPP_WCA_APIKEY,
+        firebaseapp_wca_senderid=FIREBASEAPP_WCA_SENDERID,
+    )
 
 
 @app.route("/login")
 def login():
-    raise NotImplementedError()
+    return render_template(
+        "login.html",
+        contest_url=CONTEST_URL,
+        firebaseapp_contest=FIREBASEAPP_CONTEST,
+        firebaseapp_contest_apikey=FIREBASEAPP_CONTEST_APIKEY,
+        firebaseapp_contest_senderid=FIREBASEAPP_CONTEST_SENDERID,
+        firebaseapp_wca=FIREBASEAPP_WCA,
+        firebaseapp_wca_apikey=FIREBASEAPP_WCA_APIKEY,
+        firebaseapp_wca_senderid=FIREBASEAPP_WCA_SENDERID,
+    )
 
 
 @app.route("/logout")
 def logout():
-    raise NotImplementedError()
+    return render_template(
+        "logout.html",
+        contest_url=CONTEST_URL,
+        firebaseapp_contest=FIREBASEAPP_CONTEST,
+        firebaseapp_contest_apikey=FIREBASEAPP_CONTEST_APIKEY,
+        firebaseapp_contest_senderid=FIREBASEAPP_CONTEST_SENDERID,
+        firebaseapp_wca=FIREBASEAPP_WCA,
+        firebaseapp_wca_apikey=FIREBASEAPP_WCA_APIKEY,
+        firebaseapp_wca_senderid=FIREBASEAPP_WCA_SENDERID,
+    )
 
 
 @app.route("/forgot")
