@@ -1,0 +1,1386 @@
+[% set title = id %] [% set page_url = contest_url + '/user/' + id %]
+
+<!DOCTYPE html>
+<html lang="ja" ng-app="contestApp">
+  <head
+    prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#"
+  >
+    [% import "components/header.html" as header %] [[ header.print(title=title,
+    description=contest_description, sitename=contest_name,
+    contest_url=contest_url, page_url=page_url) ]] [% import
+    "components/basejs.html" as basejs %] [[ basejs.print(firebaseapp_contest,
+    firebaseapp_contest_apikey, firebaseapp_contest_senderid) ]] [% import
+    "components/authjs.html" as authjs %] [[
+    authjs.print(redirect_login="",redirect_logout="", check_first=False) ]]
+
+    <!-- Load c3.css -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.11/c3.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+
+    <!-- Load d3.js and c3.js -->
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"
+      charset="utf-8"
+    ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.11/c3.min.js"></script>
+
+    <style>
+      h3,
+      h4 {
+        margin-top: 40px;
+      }
+      a.video-url {
+        margin-bottom: 0;
+        min-width: auto;
+        padding: 10px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      [% import "components/bodyheader.html" as bodyheader %] [[
+      bodyheader.print(title=title, contest_name=contest_name) ]]
+
+      <div ng-controller="AuthCtrl">
+        <div ng-controller="UserCtrl">
+          <div ng-hide="authLoaded && userLoaded">
+            <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+            <span class="sr-only">Loading...</span>
+            Loading...
+          </div>
+          <div
+            id="main-content"
+            class="hide"
+            ng-show="authLoaded && userLoaded"
+          >
+            <div ng-hide="existsUser">
+              <p class="color-error">存在しないユーザです。</p>
+            </div>
+
+            <div ng-show="suspendedUser">
+              <p class="color-error">このアカウントは一時停止中です。</p>
+            </div>
+            <div ng-show="deletedUser">
+              <p class="color-error">存在しないユーザです。</p>
+            </div>
+
+            <div
+              ng-if="(usersecretData.isAdmin) && (existsUser) && (!suspendedUser) && (!deletedUser)"
+            >
+              <p>
+                <strong>運営用</strong><br />
+                <a
+                  class="btn btn-error"
+                  style="margin: 1em"
+                  href="javascript:void(0);"
+                  ng-click="banUser('[[id]]', '/admin-api/user/ban?u=[[id]]&token=' + usersecretData.adminToken)"
+                >
+                  <i class="fa fa-ban"></i> このユーザーをBANする
+                </a>
+              </p>
+              <hr />
+            </div>
+            <div
+              ng-if="(usersecretData.isAdmin) && (existsUser) && (suspendedUser) && (!deletedUser)"
+            >
+              <p>
+                <strong>運営用</strong><br />
+                <a
+                  class="btn"
+                  style="margin: 1em"
+                  href="javascript:void(0);"
+                  ng-click="unbanUser('[[id]]', '/admin-api/user/unban?u=[[id]]&token=' + usersecretData.adminToken)"
+                >
+                  <i class="fa fa-check"></i> このユーザーのBANを解除する
+                </a>
+              </p>
+              <hr />
+            </div>
+
+            <div ng-show="existsUser && !suspendedUser && !deletedUser">
+              <h2>
+                {{ thisUserData.displayname }}
+                <span style="font-size: 60%; color: #999">[[id]]</span>
+                <i
+                  class="fa fa-check-circle"
+                  style="color: #3498db"
+                  title="認証済みアカウント"
+                  ng-if="thisUserData.isTriboxCustomer"
+                ></i>
+              </h2>
+
+              <table class="profile">
+                <tbody>
+                  <tr>
+                    <th>所属</th>
+                    <td>{{ thisUserData.organization }}</td>
+                  </tr>
+                  <tr ng-show="thisUserData.wcaId">
+                    <th>WCA</th>
+                    <td>
+                      <a
+                        href="https://www.worldcubeassociation.org/persons/{{ thisUserData.wcaId }}"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        >{{ thisUserData.wcaId }}</a
+                      >
+                    </td>
+                  </tr>
+                  <tr ng-show="thisUserData.wcaId">
+                    <th>国籍</th>
+                    <td>
+                      <span ng-show="!(thisUserData.iso2)">Loading...</span>
+                      <span ng-show="thisUserData.iso2">
+                        <img
+                          src="[[ url_for('static', filename='flags/flags-iso/shiny/24/[[thisUserData.iso2]].png') ]]"
+                          height="24"
+                          style="vertical-align: middle"
+                          ng-show="thisUserData.iso2"
+                        />
+                        {{ thisUserData.country }}
+                      </span>
+                    </td>
+                  </tr>
+                  <tr ng-show="thisUserData.twitterId">
+                    <th>Twitter</th>
+                    <td>
+                      <a
+                        href="https://twitter.com/{{ thisUserData.twitterId }}"
+                        target="_blank"
+                        >@{{ thisUserData.twitterId }}</a
+                      >
+                    </td>
+                  </tr>
+                  <tr ng-show="thisUserData.bio">
+                    <th>自己紹介</th>
+                    <td>{{ thisUserData.bio }}</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <h3>今シーズンのコンテスト参加履歴</h3>
+
+              <h4>競技一覧</h4>
+              <p ng-if="authData.uid == thisUsername.uid">
+                <span ng-repeat="toc in tocMyHtml">
+                  <span ng-show="$index != 0"> / </span>
+                  <a href="#{{ toc.eid | removeHead }}">{{ toc.name }}</a>
+                </span>
+              </p>
+              <p ng-if="authData.uid != thisUsername.uid">
+                <span ng-repeat="toc in tocHtml">
+                  <span ng-show="$index != 0"> / </span>
+                  <a href="#{{ toc.eid | removeHead }}">{{ toc.name }}</a>
+                </span>
+              </p>
+
+              <p><i class="fa fa-star color-star"></i>: 当選ポイント獲得</p>
+
+              <div ng-repeat="(eid, e) in events">
+                <div
+                  ng-if="(authData.uid == thisUsername.uid) || (authData.uid != thisUsername.uid && history[eid])"
+                >
+                  <h4 id="{{ eid | removeHead }}">
+                    <span
+                      class="cubing-icon event-{{ eid | removeHead }}"
+                      style="vertical-align: baseline"
+                    ></span>
+                    {{ events[eid].name }}
+                  </h4>
+
+                  <p>
+                    合計獲得シーズンポイント:
+                    <b>{{ sumSeasonPoint[eid] }}</b> ポイント
+                  </p>
+
+                  <table
+                    class="table table-bordered inProgress"
+                    style="width: auto"
+                    ng-if="authData.uid && authData.uid == thisUsername.uid"
+                  >
+                    <thead>
+                      <tr>
+                        <th>開催中</th>
+                        <th>参加状況</th>
+                        <th>記録</th>
+                        <th>ビデオURL</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>
+                          <a
+                            href="/contest/{{ inProgress.contest | removeHead }}"
+                            ng-show="!(inProgressContest._dummy)"
+                            >第{{ inProgressContest.number }}節</a
+                          >
+                        </td>
+                        <td
+                          class="color-success"
+                          ng-if="historyInProgress[eid]"
+                        >
+                          <i class="fa fa-check-circle"></i> 参加済み
+                        </td>
+                        <td
+                          class="color-error"
+                          ng-if="!(historyInProgress[eid])"
+                        >
+                          未参加
+                        </td>
+                        <td>
+                          <span ng-show="historyInProgress[eid]">
+                            {{ historyInProgress[eid].resultF }}
+                          </span>
+                        </td>
+                        <td>
+                          <span ng-show="historyInProgress[eid]">
+                            <input
+                              type="url"
+                              placeholder="URLを入力"
+                              class="form-control"
+                              style="width: auto; margin-bottom: 0"
+                              ng-model="videoUrlInput[eid]"
+                            />
+                            <a
+                              class="btn video-url"
+                              ng-click="updateVideoUrl(inProgress.contest, eid);"
+                              >登録</a
+                            >
+                            <span
+                              id="update-video-success-{{ eid }}"
+                              class="hide"
+                              >ビデオURLを登録しました。</span
+                            >
+                            <span
+                              id="update-video-error-{{ eid }}"
+                              class="color-error hide"
+                            ></span>
+                          </span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <p ng-show="historyInProgress[eid]">
+                    <i class="fa fa-hand-o-up" style="font-weight: bold"></i>
+                    <a
+                      href="https://support.google.com/youtube/answer/1270709?hl=ja"
+                      target="_blank"
+                      >動画の公開時刻を予約して</a
+                    >、 コンテストの終了時刻
+                    <i>{{ inProgressContest.endAt | toDate }}</i>
+                    にビデオが公開されるように設定してください。
+                  </p>
+
+                  <table
+                    class="table table-bordered result tribox-contest margin-bottom-40"
+                    ng-if="history[eid]"
+                  >
+                    <thead>
+                      <tr>
+                        <th></th>
+                        <th>順位</th>
+                        <th>獲得SP</th>
+                        <th
+                          ng-if="eid != 'e333fm' && (events[eid].method == 'average' || events[eid].method == 'mean')"
+                        >
+                          平均記録
+                        </th>
+                        <th
+                          ng-if="eid != 'e333fm' && events[eid].method == 'best'"
+                        >
+                          最高記録
+                        </th>
+                        <th ng-if="eid == 'e333fm'">記録</th>
+                        <th class="mb-hide" ng-if="eid != 'e333fm'">
+                          個々の記録
+                        </th>
+                        <th class="mb-hide" ng-if="eid == 'e333fm'">
+                          解答・解説コメント
+                        </th>
+                        <th>使用キューブ</th>
+                        <th><i class="fa fa-video-camera"></i></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr
+                        id="{{ eid }}-{{ c.contestId }}"
+                        ng-repeat="c in history[eid] | orderBy:'-contestId'"
+                      >
+                        <td>
+                          <a
+                            href="/contest/result/{{ c.contestId }}/{{ eid | removeHead }}"
+                            >第{{ c.contest.number }}節</a
+                          >
+                        </td>
+                        <td>
+                          {{ c.result.place }}
+                          <span class="lottery" ng-show="c.result.lottery">
+                            <i class="fa fa-star color-star"></i>
+                          </span>
+                        </td>
+                        <td
+                          ng-if="c.result.seasonPoint && c.result.seasonPoint != 0"
+                        >
+                          {{ c.result.seasonPoint }}
+                        </td>
+                        <td
+                          ng-if="!(c.result.seasonPoint) || c.result.seasonPoint == 0"
+                        ></td>
+                        <td>{{ c.result.resultF }}</td>
+                        <td class="mb-hide" ng-if="eid != 'e333fm'">
+                          {{ c.result.detailsF }}
+                        </td>
+                        <td
+                          class="mb-hide"
+                          ng-if="eid == 'e333fm'"
+                          id="e333fm-{{ c.contestId }}-show"
+                        >
+                          <a
+                            class="cursor-pointer"
+                            ng-click="showDetail(c.contestId)"
+                            >表示</a
+                          >
+                        </td>
+                        <td ng-show="c.result.puzzle.type == 'database'">
+                          <a
+                            href="http://store.tribox.com/products/detail.php?product_id={{ c.result.puzzle.product }}"
+                            target="_blank"
+                            >{{ c.result.puzzleF }}</a
+                          >
+                        </td>
+                        <td
+                          ng-show="c.result.puzzle.type == 'nodatabase' || c.result.puzzle.type == 'unknown'"
+                        >
+                          {{ c.result.puzzleF }}
+                        </td>
+                        <td ng-if="c.result.videoUrl">
+                          <a
+                            href="{{ c.result.videoUrl | encodeURI }}"
+                            target="_blank"
+                            ><i class="fa fa-video-camera"></i
+                          ></a>
+                          <i
+                            class="color-success fa fa-check-circle"
+                            ng-show="c.result.videoIsAccepted != null && c.result.videoIsAccepted == true"
+                            title="承認済み"
+                          ></i>
+                          <i
+                            class="color-error fa fa-ban"
+                            ng-show="c.result.videoIsAccepted != null && c.result.videoIsAccepted == false"
+                            title="非承認"
+                          ></i>
+                        </td>
+                        <td ng-if="!(c.result.videoUrl)"></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- 過去シーズン -->
+
+              <hr />
+              <h3>過去のシーズンのコンテスト参加履歴</h3>
+              <a
+                class="cursor-pointer btn btn-empty btn-success"
+                id="show-past-20232"
+                ng-click="showPastSeason(20232)"
+                >2023 後半期</a
+              >
+              <a
+                class="cursor-pointer btn btn-empty"
+                id="show-past-20231"
+                ng-click="showPastSeason(20231)"
+                >2023 前半期</a
+              >
+              <a
+                class="cursor-pointer btn btn-empty btn-success"
+                id="show-past-20222"
+                ng-click="showPastSeason(20222)"
+                >2022 後半期</a
+              >
+              <a
+                class="cursor-pointer btn btn-empty"
+                id="show-past-20221"
+                ng-click="showPastSeason(20221)"
+                >2022 前半期</a
+              >
+              <a
+                class="cursor-pointer btn btn-empty btn-success"
+                id="show-past-20212"
+                ng-click="showPastSeason(20212)"
+                >2021 後半期</a
+              >
+              <a
+                class="cursor-pointer btn btn-empty"
+                id="show-past-20211"
+                ng-click="showPastSeason(20211)"
+                >2021 前半期</a
+              >
+              <a
+                class="cursor-pointer btn btn-empty btn-success"
+                id="show-past-20202"
+                ng-click="showPastSeason(20202)"
+                >2020 後半期</a
+              >
+              <a
+                class="cursor-pointer btn btn-empty"
+                id="show-past-20201"
+                ng-click="showPastSeason(20201)"
+                >2020 前半期</a
+              >
+              <a
+                class="cursor-pointer btn btn-empty btn-success"
+                id="show-past-20192"
+                ng-click="showPastSeason(20192)"
+                >2019 後半期</a
+              >
+              <a
+                class="cursor-pointer btn btn-empty"
+                id="show-past-20191"
+                ng-click="showPastSeason(20191)"
+                >2019 前半期</a
+              >
+              <a
+                class="cursor-pointer btn btn-empty btn-success"
+                id="show-past-20182"
+                ng-click="showPastSeason(20182)"
+                >2018 後半期</a
+              >
+              <a
+                class="cursor-pointer btn btn-empty"
+                id="show-past-20181"
+                ng-click="showPastSeason(20181)"
+                >2018 前半期</a
+              >
+              <a
+                class="cursor-pointer btn btn-empty btn-success"
+                id="show-past-20172"
+                ng-click="showPastSeason(20172)"
+                >2017 後半期</a
+              >
+              <a
+                class="cursor-pointer btn btn-empty"
+                id="show-past-20171"
+                ng-click="showPastSeason(20171)"
+                >2017 前半期</a
+              >
+              <a
+                class="cursor-pointer btn btn-empty btn-success"
+                id="show-past-20162"
+                ng-click="showPastSeason(20162)"
+                >2016 後半期</a
+              >
+
+              <div ng-show="isShownPastSeason">
+                <h4>競技一覧</h4>
+                <p>
+                  <span ng-repeat="toc in tocHtmlPast">
+                    <span ng-show="$index != 0"> / </span>
+                    <a href="#past-{{ toc.eid | removeHead }}"
+                      >{{ toc.name }}</a
+                    >
+                  </span>
+                </p>
+
+                <p><i class="fa fa-star color-star"></i>: 当選ポイント獲得</p>
+
+                <div ng-repeat="(eid, e) in events">
+                  <div ng-if="historyPast[eid]">
+                    <h4 id="past-{{ eid | removeHead }}">
+                      <span
+                        class="cubing-icon event-{{ eid | removeHead }}"
+                        style="vertical-align: baseline"
+                      ></span>
+                      {{ events[eid].name }}
+                    </h4>
+
+                    <p>
+                      合計獲得シーズンポイント:
+                      <b>{{ sumSeasonPointPast[eid] }}</b> ポイント
+                    </p>
+
+                    <table
+                      class="table table-bordered result tribox-contest margin-bottom-40"
+                      ng-if="historyPast[eid]"
+                    >
+                      <thead>
+                        <tr>
+                          <th></th>
+                          <th>順位</th>
+                          <th>獲得SP</th>
+                          <th
+                            ng-if="eid != 'e333fm' && (events[eid].method == 'average' || events[eid].method == 'mean')"
+                          >
+                            平均記録
+                          </th>
+                          <th
+                            ng-if="eid != 'e333fm' && events[eid].method == 'best'"
+                          >
+                            最高記録
+                          </th>
+                          <th ng-if="eid == 'e333fm'">記録</th>
+                          <th class="mb-hide" ng-if="eid != 'e333fm'">
+                            個々の記録
+                          </th>
+                          <th class="mb-hide" ng-if="eid == 'e333fm'">
+                            解答・解説コメント
+                          </th>
+                          <th>使用キューブ</th>
+                          <th><i class="fa fa-video-camera"></i></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr
+                          id="{{ eid }}-{{ c.contestId }}"
+                          ng-repeat="c in historyPast[eid] | orderBy:'-contestId'"
+                        >
+                          <td>
+                            <a
+                              href="/contest/result/{{ c.contestId }}/{{ eid | removeHead }}"
+                              >第{{ c.contest.number }}節</a
+                            >
+                          </td>
+                          <td>
+                            {{ c.result.place }}
+                            <span class="lottery" ng-show="c.result.lottery">
+                              <i class="fa fa-star color-star"></i>
+                            </span>
+                          </td>
+                          <td
+                            ng-if="c.result.seasonPoint && c.result.seasonPoint != 0"
+                          >
+                            {{ c.result.seasonPoint }}
+                          </td>
+                          <td
+                            ng-if="!(c.result.seasonPoint) || c.result.seasonPoint == 0"
+                          ></td>
+                          <td>{{ c.result.resultF }}</td>
+                          <td class="mb-hide" ng-if="eid != 'e333fm'">
+                            {{ c.result.detailsF }}
+                          </td>
+                          <td
+                            class="mb-hide"
+                            ng-if="eid == 'e333fm'"
+                            id="e333fm-{{ c.contestId }}-show"
+                          >
+                            <a
+                              class="cursor-pointer"
+                              ng-click="showDetailPast(c.contestId)"
+                              >表示</a
+                            >
+                          </td>
+                          <td ng-show="c.result.puzzle.type == 'database'">
+                            <a
+                              href="http://store.tribox.com/products/detail.php?product_id={{ c.result.puzzle.product }}"
+                              target="_blank"
+                              >{{ c.result.puzzleF }}</a
+                            >
+                          </td>
+                          <td
+                            ng-show="c.result.puzzle.type == 'nodatabase' || c.result.puzzle.type == 'unknown'"
+                          >
+                            {{ c.result.puzzleF }}
+                          </td>
+                          <td ng-if="c.result.videoUrl">
+                            <a
+                              href="{{ c.result.videoUrl | encodeURI }}"
+                              target="_blank"
+                              ><i class="fa fa-video-camera"></i
+                            ></a>
+                            <i
+                              class="color-success fa fa-check-circle"
+                              ng-show="c.result.videoIsAccepted != null && c.result.videoIsAccepted == true"
+                              title="承認済み"
+                            ></i>
+                            <i
+                              class="color-error fa fa-ban"
+                              ng-show="c.result.videoIsAccepted != null && c.result.videoIsAccepted == false"
+                              title="非承認"
+                            ></i>
+                          </td>
+                          <td ng-if="!(c.result.videoUrl)"></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              <!--<p>[[id]] -> thisUserData:</p>
+        <pre>{{ thisUserData | json }}</pre>
+        <p>[[id]] -> thisUsername:</p>
+        <pre>{{ thisUsername | json }}</pre>-->
+
+              <!--<p>history:</p>
+        <pre>{{ history | json }}</pre>-->
+
+              <!--<p>historyInProgress:</p>
+        <pre>{{ historyInProgress | json }}</pre>-->
+
+              <!--<p>tocHtml:</p>
+        <pre>{{ tocHtml | json }}</pre>-->
+
+              <!--<p>videoUrlInput:</p>
+        <pre>{{ videoUrlInput | json }}</pre>-->
+
+              <!--<p>events:</p>
+        <pre>{{ events | json }}</pre>-->
+
+              <!--<p>inProgress:</p>
+        <pre>{{ inProgress | json }}</pre>-->
+
+              <!--<p>inProgressContest:</p>
+        <pre>{{ inProgressContest | json }}</pre>-->
+
+              <!--<p>contests:</p>
+        <pre>{{ contests | json }}</pre>-->
+
+              <!--<p>authData:</p>
+        <pre>{{ authData | json }}</pre>
+        <p>userData:</p>
+        <pre>{{ userData | json }}</pre>
+        <p>usersecretData:</p>
+        <pre>{{ usersecretData | json }}</pre>-->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      [% include "components/bodyfooter.html" %]
+
+      <script>
+        app.controller("UserCtrl", [
+          "$scope",
+          "$timeout",
+          function ($scope, $timeout) {
+            $scope.thisUserData = null;
+            $scope.thisUsername = null;
+            $scope.userLoaded = false;
+            $scope.existsUser = false;
+            $scope.suspendedUser = false;
+            $scope.deletedUser = false;
+
+            $scope.events = null;
+            $scope.inProgress = null;
+            $scope.inProgressContest = null;
+            $scope.contests = null;
+            $scope.contestsArray = [];
+
+            $scope.history = {};
+            $scope.historyInProgress = {};
+            $scope.sumSeasonPoint = {};
+            $scope.videoUrlInput = {};
+            $scope.tocHtml = [];
+            $scope.tocMyHtml = [];
+
+            $scope.historyPast = {};
+            $scope.sumSeasonPointPast = {};
+            $scope.tocHtmlPast = [];
+
+            contestRef
+              .child("usernames")
+              .child("[[id]]")
+              .once(
+                "value",
+                function (snapUsername) {
+                  if (
+                    snapUsername.exists() &&
+                    snapUsername.val().uid != null &&
+                    snapUsername.val()._dummy == null &&
+                    !snapUsername.val().disabledAt
+                  ) {
+                    var userId = snapUsername.val().uid;
+
+                    contestRef
+                      .child("users")
+                      .child(userId)
+                      .once("value", function (snapUser) {
+                        var user = snapUser.val();
+
+                        contestRef
+                          .child("events")
+                          .once("value", function (snapEvents) {
+                            var events = snapEvents.val();
+
+                            contestRef
+                              .child("inProgress")
+                              .once("value", function (snapInProgress) {
+                                var inProgress = snapInProgress.val();
+
+                                contestRef
+                                  .child("contests")
+                                  .once("value", function (snapContests) {
+                                    var contests = snapContests.val();
+
+                                    contestRef
+                                      .child("userhistories")
+                                      .child(userId)
+                                      .once(
+                                        "value",
+                                        function (snapUserhistories) {
+                                          var userHistories =
+                                            snapUserhistories.val();
+
+                                          // 最新のコンテスト
+                                          var inProgressContest =
+                                            contests[inProgress.contest];
+                                          // 最新のコンテストの参加有無
+                                          firebase
+                                            .auth()
+                                            .onAuthStateChanged(function (
+                                              authData
+                                            ) {
+                                              if (
+                                                authData &&
+                                                authData.uid == userId
+                                              ) {
+                                                Object.keys(events).forEach(
+                                                  function (eid) {
+                                                    contestRef
+                                                      .child("results")
+                                                      .child(inProgress.contest)
+                                                      .child(eid)
+                                                      .child(userId)
+                                                      .once(
+                                                        "value",
+                                                        function (snapResult) {
+                                                          $timeout(function () {
+                                                            if (
+                                                              snapResult.exists() &&
+                                                              snapResult.val()
+                                                                .endAt
+                                                            ) {
+                                                              var r =
+                                                                snapResult.val();
+                                                              $scope.historyInProgress[
+                                                                eid
+                                                              ] = r;
+                                                              if (
+                                                                eid != "e333fm"
+                                                              ) {
+                                                                $scope.historyInProgress[
+                                                                  eid
+                                                                ].resultF =
+                                                                  TriboxContest.formatResult(
+                                                                    r,
+                                                                    eid,
+                                                                    events
+                                                                  );
+                                                              } else {
+                                                                $scope.historyInProgress[
+                                                                  eid
+                                                                ].resultF =
+                                                                  "コンテスト終了時に発表";
+                                                              }
+                                                              $scope.videoUrlInput[
+                                                                eid
+                                                              ] = r.videoUrl;
+                                                            } else {
+                                                              $scope.historyInProgress[
+                                                                eid
+                                                              ] = null;
+                                                            }
+                                                          });
+                                                        }
+                                                      );
+                                                  }
+                                                );
+                                              }
+
+                                              // 各競技のシーズンポイント初期化
+                                              Object.keys(events).forEach(
+                                                function (eid) {
+                                                  $timeout(function () {
+                                                    $scope.sumSeasonPoint[
+                                                      eid
+                                                    ] = 0;
+                                                    $scope.tocMyHtml.push({
+                                                      eid: eid,
+                                                      name: events[eid].name,
+                                                    });
+                                                  });
+                                                }
+                                              );
+
+                                              Object.keys(events).forEach(
+                                                function (eid) {
+                                                  Object.keys(contests).forEach(
+                                                    function (cid) {
+                                                      // 現在のシーズンのコンテストのみ
+                                                      if (
+                                                        inProgressContest.year ==
+                                                          contests[cid].year &&
+                                                        inProgressContest.season ==
+                                                          contests[cid].season
+                                                      ) {
+                                                        // ユーザが完了済みのコンテストのみ
+                                                        if (
+                                                          userHistories &&
+                                                          cid in
+                                                            userHistories &&
+                                                          eid in
+                                                            userHistories[
+                                                              cid
+                                                            ] &&
+                                                          userHistories[cid][
+                                                            eid
+                                                          ].hasCompeted == true
+                                                        ) {
+                                                          // 必要な分の結果だけ読み込む
+                                                          contestRef
+                                                            .child("results")
+                                                            .child(cid)
+                                                            .child(eid)
+                                                            .child(userId)
+                                                            .once(
+                                                              "value",
+                                                              function (
+                                                                snapResult
+                                                              ) {
+                                                                var result =
+                                                                  snapResult.val();
+                                                                if (
+                                                                  result != null
+                                                                ) {
+                                                                  if (
+                                                                    !result._dummy &&
+                                                                    result.endAt
+                                                                  ) {
+                                                                    result.resultF =
+                                                                      TriboxContest.formatResult(
+                                                                        result,
+                                                                        eid,
+                                                                        events
+                                                                      );
+                                                                    result.detailsF =
+                                                                      TriboxContest.formatDetails(
+                                                                        result,
+                                                                        eid,
+                                                                        events
+                                                                      );
+                                                                    result.puzzleF =
+                                                                      TriboxContest.formatPuzzle(
+                                                                        result
+                                                                      );
+                                                                    $timeout(
+                                                                      function () {
+                                                                        if (
+                                                                          !(
+                                                                            eid in
+                                                                            $scope.history
+                                                                          )
+                                                                        ) {
+                                                                          $scope.history[
+                                                                            eid
+                                                                          ] =
+                                                                            [];
+                                                                          $scope.tocHtml.push(
+                                                                            {
+                                                                              eid: eid,
+                                                                              name: events[
+                                                                                eid
+                                                                              ]
+                                                                                .name,
+                                                                            }
+                                                                          );
+                                                                        }
+                                                                        $scope.history[
+                                                                          eid
+                                                                        ].push({
+                                                                          contestId:
+                                                                            contests[
+                                                                              cid
+                                                                            ]
+                                                                              .contestId,
+                                                                          contest:
+                                                                            contests[
+                                                                              cid
+                                                                            ],
+                                                                          result:
+                                                                            result,
+                                                                        });
+                                                                        if (
+                                                                          result.seasonPoint
+                                                                        ) {
+                                                                          $scope.sumSeasonPoint[
+                                                                            eid
+                                                                          ] +=
+                                                                            result.seasonPoint;
+                                                                        }
+                                                                      }
+                                                                    );
+                                                                  }
+                                                                }
+                                                              }
+                                                            );
+                                                        }
+                                                      }
+                                                    }
+                                                  );
+                                                }
+                                              );
+
+                                              $timeout(function () {
+                                                $scope.thisUserData =
+                                                  snapUser.val();
+                                                $scope.thisUsername =
+                                                  snapUsername.val();
+                                                $scope.events = events;
+                                                $scope.inProgress = inProgress;
+                                                $scope.inProgressContest =
+                                                  inProgressContest;
+                                                $scope.contests = contests;
+                                                Object.keys(contests).forEach(
+                                                  function (cid) {
+                                                    $scope.contestsArray.push(
+                                                      contests[cid]
+                                                    );
+                                                  }
+                                                );
+
+                                                if (
+                                                  snapUser.val().isSuspended
+                                                ) {
+                                                  $scope.suspendedUser = true;
+                                                }
+                                                if (snapUser.val().isDeleted) {
+                                                  $scope.deletedUser = true;
+                                                }
+                                                $scope.existsUser = true;
+                                                $scope.userLoaded = true;
+
+                                                angular
+                                                  .element(
+                                                    document.getElementById(
+                                                      "main-content"
+                                                    )
+                                                  )
+                                                  .removeClass("hide");
+                                              });
+
+                                              if (snapUser.val().wcaId) {
+                                                wcaRef
+                                                  .child("persons")
+                                                  .child(snapUser.val().wcaId)
+                                                  .once(
+                                                    "value",
+                                                    function (snapPerson) {
+                                                      if (snapPerson.exists()) {
+                                                        wcaRef
+                                                          .child("countries")
+                                                          .child(
+                                                            snapPerson.val()
+                                                              .countryId
+                                                          )
+                                                          .once(
+                                                            "value",
+                                                            function (
+                                                              snapCountry
+                                                            ) {
+                                                              if (
+                                                                snapCountry.exists()
+                                                              ) {
+                                                                $timeout(
+                                                                  function () {
+                                                                    $scope.thisUserData.country =
+                                                                      snapCountry.val().name;
+                                                                    $scope.thisUserData.iso2 =
+                                                                      snapCountry.val().iso2;
+                                                                  }
+                                                                );
+                                                              }
+                                                            }
+                                                          );
+                                                      }
+                                                    }
+                                                  );
+                                              }
+                                            }); // onAuthStateChange
+                                        }
+                                      );
+                                  });
+                              });
+                          });
+                      });
+                  } else {
+                    console.error("Invalid username: [[id]]");
+                    $scope.userLoaded = true;
+                  }
+                },
+                function (error) {
+                  console.error(error);
+                }
+              );
+
+            var showDetailList = [];
+            $scope.showDetail = function (contestId) {
+              var r;
+              $scope.history["e333fm"].forEach(function (c) {
+                if (c.contestId == contestId) {
+                  r = c.result;
+                  return;
+                }
+              });
+
+              var acceptedHtml = "<br>";
+              if (r.details[0].noteIsAccepted != null) {
+                if (r.details[0].noteIsAccepted == true) {
+                  acceptedHtml =
+                    ' <span class="color-success"><i class="fa fa-check-circle"></i> 承認済み</span><br>';
+                } else {
+                  acceptedHtml =
+                    ' <span class="color-error"><i class="fa fa-ban"></i> 非承認</span><br>';
+                }
+              }
+
+              if (!showDetailList[contestId]) {
+                showDetailList[contestId] = true;
+                var html =
+                  '<tr id="fmc-detail-' +
+                  contestId +
+                  '" class="fmc-detail"><td colspan="6">' +
+                  "<p><b>解答:</b><br>" +
+                  TriboxContest.escapeHTML(r.details[0].solution) +
+                  "</p>" +
+                  "<p><b>解説コメント:</b>" +
+                  acceptedHtml +
+                  TriboxContest.escapeHTML(r.details[0].note) +
+                  "</p>";
+                angular
+                  .element(document.getElementById("e333fm-" + contestId))
+                  .after(html);
+                //angular.element(document.getElementById('e333fm-' + contestId + '-show')).text('表示済み');
+                fadeIn(document.getElementById("fmc-detail-" + contestId));
+              } else {
+                showDetailList[contestId] = false;
+                angular
+                  .element(document.getElementById("fmc-detail-" + contestId))
+                  .remove();
+              }
+            };
+
+            /* 過去のシーズン表示用 */
+            $scope.isShownPastSeason = false;
+            var showingSeason = "";
+            $scope.showPastSeason = function (season) {
+              // ボタン表示
+              var btnClickDOM = document.getElementById("show-past-" + season);
+              var btnPastDOM = document.getElementById(
+                "show-past-" + showingSeason
+              );
+              angular.element(btnClickDOM).removeClass("btn-empty");
+              angular.element(btnPastDOM).addClass("btn-empty");
+              showingSeason = season;
+
+              $scope.historyPast = {};
+              $scope.sumSeasonPointPast = {};
+              $scope.tocHtmlPast = [];
+
+              contestRef
+                .child("usernames")
+                .child("[[id]]")
+                .once(
+                  "value",
+                  function (snapUsername) {
+                    if (
+                      snapUsername.exists() &&
+                      snapUsername.val().uid != null &&
+                      snapUsername.val()._dummy == null &&
+                      !snapUsername.val().disabledAt
+                    ) {
+                      var userId = snapUsername.val().uid;
+
+                      contestRef
+                        .child("users")
+                        .child(userId)
+                        .once("value", function (snapUser) {
+                          var user = snapUser.val();
+
+                          contestRef
+                            .child("events")
+                            .once("value", function (snapEvents) {
+                              var events = snapEvents.val();
+
+                              contestRef
+                                .child("contests")
+                                .once("value", function (snapContests) {
+                                  var contests = snapContests.val();
+
+                                  contestRef
+                                    .child("userhistories")
+                                    .child(userId)
+                                    .once(
+                                      "value",
+                                      function (snapUserhistories) {
+                                        var userHistories =
+                                          snapUserhistories.val();
+
+                                        // 各競技のシーズンポイント初期化
+                                        Object.keys(events).forEach(function (
+                                          eid
+                                        ) {
+                                          $timeout(function () {
+                                            // 過去のシーズン
+                                            $scope.sumSeasonPointPast[eid] = 0;
+                                          });
+                                        });
+
+                                        Object.keys(events).forEach(function (
+                                          eid
+                                        ) {
+                                          Object.keys(contests).forEach(
+                                            function (cid) {
+                                              // 過去のシーズン
+                                              if (cid.substr(1, 5) == season) {
+                                                // ユーザが完了済みのコンテストのみ
+                                                if (
+                                                  userHistories &&
+                                                  cid in userHistories &&
+                                                  eid in userHistories[cid] &&
+                                                  userHistories[cid][eid]
+                                                    .hasCompeted == true
+                                                ) {
+                                                  // 必要な分の結果だけ読み込む
+                                                  contestRef
+                                                    .child("results")
+                                                    .child(cid)
+                                                    .child(eid)
+                                                    .child(userId)
+                                                    .once(
+                                                      "value",
+                                                      function (snapResult) {
+                                                        var result =
+                                                          snapResult.val();
+                                                        if (result != null) {
+                                                          if (
+                                                            !result._dummy &&
+                                                            result.endAt
+                                                          ) {
+                                                            result.resultF =
+                                                              TriboxContest.formatResult(
+                                                                result,
+                                                                eid,
+                                                                events
+                                                              );
+                                                            result.detailsF =
+                                                              TriboxContest.formatDetails(
+                                                                result,
+                                                                eid,
+                                                                events
+                                                              );
+                                                            result.puzzleF =
+                                                              TriboxContest.formatPuzzle(
+                                                                result
+                                                              );
+                                                            $timeout(
+                                                              function () {
+                                                                if (
+                                                                  !(
+                                                                    eid in
+                                                                    $scope.historyPast
+                                                                  )
+                                                                ) {
+                                                                  $scope.historyPast[
+                                                                    eid
+                                                                  ] = [];
+                                                                  $scope.tocHtmlPast.push(
+                                                                    {
+                                                                      eid: eid,
+                                                                      name: events[
+                                                                        eid
+                                                                      ].name,
+                                                                    }
+                                                                  );
+                                                                }
+                                                                $scope.historyPast[
+                                                                  eid
+                                                                ].push({
+                                                                  contestId:
+                                                                    contests[
+                                                                      cid
+                                                                    ].contestId,
+                                                                  contest:
+                                                                    contests[
+                                                                      cid
+                                                                    ],
+                                                                  result:
+                                                                    result,
+                                                                });
+                                                                if (
+                                                                  result.seasonPoint
+                                                                ) {
+                                                                  $scope.sumSeasonPointPast[
+                                                                    eid
+                                                                  ] +=
+                                                                    result.seasonPoint;
+                                                                }
+                                                              }
+                                                            );
+                                                          }
+                                                        }
+                                                      }
+                                                    );
+                                                }
+                                              }
+                                            }
+                                          );
+                                        });
+                                      }
+                                    );
+                                });
+                            });
+                        });
+                    } else {
+                      console.error("Invalid username: [[id]]");
+                      $scope.userLoaded = true;
+                    }
+                  },
+                  function (error) {
+                    console.error(error);
+                  }
+                );
+
+              $timeout(function () {
+                $scope.isShownPastSeason = true;
+              });
+            };
+
+            /* 過去のシーズン用 */
+            var showDetailListPast = [];
+            $scope.showDetailPast = function (contestId) {
+              var r;
+              $scope.historyPast["e333fm"].forEach(function (c) {
+                if (c.contestId == contestId) {
+                  r = c.result;
+                  return;
+                }
+              });
+
+              var acceptedHtml = "<br>";
+              if (r.details[0].noteIsAccepted != null) {
+                if (r.details[0].noteIsAccepted == true) {
+                  acceptedHtml =
+                    ' <span class="color-success"><i class="fa fa-check-circle"></i> 承認済み</span><br>';
+                } else {
+                  acceptedHtml =
+                    ' <span class="color-error"><i class="fa fa-ban"></i> 非承認</span><br>';
+                }
+              }
+
+              if (!showDetailListPast[contestId]) {
+                showDetailListPast[contestId] = true;
+                var html =
+                  '<tr id="fmc-detail-' +
+                  contestId +
+                  '" class="fmc-detail"><td colspan="6">' +
+                  "<p><b>解答:</b><br>" +
+                  TriboxContest.escapeHTML(r.details[0].solution) +
+                  "</p>" +
+                  "<p><b>解説コメント:</b>" +
+                  acceptedHtml +
+                  TriboxContest.escapeHTML(r.details[0].note) +
+                  "</p>";
+                angular
+                  .element(document.getElementById("e333fm-" + contestId))
+                  .after(html);
+                //angular.element(document.getElementById('e333fm-' + contestId + '-show')).text('表示済み');
+                fadeIn(document.getElementById("fmc-detail-" + contestId));
+              } else {
+                showDetailListPast[contestId] = false;
+                angular
+                  .element(document.getElementById("fmc-detail-" + contestId))
+                  .remove();
+              }
+            };
+
+            $scope.updateVideoUrl = function (contestId, eventId) {
+              var successDOM = document.getElementById(
+                "update-video-success-" + eventId
+              );
+              var errorDOM = document.getElementById(
+                "update-video-error-" + eventId
+              );
+
+              angular.element(successDOM).addClass("hide");
+              angular.element(errorDOM).addClass("hide");
+              angular.element(successDOM).removeClass("block");
+              angular.element(errorDOM).addClass("block");
+
+              if (!$scope.videoUrlInput[eventId]) {
+                angular.element(errorDOM).text("URLを入力してください。");
+                angular.element(errorDOM).addClass("block");
+                angular.element(errorDOM).removeClass("hide");
+                return;
+              }
+              if (
+                TriboxContest.INPUT_LENGTH.videoUrl.max <
+                $scope.videoUrlInput[eventId].length
+              ) {
+                angular
+                  .element(errorDOM)
+                  .text(
+                    "URLは" +
+                      TriboxContest.INPUT_LENGTH.videoUrl.max +
+                      "文字以下で入力してください。"
+                  );
+                angular.element(errorDOM).addClass("block");
+                angular.element(errorDOM).removeClass("hide");
+                return;
+              }
+
+              firebase.auth().onAuthStateChanged(function (authData) {
+                if (authData && authData.uid == $scope.thisUsername.uid) {
+                  contestRef
+                    .child("results")
+                    .child(contestId)
+                    .child(eventId)
+                    .child(authData.uid)
+                    .update(
+                      {
+                        videoUrl: $scope.videoUrlInput[eventId],
+                      },
+                      function (error) {
+                        if (error) {
+                          console.error(error);
+                        } else {
+                          angular.element(successDOM).addClass("block");
+                          angular.element(successDOM).removeClass("hide");
+                        }
+                      }
+                    );
+                }
+              }); // onAuthStateChange
+            };
+
+            $scope.banUser = function (username, url) {
+              var ok = confirm(
+                "【確認】ユーザー名 (" + username + ") をBANしますか？"
+              );
+              if (ok) {
+                window.open(url, "_blank");
+              }
+            };
+
+            $scope.unbanUser = function (username, url) {
+              var ok = confirm(
+                "【確認】ユーザー名 (" + username + ") のBANを解除しますか？"
+              );
+              if (ok) {
+                window.open(url, "_blank");
+              }
+            };
+          },
+        ]);
+      </script>
+      <script
+        type="text/javascript"
+        src="@routes.DynamicJsController.products"
+      ></script>
+    </div>
+  </body>
+</html>
