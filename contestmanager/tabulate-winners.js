@@ -188,7 +188,8 @@ var checkWinners = function() {
             'eminx':  [10000, 5000, 3000],
             'epyram': [15000, 7500, 4000],
             'esq1':   [10000, 5000, 3000],
-            'eskewb': [15000, 7500, 4000]
+            'eskewb': [15000, 7500, 4000],
+            'eclock': [10000, 5000, 3000],
         };
         Object.keys(Events).forEach(function(eventId) {
             for (var i = 0; i < 3; i++) {
