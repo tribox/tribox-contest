@@ -215,12 +215,19 @@ node contestmanager/update-wcaapp.js
 
 #### 種目を追加する
 
+##### 種目が追加されたシーズンが開始するまでに
+
 (1) `contestmanager/add-XXX.js` を作成して、種目追加スクリプトを用意する。  
 (2) (1) を実行する。  
 (3) `contestmanager/create-season.js` のデフォルトの競技を変更（追加）する。  
 (4) `app/controllers/ContestController.scala` のパズルのカテゴリを変更（追加）する。  
 (5) `contestmanager/create-season.js` を実行する（詳細なやり方は上の方に書いてある）。  
-(6) `contentmanager/config.js` (sampleも) の当選者数を設定する。
+(6) `app/views/about.scala.html` の追加種目部分を編集する。  
+(7) `contestmanager/config.js` (sampleも) の当選者数を設定する。  
+
+##### 種目が追加されたシーズンが終了するまでに
+
+(8) `contestmanager/tabulate-winners.js` に入賞ポイントを設定する。  
 
 
 ## Abuse 関係
