@@ -1,0 +1,149 @@
+[% set title = "Login" %] [% set page_url = contest_url + '/login' %]
+
+<!DOCTYPE html>
+<html lang="ja" ng-app="contestApp">
+  <head
+    prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#"
+  >
+    [% import "components/header.html" as header %] [[ header.print(title=title,
+    description=contest_description, sitename=contest_name,
+    contest_url=contest_url, page_url=page_url) ]] [% import
+    "components/basejs.html" as basejs %] [[ basejs.print(firebaseapp_contest,
+    firebaseapp_contest_apikey, firebaseapp_contest_senderid) ]][% import
+    "components/authjs.html" as authjs %] [[ authjs.print(redirect_login="",
+    redirect_logout="", check_first=False) ]]
+
+    <script>
+      app.controller("AuthLoginCtrl", [
+        "$scope",
+        "$timeout",
+        "Auth",
+        function ($scope, $timeout, Auth) {
+          firebase.auth().onAuthStateChanged(function (authData) {
+            if (!authData) {
+              var vars = getUrlVars();
+              if (vars.join) {
+                $timeout(function () {
+                  $scope.afterJoin = true;
+                });
+              }
+            }
+          }); // onAuthStateChange
+
+          $scope.login = function () {
+            $scope.message = null;
+            $scope.error = null;
+
+            Auth.$signInWithEmailAndPassword($scope.email, $scope.password)
+              .then(function (authData) {
+                // Get users list from DB
+                contestRef
+                  .child("users")
+                  .child(authData.user.uid)
+                  .on(
+                    "value",
+                    function (snapshot) {
+                      if (snapshot.exists()) {
+                        // Second or more time of login because user data exists
+                        contestRef
+                          .child("usersecrets")
+                          .child(authData.user.uid)
+                          .update(
+                            {
+                              loggedinAt:
+                                firebase.database.ServerValue.TIMESTAMP,
+                            },
+                            function (error) {
+                              if (error) {
+                                console.err(error);
+                                Auth.$signOut();
+                              } else {
+                                console.log(
+                                  "Logged in as: " + authData.user.uid
+                                );
+                                location.href = "[[ url_for('index') ]]";
+                              }
+                            }
+                          );
+                      } else {
+                        // First login because no user data yet
+                        console.log(
+                          "Logged in as: " +
+                            authData.user.uid +
+                            " (first login)"
+                        );
+                        location.href = "[[ url_for('setting_first') ]]";
+                      }
+                    },
+                    function (error) {
+                      Auth.$signOut();
+                      $scope.error = error;
+                    }
+                  );
+              })
+              .catch(function (error) {
+                $scope.error = TriboxContest.convErrorCodes(error.code);
+              });
+          };
+        },
+      ]);
+    </script>
+  </head>
+
+  <body>
+    <div class="container">
+      [% import "components/bodyheader.html" as bodyheader %] [[
+      bodyheader.print(title=title, contest_name=contest_name) ]]
+
+      <div ng-controller="AuthCtrl">
+        <div ng-controller="AuthLoginCtrl">
+          <div ng-hide="authLoaded">
+            <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+            <span class="sr-only">Loading...</span>
+            Loading...
+          </div>
+          <div ng-show="authLoaded">
+            <h2>ログイン</h2>
+
+            <!--<div class="color-dark margin-bottom-20" ng-if="message">
+                Message: {{ message }}
+            </div>-->
+
+            <div class="notice-success margin-bottom-20" ng-if="afterJoin">
+              <i class="fa fa-check"></i>
+              新規ユーザ登録が完了しました。ログインしてください。
+            </div>
+            <div class="color-error margin-bottom-20" ng-if="error">
+              エラー: {{ error }}
+            </div>
+
+            <form name="loginForm" ng-submit="login()">
+              <div>
+                <label>メールアドレス</label>
+                <input class="form-control" type="email" ng-model="email" />
+              </div>
+              <div>
+                <label>パスワード</label>
+                <input
+                  class="form-control"
+                  type="password"
+                  ng-model="password"
+                />
+              </div>
+              <input class="btn" type="submit" value="ログイン" />
+            </form>
+
+            <p>
+              <a href="/forgot">パスワードを忘れましたか？</a>
+            </p>
+            <p>
+              <a href="[[ url_for('join') ]]">アカウントを新規作成する</a>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      [% include "components/bodyfooter.html" %]
+    </div>
+  </body>
+</html>
