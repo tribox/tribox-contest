@@ -1,4 +1,4 @@
-[% macro print(firebaseapp_contest, firebaseapp_contest_apikey, firebaseapp_contest_messagingsenderid, firebaseapp_wca='') -%]
+[% macro print(firebaseapp_contest, firebaseapp_contest_apikey, firebaseapp_contest_senderid, firebaseapp_wca='') -%]
 
 <script>
     window.TriboxContest = {};
@@ -219,7 +219,7 @@
         databaseURL: "https://[[ firebaseapp_contest ]].firebaseio.com",
         projectId: "[[ firebaseapp_contest ]]",
         storageBucket: "[[ firebaseapp_contest ]].appspot.com",
-        messagingSenderId: "[[ firebaseapp_contest_messagingsenderid ]]"
+        messagingSenderId: "[[ firebaseapp_contest_senderid ]]"
     };
     firebase.initializeApp(config);
     var contestRef = firebase.database().ref();
