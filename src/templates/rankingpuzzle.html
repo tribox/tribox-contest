@@ -1,0 +1,381 @@
+[% set title = "Puzzle Ranking " + sid[0:4] + " " + sid[4:5] + "H" %] [% set
+page_url = contest_url + "ranking/" + sid + "/puzzle" %]
+
+<!DOCTYPE html>
+<html lang="ja" ng-app="contestApp">
+  <head
+    prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#"
+  >
+    [% import "components/header.html" as header %] [[ header.print(title=title,
+    description=contest_description, sitename=contest_name,
+    contest_url=contest_url, page_url=page_url) ]]
+
+    <!-- Load c3.css -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.11/c3.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+
+    <!-- Load d3.js and c3.js -->
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"
+      charset="utf-8"
+    ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.11/c3.min.js"></script>
+
+    [% import "components/basejs.html" as basejs %] [[
+    basejs.print(firebaseapp_contest, firebaseapp_contest_apikey,
+    firebaseapp_contest_senderid, firebaseapp_wca) ]]
+
+    <style>
+      h3,
+      h4 {
+        margin-top: 40px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      [% import "components/bodyheader.html" as bodyheader %] [[
+      bodyheader.print(title=title, contest_name=contest_name) ]]
+
+      <div ng-controller="AuthCtrl">
+        <div ng-controller="RankingPuzzleCtrl">
+          <div ng-hide="authLoaded && rankingPuzzleLoaded">
+            <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+            <span class="sr-only">Loading...</span>
+            Loading...
+          </div>
+          <div ng-show="authLoaded && rankingPuzzleLoaded">
+            [% import "components/authinfo.html" as authinfo %] [[
+            authinfo.print() ]]
+
+            <div ng-hide="existsSeason">
+              <p class="color-error">存在しないシーズンです。</p>
+            </div>
+
+            <div ng-show="existsSeason">
+              <h2>{{ seasonName }} キューブ使用率ランキング</h2>
+
+              <p>
+                集計対象コンテスト:<br />
+                <b>{{ targetContestFrom.contestName }}</b> ({{
+                targetContestFrom.beginAt | toDateShort }} 開始) ~
+                <b>{{ targetContestTo.contestName }}</b> ({{
+                targetContestTo.endAt | toDateShort }} 終了)
+              </p>
+              <p>
+                対象者:<br />
+                <b>入賞者 (シーズンポイント獲得者)</b><br />
+              </p>
+
+              <p>
+                <a href="@routes.RankingController.rankingpuzzleall(sid)"
+                  ><i class="fa fa-pie-chart"></i>
+                  参加者全員のキューブ使用率ランキング</a
+                >
+                に切り替える
+              </p>
+
+              <h4>競技一覧</h4>
+              <p>
+                <span ng-repeat="(eid, e) in events">
+                  <span ng-show="$index != 0"> / </span>
+                  <a href="#{{ eid | removeHead }}">{{ events[eid].name }}</a>
+                </span>
+              </p>
+
+              <div ng-repeat="(eid, e) in events">
+                <h4 id="{{ eid | removeHead }}">
+                  <span
+                    class="cubing-icon event-{{ eid | removeHead }}"
+                    style="vertical-align: baseline"
+                  ></span>
+                  {{ events[eid].name }}
+                </h4>
+
+                <div class="row">
+                  <div class="col sm-4">
+                    <ol>
+                      <li ng-repeat="p in usedPuzzlesSummary[eid]">
+                        <a
+                          href="http://store.tribox.com/products/detail.php?product_id={{ p.productId }}"
+                          target="_blank"
+                          ng-show="p.productId != -1"
+                        >
+                          {{ p.productName }}
+                        </a>
+                        <span ng-show="p.productId == -1"> その他 </span>
+                        ({{ p.percentage }}%)
+                      </li>
+                    </ol>
+                  </div>
+                  <div class="col sm-8">
+                    <div id="chart-{{ eid }}"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      [% include "components/bodyfooter.html" %] [% import
+      "components/authjs.html" as authjs %] [[ authjs.print(redirect_login="",
+      redirect_logout="", check_first=True) ]]
+
+      <script>
+        var chart = {};
+        var drawChart = function (eid, data) {
+          if (0 < data.length) {
+            chart[eid] = c3.generate({
+              bindto: "#chart-" + eid,
+              data: {
+                columns: data,
+                type: "pie",
+                order: null,
+              },
+              size: {
+                height: 240,
+              },
+            });
+          }
+        };
+
+        app.controller("RankingPuzzleCtrl", [
+          "$scope",
+          "$timeout",
+          function ($scope, $timeout) {
+            $scope.rankingPuzzleLoaded = false;
+            $scope.existsSeason = false;
+
+            $scope.seasonName = null;
+            $scope.targetContestFrom = null;
+            $scope.targetContestTo = null;
+            $scope.events = null;
+            $scope.resultsPuzzlesSummary = null;
+
+            contestRef.child("events").once("value", function (snapEvents) {
+              var events = snapEvents.val();
+
+              contestRef.child("users").once("value", function (snapUsers) {
+                var users = snapUsers.val();
+
+                contestRef
+                  .child("inProgress")
+                  .once("value", function (snapInProgress) {
+                    var inProgress = snapInProgress.val();
+
+                    contestRef
+                      .child("contests")
+                      .once("value", function (snapContests) {
+                        var contests = snapContests.val();
+
+                        var seasonName = "";
+                        var targetContests = [];
+                        var targetContestFrom = "";
+                        var targetContestTo = "";
+                        Object.keys(contests).forEach(function (cid) {
+                          if (
+                            "" + contests[cid].year + contests[cid].season ==
+                            "[[ sid ]]"
+                          ) {
+                            if (cid < inProgress.contest) {
+                              targetContests.push(cid);
+
+                              if (
+                                targetContestFrom == "" &&
+                                targetContestTo == ""
+                              ) {
+                                targetContestFrom = cid;
+                                targetContestTo = cid;
+                              } else {
+                                if (cid < targetContestFrom) {
+                                  targetContestFrom = cid;
+                                }
+                                if (targetContestTo < cid) {
+                                  targetContestTo = cid;
+                                }
+                              }
+
+                              if (seasonName == "") {
+                                seasonName = contests[cid].year + "年";
+                                if (contests[cid].season == 1) {
+                                  seasonName += " 前半期";
+                                } else if (contests[cid].season == 2) {
+                                  seasonName += " 後半期";
+                                }
+                              }
+                            }
+                          }
+                        });
+                        if (0 < targetContests.length) {
+                          var results = {};
+                          var numResultsFetched = 0;
+                          targetContests.forEach(function (cid) {
+                            contestRef
+                              .child("results")
+                              .child(cid)
+                              .once("value", function (snapResult) {
+                                results[cid] = snapResult.val();
+                                numResultsFetched++;
+                                if (
+                                  numResultsFetched == targetContests.length
+                                ) {
+                                  // Now, All results fetched
+
+                                  // 使用キューブ集計
+                                  var usedPuzzles = {};
+                                  Object.keys(events).forEach(function (eid) {
+                                    usedPuzzles[eid] = {};
+                                  });
+                                  Object.keys(results).forEach(function (cid) {
+                                    Object.keys(results[cid]).forEach(function (
+                                      eid
+                                    ) {
+                                      Object.keys(results[cid][eid]).forEach(
+                                        function (uid) {
+                                          if (
+                                            !results[cid][eid][uid]._dummy &&
+                                            results[cid][eid][uid].seasonPoint
+                                          ) {
+                                            if (
+                                              results[cid][eid][uid].puzzle &&
+                                              results[cid][eid][uid].puzzle
+                                                .type == "database"
+                                            ) {
+                                              var productId =
+                                                results[cid][eid][uid].puzzle
+                                                  .product;
+                                              if (
+                                                !(productId in usedPuzzles[eid])
+                                              ) {
+                                                usedPuzzles[eid][productId] = 0;
+                                              }
+                                              usedPuzzles[eid][productId]++;
+                                            }
+                                          }
+                                        }
+                                      );
+                                    });
+                                  });
+
+                                  // 使用キューブを
+                                  // 配列化・ソート
+                                  var usedPuzzlesSorted = {};
+                                  var usedPuzzlesSummary = {};
+                                  var jsdata = {};
+                                  Object.keys(usedPuzzles).forEach(function (
+                                    eid
+                                  ) {
+                                    var usedPuzzlesSum = 0;
+
+                                    // 配列化
+                                    usedPuzzlesSorted[eid] = [];
+                                    usedPuzzlesSummary[eid] = [];
+                                    Object.keys(usedPuzzles[eid]).forEach(
+                                      function (productId) {
+                                        var productName = "";
+                                        if (0 < productId) {
+                                          productName =
+                                            TriboxContest.Products[productId];
+                                        }
+                                        usedPuzzlesSorted[eid].push({
+                                          productId: productId,
+                                          productName: productName,
+                                          count: usedPuzzles[eid][productId],
+                                        });
+                                        usedPuzzlesSum +=
+                                          usedPuzzles[eid][productId];
+                                      }
+                                    );
+
+                                    // ソート
+                                    usedPuzzlesSorted[eid].sort(function (
+                                      a,
+                                      b
+                                    ) {
+                                      if (a.count < b.count) return 1;
+                                      if (a.count > b.count) return -1;
+                                      if (a.productId < b.productId) return 1;
+                                      if (a.productId > b.productId) return -1;
+                                      return 0;
+                                    });
+
+                                    // 上位5パズル以外はその他にする
+                                    jsdata[eid] = [];
+                                    var countOthers = 0;
+                                    usedPuzzlesSorted[eid].forEach(function (
+                                      puzzleObj,
+                                      index
+                                    ) {
+                                      if (index < 5) {
+                                        puzzleObj.percentage = Math.round(
+                                          (puzzleObj.count / usedPuzzlesSum) *
+                                            100
+                                        );
+                                        usedPuzzlesSummary[eid].push(puzzleObj);
+                                        jsdata[eid].push([
+                                          puzzleObj.productName,
+                                          puzzleObj.count,
+                                        ]);
+                                      } else {
+                                        countOthers += puzzleObj.count;
+                                      }
+                                    });
+                                    if (0 < countOthers) {
+                                      usedPuzzlesSummary[eid].push({
+                                        productId: -1,
+                                        productName: "その他",
+                                        count: countOthers,
+                                        percentage: Math.round(
+                                          (countOthers / usedPuzzlesSum) * 100
+                                        ),
+                                      });
+                                      jsdata[eid].push(["その他", countOthers]);
+                                    }
+                                  });
+
+                                  $timeout(function () {
+                                    $scope.rankingPuzzleLoaded = true;
+                                    $scope.existsSeason = true;
+
+                                    $scope.seasonName = seasonName;
+                                    $scope.targetContestFrom =
+                                      contests[targetContestFrom];
+                                    $scope.targetContestTo =
+                                      contests[targetContestTo];
+
+                                    $scope.events = events;
+                                    $scope.usedPuzzlesSummary =
+                                      usedPuzzlesSummary;
+                                  });
+
+                                  // 円グラフ描画 (DOMが生成される前に呼ばれると表示されないから適当に遅らせる)
+                                  setTimeout(function () {
+                                    Object.keys(usedPuzzles).forEach(function (
+                                      eid
+                                    ) {
+                                      drawChart(eid, jsdata[eid]);
+                                    });
+                                  }, 1000);
+                                }
+                              });
+                          });
+                        } else {
+                          $timeout(function () {
+                            $scope.rankingLoaded = true;
+                          });
+                        }
+                      });
+                  });
+              });
+            });
+          },
+        ]);
+      </script>
+      <script type="text/javascript" src="/js/products.js"></script>
+    </div>
+  </body>
+</html>
