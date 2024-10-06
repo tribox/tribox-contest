@@ -1,5 +1,5 @@
 [% set title = "About" %]
-[# set page_url = contest_url + '/about' #]
+[% set page_url = contest_url + 'about' %]
 
 <!DOCTYPE html>
 <html lang="ja" ng-app="contestApp">
@@ -8,7 +8,7 @@
     [[ header.print(title=title, description=contest_description, sitename=contest_name, contest_url=contest_url, page_url=page_url) ]]
 
 [% import "components/basejs.html" as basejs %]
-[[ basejs.print(firebaseapp_contest, firebaseapp_contest_apikey, firebaseapp_contest_messagingsenderid) ]]
+[[ basejs.print(firebaseapp_contest, firebaseapp_contest_apikey, firebaseapp_contest_senderid) ]]
 
 [% import "components/authjs.html" as authjs %]
 [[ authjs.print(redirect_login="", redirect_logout="", check_first=True) ]]

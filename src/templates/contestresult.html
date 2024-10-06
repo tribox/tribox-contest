@@ -1,0 +1,486 @@
+[% set title = "Contest Result " + cid + " (" + eid + ")"%] [% set page_url =
+contest_url + "/contest/result/" + cid + "/" + eid %]
+
+<!DOCTYPE html>
+<html lang="ja" ng-app="contestApp">
+  <head
+    prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#"
+  >
+    [% import "components/header.html" as header %] [[ header.print(title=title,
+    description=contest_description, sitename=contest_name,
+    contest_url=contest_url, page_url=page_url) ]]
+    <!-- Load c3.css -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.11/c3.min.css"
+      rel="stylesheet"
+      type="text/css"
+    />
+
+    <!-- Load d3.js and c3.js -->
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"
+      charset="utf-8"
+    ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.11/c3.min.js"></script>
+
+    [% import "components/basejs.html" as basejs %] [[
+    basejs.print(firebaseapp_contest, firebaseapp_contest_apikey,
+    firebaseapp_contest_senderid, firebaseapp_wca) ]]
+
+    <style>
+      h4 {
+        margin-top: 1em;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      [% import "components/bodyheader.html" as bodyheader %] [[
+      bodyheader.print(title=title, contest_name=contest_name) ]]
+
+      <div ng-controller="AuthCtrl">
+        <div ng-controller="ContestCtrl">
+          <div ng-controller="ContestResultCtrl">
+            <div ng-hide="authLoaded && contestLoaded && contestResultLoaded">
+              <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+              <span class="sr-only">Loading...</span>
+              Loading...
+            </div>
+            <div
+              id="main-content"
+              class="hide"
+              ng-show="authLoaded && contestLoaded && contestResultLoaded"
+            >
+              [% import "components/authinfo.html" as authinfo %] [[
+              authinfo.print() ]]
+
+              <div ng-hide="existsContest">
+                <p class="color-error">存在しないコンテストです。</p>
+              </div>
+              <div ng-hide="existsEvent">
+                <p class="color-error">存在しない競技です。</p>
+              </div>
+              <div ng-hide="countdown < 0">
+                <p class="color-error">
+                  終了していないコンテストです。結果を表示できません。
+                </p>
+              </div>
+              <div
+                ng-hide="0 <= countdown || contestData.resultsStatus == 'public' || usersecretData.isAdmin"
+              >
+                <p class="color-error notice-error">
+                  記録を集計中です。集計完了後に結果が公開されます。公開までしばらくお待ちください。
+                </p>
+              </div>
+
+              <div
+                ng-show="existsContest && existsEvent && countdown < 0 && (contestData.resultsStatus == 'public' || usersecretData.isAdmin)"
+              >
+                <h2>{{ contestData.contestName }}</h2>
+
+                <p
+                  ng-if="contestData.videoBonusStatus && (countdown >= 0) && ('[[ eid ]]' == '333')"
+                >
+                  <i class="em em-tada"></i> <b>ビデオボーナス節</b>
+                  <i class="em em-tada"></i>
+                </p>
+                <p
+                  ng-if="(contestData.videoBonusStatus == 'checking') && (countdown < 0) && ('[[ eid ]]' == '333')"
+                >
+                  <i class="em em-tada"></i>
+                  <b>ビデオボーナス節（ビデオチェック中）</b>
+                  <i class="em em-tada"></i>
+                </p>
+                <p
+                  ng-if="(contestData.videoBonusStatus == 'done') && (countdown < 0) && ('[[ eid ]]' == '333')"
+                >
+                  <i class="em em-tada"></i>
+                  <b>ビデオボーナス節（ビデオチェック完了）</b>
+                  <i class="em em-tada"></i>
+                </p>
+
+                <p>
+                  <i class="fa fa-calendar"></i> 開催期間:
+                  <b>{{ contestData.beginAt | toDate }}</b> ~
+                  <b>{{ contestData.endAt | toDate }}</b>
+                </p>
+
+                <p>
+                  別のコンテスト・競技種目の結果を見る<br />
+                  <select
+                    class="form-control"
+                    style="margin-bottom: 5px"
+                    ng-model="currentContest"
+                    ng-change="currentContestChange()"
+                  >
+                    <option
+                      ng-repeat="c in contestsList"
+                      value="{{ c.id | removeHead}}"
+                    >
+                      {{ c.shortName }}
+                    </option></select
+                  ><br />
+                  <select
+                    class="form-control"
+                    style="margin-bottom: 5px"
+                    ng-model="currentEvent"
+                    ng-change="currentEventChange()"
+                  >
+                    <option
+                      ng-repeat="e in contestData.events"
+                      value="{{ e | removeHead}}"
+                    >
+                      {{ events[e].name }}
+                    </option>
+                  </select>
+                </p>
+
+                <h3>
+                  <span
+                    class="cubing-icon event-[[ eid ]]"
+                    style="vertical-align: baseline"
+                  ></span>
+                  {{ events.e[[ eid ]].name }}
+                </h3>
+                <p>
+                  計測方法: {{ events.e[[ eid ]].method | uppercaseHead }} of {{
+                  events.e[[ eid ]].attempts }}<br />
+                  参加人数: {{ resultsPersons.e[[ eid ]] }} 人
+                </p>
+
+                <h4>キューブ使用率ランキング</h4>
+                <div class="row">
+                  <div class="col sm-12"><b>集計対象: 参加者全員</b></div>
+                  <div class="col sm-4">
+                    <ol>
+                      <li ng-repeat="p in resultsPuzzlesAll.e[[ eid ]]">
+                        <a
+                          href="http://store.tribox.com/products/detail.php?product_id={{ p.productId }}"
+                          target="_blank"
+                          ng-show="p.productId != -1"
+                        >
+                          {{ p.productName }}
+                        </a>
+                        <span ng-show="p.productId == -1"> その他 </span>
+                        ({{ p.percentage }}%)
+                      </li>
+                    </ol>
+                  </div>
+                  <div class="col sm-8">
+                    <div id="chartall"></div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col sm-12"><b>集計対象: 入賞者</b></div>
+                  <div class="col sm-4">
+                    <ol>
+                      <li ng-repeat="p in resultsPuzzles.e[[ eid ]]">
+                        <a
+                          href="http://store.tribox.com/products/detail.php?product_id={{ p.productId }}"
+                          target="_blank"
+                          ng-show="p.productId != -1"
+                        >
+                          {{ p.productName }}
+                        </a>
+                        <span ng-show="p.productId == -1"> その他 </span>
+                        ({{ p.percentage }}%)
+                      </li>
+                    </ol>
+                  </div>
+                  <div class="col sm-8">
+                    <div id="chart"></div>
+                  </div>
+                </div>
+                <script>
+                  var drawChart = function (dataall, data) {
+                    if (0 < dataall.length) {
+                      var chart = c3.generate({
+                        bindto: "#chartall",
+                        data: {
+                          columns: dataall,
+                          type: "pie",
+                          order: null,
+                        },
+                        size: {
+                          height: 240,
+                        },
+                      });
+                    }
+                    if (0 < data.length) {
+                      var chart = c3.generate({
+                        bindto: "#chart",
+                        data: {
+                          columns: data,
+                          type: "pie",
+                          order: null,
+                        },
+                        size: {
+                          height: 240,
+                        },
+                      });
+                    }
+                  };
+                </script>
+
+                <h4>コンテスト結果</h4>
+                <p><i class="fa fa-star color-star"></i>: 当選ポイント獲得</p>
+                <table class="table table-bordered result tribox-contest">
+                  <thead>
+                    <tr>
+                      <th><i class="fa fa-hashtag"></i></th>
+                      <th>SP</th>
+                      <th>名前</th>
+                      <th class="mb-hide">所属</th>
+                      <th>記録</th>
+                      <th class="mb-hide"></th>
+                      <th>パズル</th>
+                      <th class="mb-hide">
+                        <i class="fa fa-video-camera"></i>
+                      </th>
+                      <th ng-if="usersecretData.isAdmin">運営用</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr
+                      id="e[[ eid ]]-{{ $index }}"
+                      ng-repeat="r in resultsAll.e[[ eid ]]"
+                    >
+                      <td>
+                        {{ r.place }}
+                        <span class="lottery" ng-show="r.lottery">
+                          <i class="fa fa-star color-star"></i>
+                        </span>
+                      </td>
+                      <td>
+                        <span
+                          ng-if="(r.seasonPoint || r.seasonPointVideoBonus) && (r.seasonPoint + r.seasonPointVideoBonus) > 0"
+                          >{{ r.seasonPoint + r.seasonPointVideoBonus }}</span
+                        >
+                      </td>
+                      <td>
+                        <img
+                          src="/assets/flags/flags-iso/shiny/24/{{ r.user.iso2 }}.png"
+                          height="24"
+                          style="vertical-align: middle"
+                          ng-show="r.user.iso2"
+                        />
+                        <a href="/user/{{ r.user.username }}"
+                          >{{ r.user.displayname }}</a
+                        >
+                      </td>
+                      <td class="mb-hide ellipsis">
+                        {{ r.user.organization }}
+                      </td>
+                      <td class="mb-hide"><b>{{ r.resultF }}</b></td>
+                      <td class="tb-hide pc-hide">
+                        <a class="cursor-pointer" ng-click="showDetail($index)"
+                          ><b style="color: rgb(85, 85, 85)"
+                            >{{ r.resultF }}</b
+                          ></a
+                        >
+                      </td>
+
+                      <td
+                        ng-if="'[[ eid ]]' != '333fm'"
+                        id="e[[ eid ]]-{{ $index }}-show"
+                        class="mb-hide"
+                      >
+                        <a class="cursor-pointer" ng-click="showDetail($index)"
+                          >詳細</a
+                        >
+                      </td>
+
+                      <td
+                        ng-if="'[[ eid ]]' == '333fm'"
+                        id="e[[ eid ]]-{{ $index }}-show"
+                        class="mb-hide"
+                      >
+                        <a class="cursor-pointer" ng-click="showDetail($index)"
+                          >解答</a
+                        >
+                      </td>
+
+                      <td ng-show="r.puzzle.type == 'database'">
+                        <a
+                          href="http://store.tribox.com/products/detail.php?product_id={{ r.puzzle.product }}"
+                          target="_blank"
+                          >{{ r.puzzleF }}</a
+                        >
+                      </td>
+                      <td
+                        ng-show="r.puzzle.type == 'nodatabase' || r.puzzle.type == 'unknown'"
+                      >
+                        {{ r.puzzleF }}
+                      </td>
+                      <td class="mb-hide" ng-if="r.videoUrl">
+                        <a href="{{ r.videoUrl | encodeURI }}" target="_blank"
+                          ><i class="fa fa-video-camera"></i
+                        ></a>
+                      </td>
+                      <td class="mb-hide" ng-if="!(r.videoUrl)"></td>
+                      <td ng-if="usersecretData.isAdmin">
+                        <a
+                          class="btn btn-small btn-error"
+                          style="margin: 0"
+                          href="javascript:void(0);"
+                          ng-click="deleteResult(r.user.username, r.user.displayname, '/admin-api/contest/result/delete?c=[[ cid ]]&e=[[ eid ]]&u=' + r.user.username + '&token=' + usersecretData.adminToken)"
+                        >
+                          削除
+                        </a>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <h4>スクランブル</h4>
+
+                <table class="table table-striped">
+                  <tbody>
+                    <tr ng-repeat="s in scramblesData.e[[ eid ]]">
+                      <td>{{ $index + 1 }}</td>
+                      <td ng-bind-html="s"></td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <!--<p>usersecretData:</p>
+        <pre>{{ usersecretData | json }}</pre>-->
+
+                <!--<p>[[ cid ]] -> contestData:</p>
+        <pre>{{ contestData | json }}</pre>-->
+
+                <!--<pre>{{ resultsAll.e[[ eid ]] | json }}</pre>-->
+
+                <!--<pre>{{ resultsPuzzles.e[[ eid ]] | json }}</pre>-->
+
+                <!--<pre>{{ resultsTop3.e[[ eid ]] | json }}</pre>-->
+
+                <!--<pre>{{ scramblesData | json }}</pre>-->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      [% include "components/bodyfooter.html" %] [% import
+      "components/authjs.html" as authjs %] [[ authjs.print(redirect_login="",
+      redirect_logout="", check_first=True) ]] [% import
+      "components/contestjs.html" as contestjs %] [[ contestjs.print(cid=cid,
+      eid=eid, fetch_scrambles=True, fetch_results_top3=False,
+      fetch_results_all=True)]]
+      <script>
+        app.controller("ContestResultCtrl", [
+          "$scope",
+          function ($scope) {
+            $scope.contestResultLoaded = false;
+            $scope.currentContest = "[[ cid ]]";
+            $scope.currentEvent = "[[ eid ]]";
+            $scope.contestsList = null;
+
+            // 今シーズンの開催済みコンテストリスト
+            // とりあえず contests テーブルから引っ張ってくる
+            contestRef.child("contests").once("value", function (snapContests) {
+              contestRef
+                .child("inProgress")
+                .once("value", function (snapInProgress) {
+                  var lastContest = snapInProgress.val().lastContest;
+                  var contests = snapContests.val();
+                  var _contestsList = [];
+                  Object.keys(snapContests.val()).forEach(function (contestId) {
+                    if (contestId <= lastContest) {
+                      _contestsList.push({
+                        id: contestId,
+                        name: contests[contestId].contestName,
+                        shortName: contests[contestId].contestName.slice(15),
+                      });
+                    }
+                  });
+                  $scope.contestsList = _contestsList;
+                  $scope.contestResultLoaded = true;
+                });
+            });
+
+            $scope.currentContestChange = function () {
+              location.href =
+                "/contest/result/" + $scope.currentContest + "/[[ eid ]]";
+            };
+
+            $scope.currentEventChange = function () {
+              location.href =
+                "/contest/result/[[ cid ]]/" + $scope.currentEvent;
+            };
+
+            var showDetailList = [];
+            if ("[[ eid ]]" == "333fm") {
+              $scope.showDetail = function (index) {
+                if (!showDetailList[index]) {
+                  showDetailList[index] = true;
+                  var html =
+                    '<tr id="row-detail-' +
+                    index +
+                    '" class="row-detail"><td colspan="7">' +
+                    "<p><b>解答:</b><br>" +
+                    TriboxContest.escapeHTML(
+                      $scope.resultsAll["e333fm"][index].details[0].solution
+                    ) +
+                    "</p>" +
+                    "<p><b>解説コメント:</b><br>" +
+                    TriboxContest.escapeHTML(
+                      $scope.resultsAll["e333fm"][index].details[0].note
+                    ) +
+                    "</p>";
+                  angular
+                    .element(document.getElementById("e333fm-" + index))
+                    .after(html);
+                  //angular.element(document.getElementById('e333fm-' + index + '-show')).text('表示済み');
+                  fadeIn(document.getElementById("row-detail-" + index));
+                } else {
+                  showDetailList[index] = false;
+                  angular
+                    .element(document.getElementById("row-detail-" + index))
+                    .remove();
+                }
+              };
+            } else {
+              $scope.showDetail = function (index) {
+                if (!showDetailList[index]) {
+                  showDetailList[index] = true;
+                  var html =
+                    '<tr id="row-detail-' +
+                    index +
+                    '" class="row-detail"><td colspan="7">' +
+                    TriboxContest.escapeHTML(
+                      $scope.resultsAll["[[ eid ]]"][index].detailsF
+                    );
+                  angular
+                    .element(document.getElementById("e[[ eid ]]-" + index))
+                    .after(html);
+                  fadeIn(document.getElementById("row-detail-" + index));
+                } else {
+                  showDetailList[index] = false;
+                  angular
+                    .element(document.getElementById("row-detail-" + index))
+                    .remove();
+                }
+              };
+            }
+
+            $scope.deleteResult = function (username, displayname, url) {
+              var ok = confirm(
+                "【確認】" +
+                  displayname +
+                  " (ユーザー名 " +
+                  username +
+                  ") の記録を削除しますか？"
+              );
+              if (ok) {
+                window.open(url, "_blank");
+              }
+            };
+          },
+        ]);
+      </script>
+      <script type="text/javascript" src="/js/products.js"></script>
+    </div>
+  </body>
+</html>
