@@ -334,7 +334,7 @@ fetch_results_all=False) -%]
                                               // Details
                                               $scope.resultsData[e][uid].detailsF = TriboxContest.formatDetails(results, e, Events);
                                               // Puzzle
-                                              //$scope.resultsData[e][uid].puzzleF = TriboxContest.formatPuzzle(results);
+                                              $scope.resultsData[e][uid].puzzleF = TriboxContest.formatPuzzle(results);
 
                                               $scope.resultsTop3[e].push($scope.resultsData[e][uid]);
                                           }
