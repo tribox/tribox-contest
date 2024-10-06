@@ -312,10 +312,11 @@ cid %]
                           </td>
                           <td>
                             <img
-                            src="@routes.Assets.versioned("flags/flags-iso/shiny/24")/{{
-                            r.user.iso2 }}.png" height="24"
-                            style="vertical-align: middle;"
-                            ng-show="r.user.iso2">
+                              src="/assets/flags/flags-iso/shiny/24/{{ r.user.iso2 }}.png"
+                              height="24"
+                              style="vertical-align: middle"
+                              ng-show="r.user.iso2"
+                            />
                             <a href="/user/{{ r.user.username }}"
                               >{{ r.user.displayname }}</a
                             >
