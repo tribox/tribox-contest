@@ -127,11 +127,12 @@ def contest(cid):
         firebaseapp_wca_senderid=FIREBASEAPP_WCA_SENDERID,
     )
 
-@app.route("/ranking/<sid>/puzzle/all")
-def ranking_puzzle_all(sid):
+@app.route("/contest/result/<cid>/<eid>")
+def contestresult(cid, eid):
     return render_template(
-        "rankingpuzzleall.html",
-        sid=sid,
+        "contestresult.html",
+        cid=cid,
+        eid=eid,
         contest_description=CONTEST_DESCRIPTION,
         contest_name=CONTEST_NAME,
         contest_url=CONTEST_URL,
