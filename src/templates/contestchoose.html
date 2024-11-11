@@ -1,0 +1,158 @@
+[% set title = "Contest Choose " + cid + " (" + eid + ")"%] [% set page_url =
+contest_url + "/contest/" + cid + "/" + eid + "/choose" %]
+
+<!DOCTYPE html>
+<html lang="ja" ng-app="contestApp">
+  <head
+    prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#"
+  >
+    [% import "components/header.html" as header %] [[ header.print(title=title,
+    description=contest_description, sitename=contest_name,
+    contest_url=contest_url, page_url=page_url) ]]
+
+    <style>
+      .choosebox {
+        border: 2px solid #659ac9;
+        -webkit-border-radius: 10px;
+        -moz-border-radius: 10;
+        border-radius: 10px;
+        text-align: center;
+        padding: 10px;
+        margin-bottom: 10px;
+      }
+    </style>
+
+    [% import "components/basejs.html" as basejs %] [[
+    basejs.print(firebaseapp_contest, firebaseapp_contest_apikey,
+    firebaseapp_contest_senderid, firebaseapp_wca) ]]
+  </head>
+  <body>
+    <div class="container">
+      [% import "components/bodyheader.html" as bodyheader %] [[
+      bodyheader.print(title=title, contest_name=contest_name) ]]
+
+      <div ng-controller="AuthCtrl">
+        <div ng-controller="ContestCtrl">
+          <div ng-controller="ContestChooseCtrl">
+            <div ng-hide="authLoaded && contestLoaded && contestChooseLoaded">
+              <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+              <span class="sr-only">Loading...</span>
+              Loading...
+            </div>
+            <div ng-show="authLoaded && contestLoaded && contestChooseLoaded">
+              [% import "components/authinfo.html" as authinfo %]
+              [[ authinfo.print() ]]
+
+              <div ng-hide="existsContest">
+                <p class="color-error">存在しないコンテストです。</p>
+              </div>
+              <div ng-hide="existsEvent">
+                <p class="color-error">存在しない競技です。</p>
+              </div>
+              <div ng-hide="inProgress.contest == 'c[[ cid ]]'">
+                <p class="color-error">開催中のコンテストではありません。</p>
+              </div>
+              <div ng-hide="!invalidPage">
+                <p class="color-error">不正なページ遷移です。</p>
+              </div>
+
+              <div
+                ng-show="existsContest && existsEvent && inProgress.contest == 'c[[ cid ]]' && !invalidPage"
+              >
+                <h2>{{ contestData.contestName }}</h2>
+
+                <p>
+                  <i class="fa fa-calendar"></i> 開催期間:
+                  <b>{{ contestData.beginAt | toDate }}</b> ~
+                  <b>{{ contestData.endAt | toDate }}</b>
+                </p>
+                <p ng-if="countdown == 0">現在開催中のコンテストです。</p>
+                <p ng-if="countdown < 0">すでに終了したコンテストです。</p>
+                <p ng-if="countdown > 0">
+                  このコンテストはまだ開始されていません。
+                </p>
+
+                <h3>{{ events[eid].name }}</h3>
+
+                <div class="row">
+                  [% if(eid != "333fm") %]
+                  <div class="col md-6">
+                    <a href="/contest/[[ cid ]]/[[ eid ]]/timer"
+                      ><div class="choosebox">
+                        <i class="fa fa-clock-o fa-5x"></i><br />
+                        コンテストタイマーを使用して計測する
+                      </div></a
+                    >
+                  </div>
+                  <div class="col md-6">
+                    <a href="/contest/[[ cid ]]/[[ eid ]]/form"
+                      ><div class="choosebox">
+                        <i class="fa fa-pencil-square-o fa-5x"></i><br />
+                        タイムを手入力する
+                      </div></a
+                    >
+                  </div>
+                  [% else %]
+                  <div class="col md-12">
+                    <a href="/contest/[[ cid ]]/[[ eid ]]/solution"
+                      ><div class="choosebox">
+                        <i class="fa fa-pencil-square-o fa-5x"></i><br />
+                        解法を入力する
+                      </div></a
+                    >
+                  </div>
+                  [% endif %]
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      [% include "components/bodyfooter.html" %]
+      [% import "components/authjs.html" as authjs %]
+      [[ authjs.print(redirect_login="", redirect_logout="", check_first=True) ]]
+      [% import "components/contestjs.html" as contestjs %]
+      [[ contestjs.print(cid=cid, eid=eid, fetch_scrambles=False, fetch_results_top3=False, fetch_results_all=False)]]
+
+      <script>
+        app.controller("ContestChooseCtrl", [
+          "$scope",
+          "$timeout",
+          function ($scope, $timeout) {
+            firebase.auth().onAuthStateChanged(function (authData) {
+              $scope.invalidPage = false;
+              $scope.contestChooseLoaded = false;
+
+              // Read personal results
+              if (authData) {
+                contestRef
+                  .child("results")
+                  .child("c[[ cid ]]")
+                  .child("e[[ eid ]]")
+                  .child(authData.uid)
+                  .once(
+                    "value",
+                    function (snapResult) {
+                      $timeout(function () {
+                        if (snapResult.exists()) {
+                          $scope.invalidPage = true;
+                        }
+                        $scope.contestChooseLoaded = true;
+                      });
+                    },
+                    function (error) {
+                      console.error(error);
+                    }
+                  );
+              } else {
+                location.href = '[[ url_for("index") ]]?logout=1';
+              }
+            }); // onAuthStateChange
+          },
+        ]);
+      </script>
+    </div>
+  </body>
+</html>
+
