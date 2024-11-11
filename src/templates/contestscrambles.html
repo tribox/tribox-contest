@@ -1,0 +1,31 @@
+[% macro print(eid='', showIndividual=False) -%]
+<table id="contest-scrambles" class="scrambles">
+    <thead>
+        <tr>
+            [% if showIndividual %]
+                <th>{{ scrambleIndexText }} Scramble:</th>
+            [% else %]
+                <th colspan="2">Scrambles:</th>
+            [% endif %]
+        </tr>
+    </thead>
+    <tbody>
+        [% if not showIndividual %]
+            <tr ng-repeat="s in scramblesData['e[[ eid ]]']" id="scramble-{{ $index }}">
+                <td>{{ $index + 1 | ordinal }}:</td>
+                <td ng-bind-html="s"></td>
+            </tr>
+        [% else %]
+            [% if eid != "demo" %]
+                <tr ng-repeat="s in scramblesData['e[[ eid ]]']" id="scramble-{{ $index }}" class="hide">
+                    <td ng-bind-html="s"></td>
+                </tr>
+            [% else %]
+                <tr ng-repeat="s in scramblesData.demo" id="scramble-{{ $index }}" class="hide">
+                    <td>{{ s | removeHead }}</td>
+                </tr>
+            [% endif %]
+        [% endif %]
+    </tbody>
+</table>
+[%- endmacro %]

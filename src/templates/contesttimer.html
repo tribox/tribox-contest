@@ -1,0 +1,719 @@
+<!--
+    * 結果投稿ページ
+    * Javascript コンテストタイマー
+-->
+
+
+[% set title = "Contest Timer " + cid + " (" + eid + ")"%]
+[% set page_url = contest_url + "/contest/" + cid + "/" + eid + "/timer" %]
+
+<!DOCTYPE html>
+<html lang="ja" ng-app="contestApp">
+<head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
+    [% import "components/header.html" as header %]
+    [[ header.print(title=title, description=contest_description, sitename=contest_name, contest_url=contest_url, page_url=page_url) ]]
+    <link rel="stylesheet" media="screen" href="[[ url_for('static', filename='stylesheets/timer.css') ]]">
+    <link rel="stylesheet" media="screen" href="[[ url_for('static', filename='stylesheets/toggle.css') ]]">
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/5.0.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.0.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.0.0/firebase-database.js"></script>
+
+    [% import "components/basejs.html" as basejs %]
+    [[ basejs.print(firebaseapp_contest, firebaseapp_contest_apikey, firebaseapp_contest_senderid, firebaseapp_wca) ]]
+
+    <script src="/assets/audiojs/audiojs/audio.tribox.js" type="text/javascript"></script>
+</head>
+<body><div class="container">
+    [% import "components/bodyheader.html" as bodyheader %]
+    [[ bodyheader.print(title=title, contest_name=contest_name, cid=cid, eid=eid) ]]
+
+    <div ng-controller="AuthCtrl"><div ng-controller="ContestCtrl"><div ng-controller="ContestTimerCtrl">
+    <div ng-hide="authLoaded && contestLoaded && contestTimerLoaded">
+        <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+        <span class="sr-only">Loading...</span>
+        Loading...
+    </div>
+    <div ng-show="authLoaded && contestLoaded && contestTimerLoaded">
+
+        [% import "components/authinfo.html" as authinfo %]
+        [[ authinfo.print(eid=eid) ]]
+
+    <div ng-hide="existsContest">
+        <p class="color-error">
+            存在しないコンテストです。
+        </p>
+    </div>
+    <div ng-hide="existsEvent">
+        <p class="color-error">
+            存在しない競技です。
+        </p>
+    </div>
+    <div ng-hide="inProgress.contest == 'c[[ cid ]]'">
+        <p class="color-error">
+            開催中のコンテストではありません。
+        </p>
+    </div>
+    <div ng-hide="!invalidPage">
+        <p class="color-error">
+            不正なページ移動です。
+        </p>
+    </div>
+
+    <div ng-show="existsContest && existsEvent && inProgress.contest == 'c[[ cid ]]' && !invalidPage">
+
+        <div style="display: none;">
+            <audio class="judgecall-audio" src="/assets/call/8s.mp3" preload="auto" />
+            <audio class="judgecall-audio" src="/assets/call/12s.mp3" preload="auto" />
+            <audio class="judgecall-audio" src="/assets/call/ready.mp3" preload="auto" />
+            <audio class="judgecall-audio" src="/assets/call/ok.mp3" preload="auto" />
+            <audio class="judgecall-audio" src="/assets/call/penalty.mp3" preload="auto" />
+            <audio class="judgecall-audio" src="/assets/call/dnf.mp3" preload="auto" />
+        </div>
+
+        <div class="switch">
+            <div class="sound-sw sound-sw-off"><i id="sound-off" class="fa fa-volume-off fa-2x" aria-hidden="true"></i></div>
+            <input id="cmn-toggle-sound" class="cmn-toggle cmn-toggle-round-flat" type="checkbox" ng-model="judgecall" ng-change="judgecallchange()" />
+            <label class="toggle-label" for="cmn-toggle-sound"></label>
+            <div class="sound-sw sound-sw-on"><i id="sound-on" class="fa fa-volume-up fa-2x" aria-hidden="true"></i></div>
+        </div>
+
+        <div id="touchArea">
+
+            [% import "/contestscrambles.html" as contestscrambles %]
+            [[ contestscrambles.print(eid=eid) ]]
+
+            <div id="timerArea">
+                <div id="timerText">0.000</div>
+
+                <div id="timerNote"></div>
+                <div id="timerNoteMb"></div>
+            </div>
+
+        </div>
+
+        [% import "contesttimeform.html" as contesttimeform %]
+        [[ contesttimeform.print(eid=eid, useInput=False, clickable=True) ]]
+
+
+        <p id="input-completed" class="margin-top-20 text-center hide">
+            計測が完了しました。間違いがなければ確認ページへ進んでください。<br>
+            <a href="/contest/[[ cid ]]/[[ eid ]]/confirm" class="btn margin-top-10">確認ページへ</a>
+        </p>
+
+    </div></div></div></div></div>
+
+    [% include "components/bodyfooter.html" %]
+    [% import "components/authjs.html" as authjs %]
+    [[ authjs.print(redirect_login="", redirect_logout="", check_first=True) ]]
+    [% import "components/contestjs.html" as contestjs %]
+    [[ contestjs.print(cid=cid, eid=eid, fetch_scrambles=True, fetch_results_top3=False, fetch_results_all=False)]]
+
+<script>
+window.TriboxContest.timerIdlingText = 'スペースキーを押してインスペクションタイムをスタート';
+window.TriboxContest.timerIdlingTextMb = 'タップしてインスペクションタイムをスタート';
+window.TriboxContest.timerInspectingText = 'スペースキーを長押しして、手を離してタイマースタート';
+window.TriboxContest.timerInspectingTextMb = 'タップ長押しして、手を離してタイマースタート';
+window.TriboxContest.timerRunningText = 'キーを押してタイマーをストップ';
+window.TriboxContest.timerRunningTextMb = 'タップしてタイマーをストップ';
+window.TriboxContest.timerFinishText = '計測が完了しました';
+
+audiojs.events.ready(function() {
+    var as = audiojs.createAll();
+});
+var a = audiojs.createAll();
+
+app.controller('ContestTimerCtrl', ['$scope', '$timeout', '$interval', function($scope, $timeout, $interval) {
+
+if('[[ eid ]]' == "333fm") {
+
+    $scope.invalidPage = true;
+    $scope.contestTimerLoaded = true;
+
+} else {
+firebase.auth().onAuthStateChanged(function(authData) {
+    $scope.invalidPage = false;
+    $scope.contestTimerLoaded = false;
+
+    // Results
+    $scope.results = [];
+    $scope.resultsDetail = null;
+
+    $scope.scrambleIndex = 0;
+    $scope.scrambleIndexText = '1st';
+    //angular.element(document.getElementById('scramble-0')).removeClass('hide');
+
+    // Judge Call
+    $scope.judgecall = false;
+
+    // Set volume for Judge Call
+    // true: on (volume=1), false: off (volume=0)
+    var setJudgecallVolume = function(state) {
+        var audios = document.getElementsByClassName('judgecall-audio');
+        var vol = (state == true)? 1 : 0;
+        for (var i = 0; i < audios.length; i++) {
+            audios[i].volume = vol;
+        }
+    };
+    setJudgecallVolume(false);
+
+    var startPenalty = false;
+
+    // Forcefully show the button to the confirmation page whenever needed
+    $interval(function() {
+        if (window.TriboxContest.events) {
+            console.log(window.TriboxContest)
+            if (window.TriboxContest.events['e[[ eid ]]'].attempts <= $scope.scrambleIndex) {
+                angular.element(document.getElementById('input-completed')).removeClass('hide');
+                document.getElementById('timerNote').innerHTML = window.TriboxContest.timerFinishText;
+                document.getElementById('timerNoteMb').innerHTML = window.TriboxContest.timerFinishText;
+                updateStatus(false, false, false);
+            }
+        }
+    }, 1000);
+
+    // Set begin time
+    if (authData) {
+        contestRef.child('events').child('e[[ eid ]]').child('hasInspection').once('value', function(snapHasInspection) {
+            window.TriboxContest.hasInspection = snapHasInspection.val();
+            if (window.TriboxContest.hasInspection) {
+                document.getElementById('timerNote').innerHTML = window.TriboxContest.timerIdlingText;
+                document.getElementById('timerNoteMb').innerHTML = window.TriboxContest.timerIdlingTextMb;
+            } else {
+                document.getElementById('timerNote').innerHTML = window.TriboxContest.timerInspectingText;
+                document.getElementById('timerNoteMb').innerHTML = window.TriboxContest.timerInspectingTextMb;
+            }
+
+            // do not overwrite
+            contestRef.child('results').child('c[[ cid ]]').child('e[[ eid ]]').child(authData.uid).once('value', function(snapResult) {
+                if (!(snapResult.exists())) {
+                    contestRef.child('results').child('c[[ cid ]]').child('e[[ eid ]]').child(authData.uid).set({
+                        'beginAt': firebase.database.ServerValue.TIMESTAMP,
+                        'type': 'timer'
+                    }, function(error) {
+                        if (error) {
+                            // 不正なコンテストまたは不正な競技イベントでスタート記録が書き込めない場合
+                            // ここでエラーになる。
+                            console.error(error);
+                        }
+                        showScramble($scope.scrambleIndex);
+                        $timeout(function() {
+                            $scope.contestTimerLoaded = true;
+                        });
+                    });
+                } else {
+                    // Read current data
+                    var result = snapResult.val();
+                    if (result.type != "timer") {
+                        $scope.invalidPage = true;
+                    } else {
+                        $timeout(function() {
+                            if (result.details) {
+                                $scope.results = result.details;
+                                $scope.results.forEach(function(r, index) {
+                                    $scope.scrambleIndex = index;
+                                });
+                                ($scope.scrambleIndex)++;
+                            }
+                            showScramble($scope.scrambleIndex);
+                            if (window.TriboxContest.events['e[[ eid ]]'].attempts <= $scope.scrambleIndex) {
+                                angular.element(document.getElementById('input-completed')).removeClass('hide');
+                                document.getElementById('timerNote').innerHTML = window.TriboxContest.timerFinishText;
+                                document.getElementById('timerNoteMb').innerHTML = window.TriboxContest.timerFinishText;
+                                updateStatus(false, false, false);
+                            }
+                        });
+                    }
+                    $timeout(function() {
+                        $scope.contestTimerLoaded = true;
+                    });
+                }
+            }, function(error) {
+                console.error(error);
+            });
+        }, function(error) {
+            console.error(error);
+            $timeout(function() {
+                $scope.contestTimerLoaded = true;
+            });
+        });
+
+        // Judge Call
+        contestRef.child('usersecrets').child(authData.uid).on('value', function(snapUserSecret) {
+            if (snapUserSecret.exists()) {
+                var userSecret = snapUserSecret.val();
+                if ('prefJudgecall' in userSecret) {
+                    if (userSecret['prefJudgecall'] == true) {
+                        $timeout(function() {
+                            $scope.judgecall = true;
+                            setJudgecallVolume($scope.judgecall);
+                        });
+                    }
+                }
+            }
+        });
+
+    } else {
+        location.href = '[[ url_for("index") ]]?please=1';
+    }
+
+    // Judge Call on change
+    $scope.judgecallchange = function() {
+        if (authData) {
+            contestRef.child('usersecrets').child(authData.uid).child('prefJudgecall').set($scope.judgecall);
+            setJudgecallVolume($scope.judgecall);
+        }
+    };
+
+    var showScramble = function(index) {
+        $timeout(function() {
+            if (window.TriboxContest.events['e[[ eid ]]'].attempts <= index) {
+                index = window.TriboxContest.events['e[[ eid ]]'].attempts - 1;
+            }
+            $scope.scrambleIndexText = toOrdinal(index + 1);
+            angular.element(document.getElementById('scramble-' + (index - 1))).addClass('hide');
+            angular.element(document.getElementById('scramble-' + index)).removeClass('hide');
+            $scope.resultsDetail = $scope.turnOnButtons(window.TriboxContest.events['e[[ eid ]]'].format, $scope.results);
+        });
+    };
+
+    // Condition buttons
+    $scope.applyOK = function(index) {
+        var resultElem = $scope.results[index];
+        if (resultElem && 0 < resultElem.record && resultElem.record < LIMIT_SECOND) {
+            var btnOK = angular.element(document.getElementById('timeform-cond-ok-' + index));
+            var btnPenalty = angular.element(document.getElementById('timeform-cond-penalty-' + index));
+            var btnDNF = angular.element(document.getElementById('timeform-cond-dnf-' + index));
+            $scope.results[index].condition = 'OK';
+            $scope.resultsDetail[index] = TriboxContest.formatTime($scope.results[index].record);
+            btnOK.addClass('cond-ok-on');
+            btnPenalty.removeClass('cond-penalty-on');
+            btnDNF.removeClass('cond-dnf-on');
+            a[3].play();
+            saveAndPrepare();
+        }
+    };
+    $scope.applyPenalty = function(index) {
+        var resultElem = $scope.results[index];
+        if (resultElem && 0 < resultElem.record && resultElem.record < LIMIT_SECOND) {
+            var btnOK = angular.element(document.getElementById('timeform-cond-ok-' + index));
+            var btnPenalty = angular.element(document.getElementById('timeform-cond-penalty-' + index));
+            var btnDNF = angular.element(document.getElementById('timeform-cond-dnf-' + index));
+            $scope.results[index].condition = '+2';
+            $scope.resultsDetail[index] = TriboxContest.formatTime($scope.results[index].record + 2.000);
+            btnOK.removeClass('cond-ok-on');
+            btnPenalty.addClass('cond-penalty-on');
+            btnDNF.removeClass('cond-dnf-on');
+            a[4].play();
+            saveAndPrepare();
+        }
+    };
+    $scope.applyDNF = function(index) {
+        var resultElem = $scope.results[index];
+        if (resultElem) {
+            var btnOK = angular.element(document.getElementById('timeform-cond-ok-' + index));
+            var btnPenalty = angular.element(document.getElementById('timeform-cond-penalty-' + index));
+            var btnDNF = angular.element(document.getElementById('timeform-cond-dnf-' + index));
+            $scope.results[index].condition = 'DNF';
+            $scope.resultsDetail[index] = 'DNF';
+            btnOK.removeClass('cond-ok-on');
+            btnPenalty.removeClass('cond-penalty-on');
+            btnDNF.addClass('cond-dnf-on');
+            a[5].play();
+            saveAndPrepare();
+        }
+    };
+
+    // Save & Fetch data
+    var saveAndPrepare = function() {
+        //var authData = firebase.auth().currentUser;
+        if (authData) {
+            contestRef.child('results').child('c[[ cid ]]').child('e[[ eid ]]').child(authData.uid).child('details').set($scope.results, function(error) {
+                if (!error) {
+                    contestRef.child('results').child('c[[ cid ]]').child('e[[ eid ]]').child(authData.uid).child('details').once('value', function(snapData) {
+                        var _results = snapData.val();
+
+                        // Prepare next button
+                        var inputCompleted = angular.element(document.getElementById('input-completed'));
+                        var attempts = window.TriboxContest.events['e[[ eid ]]'].attempts, count = 0;
+                        for (var i = 0; i < attempts; i++) {
+                            if (_results[i] != null) {
+                                count++;
+                            }
+                        }
+                        if (count == attempts) {
+                            inputCompleted.removeClass('hide');
+                            document.getElementById('timerNote').innerHTML = window.TriboxContest.timerFinishText;
+                            document.getElementById('timerNoteMb').innerHTML = window.TriboxContest.timerFinishText;
+                            updateStatus(false, false, false);
+                        } else {
+                            inputCompleted.addClass('hide');
+                        }
+                    }, function(error) {
+                        console.error(error);
+                    });
+                } else {
+                    console.error(error);
+                }
+            });
+        } else {
+            location.href = '[[ url_for("index") ]]?please=1';
+        }
+    };
+
+    /**
+     * Timer
+     */
+
+    document.onselectstart = function() { return false; };
+
+    var startTime, stopTime = 0;
+    var timerId, dispTimerId;
+    var inspectionTimerId, inspectionPenaltyTimerId, inspectionDNFTimerId;
+
+    var hasInspection = window.TriboxContest.hasInspection;
+    var inspectionCountdown;
+
+    var isIdling = true;        //@* 待機中 *@
+    var isInspecting = false;   //@* インスペクションタイム中 *@
+    var isRunning = false;      //@* タイマー動作中 *@
+    var isTouching = false;     //@* タッチ中 (スタート時) *@
+    var isTouchingStop = false; //@* タッチ中 (ストップ時) *@
+    var isTouchingStartDNF = false; //@* タッチ中 (スタート時DNF) *@
+    var startTouch = Infinity;
+
+    var INSPECTION_SECOND = 15; //@* /* インスペクションタイムは15秒 */ *@
+    var TOUCHING_TH = 350;      //@* /* 0.35秒長押しでタイマースタート */ *@
+    var LIMIT_SECOND = 600;     //@* /* 10分でDNF */ *@
+    var FREEZING_TH = 1000;     //@* /* タイマーストップ後1秒はタイマースタートできない */ *@
+    var REJECTING_STOPTIMER_TH = 200;   //@* /* 計測開始後0.2秒はタッチ操作で計測終了できない */ *@
+
+    //var startButton = document.getElementById('start');
+    //var stopButton = document.getElementById('stop');
+    //var resetButton = document.getElementById('reset');
+    var timerText = document.getElementById('timerText');
+
+    var touchX, touchY;
+    var TAP_TH = 10; //@* タップと認識する移動距離の閾値 *@
+
+    /*var setButtonState = function(start, stop, reset) {
+        startButton.disabled = !start;
+        stopButton.disabled = !stop;
+        resetButton.disabled = !reset;
+    };*/
+    //setButtonState(true, false, false);
+
+    var updateStatus = function(_isIdling, _isInspecting, _isRunning) {
+        isIdling = _isIdling;
+        isInspecting = _isInspecting;
+        isRunning = _isRunning;
+    };
+
+    var startInspection = function() {
+        if (hasInspection && isIdling) {
+            document.getElementById('timerNote').innerHTML = window.TriboxContest.timerInspectingText;
+            document.getElementById('timerNoteMb').innerHTML = window.TriboxContest.timerInspectingTextMb;
+            startPenalty = false;
+            updateStatus(false, true, false);
+            updateInspectionTimerText();
+        }
+    };
+
+    var updateInspectionTimerText = function() {
+        inspectionCountdown = INSPECTION_SECOND;
+        timerText.innerHTML = inspectionCountdown;
+
+        // インスペクションタイム
+        var hasCalled8s = false;
+        var hasCalled12s = false;
+        inspectionTimerId = setInterval(function() {
+            inspectionCountdown--;
+            timerText.innerHTML = inspectionCountdown;
+            if (inspectionCountdown == 7 && !hasCalled8s) {
+                a[0].play();
+                hasCalled8s = true;
+            }
+            if (inspectionCountdown == 3 && !hasCalled12s) {
+                a[1].play();
+                hasCalled12s = true;
+            }
+        }, 1000);
+
+        // スタート時 +2ペナルティ
+        inspectionPenaltyTimerId = setTimeout(function() {
+            clearTimeout(inspectionTimerId);
+            timerText.innerHTML = '+2';
+            startPenalty = true;
+        }, inspectionCountdown * 1000);
+
+        // スタート時DNF
+        inspectionDNFTimerId = setTimeout(function() {
+            clearTimeout(inspectionPenaltyTimerId);
+            timerText.innerHTML = 'DNF';
+
+            $timeout(function() {
+                $scope.results[$scope.scrambleIndex] = {'record': 0, 'condition': 'DNF'};
+                saveAndPrepare();
+                ($scope.scrambleIndex)++;
+                showScramble($scope.scrambleIndex);
+            });
+
+            updateStatus(true, false, false);
+            document.getElementById('timerNote').innerHTML = window.TriboxContest.timerIdlingText;
+            document.getElementById('timerNoteMb').innerHTML = window.TriboxContest.timerIdlingTextMb;
+
+            // インスペクションタイム超過でDNFになるときにスペースキータッチ中の場合の処理
+            if (isTouching) {
+                isTouchingStartDNF = true;
+                angular.element(document.getElementById('timerText')).removeClass('wait');
+                angular.element(document.getElementById('timerText')).removeClass('ready');
+            }
+
+            unShowOnlyTimer();
+            alert("インスペクションタイムを超過しました。");
+            alert("インスペクションタイムを超過したためDNFです。");
+        }, (inspectionCountdown + 2) * 1000);
+    };
+
+    var startTimer = function() {
+        if ((hasInspection && isInspecting) || (!hasInspection && isIdling)) {
+            startTime = Date.now();
+            document.getElementById('timerNote').innerHTML = window.TriboxContest.timerRunningText;
+            document.getElementById('timerNoteMb').innerHTML = window.TriboxContest.timerRunningTextMb;
+            clearTimeout(inspectionTimerId);
+            clearTimeout(inspectionPenaltyTimerId);
+            clearTimeout(inspectionDNFTimerId);
+            updateStatus(false, false, true);
+            updateTimerText();
+            //setButtonState(false, true, false);
+        }
+    };
+    //startButton.addEventListener('click', startTimer);
+
+    var stopTimer = function() {
+        if (isRunning) {
+            stopTime = Date.now();
+            if (window.TriboxContest.hasInspection) {
+                document.getElementById('timerNote').innerHTML = window.TriboxContest.timerIdlingText;
+                document.getElementById('timerNoteMb').innerHTML = window.TriboxContest.timerIdlingTextMb;
+            } else {
+                document.getElementById('timerNote').innerHTML = window.TriboxContest.timerInspectingText;
+                document.getElementById('timerNoteMb').innerHTML = window.TriboxContest.timerInspectingTextMb;
+            }
+            clearTimeout(timerId);
+            updateStatus(true, false, false);
+            var resultTime = (stopTime - startTime) / 1000;
+            timerText.innerHTML = TriboxContest.formatTime(resultTime);
+            //setButtonState(true, false, true);
+
+            // Prepare results data
+            $timeout(function() {
+                $scope.results[$scope.scrambleIndex] = {'record': null, 'condition': null};
+                if (resultTime < LIMIT_SECOND) {
+                    $scope.results[$scope.scrambleIndex].record = resultTime;
+                    if (!startPenalty) {
+                        $scope.results[$scope.scrambleIndex].condition = 'OK';
+                    } else {
+                        $scope.results[$scope.scrambleIndex].condition = '+2';
+                    }
+                } else {
+                    $scope.results[$scope.scrambleIndex].record = resultTime;
+                    $scope.results[$scope.scrambleIndex].condition = 'DNF';
+                    timerText.innerHTML = 'DNF';
+                }
+                saveAndPrepare();
+                ($scope.scrambleIndex)++;
+                showScramble($scope.scrambleIndex);
+            });
+        }
+    };
+    //stopButton.addEventListener('click', stopTimer);
+
+    /*var resetTimer = function() {
+        if (isRunning) return;
+        timerText.innerHTML = '0.000';
+        //setButtonState(true, false, false);
+    };*/
+    //resetButton.addEventListener('click', resetTimer);
+
+    var updateTimerText = function() {
+        timerId = setInterval(function() {
+            var elapsed = (Date.now() - startTime) / 1000;
+            //timerText.innerHTML = (elapsed).toFixed(3);
+            timerText.innerHTML = TriboxContest.formatTime(elapsed);
+            if (LIMIT_SECOND <= elapsed) {
+                stopTimer();
+                unShowOnlyTimer();
+            }
+        }, 29);
+    };
+
+    document.addEventListener('keydown', function(e) {
+        //document.getElementById('keydown').innerHTML = e.keyCode + ':' + e.code + ' (' + Date.now() + ')';
+        hasInspection = window.TriboxContest.hasInspection;
+        if (isRunning && REJECTING_STOPTIMER_TH < Date.now() - startTime) {
+            stopTimer();
+            unShowOnlyTimer();
+            isTouchingStop = true;
+        } else if ((hasInspection && isInspecting || !hasInspection && isIdling) && !isTouching && !isTouchingStop && (e.keyCode == 32 || e.code == 'Space')) {
+            if (FREEZING_TH < Date.now() - stopTime) {
+                startTouch = Date.now();
+                isTouching = true;
+                angular.element(document.getElementById('timerText')).addClass('wait');
+                showOnlyTimer();
+                dispTimerId = setTimeout(function() {
+                    angular.element(document.getElementById('timerText')).removeClass('wait');
+                    angular.element(document.getElementById('timerText')).addClass('ready');
+                }, TOUCHING_TH);
+            }
+        }
+    });
+    document.addEventListener('keyup', function(e) {
+        //document.getElementById('keyup').innerHTML = e.keyCode + ':' + e.code + ' (' + Date.now() + ')';
+        if (isTouchingStop) {
+            isTouchingStop = false;
+        } else if ((hasInspection && isInspecting || !hasInspection && isIdling) && !isTouchingStartDNF && (e.keyCode == 32 || e.code == 'Space')) {
+            if (FREEZING_TH < Date.now() - stopTime) {
+                isTouching = false;
+                clearTimeout(dispTimerId);
+                angular.element(document.getElementById('timerText')).removeClass('wait');
+                angular.element(document.getElementById('timerText')).removeClass('ready');
+                if (TOUCHING_TH <= (Date.now() - startTouch)) {
+                    startTimer();
+                    startTouch = Infinity;
+                }
+            }
+        } else if (hasInspection && isIdling && !isTouchingStartDNF && (e.keyCode == 32 || e.code == 'Space')) {
+            if (FREEZING_TH < Date.now() - stopTime) {
+                startInspection();
+                showOnlyTimer();
+            }
+        }
+        isTouchingStartDNF = false;
+    });
+    if (window.TouchEvent) {
+        var touchArea = document.getElementById('touchArea');
+        touchArea.addEventListener('touchstart', function(e) {
+            //document.getElementById('keydown').innerHTML = 'touchstart (' + Date.now() + ' ' + e.changedTouches[0].pageX + ' ' + e.changedTouches[0].pageY + ')';
+            touchX = e.changedTouches[0].pageX;
+            touchY = e.changedTouches[0].pageY;
+            hasInspection = window.TriboxContest.hasInspection;
+            if (isRunning && REJECTING_STOPTIMER_TH < Date.now() - startTime) {
+                stopTimer();
+                unShowOnlyTimer();
+                isTouchingStop = true;
+            } else if ((hasInspection && isInspecting || !hasInspection && isIdling) && !isTouching && !isTouchingStop) {
+                if (FREEZING_TH < Date.now() - stopTime) {
+                    startTouch = Date.now();
+                    isTouching = true;
+                    angular.element(document.getElementById('timerText')).addClass('wait');
+                    showOnlyTimer();
+                    dispTimerId = setTimeout(function() {
+                        angular.element(document.getElementById('timerText')).removeClass('wait');
+                        angular.element(document.getElementById('timerText')).addClass('ready');
+                    }, TOUCHING_TH);
+                }
+            }
+        });
+        document.addEventListener('touchend', function(e) {
+            //document.getElementById('keyup').innerHTML = 'touchend (' + Date.now() + ' ' + e.changedTouches[0].pageX + ' ' + e.changedTouches[0].pageY + ')';
+            if (isTouchingStop) {
+                isTouchingStop = false;
+            } else if ((hasInspection && isInspecting || !hasInspection && isIdling) && !isTouchingStartDNF) {
+                if (FREEZING_TH < Date.now() - stopTime) {
+                    isTouching = false;
+                    clearTimeout(dispTimerId);
+                    angular.element(document.getElementById('timerText')).removeClass('wait');
+                    angular.element(document.getElementById('timerText')).removeClass('ready');
+                    if (TOUCHING_TH <= (Date.now() - startTouch)) {
+                        startTimer();
+                        startTouch = Infinity;
+                    }
+                }
+            } else if (hasInspection && isIdling && !isTouchingStartDNF) {
+                if (Math.abs(e.changedTouches[0].pageX - touchX) <= TAP_TH && Math.abs(e.changedTouches[0].pageY - touchY) <= TAP_TH) {
+                    if (FREEZING_TH < Date.now() - stopTime) {
+                        startInspection();
+                        showOnlyTimer();
+                    }
+                } else {
+                    angular.element(document.getElementById('timerText')).removeClass('wait');
+                    angular.element(document.getElementById('timerText')).removeClass('ready');
+                }
+            }
+            isTouchingStartDNF = false;
+        });
+    }
+
+    // タイマーのみを表示
+    var showOnlyTimer = function() {
+        // ヘッダ・フッタ
+        angular.element(document.getElementById('header')).addClass('hide');
+        angular.element(document.getElementById('header-line')).addClass('hide');
+        angular.element(document.getElementById('footer-line')).addClass('hide');
+        angular.element(document.getElementById('footer')).addClass('hide');
+
+        // メインコンテント
+        angular.element(document.getElementById('event-info')).addClass('hide');
+        angular.element(document.getElementById('auth-info')).addClass('hide');
+        angular.element(document.getElementById('contest-scrambles')).addClass('hide');
+        angular.element(document.getElementById('timeforms')).addClass('hide');
+        angular.element(document.getElementById('timerText')).addClass('timerText-tall');
+
+        angular.element(document.getElementById('touchArea')).addClass('full-screen');
+        fadeIn(document.getElementById('timerArea'));
+    };
+
+    // タイマーのみを表示を解除
+    var unShowOnlyTimer = function() {
+        // ヘッダ・フッタ
+        angular.element(document.getElementById('header')).removeClass('hide');
+        angular.element(document.getElementById('header-line')).removeClass('hide');
+        angular.element(document.getElementById('footer-line')).removeClass('hide');
+        angular.element(document.getElementById('footer')).removeClass('hide');
+
+        // メインコンテント
+        angular.element(document.getElementById('event-info')).removeClass('hide');
+        angular.element(document.getElementById('auth-info')).removeClass('hide');
+        angular.element(document.getElementById('contest-scrambles')).removeClass('hide');
+        angular.element(document.getElementById('timeforms')).removeClass('hide');
+        angular.element(document.getElementById('timerText')).removeClass('timerText-tall');
+
+        angular.element(document.getElementById('touchArea')).removeClass('full-screen');
+    };
+
+    // モバイル用
+    // タイマー表示
+    /*$scope.showTimer = function() {
+        angular.element(document.getElementById('timeforms')).removeClass('mb-hide');
+        angular.element(document.getElementById('timeforms')).removeClass('tb-hide');
+
+        angular.element(document.getElementById('tabs-timer')).removeClass('hide');
+        angular.element(document.getElementById('tabs-history')).addClass('hide');
+
+        angular.element(document.getElementById('timeforms')).addClass('hide');
+        angular.element(document.getElementById('touchArea')).removeClass('hide');
+    };*/
+
+    // モバイル用
+    // タイム履歴表示
+    /*$scope.showHistory = function() {
+        angular.element(document.getElementById('timeforms')).removeClass('mb-hide');
+        angular.element(document.getElementById('timeforms')).removeClass('tb-hide');
+
+        angular.element(document.getElementById('tabs-timer')).addClass('hide');
+        angular.element(document.getElementById('tabs-history')).removeClass('hide');
+
+        angular.element(document.getElementById('timeforms')).removeClass('hide');
+        angular.element(document.getElementById('touchArea')).addClass('hide');
+    };*/
+
+}); // onAuthStateChange
+}
+
+}]);
+</script>
+
+</div></body>
+</html>
