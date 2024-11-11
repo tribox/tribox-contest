@@ -1,348 +1,741 @@
-[% set title = "Contest " + cid %]
-[% set page_url = contest_url + 'contest/' + cid %]
+[% set title = "Contest " + cid %] [% set page_url = contest_url + 'contest/' +
+cid %]
 
 <!DOCTYPE html>
 <html lang="ja" ng-app="contestApp">
-<head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
-  [% import "components/header.html" as header %]
-  [[ header.print(title=title, description=contest_description, sitename=contest_name, contest_url=contest_url, page_url=page_url) ]]
+  <head
+    prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#"
+  >
+    [% import "components/header.html" as header %] [[ header.print(title=title,
+    description=contest_description, sitename=contest_name,
+    contest_url=contest_url, page_url=page_url) ]]
 
-  <link rel="stylesheet" media="screen" href="/assets/stylesheets/modal.css">
+    <link
+      rel="stylesheet"
+      media="screen"
+      href="/assets/stylesheets/modal.css"
+    />
 
-  [% import "components/basejs.html" as basejs %]
-  [[ basejs.print(firebaseapp_contest, firebaseapp_contest_apikey, firebaseapp_contest_senderid, firebaseapp_wca) ]]
-</head>
-<body>
-  <div class="container">
-    [% import "components/bodyheader.html" as bodyheader %]
-    [[ bodyheader.print(title=title, contest_name=contest_name) ]]
+    [% import "components/basejs.html" as basejs %] [[
+    basejs.print(firebaseapp_contest, firebaseapp_contest_apikey,
+    firebaseapp_contest_senderid, firebaseapp_wca) ]]
+  </head>
+  <body>
+    <div class="container">
+      [% import "components/bodyheader.html" as bodyheader %] [[
+      bodyheader.print(title=title, contest_name=contest_name) ]]
 
-    <div ng-controller="AuthCtrl">
-      <div ng-hide="authLoaded">auth loaded</div>
-    </div>
-    <div ng-controller="ContestIndexCtrl">
-      <div ng-hide="contestIndexLoaded">contest index loaded</div>
-    </div>
-    <div ng-controller="ContestCtrl">
-      <div ng-hide="contestLoaded">contest loaded</div>
-    </div>
+      <div ng-controller="AuthCtrl">
+        <div ng-controller="ContestCtrl">
+          <div ng-controller="ContestIndexCtrl">
+            <div
+              id="modal-overlay"
+              class="hide"
+              ng-show="countdown == 0 && (justSuspended || justDone)"
+            ></div>
+            <div
+              id="modal-suspended"
+              class="modal-content hide"
+              ng-show="countdown == 0 && justSuspended"
+            >
+              <p>
+                <i class="fa fa-check"></i>
+                "[[ justSuspended ]]" が一時中断されました。
+              </p>
+              <p>
+                <a id="modal-suspended-close" class="modal-close">閉じる</a>
+              </p>
+            </div>
+            <div
+              id="modal-done"
+              class="modal-content hide"
+              ng-show="countdown == 0 && justDone"
+            >
+              <p>
+                <i class="fa fa-check"></i>
+                "[[ justDone ]]" の結果送信が完了しました。<br />
+                結果発表まではタイムの公開をお控えください。<br />
+                <a
+                  href="http://twitter.com/share?url=[[ contestUrl ]]%2F%3Fe%3D[[ justDoneEvent ]]&text=[[ justDoneText ]]&related=triboxContest"
+                  class="btn btn-tweet"
+                  target="_blank"
+                >
+                  <i class="fa fa-twitter"></i> Tweet</a
+                >
+              </p>
+              <p>
+                <a id="modal-done-close" class="modal-close">閉じる</a>
+              </p>
+            </div>
 
-    [% include "components/bodyfooter.html" %]
+            <div ng-hide="authLoaded && contestLoaded && contestIndexLoaded">
+              <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+              <span class="sr-only">Loading...</span>
+              Loading...
+            </div>
+            <div
+              id="main-content"
+              class="hide"
+              ng-show="authLoaded && contestLoaded && contestIndexLoaded"
+            >
+              @authinfo()
 
-    [% import "components/authjs.html" as authjs %]
-    [[ authjs.print(redirect_login="", redirect_logout="", check_first=True) ]]
+              <div ng-hide="existsContest">
+                <p class="color-error">存在しないコンテストです。</p>
+              </div>
 
-    [% import "components/contestjs.html" as contestjs %]
-    [[ contestjs.print(cid=cid, fetch_scrambles=False, fetch_results_top3=True, fetch_results_all=False)]]
+              <div ng-show="existsContest">
+                <h2>{{ contestData.contestName }}</h2>
 
-    <script>
-      app.controller("ContestIndexCtrl", [
-        "$scope",
-        "$timeout",
-        function ($scope, $timeout) {
-          firebase.auth().onAuthStateChanged(function (authData) {
-            $scope.eventsDone = {};
-            $scope.justSuspended = null;
-            $scope.justDone = null;
-            $scope.justDoneText = "";
-            $scope.justDoneEvent = "";
+                <p ng-if="contestData.videoBonusStatus && (countdown >= 0)">
+                  <i class="em em-tada"></i><i class="em em-tada"></i
+                  ><i class="em em-tada"></i>
+                  <b>ビデオボーナス節 (3×3×3のみ)</b> <i class="em em-tada"></i
+                  ><i class="em em-tada"></i><i class="em em-tada"></i><br />
+                  要件を満たすビデオを提出いただいた方のうち上位5名に追加のSP（シーズンポイント）が与えられます！<br />
+                  ビデオボーナス節についての詳細は
+                  <b
+                    ><a href="[[ url_for('regulations') ]]"
+                      >参加方法とルール</a
+                    ></b
+                  >
+                  をご覧ください。
+                </p>
+                <p
+                  ng-if="(contestData.videoBonusStatus == 'checking') && (countdown < 0)"
+                >
+                  <i class="em em-tada"></i>
+                  <b>ビデオボーナス節（ビデオチェック中）</b>
+                  <i class="em em-tada"></i>
+                </p>
+                <p
+                  ng-if="(contestData.videoBonusStatus == 'done') && (countdown < 0)"
+                >
+                  <i class="em em-tada"></i>
+                  <b>ビデオボーナス節（ビデオチェック完了）</b>
+                  <i class="em em-tada"></i>
+                </p>
 
-            $scope.contestIndexLoaded = true;
+                <p>
+                  <i class="fa fa-calendar"></i> 開催期間:
+                  <b>{{ contestData.beginAt | toDate }}</b> ~
+                  <b>{{ contestData.endAt | toDate }}</b>
+                </p>
+                <p ng-if="countdown == 0">現在開催中のコンテストです。</p>
+                <p class="color-error" ng-if="countdown < 0">
+                  このコンテストは終了しました。
+                </p>
+                <p class="color-error" ng-if="countdown > 0">
+                  このコンテストはまだ開始されていません。
+                </p>
+                <p
+                  class="color-error notice-error"
+                  ng-if="(countdown < 0) && !(contestData.resultsStatus == 'public' || usersecretData.isAdmin)"
+                >
+                  記録を集計中です。集計完了後に結果が公開されます。公開までしばらくお待ちください。
+                </p>
 
-            $scope.currentContest = "[[ cid ]]";
-            $scope.contestsList = null;
+                <div
+                  ng-if="(usersecretData.isAdmin) && (countdown < 0) && (contestData.resultsStatus != 'public')"
+                >
+                  <p>
+                    <strong>運営用</strong><br />
+                    <a
+                      class="btn"
+                      style="margin: 1em"
+                      href="javascript:void(0);"
+                      ng-click="publishContest('[[ cid ]]', '/admin-api/contest/publish?c=[[ cid ]]&token=' + usersecretData.adminToken)"
+                    >
+                      <i class="fa fa-lock"></i>
+                      <i class="fa fa-arrow-right"></i>
+                      <i class="fa fa-globe"></i> 結果ページを公開にする
+                    </a>
+                  </p>
+                  <hr />
+                </div>
+                <div
+                  ng-if="(usersecretData.isAdmin) && (countdown < 0) && (contestData.resultsStatus == 'public')"
+                >
+                  <p>
+                    <strong>運営用</strong><br />
+                    <a
+                      class="btn"
+                      style="margin: 1em"
+                      href="javascript:void(0);"
+                      ng-click="tweetContest('[[ cid ]]', '/admin-api/contest/tweet?c=[[ cid ]]&token=' + usersecretData.adminToken)"
+                    >
+                      <i class="fa fa-twitter"></i> 優勝者をツイートする
+                    </a>
+                    <a
+                      class="btn btn-light"
+                      style="margin: 1em; color: #555"
+                      href="javascript:void(0);"
+                      ng-click="unpublishContest('[[ cid ]]', '/admin-api/contest/unpublish?c=[[ cid ]]&token=' + usersecretData.adminToken)"
+                    >
+                      <i class="fa fa-globe"></i>
+                      <i class="fa fa-arrow-right"></i>
+                      <i class="fa fa-lock"></i> 結果ページを非公開にする
+                    </a>
+                  </p>
+                  <hr />
+                </div>
 
-            // Read personal results
-            if (authData) {
-              contestRef
-                .child("contests")
-                .child("c[[ cid ]]")
-                .once("value", function (snapContest) {
-                  if (snapContest.exists()) {
-                    var contestData = snapContest.val();
-                    contestData.events.forEach(function (e) {
-                      contestRef
-                        .child("results")
-                        .child("c[[ cid ]]")
-                        .child(e)
-                        .child(authData.uid)
-                        .once(
-                          "value",
-                          function (snapResult) {
-                            var resultData = snapResult.val();
-                            $timeout(function () {
-                              if (!resultData) {
-                                $scope.eventsDone[e] = false;
-                              } else {
-                                if (resultData.endAt) {
-                                  $scope.eventsDone[e] = true;
-                                } else {
-                                  $scope.eventsDone[e] = resultData.type;
-                                }
-                              }
-                            });
-                          },
-                          function (error) {
-                            console.error(error);
-                          }
-                        );
-                    });
-                  } else {
-                    console.error("Undefined contest: [[ cid ]]");
-                  }
-                });
+                <p ng-show="countdown < 0">
+                  別のコンテスト結果を見る<br />
+                  <select
+                    class="form-control"
+                    style="margin-bottom: 5px"
+                    ng-model="currentContest"
+                    ng-change="currentContestChange()"
+                  >
+                    <option
+                      ng-repeat="c in contestsList"
+                      value="{{ c.id | removeHead }}"
+                    >
+                      {{ c.shortName }}
+                    </option>
+                  </select>
+                </p>
 
-              var vars = getUrlVars();
-              if (vars.suspended) {
-                var qe = "e" + vars.suspended;
-                contestRef.child("events").once(
-                  "value",
-                  function (snapEvents) {
-                    if (snapEvents.exists() && snapEvents.val()[qe]) {
-                      $timeout(function () {
-                        $scope.justSuspended = snapEvents.val()[qe].name;
-                        // うまくDOMのサイズが取得できないときがあるので何回か呼ぶ
-                        showModalSuspended();
-                        for (var delay = 1; delay <= 20; delay++) {
-                          $timeout(showModalSuspended, delay * 50);
-                        }
-                        for (var delay = 2; delay <= 10; delay++) {
-                          $timeout(showModalSuspended, delay * 1000);
-                        }
-                      });
-                    }
-                  },
-                  function (error) {
-                    console.error(error);
-                  }
-                );
+                <table
+                  class="table table-bordered tribox-contest"
+                  ng-if="0 <= countdown"
+                >
+                  <thead>
+                    <tr>
+                      <th>競技種目</th>
+                      <th>計測フォーマット</th>
+                      <th>参加</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr ng-repeat="e in contestData.events">
+                      <td>
+                        <span
+                          class="cubing-icon event-{{ e | removeHead }}"
+                          style="vertical-align: baseline; font-size: 18px"
+                        ></span>
+                        {{ events[e].name }}
+                      </td>
+                      <td>
+                        {{ events[e].method | uppercaseHead }} of {{
+                        events[e].attempts }}
+                      </td>
+                      <td>
+                        <a
+                          class="font-bold"
+                          href="/contest/[[ cid ]]/{{ e | removeHead }}"
+                          ng-if="countdown == 0 && authData != null && eventsDone[e] == false"
+                          ><i class="fa fa-play-circle"></i> 参加する</a
+                        >
+                        <a
+                          class="font-bold color-error"
+                          href="/contest/[[ cid ]]/{{ e | removeHead }}/timer"
+                          ng-if="countdown == 0 && authData != null && eventsDone[e] == 'timer'"
+                          ><i class="fa fa-play-circle"></i> 再開する</a
+                        >
+                        <a
+                          class="font-bold color-error"
+                          href="/contest/[[ cid ]]/{{ e | removeHead }}/form"
+                          ng-if="countdown == 0 && authData != null && eventsDone[e] == 'form'"
+                          ><i class="fa fa-play-circle"></i> 再開する</a
+                        >
+                        <a
+                          class="font-bold color-error"
+                          href="/contest/[[ cid ]]/{{ e | removeHead }}/solution"
+                          ng-if="countdown == 0 && authData != null && eventsDone[e] == 'solution'"
+                          ><i class="fa fa-play-circle"></i> 再開する</a
+                        >
+                        <span
+                          style="color: #ccc"
+                          ng-if="countdown == 0 && authData != null && eventsDone[e] == true"
+                          ><i class="fa fa-check-circle"></i> 参加済みです</span
+                        >
+                        <a
+                          href="[[ url_for('login') ]]"
+                          ng-if="countdown == 0 && authData == null"
+                          ><i class="fa fa-sign-in"></i>
+                          ログインして参加してください</a
+                        >
+                        <span ng-if="countdown != 0"
+                          ><i class="fa fa-ban"></i>
+                          現在このコンテストには参加できません</span
+                        >
+                        <span ng-show="countdown == 0"
+                          >({{ participants[e] }}名参加済)</span
+                        >
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
 
-                // Modal
-                var modalOverlayElem =
-                  document.getElementById("modal-overlay");
-                var modalSuspendedElem =
-                  document.getElementById("modal-suspended");
-                var modalSuspendedCloseElem = document.getElementById(
-                  "modal-suspended-close"
-                );
-                var modalOverlayNgElem = angular.element(modalOverlayElem);
-                var modalSuspendedNgElem =
-                  angular.element(modalSuspendedElem);
-                modalOverlayNgElem.removeClass("hide");
-                modalSuspendedNgElem.removeClass("hide");
-                var showModalSuspended = function () {
-                  var windowW = window.innerWidth;
-                  var windowH = window.innerHeight;
-                  var modalW = modalSuspendedElem.offsetWidth;
-                  var modalH = modalSuspendedElem.offsetHeight;
-                  modalSuspendedNgElem.css(
-                    "left",
-                    (windowW - modalW) / 2 + "px"
-                  );
-                  modalSuspendedNgElem.css(
-                    "top",
-                    (windowH - modalH) / 2 + "px"
-                  );
-                };
-                var closeModalSuspended = function () {
-                  modalOverlayNgElem.addClass("hide");
-                  modalSuspendedNgElem.addClass("hide");
-                  history.replaceState("", "", "[[ cid ]]");
-                };
-                modalOverlayElem.onclick = closeModalSuspended;
-                modalSuspendedCloseElem.onclick = closeModalSuspended;
-              } else if (vars.done) {
-                var qe = "e" + vars.done;
-                $scope.justDoneEvent = vars.done;
+                <div
+                  ng-if="(countdown < 0) && (contestData.resultsStatus == 'public' || usersecretData.isAdmin)"
+                >
+                  <div ng-repeat="e in contestData.events">
+                    <h3>
+                      <span
+                        class="cubing-icon event-{{ e | removeHead }}"
+                        style="vertical-align: baseline"
+                      ></span>
+                      {{ events[e].name }}
+                    </h3>
+                    <p>
+                      計測方法: {{ events[e].method | uppercaseHead }} of {{
+                      events[e].attempts }}<br />
+                      参加人数: {{ resultsPersons[e] }} 人
+                    </p>
+                    <table class="table table-bordered result tribox-contest">
+                      <thead>
+                        <tr>
+                          <th><i class="fa fa-hashtag"></i></th>
+                          <th>SP</th>
+                          <th>名前</th>
+                          <th class="mb-hide">所属</th>
+                          <th>記録</th>
+                          <th class="mb-hide"></th>
+                          <th>パズル</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr
+                          id="[[ e ]]-[[ index ]]"
+                          ng-repeat="r in resultsTop3[e]"
+                        >
+                          <td>{{ r.place }}</td>
+                          <td>
+                            <span
+                              ng-if="(r.seasonPoint || r.seasonPointVideoBonus) && (r.seasonPoint + r.seasonPointVideoBonus) > 0"
+                              >{{ r.seasonPoint + r.seasonPointVideoBonus
+                              }}</span
+                            >
+                          </td>
+                          <td>
+                            <img
+                              src="/assets/flags/flags-iso/shiny/24/{{ r.user.iso2 }}.png"
+                              height="24"
+                              style="vertical-align: middle"
+                              ng-show="r.user.iso2"
+                            />
+                            <a href="/user/{{ r.user.username }}"
+                              >{{ r.user.displayname }}</a
+                            >
+                          </td>
+                          <td class="mb-hide ellipsis">
+                            {{ r.user.organization }}
+                          </td>
+                          <td class="mb-hide"><b>{{r.resultF }}</b></td>
+                          <td class="tb-hide pc-hide">
+                            <a
+                              class="cursor-pointer"
+                              ng-click="showDetail(e, $index)"
+                              ><b style="color: rgb(85, 85, 85)"
+                                >{{r.resultF }}</b
+                              ></a
+                            >
+                          </td>
+                          <td
+                            class="mb-hide"
+                            id="[[ e ]]-[[ index ]]-show"
+                            ng-if="e != 'e333fm'"
+                          >
+                            <a
+                              class="cursor-pointer"
+                              ng-click="showDetail(e, index)"
+                              >詳細</a
+                            >
+                          </td>
+                          <td
+                            class="mb-hide"
+                            id="[[ e ]]-[[ index ]]-show"
+                            ng-if="e == 'e333fm'"
+                          >
+                            <a
+                              class="cursor-pointer"
+                              ng-click="showDetail(e, index)"
+                              >解答</a
+                            >
+                          </td>
+                          <td ng-show="r.puzzle.type == 'database'">
+                            <a
+                              href="http://store.tribox.com/products/detail.php?product_id={{ r.puzzle.product }}"
+                              target="_blank"
+                              >{{ r.puzzleF }}</a
+                            >
+                          </td>
+                          <td
+                            ng-show="r.puzzle.type == 'nodatabase' || r.puzzle.type == 'unknown'"
+                          >
+                            {{ r.puzzleF }}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <p>
+                      <a
+                        class="btn mb-hide"
+                        href="/contest/result/[[ cid ]]/{{ e | removeHead }}"
+                      >
+                        {{ events[e].name }} のすべての結果を見る
+                      </a>
+                      <a
+                        class="btn tb-hide pc-hide"
+                        href="/contest/result/[[ cid ]]/{{ e | removeHead }}"
+                        style="padding: 10px 15px"
+                      >
+                        {{ events[e].name }} すべての結果
+                      </a>
+                    </p>
+                    [#
+                    <!--<pre>{{ resultsData[e] | json }}</pre>-->
+                    #] [#
+                    <!--<pre>{{ resultsTop3[e] | json }}</pre>-->
+                    #]
+                  </div>
+                </div>
+
+                [#
+                <!--<p>usersecretData:</p>
+      <pre>{{ usersecretData | json }}</pre>-->
+                #] [#
+                <!--<p>[[ cid ]] -> contestData:</p>
+      <pre>{[ contestData | json }}</pre>-->
+                #] [#
+                <!--<p>inProgress / countdown:</p>
+      <pre>{{ inProgress | json }}</pre>
+      <pre>{{ countdown | json }}</pre>-->
+                #] [#
+                <!--<p>[[ cid ]] -> scramblesData:</p>
+      <pre>{{ scramblesData | json }}</pre>-->
+                #] [#
+                <!--<p>[[ cid ]] -> resultsData:</p>
+      <pre>{{ resultsData | json }}</pre>-->
+                #] [#
+                <!--<p>events:</p>
+      <pre>{{ events | json }}</pre>-->
+                #]
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      [% include "components/bodyfooter.html" %] [% import
+      "components/authjs.html" as authjs %] [[ authjs.print(redirect_login="",
+      redirect_logout="", check_first=True) ]] [% import
+      "components/contestjs.html" as contestjs %] [[ contestjs.print(cid=cid,
+      fetch_scrambles=False, fetch_results_top3=True, fetch_results_all=False)]]
+
+      <script>
+        app.controller("ContestIndexCtrl", [
+          "$scope",
+          "$timeout",
+          function ($scope, $timeout) {
+            firebase.auth().onAuthStateChanged(function (authData) {
+              $scope.eventsDone = {};
+              $scope.justSuspended = null;
+              $scope.justDone = null;
+              $scope.justDoneText = "";
+              $scope.justDoneEvent = "";
+
+              $scope.contestIndexLoaded = true;
+
+              $scope.currentContest = "[[ cid ]]";
+              $scope.contestsList = null;
+
+              // Read personal results
+              if (authData) {
                 contestRef
                   .child("contests")
                   .child("c[[ cid ]]")
                   .once("value", function (snapContest) {
-                    var contest = snapContest.val();
-                    var season = "";
-                    if (contest.season == 1) {
-                      season = "前半期";
-                    } else if (contest.season == 2) {
-                      season = "後半期";
+                    if (snapContest.exists()) {
+                      var contestData = snapContest.val();
+                      contestData.events.forEach(function (e) {
+                        contestRef
+                          .child("results")
+                          .child("c[[ cid ]]")
+                          .child(e)
+                          .child(authData.uid)
+                          .once(
+                            "value",
+                            function (snapResult) {
+                              var resultData = snapResult.val();
+                              $timeout(function () {
+                                if (!resultData) {
+                                  $scope.eventsDone[e] = false;
+                                } else {
+                                  if (resultData.endAt) {
+                                    $scope.eventsDone[e] = true;
+                                  } else {
+                                    $scope.eventsDone[e] = resultData.type;
+                                  }
+                                }
+                              });
+                            },
+                            function (error) {
+                              console.error(error);
+                            }
+                          );
+                      });
+                    } else {
+                      console.error("Undefined contest: [[ cid ]]");
                     }
-                    contestRef.child("events").once(
-                      "value",
-                      function (snapEvents) {
-                        if (snapEvents.exists() && snapEvents.val()[qe]) {
-                          $timeout(function () {
-                            $scope.justDone = snapEvents.val()[qe].name;
-                            $scope.justDoneText =
-                              snapEvents.val()[qe].name +
-                              " に参加しました！%0a" +
-                              contest.contestName +
-                              "%0a" +
-                              "締め切りは毎週日曜21時です。";
-                            // うまくDOMのサイズが取得できないときがあるので何回か呼ぶ
-                            showModalDone();
-                            for (var delay = 1; delay <= 20; delay++) {
-                              $timeout(showModalDone, delay * 50);
-                            }
-                            for (var delay = 2; delay <= 10; delay++) {
-                              $timeout(showModalDone, delay * 1000);
-                            }
-                          });
-                        }
-                      },
-                      function (error) {
-                        console.error(error);
-                      }
-                    );
                   });
 
-                // Modal
-                var modalOverlayElem =
-                  document.getElementById("modal-overlay");
-                var modalDoneElem = document.getElementById("modal-done");
-                var modalDoneCloseElem =
-                  document.getElementById("modal-done-close");
-                var modalOverlayNgElem = angular.element(modalOverlayElem);
-                var modalDoneNgElem = angular.element(modalDoneElem);
-                modalOverlayNgElem.removeClass("hide");
-                modalDoneNgElem.removeClass("hide");
-                var showModalDone = function () {
-                  var windowW = window.innerWidth;
-                  var windowH = window.innerHeight;
-                  var modalW = modalDoneElem.offsetWidth;
-                  var modalH = modalDoneElem.offsetHeight;
-                  modalDoneNgElem.css("left", (windowW - modalW) / 2 + "px");
-                  modalDoneNgElem.css("top", (windowH - modalH) / 2 + "px");
-                };
-                var closeModalDone = function () {
-                  modalOverlayNgElem.addClass("hide");
-                  modalDoneNgElem.addClass("hide");
-                  history.replaceState("", "", "[[ cid ]]");
-                };
-                modalOverlayElem.onclick = closeModalDone;
-                modalDoneCloseElem.onclick = closeModalDone;
-              }
-            }
-
-            // 今シーズンの開催済みコンテストリスト
-            // とりあえず contests テーブルから引っ張ってくる
-            contestRef
-              .child("contests")
-              .once("value", function (snapContests) {
-                var contests = snapContests.val();
-                contestRef
-                  .child("inProgress")
-                  .once("value", function (snapInProgress) {
-                    var lastContest = snapInProgress.val().lastContest;
-                    var _contestsList = [];
-                    Object.keys(snapContests.val()).forEach(function (
-                      contestId
-                    ) {
-                      if (contestId <= lastContest) {
-                        _contestsList.push({
-                          id: contestId,
-                          name: contests[contestId].contestName,
-                          shortName:
-                            contests[contestId].contestName.slice(15),
+                var vars = getUrlVars();
+                if (vars.suspended) {
+                  var qe = "e" + vars.suspended;
+                  contestRef.child("events").once(
+                    "value",
+                    function (snapEvents) {
+                      if (snapEvents.exists() && snapEvents.val()[qe]) {
+                        $timeout(function () {
+                          $scope.justSuspended = snapEvents.val()[qe].name;
+                          // うまくDOMのサイズが取得できないときがあるので何回か呼ぶ
+                          showModalSuspended();
+                          for (var delay = 1; delay <= 20; delay++) {
+                            $timeout(showModalSuspended, delay * 50);
+                          }
+                          for (var delay = 2; delay <= 10; delay++) {
+                            $timeout(showModalSuspended, delay * 1000);
+                          }
                         });
                       }
-                    });
-                    $timeout(function () {
-                      $scope.contestsList = _contestsList;
-                    });
-                  });
-              });
+                    },
+                    function (error) {
+                      console.error(error);
+                    }
+                  );
 
-            $scope.currentContestChange = function () {
-              location.href = "/contest/" + $scope.currentContest;
-            };
-
-            var showDetailList = [];
-            $scope.showDetail = function (eid, index) {
-              var id = "" + eid + index;
-              if (eid == "e333fm") {
-                if (!showDetailList[id]) {
-                  showDetailList[id] = true;
-                  var html =
-                    '<tr id="row-detail-' +
-                    id +
-                    '" class="row-detail"><td colspan="7">' +
-                    "<p><b>解答:</b><br>" +
-                    TriboxContest.escapeHTML(
-                      $scope.resultsTop3["e333fm"][index].details[0].solution
-                    ) +
-                    "</p>" +
-                    "<p><b>解説コメント:</b><br>" +
-                    TriboxContest.escapeHTML(
-                      $scope.resultsTop3["e333fm"][index].details[0].note
-                    ) +
-                    "</p>";
-                  angular
-                    .element(document.getElementById("e333fm-" + index))
-                    .after(html);
-                  //angular.element(document.getElementById('e333fm-' + index + '-show')).text('表示済み');
-                  fadeIn(document.getElementById("row-detail-" + id));
-                } else {
-                  showDetailList[id] = false;
-                  angular
-                    .element(document.getElementById("row-detail-" + id))
-                    .remove();
-                }
-              } else {
-                if (!showDetailList[id]) {
-                  showDetailList[id] = true;
-                  var html =
-                    '<tr id="row-detail-' +
-                    id +
-                    '" class="row-detail"><td colspan="7">' +
-                    TriboxContest.escapeHTML(
-                      $scope.resultsTop3[eid][index].detailsF
+                  // Modal
+                  var modalOverlayElem =
+                    document.getElementById("modal-overlay");
+                  var modalSuspendedElem =
+                    document.getElementById("modal-suspended");
+                  var modalSuspendedCloseElem = document.getElementById(
+                    "modal-suspended-close"
+                  );
+                  var modalOverlayNgElem = angular.element(modalOverlayElem);
+                  var modalSuspendedNgElem =
+                    angular.element(modalSuspendedElem);
+                  modalOverlayNgElem.removeClass("hide");
+                  modalSuspendedNgElem.removeClass("hide");
+                  var showModalSuspended = function () {
+                    var windowW = window.innerWidth;
+                    var windowH = window.innerHeight;
+                    var modalW = modalSuspendedElem.offsetWidth;
+                    var modalH = modalSuspendedElem.offsetHeight;
+                    modalSuspendedNgElem.css(
+                      "left",
+                      (windowW - modalW) / 2 + "px"
                     );
-                  angular
-                    .element(document.getElementById(eid + "-" + index))
-                    .after(html);
-                  fadeIn(document.getElementById("row-detail-" + id));
-                } else {
-                  showDetailList[id] = false;
-                  angular
-                    .element(document.getElementById("row-detail-" + id))
-                    .remove();
+                    modalSuspendedNgElem.css(
+                      "top",
+                      (windowH - modalH) / 2 + "px"
+                    );
+                  };
+                  var closeModalSuspended = function () {
+                    modalOverlayNgElem.addClass("hide");
+                    modalSuspendedNgElem.addClass("hide");
+                    history.replaceState("", "", "[[ cid ]]");
+                  };
+                  modalOverlayElem.onclick = closeModalSuspended;
+                  modalSuspendedCloseElem.onclick = closeModalSuspended;
+                } else if (vars.done) {
+                  var qe = "e" + vars.done;
+                  $scope.justDoneEvent = vars.done;
+                  contestRef
+                    .child("contests")
+                    .child("c[[ cid ]]")
+                    .once("value", function (snapContest) {
+                      var contest = snapContest.val();
+                      var season = "";
+                      if (contest.season == 1) {
+                        season = "前半期";
+                      } else if (contest.season == 2) {
+                        season = "後半期";
+                      }
+                      contestRef.child("events").once(
+                        "value",
+                        function (snapEvents) {
+                          if (snapEvents.exists() && snapEvents.val()[qe]) {
+                            $timeout(function () {
+                              $scope.justDone = snapEvents.val()[qe].name;
+                              $scope.justDoneText =
+                                snapEvents.val()[qe].name +
+                                " に参加しました！%0a" +
+                                contest.contestName +
+                                "%0a" +
+                                "締め切りは毎週日曜21時です。";
+                              // うまくDOMのサイズが取得できないときがあるので何回か呼ぶ
+                              showModalDone();
+                              for (var delay = 1; delay <= 20; delay++) {
+                                $timeout(showModalDone, delay * 50);
+                              }
+                              for (var delay = 2; delay <= 10; delay++) {
+                                $timeout(showModalDone, delay * 1000);
+                              }
+                            });
+                          }
+                        },
+                        function (error) {
+                          console.error(error);
+                        }
+                      );
+                    });
+
+                  // Modal
+                  var modalOverlayElem =
+                    document.getElementById("modal-overlay");
+                  var modalDoneElem = document.getElementById("modal-done");
+                  var modalDoneCloseElem =
+                    document.getElementById("modal-done-close");
+                  var modalOverlayNgElem = angular.element(modalOverlayElem);
+                  var modalDoneNgElem = angular.element(modalDoneElem);
+                  modalOverlayNgElem.removeClass("hide");
+                  modalDoneNgElem.removeClass("hide");
+                  var showModalDone = function () {
+                    var windowW = window.innerWidth;
+                    var windowH = window.innerHeight;
+                    var modalW = modalDoneElem.offsetWidth;
+                    var modalH = modalDoneElem.offsetHeight;
+                    modalDoneNgElem.css("left", (windowW - modalW) / 2 + "px");
+                    modalDoneNgElem.css("top", (windowH - modalH) / 2 + "px");
+                  };
+                  var closeModalDone = function () {
+                    modalOverlayNgElem.addClass("hide");
+                    modalDoneNgElem.addClass("hide");
+                    history.replaceState("", "", "[[ cid ]]");
+                  };
+                  modalOverlayElem.onclick = closeModalDone;
+                  modalDoneCloseElem.onclick = closeModalDone;
                 }
               }
-            };
-          }); // onAuthStateChange
 
-          $scope.publishContest = function (contest, url) {
-            var ok = confirm(
-              "【確認】コンテスト (" +
-                contest +
-                ") の結果ページを公開しますか？"
-            );
-            if (ok) {
-              window.open(url, "_blank");
-            }
-          };
-          $scope.unpublishContest = function (contest, url) {
-            var ok = confirm(
-              "【確認】コンテスト (" +
-                contest +
-                ") の結果ページを非公開にしますか？"
-            );
-            if (ok) {
-              window.open(url, "_blank");
-            }
-          };
-          $scope.tweetContest = function (contest, url) {
-            var ok = confirm(
-              "【確認】コンテスト (" +
-                contest +
-                ") の優勝者をツイートしますか？"
-            );
-            if (ok) {
-              window.open(url, "_blank");
-            }
-          };
-        },
-      ]);
-    </script>
-  </div>
-</body>
+              // 今シーズンの開催済みコンテストリスト
+              // とりあえず contests テーブルから引っ張ってくる
+              contestRef
+                .child("contests")
+                .once("value", function (snapContests) {
+                  var contests = snapContests.val();
+                  contestRef
+                    .child("inProgress")
+                    .once("value", function (snapInProgress) {
+                      var lastContest = snapInProgress.val().lastContest;
+                      var _contestsList = [];
+                      Object.keys(snapContests.val()).forEach(function (
+                        contestId
+                      ) {
+                        if (contestId <= lastContest) {
+                          _contestsList.push({
+                            id: contestId,
+                            name: contests[contestId].contestName,
+                            shortName:
+                              contests[contestId].contestName.slice(15),
+                          });
+                        }
+                      });
+                      $timeout(function () {
+                        $scope.contestsList = _contestsList;
+                      });
+                    });
+                });
+
+              $scope.currentContestChange = function () {
+                location.href = "/contest/" + $scope.currentContest;
+              };
+
+              var showDetailList = [];
+              $scope.showDetail = function (eid, index) {
+                var id = "" + eid + index;
+                if (eid == "e333fm") {
+                  if (!showDetailList[id]) {
+                    showDetailList[id] = true;
+                    var html =
+                      '<tr id="row-detail-' +
+                      id +
+                      '" class="row-detail"><td colspan="7">' +
+                      "<p><b>解答:</b><br>" +
+                      TriboxContest.escapeHTML(
+                        $scope.resultsTop3["e333fm"][index].details[0].solution
+                      ) +
+                      "</p>" +
+                      "<p><b>解説コメント:</b><br>" +
+                      TriboxContest.escapeHTML(
+                        $scope.resultsTop3["e333fm"][index].details[0].note
+                      ) +
+                      "</p>";
+                    angular
+                      .element(document.getElementById("e333fm-" + index))
+                      .after(html);
+                    //angular.element(document.getElementById('e333fm-' + index + '-show')).text('表示済み');
+                    fadeIn(document.getElementById("row-detail-" + id));
+                  } else {
+                    showDetailList[id] = false;
+                    angular
+                      .element(document.getElementById("row-detail-" + id))
+                      .remove();
+                  }
+                } else {
+                  if (!showDetailList[id]) {
+                    showDetailList[id] = true;
+                    var html =
+                      '<tr id="row-detail-' +
+                      id +
+                      '" class="row-detail"><td colspan="7">' +
+                      TriboxContest.escapeHTML(
+                        $scope.resultsTop3[eid][index].detailsF
+                      );
+                    angular
+                      .element(document.getElementById(eid + "-" + index))
+                      .after(html);
+                    fadeIn(document.getElementById("row-detail-" + id));
+                  } else {
+                    showDetailList[id] = false;
+                    angular
+                      .element(document.getElementById("row-detail-" + id))
+                      .remove();
+                  }
+                }
+              };
+            }); // onAuthStateChange
+
+            $scope.publishContest = function (contest, url) {
+              var ok = confirm(
+                "【確認】コンテスト (" +
+                  contest +
+                  ") の結果ページを公開しますか？"
+              );
+              if (ok) {
+                window.open(url, "_blank");
+              }
+            };
+            $scope.unpublishContest = function (contest, url) {
+              var ok = confirm(
+                "【確認】コンテスト (" +
+                  contest +
+                  ") の結果ページを非公開にしますか？"
+              );
+              if (ok) {
+                window.open(url, "_blank");
+              }
+            };
+            $scope.tweetContest = function (contest, url) {
+              var ok = confirm(
+                "【確認】コンテスト (" +
+                  contest +
+                  ") の優勝者をツイートしますか？"
+              );
+              if (ok) {
+                window.open(url, "_blank");
+              }
+            };
+          },
+        ]);
+      </script>
+
+      <script type="text/javascript" src="/js/products.js"></script>
+    </div>
+  </body>
 </html>
