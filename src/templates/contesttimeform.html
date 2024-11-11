@@ -1,0 +1,63 @@
+[% macro print(eid='', useInput=False, clickable=False) -%]
+[% if eid == "demo" or (eid != "333bf" and eid != "666" and eid != "777") %]
+    <div id="timeforms" class="row">
+        <div class="col md-1"></div>
+        <div class="col md-2 timeform-wrap" ng-repeat="i in range(5)">
+            <div class="timeform">
+                <div class="timeform-time">
+                [% if useInput %]
+                    <input id="result-{{ $index }}" ng-model="resultsForm[$index]" ng-blur="inputblur($index)" type="text" placeholder="-:--.---" required>
+                    <span class="hide color-error result-note"></span>
+                [% else %]
+                    <span id="result-{{ $index }}" class="result-detail" ng-if="resultsDetail[$index]">{{ resultsDetail[$index] }}</span>
+                    <span id="result-{{ $index }}" class="result-detail yet" ng-if="!(resultsDetail[$index])">-:--.----</span>
+                [% endif %]
+                </div>
+                <div class="timeform-cond">
+                    [% if clickable %]
+                        <div id="timeform-cond-ok-{{ $index }}" class="timeform-cond-btn" ng-click="applyOK($index)">OK</div>
+                        <div id="timeform-cond-penalty-{{ $index }}" class="timeform-cond-btn" ng-click="applyPenalty($index)">+2</div>
+                        <div id="timeform-cond-dnf-{{ $index }}" class="timeform-cond-btn" ng-click="applyDNF($index)">DNF</div>
+                    [% else %]
+                        <div id="timeform-cond-ok-{{ $index }}" class="timeform-cond-btn">OK</div>
+                        <div id="timeform-cond-penalty-{{ $index }}" class="timeform-cond-btn">+2</div>
+                        <div id="timeform-cond-dnf-{{ $index }}" class="timeform-cond-btn">DNF</div>
+                    [% endif %]
+                </div>
+            </div>
+        </div>
+        <div class="col md-1"></div>
+    </div>
+
+[% else %]
+    {# 試技数が3の場合 (例えば、best of 3) #}
+    <div id="timeforms" class="row">
+        <div class="col md-3"></div>
+        <div class="col md-2 timeform-wrap" ng-repeat="i in range(3)">
+            <div class="timeform">
+                <div class="timeform-time">
+                [% if useInput %]
+                    <input id="result-{{ $index }}" ng-model="resultsForm[$index]" ng-blur="inputblur($index)" type="text" placeholder="-:--.---" required>
+                    <span class="hide color-error result-note"></span>
+                [% else %]
+                    <span id="result-{{ $index }}" class="result-detail" ng-if="resultsDetail[$index]">{{ resultsDetail[$index] }}</span>
+                    <span id="result-{{ $index }}" class="result-detail yet" ng-if="!(resultsDetail[$index])">-:--.----</span>
+                [% endif %]
+                </div>
+                <div class="timeform-cond">
+                    [% if clickable %]
+                        <div id="timeform-cond-ok-{{ $index }}" class="timeform-cond-btn" ng-click="applyOK($index)">OK</div>
+                        <div id="timeform-cond-penalty-{{ $index }}" class="timeform-cond-btn" ng-click="applyPenalty($index)">+2</div>
+                        <div id="timeform-cond-dnf-{{ $index }}" class="timeform-cond-btn" ng-click="applyDNF($index)">DNF</div>
+                    [% else %]
+                        <div id="timeform-cond-ok-{{ $index }}" class="timeform-cond-btn">OK</div>
+                        <div id="timeform-cond-penalty-{{ $index }}" class="timeform-cond-btn">+2</div>
+                        <div id="timeform-cond-dnf-{{ $index }}" class="timeform-cond-btn">DNF</div>
+                    [% endif %]
+                </div>
+            </div>
+        </div>
+        <div class="col md-3"></div>
+    </div>
+[% endif %]
+[%- endmacro %]
