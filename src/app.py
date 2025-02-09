@@ -161,6 +161,23 @@ def contesttimer(cid, eid):
         firebaseapp_wca_senderid=FIREBASEAPP_WCA_SENDERID,
     )
 
+@app.route("/contest/<cid>/<eid>/confirm")
+def contestconfirm(cid, eid):
+    return render_template(
+        "contestconfirm.html",
+        cid=cid,
+        eid=eid,
+        contest_description=CONTEST_DESCRIPTION,
+        contest_name=CONTEST_NAME,
+        contest_url=CONTEST_URL,
+        firebaseapp_contest=FIREBASEAPP_CONTEST,
+        firebaseapp_contest_apikey=FIREBASEAPP_CONTEST_APIKEY,
+        firebaseapp_contest_senderid=FIREBASEAPP_CONTEST_SENDERID,
+        firebaseapp_wca=FIREBASEAPP_WCA,
+        firebaseapp_wca_apikey=FIREBASEAPP_WCA_APIKEY,
+        firebaseapp_wca_senderid=FIREBASEAPP_WCA_SENDERID,
+    )
+
 @app.route("/contest/result/<cid>/<eid>")
 def contestresult(cid, eid):
     return render_template(
