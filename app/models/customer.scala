@@ -1,14 +1,17 @@
 package models
 
+import javax.inject._
+import scala.language.postfixOps
 import anorm._
 import anorm.SqlParser._
 import play.api.db._
-import play.api.Play.current
 
 case class Customer(customer_id: Int, email: String) {
 }
 
-object Customer {
+class CustomerRepository @Inject() (dbapi: DBApi) {
+    private val db = dbapi.database("store")
+
     val data = {
         get[Int]("customer_id") ~ get[String]("email") map {
             case customer_id ~ email => Customer(customer_id, email)
@@ -17,26 +20,26 @@ object Customer {
 
     // テーブル全体
     def getAll: List[Customer] = {
-        DB.withConnection("store") { implicit c =>
+        db.withConnection { implicit c =>
             val result = SQL("""
                 SELECT customer_id, email
                 FROM dtb_customer
                 WHERE del_flg = 0
                 ORDER BY customer_id ASC
-            """).as(Customer.data *)
+            """).as(data *)
             return result
         }
     }
 
     // メールアドレスに一致するレコードを検索
     def getOnesByEmail(email: String): List[Customer] = {
-        DB.withConnection("store") { implicit c =>
+        db.withConnection { implicit c =>
             val result = SQL("""
                 SELECT customer_id, email
                 FROM dtb_customer
                 WHERE email = {email} AND del_flg = 0
                 ORDER BY customer_id ASC
-            """).on('email -> email).as(Customer.data *)
+            """).on('email -> email).as(data *)
             return result
         }
     }

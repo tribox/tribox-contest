@@ -1,14 +1,17 @@
 package models
 
+import javax.inject._
+import scala.language.postfixOps
 import anorm._
 import anorm.SqlParser._
 import play.api.db._
-import play.api.Play.current
 
 case class PuzzleBrand(category_id: Int, category_name: String) {
 }
 
-object PuzzleBrand {
+class PuzzleBrandRepository @Inject() (dbapi: DBApi) {
+    private val db = dbapi.database("store")
+
     val data = {
         get[Int]("category_id") ~ get[String]("category_name") map {
             case category_id ~ category_name => PuzzleBrand(category_id, category_name)
@@ -16,13 +19,13 @@ object PuzzleBrand {
     }
 
     def getAll: List[PuzzleBrand] = {
-        DB.withConnection("store") { implicit c =>
+        db.withConnection { implicit c =>
             val result = SQL("""
                 SELECT `category_id`, `category_name`
                 FROM `dtb_category`
                 WHERE `parent_category_id` = 3
                 ORDER BY `category_name` ASC
-            """).as(PuzzleBrand.data *)
+            """).as(data *)
             return result
         }
     }

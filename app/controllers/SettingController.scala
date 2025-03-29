@@ -4,7 +4,6 @@ import javax.inject._
 import models._
 import play.api._
 import play.api.mvc._
-import play.api.Play.current
 
 import scala.util.Random
 import java.security.SecureRandom
@@ -12,12 +11,18 @@ import java.security.SecureRandom
 import java.io.File
 import scala.sys.process._
 
+import scala.language.postfixOps
+
 /**
  * This controller creates an `Action` to handle HTTP requests to the
  * application's setting pages.
  */
 @Singleton
-class SettingController @Inject() extends HomeController {
+class SettingController @Inject() (
+    cc: ControllerComponents,
+    configuration: Configuration,
+    customerService: CustomerRepository,
+    verifyingService: VerifyingRepository) extends HomeController(cc, configuration) {
 
     /**
      * Setting: Setting / First setting / Other settings
@@ -78,23 +83,23 @@ class SettingController @Inject() extends HomeController {
 
         if (email != "" && userId != "") {
             //println("contest: userId=" + userId)
-            val verifyingUserId = Verifying.getOnesByUserId(userId)
+            val verifyingUserId = verifyingService.getOnesByUserId(userId)
             if (!(verifyingUserId.isEmpty)) {
                 errorMessage = "このアカウントはすでに認証済みです。"
             } else {
-                val customers = Customer.getOnesByEmail(email)
+                val customers = customerService.getOnesByEmail(email)
                 if (!(customers.isEmpty)) {
                     // 入力されたメールアドレスがストアに存在
                     val customerId = customers.head.customer_id
                     //println("store: customerId="+ customerId + " email=" + email)
 
-                    val verifyingCustomerId = Verifying.getOnesByCustomerId(customerId)
+                    val verifyingCustomerId = verifyingService.getOnesByCustomerId(customerId)
                     if (!(verifyingCustomerId.isEmpty)) {
                         errorMessage = "このストアアカウントはすでに他のアカウントに結びつけられています。"
                     } else {
                         val token = genToken
                         sendEmail(email, token)
-                        Verifying.insertVerifying(token, userId, customerId)
+                        verifyingService.insertVerifying(token, userId, customerId)
                         message = email + " 宛にメールを送信しました。メール内に書かれているリンクをクリックして認証を完了させてください。しばらく経ってもメールが届かない場合はお問い合わせください。"
                     }
                 } else {
@@ -120,13 +125,13 @@ class SettingController @Inject() extends HomeController {
                 case None    => -1
             }
         }
-        Verifying.makeUnverify(userId, customerId)
+        verifyingService.makeUnverify(userId, customerId)
 
         Ok(views.html.unverify(getContestName, getContestDescription, getContestUrl, getFirebaseappContest, getFirebaseappContestApikey, getFirebaseappContestMessagingsenderid, userId, customerId))
     }
 
     def verifyclick(token: String) = Action {
-        val status = Verifying.getOnesByToken(token)
+        val status = verifyingService.getOnesByToken(token)
         //println(status)
 
         var message = ""
@@ -141,7 +146,7 @@ class SettingController @Inject() extends HomeController {
             userId = status.head.user_id
             customerId = status.head.customer_id
             //println(id)
-            Verifying.makeVerify(id)
+            verifyingService.makeVerify(id)
             message = "認証が完了しました。"
         }
 

@@ -45,7 +45,7 @@ Firebase Admin SDK サービスアカウントの秘密鍵をダウンロード�
 #### 開発
 
 ```
-activator run -Dconfig.resource=dev.conf
+sbt run -Dconfig.resource=dev.conf
 ```
 
 #### 本番

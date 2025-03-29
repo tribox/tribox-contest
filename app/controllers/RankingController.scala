@@ -4,14 +4,13 @@ import javax.inject._
 import models._
 import play.api._
 import play.api.mvc._
-import play.api.Play.current
 
 /**
  * This controller creates an `Action` to handle HTTP requests to the
  * application's ranking pages.
  */
 @Singleton
-class RankingController @Inject() extends HomeController {
+class RankingController @Inject() (cc: ControllerComponents, configuration: Configuration) extends HomeController(cc, configuration) {
 
     def rankingdefault = Action {
         Ok(views.html.rankingdefault(getFirebaseappContest, getFirebaseappContestApikey, getFirebaseappContestMessagingsenderid))

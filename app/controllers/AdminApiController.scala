@@ -4,16 +4,16 @@ import javax.inject._
 import models._
 import play.api._
 import play.api.mvc._
-import play.api.Play.current
 
 import scala.sys.process._
+import scala.language.postfixOps
 
 /**
  * This controller creates an `Action` to handle HTTP requests to the
  * application's admin api endpoints.
  */
 @Singleton
-class AdminApiController @Inject() extends HomeController {
+class AdminApiController @Inject() (cc: ControllerComponents, configuration: Configuration) extends HomeController(cc, configuration) {
 
     // Nodeスクリプト実行用メソッド
     def execNodeScript(arg: String) = {

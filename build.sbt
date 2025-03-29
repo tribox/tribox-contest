@@ -4,15 +4,17 @@ version := "1.0-SNAPSHOT"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala)
 
-scalaVersion := "2.11.7"
+scalaVersion := "2.13.16"
 
 libraryDependencies ++= Seq(
   jdbc,
-  cache,
+  //cache,
   ws,
-  "org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test,
+  //"org.scalatestplus.play" %% "scalatestplus-play" % "1.5.1" % Test,
   "mysql" % "mysql-connector-java" % "5.1.34",
-  "com.typesafe.play" %% "anorm" % "2.4.0"
+  "org.xerial" % "sqlite-jdbc" % "3.49.1.0",
+  "org.playframework.anorm" %% "anorm" % "2.7.0",
+  guice
 )
 
-resolvers += "scalaz-bintray" at "http://dl.bintray.com/scalaz/releases"
+resolvers += "scalaz-bintray" at "https://dl.bintray.com/scalaz/releases"

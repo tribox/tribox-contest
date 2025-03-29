@@ -4,43 +4,42 @@ import javax.inject._
 import models._
 import play.api._
 import play.api.mvc._
-import play.api.Play.current
 
 /**
  * This controller creates an `Action` to handle HTTP requests to the
  * application's home page and auth pages.
  */
 @Singleton
-class HomeController @Inject() extends Controller {
+class HomeController @Inject() (cc: ControllerComponents, configuration: Configuration) extends AbstractController(cc) {
     def getContestName(): String = {
-        return Play.application.configuration.getString("contest.name").getOrElse("tribox Contest")
+        return configuration.underlying.getString("contest.name")
     }
     def getContestDescription(): String = {
-        return Play.application.configuration.getString("contest.description").getOrElse("")
+        return configuration.underlying.getString("contest.description")
     }
     def getContestUrl(): String = {
-        return Play.application.configuration.getString("contest.url").getOrElse("https://contest.tribox.com/")
+        return configuration.underlying.getString("contest.url")
     }
     def getFirebaseappContest(): String = {
-        return Play.application.configuration.getString("firebaseapp.contest").getOrElse("tribox-contest")
+        return configuration.underlying.getString("firebaseapp.contest")
     }
     def getFirebaseappContestApikey(): String = {
-        return Play.application.configuration.getString("firebaseapp.contestapikey").getOrElse("")
+        return configuration.underlying.getString("firebaseapp.contestapikey")
     }
     def getFirebaseappContestMessagingsenderid(): String = {
-        return Play.application.configuration.getString("firebaseapp.contestmessagingsenderid").getOrElse("")
+        return configuration.underlying.getString("firebaseapp.contestmessagingsenderid")
     }
     def getFirebaseappWca(): String = {
-        return Play.application.configuration.getString("firebaseapp.wca").getOrElse("")
+        return configuration.underlying.getString("firebaseapp.wca")
     }
     def getPlayAppPath(): String = {
-        return Play.application.configuration.getString("contest.playpath").getOrElse("/path/to/playapp")
+        return configuration.underlying.getString("contest.playpath")
     }
     def getAdminApiToken(): String = {
-        return Play.application.configuration.getString("admin.api.token").getOrElse("")
+        return configuration.underlying.getString("admin.api.token")
     }
     def getGoogleVerification(): String = {
-        return Play.application.configuration.getString("google.verification").getOrElse("")
+        return configuration.underlying.getString("google.verification")
     }
 
     /**

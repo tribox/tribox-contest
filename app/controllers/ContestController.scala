@@ -4,14 +4,18 @@ import javax.inject._
 import models._
 import play.api._
 import play.api.mvc._
-import play.api.Play.current
 
 /**
  * This controller creates an `Action` to handle HTTP requests to the
  * application's contest pages.
  */
 @Singleton
-class ContestController @Inject() extends HomeController {
+class ContestController @Inject() (
+    cc: ControllerComponents,
+    configuration: Configuration,
+    cubeService: CubeRepository,
+    puzzleCategoryService: PuzzleCategoryRepository,
+    puzzleBrandService: PuzzleBrandRepository) extends HomeController(cc, configuration) {
 
     /**
      * Contest pages
@@ -41,9 +45,8 @@ class ContestController @Inject() extends HomeController {
     }
 
     def confirm(cid: String, eid: String) = Action {
-        val cubes = Cube.getAll
-        //val puzzleCategories = PuzzleCategory.getAll
-        val puzzleBrands = PuzzleBrand.getAll
+        val cubes = cubeService.getAll
+        val puzzleBrands = puzzleBrandService.getAll
 
         // TODO: 以下の処理をScalaぽい書き方に直したい
         var puzzles = List[Puzzle]();

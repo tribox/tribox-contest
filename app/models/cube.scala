@@ -1,14 +1,17 @@
 package models
 
+import javax.inject._
+import scala.language.postfixOps
 import anorm._
 import anorm.SqlParser._
 import play.api.db._
-import play.api.Play.current
 
 case class Cube(product_id: Int, name: String, category_id: Int, parent_category_id: Int) {
 }
 
-object Cube {
+class CubeRepository @Inject() (dbapi: DBApi) {
+    private val db = dbapi.database("store")
+
     val data = {
         get[Int]("product_id") ~ get[String]("name") ~ get[Int]("category_id") ~ get[Int]("parent_category_id") map {
             case product_id ~ name ~ category_id ~ parent_category_id => Cube(product_id, name, category_id, parent_category_id)
@@ -16,7 +19,7 @@ object Cube {
     }
 
     def getAll: List[Cube] = {
-        DB.withConnection("store") { implicit c =>
+        db.withConnection{ implicit c =>
             val result = SQL("""
                 SELECT `product_id`, `name`, `category_id`, `parent_category_id` FROM (
                   SELECT `product_id`, `name`, C1.`category_id` as category_id, C1.`category_name` as category_name, C2.`category_id` as parent_category_id, C2.`category_name` as parent_category_name, `main_image`, EXPT.`except_store` AS except_flg
@@ -42,7 +45,7 @@ object Cube {
                 ) PAC
                 WHERE PAC.`parent_category_id` IN (1, 3) AND (`except_flg` IS NULL OR `except_flg` = 0) AND `category_id` NOT IN (421, 428)
                 ORDER BY `name` ASC
-            """).as(Cube.data *)
+            """).as(data *)
             return result
         }
     }
