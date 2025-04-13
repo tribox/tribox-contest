@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ja" ng-app="contestApp">
+  <head>
+    [% import "components/header.html" as header %] [[ header.print(title=title,
+    description=contest_description, sitename=contest_name,
+    contest_url=contest_url, page_url=page_url, event=event,
+    google_verification=google_verification) ]] [% import
+    "components/basejs.html" as basejs %] [[ basejs.print(firebaseapp_contest,
+    firebaseapp_contest_apikey, firebaseapp_contest_senderid) ]]
+  </head>
+  <body ng-controller="RedirectCtrl">
+    Redirecting...
+
+    <script>
+      app.controller("RedirectCtrl", [
+        "$scope",
+        function ($scope) {
+          contestRef
+            .child("inProgress")
+            .once("value", function (snapInProgress) {
+              window.location =
+                "/contest/" + removeHead(snapInProgress.val().lastContest);
+            });
+        },
+      ]);
+    </script>
+  </body>
+</html>
