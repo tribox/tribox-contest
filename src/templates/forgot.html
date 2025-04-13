@@ -1,0 +1,85 @@
+[% set title = "Forgot Password?" %] [% set page_url = contest_url + "/forgot"
+%]
+
+<!DOCTYPE html>
+<html lang="ja" ng-app="contestApp">
+  <head
+    prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#"
+  >
+    [% import "components/header.html" as header %] [[ header.print(title=title,
+    description=contest_description, sitename=contest_name,
+    contest_url=contest_url, page_url=page_url) ]] [% import
+    "components/basejs.html" as basejs %] [[ basejs.print(firebaseapp_contest,
+    firebaseapp_contest_apikey, firebaseapp_contest_senderid, firebaseapp_wca)
+    ]] [% import "components/authjs.html" as authjs %] [[
+    authjs.print(redirect_login="", redirect_logout="", check_first=True) ]]
+    <script>
+      app.controller("AuthForgotCtrl", [
+        "$scope",
+        "Auth",
+        function ($scope, Auth) {
+          $scope.resetPassword = function () {
+            $scope.resetMessage = null;
+            $scope.error = null;
+
+            if (!$scope.email) {
+              $scope.error = "メールアドレスを入力してください。";
+            } else {
+              Auth.$signOut();
+              Auth.$sendPasswordResetEmail($scope.email)
+                .then(function () {
+                  $scope.resetMessage =
+                    "パスワードを再設定するリンクを電子メールで送信しました。";
+                })
+                .catch(function (error) {
+                  $scope.error = TriboxContest.convErrorCodesAlt(error.code);
+                });
+            }
+          };
+        },
+      ]);
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      [% import "components/bodyheader.html" as bodyheader %] [[
+      bodyheader.print(title=title, contest_name=contest_name) ]]
+
+      <div ng-controller="AuthCtrl">
+        <div ng-controller="AuthForgotCtrl">
+          <div ng-hide="authLoaded">
+            <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+            <span class="sr-only">Loading...</span>
+            Loading...
+          </div>
+          <div ng-show="authLoaded">
+            <h2>パスワードリセット</h2>
+
+            <div class="notice-success margin-bottom-20" ng-if="resetMessage">
+              <i class="fa fa-check"></i>
+              {{ resetMessage }}
+            </div>
+            <div class="color-error margin-bottom-20" ng-if="error">
+              エラー: {{ error }}
+            </div>
+
+            <form name="resetPasswordForm" ng-submit="resetPassword()">
+              <div>
+                <label>メールアドレス</label>
+                <input class="form-control" type="email" ng-model="email" />
+              </div>
+
+              <input
+                class="btn"
+                type="submit"
+                value="パスワードをリセットする"
+              />
+            </form>
+          </div>
+        </div>
+      </div>
+
+      [% include "components/bodyfooter.html" %]
+    </div>
+  </body>
+</html>
