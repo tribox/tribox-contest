@@ -1,0 +1,121 @@
+[% set title = "Verify" %]
+
+<!DOCTYPE html>
+<html lang="ja" ng-app="contestApp">
+  <head>
+    [% import "components/header.html" as header %] [[ header.print(title=title,
+    description=contest_description, sitename=contest_name,
+    contest_url=contest_url, page_url=page_url, event=event,
+    google_verification=google_verification) ]] [% import
+    "components/basejs.html" as basejs %] [[ basejs.print(firebaseapp_contest,
+    firebaseapp_contest_apikey, firebaseapp_contest_senderid) ]] [% import
+    "components/authjs.html" as authjs %] [[ authjs.print(redirect_login="",
+    redirect_logout=url_for('index'), check_first=True) ]]
+
+    <script>
+      app.controller("VerifyCtrl", [
+        "$scope",
+        "$timeout",
+        function ($scope, $timeout) {
+          firebase.auth().onAuthStateChanged(function (authData) {
+            $scope.error = null;
+            $scope.showSkip = false;
+            $scope.verifyLoaded = false;
+
+            // Read personal results
+            if (authData) {
+              contestRef
+                .child("users")
+                .child(authData.uid)
+                .child("isTriboxCustomer")
+                .once("value", function (snap) {
+                  $timeout(function () {
+                    if (snap.exists() && snap.val() == true) {
+                      $scope.error = "このアカウントはすでに認証済みです。";
+                    }
+                    $scope.verifyLoaded = true;
+                  });
+                });
+
+              var vars = getUrlVars();
+              if (vars.showskip) {
+                $timeout(function () {
+                  $scope.showSkip = true;
+                });
+              }
+            }
+          }); // onAuthStateChange
+        },
+      ]);
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      [% import "components/bodyheader.html" as bodyheader %] [[
+      bodyheader.print(title=title, contest_name=contest_name) ]]
+
+      <div ng-controller="AuthCtrl">
+        <div ng-controller="VerifyCtrl">
+          <div ng-hide="authLoaded && verifyLoaded">
+            <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+            <span class="sr-only">Loading...</span>
+            Loading...
+          </div>
+          <div ng-show="authLoaded && verifyLoaded">
+            [% import "components/authinfo.html" as authinfo %] [[
+            authinfo.print() ]]
+
+            <h2>ストア&コンテスト連携</h2>
+
+            [% if(message != "") %]
+            <div class="notice-success margin-bottom-20">
+              <i class="fa fa-check"></i>
+              {{ message }}
+            </div>
+            [% endif %] [% if(errorMessage) %]
+            <div class="color-error margin-bottom-20">
+              エラー: {{ errorMessage }}
+            </div>
+            [% endif %]
+
+            <div class="color-error margin-bottom-20" ng-if="error">
+              エラー: {{ error }}
+            </div>
+
+            <div ng-if="!error">
+              <p>
+                <a href="https://store.tribox.com/" target="_blank"
+                  >TORIBOストア</a
+                >
+                に登録済みのメールアドレスを入力してください。<br />
+                入力されたメールアドレスがストアに登録済みであれば、確認メールが送信されます。<br />
+                確認メール内に書かれたリンクをクリックすると認証が完了します。
+              </p>
+
+              <form
+                name="verifyForm"
+                action="[[url_for('setting_verify')]]"
+                method="POST"
+              >
+                <div>
+                  <label>メールアドレス</label>
+                  <input class="form-control" type="email" name="email" />
+                </div>
+                <input type="hidden" name="userId" value="{{ authData.uid }}" />
+                <input class="btn" type="submit" value="認証する" />
+                <a
+                  href="[[url_for('index')]]"
+                  class="padding-left-20"
+                  ng-show="showSkip"
+                  >あとで</a
+                >
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      [% include "components/bodyfooter.html" %]
+    </div>
+  </body>
+</html>
