@@ -7,7 +7,7 @@
 [% else %]
     [% if eid != '' %]
         <p id="event-info" class="margin-bottom-0">
-            {{ events.e@{eid}.name }}
+            {{ events[eid].name }}
         </p>
     [% endif %]
 [% endif %]
