@@ -1,0 +1,153 @@
+[% set title = "Email Setting" %]
+
+<!DOCTYPE html>
+<html lang="ja" ng-app="contestApp">
+  <head>
+    [% import "components/header.html" as header %] [[ header.print(title=title,
+    description=contest_description, sitename=contest_name,
+    contest_url=contest_url, page_url=page_url, event=event,
+    google_verification=google_verification) ]] [% import
+    "components/basejs.html" as basejs %] [[ basejs.print(firebaseapp_contest,
+    firebaseapp_contest_apikey, firebaseapp_contest_senderid) ]] [% import
+    "components/authjs.html" as authjs %] [[ authjs.print(redirect_login="",
+    redirect_logout=url_for('index'), check_first=True) ]]
+
+    <script>
+      app.controller("AuthEmailCtrl", [
+        "$scope",
+        "$timeout",
+        "Auth",
+        function ($scope, $timeout, Auth) {
+          $scope.settingLoaded = false;
+
+          Auth.$onAuthStateChanged(function (authData) {
+            if (!authProcessing) {
+              if (authData) {
+                $scope.oldEmail = authData.email;
+                $scope.settingLoaded = true;
+              } else {
+                location.href = "[[url_for('index')]]";
+              }
+            }
+          });
+
+          $scope.changeEmail = function () {
+            $scope.message = null;
+            $scope.error = null;
+
+            var _oldEmail = $scope.oldEmail;
+            var _newEmail = $scope.newEmail;
+            var _password = $scope.password;
+
+            if (_newEmail == null) {
+              $scope.error = "「新しいメールアドレス」を入力してください。";
+              return;
+            }
+            if (_password == null) {
+              $scope.error = "「パスワード」を入力してください。";
+              return;
+            }
+            if (_oldEmail == _newEmail) {
+              $scope.error =
+                "現在のメールアドレスと新しいメールアドレスが同じです。";
+              return;
+            }
+
+            var credential = firebase.auth.EmailAuthProvider.credential(
+              _oldEmail,
+              _password
+            );
+            var user = firebase.auth().currentUser;
+            user
+              .reauthenticateAndRetrieveDataWithCredential(credential)
+              .then(function () {
+                Auth.$updateEmail(_newEmail)
+                  .then(function () {
+                    $scope.message = "Email changed successfully!";
+                    authProcessing = true;
+                    location.href = "[[url_for('setting')]]";
+                  })
+                  .catch(function (error) {
+                    //console.error(error);
+                    $timeout(function () {
+                      $scope.error = TriboxContest.convErrorCodesAlt(
+                        error.code
+                      );
+                    });
+                  });
+              })
+              .catch(function (error) {
+                //console.error(error);
+                $timeout(function () {
+                  $scope.error = TriboxContest.convErrorCodesAlt(error.code);
+                });
+              });
+          };
+        },
+      ]);
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      [% import "components/bodyheader.html" as bodyheader %] [[
+      bodyheader.print(title=title, contest_name=contest_name) ]]
+
+      <div ng-controller="AuthCtrl">
+        <div ng-controller="AuthEmailCtrl">
+          <div ng-hide="authLoaded && settingLoaded">
+            <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+            <span class="sr-only">Loading...</span>
+            Loading...
+          </div>
+          <div ng-show="authLoaded && settingLoaded">
+            [% import "components/authinfo.html" as authinfo %] [[
+            authinfo.print() ]]
+
+            <h2>メールアドレス設定</h2>
+
+            <form name="emailForm" ng-submit="changeEmail()">
+              <!--<div class="color-dark margin-bottom-20"ng-if="message">
+                Message: {{ message }}
+            </div>-->
+
+              <div class="color-error margin-bottom-20" ng-if="error">
+                エラー: {{ error }}
+              </div>
+
+              <div>
+                <label>現在のメールアドレス</label>
+                <input
+                  class="form-control"
+                  type="email"
+                  ng-model="oldEmail"
+                  readonly="readonly"
+                  disabled="disabled"
+                />
+              </div>
+              <div>
+                <label>新しいメールアドレス</label>
+                <input class="form-control" type="email" ng-model="newEmail" />
+              </div>
+              <div>
+                <label>パスワード</label>
+                <input
+                  class="form-control"
+                  type="password"
+                  ng-model="password"
+                />
+              </div>
+
+              <input
+                class="btn"
+                type="submit"
+                value="メールアドレスを変更する"
+              />
+            </form>
+          </div>
+        </div>
+      </div>
+
+      [% include "components/bodyfooter.html" %]
+    </div>
+  </body>
+</html>
