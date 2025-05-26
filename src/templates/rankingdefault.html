@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ja" ng-app="contestApp">
+  <head>
+    [% import "components/headeronlyfire.html" as headeronlyfire %] [[
+    headeronlyfire.print() ]] [% import "components/basejs.html" as basejs %] [[
+    basejs.print(firebaseapp_contest, firebaseapp_contest_apikey,
+    firebaseapp_contest_senderid) ]]
+  </head>
+  <body ng-controller="RedirectCtrl">
+    Redirecting...
+
+    <script>
+      app.controller("RedirectCtrl", [
+        "$scope",
+        function ($scope) {
+          contestRef
+            .child("inProgress")
+            .once("value", function (snapInProgress) {
+              window.location =
+                "/contest/" + removeHead(snapInProgress.val().lastContest);
+            });
+        },
+      ]);
+    </script>
+  </body>
+</html>

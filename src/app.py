@@ -194,6 +194,37 @@ def rankingpuzzle(sid):
         firebaseapp_wca_senderid=FIREBASEAPP_WCA_SENDERID,
     )
 
+
+@app.route("/ranking/default")
+def rankingdefault():
+    return render_template(
+        "rankingdefault.html",
+        contest_description=CONTEST_DESCRIPTION,
+        contest_name=CONTEST_NAME,
+        contest_url=CONTEST_URL,
+        firebaseapp_contest=FIREBASEAPP_CONTEST,
+        firebaseapp_contest_apikey=FIREBASEAPP_CONTEST_APIKEY,
+        firebaseapp_contest_senderid=FIREBASEAPP_CONTEST_SENDERID,
+        firebaseapp_wca=FIREBASEAPP_WCA,
+        firebaseapp_wca_apikey=FIREBASEAPP_WCA_APIKEY,
+        firebaseapp_wca_senderid=FIREBASEAPP_WCA_SENDERID,
+    )
+
+@app.route("/ranking/default/puzzle")
+def rankingpuzzledefault():
+    return render_template(
+        "rankingpuzzledefault.html",
+        contest_description=CONTEST_DESCRIPTION,
+        contest_name=CONTEST_NAME,
+        contest_url=CONTEST_URL,
+        firebaseapp_contest=FIREBASEAPP_CONTEST,
+        firebaseapp_contest_apikey=FIREBASEAPP_CONTEST_APIKEY,
+        firebaseapp_contest_senderid=FIREBASEAPP_CONTEST_SENDERID,
+        firebaseapp_wca=FIREBASEAPP_WCA,
+        firebaseapp_wca_apikey=FIREBASEAPP_WCA_APIKEY,
+        firebaseapp_wca_senderid=FIREBASEAPP_WCA_SENDERID,
+    )
+
 ########################################
 # Release Notes
 ########################################
