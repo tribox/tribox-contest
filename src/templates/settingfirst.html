@@ -1,0 +1,305 @@
+[% set title = "First Setting" %]
+
+<!DOCTYPE html>
+<html lang="ja" ng-app="contestApp">
+  <head>
+    [% import "components/header.html" as header %] [[ header.print(title=title,
+    description=contest_description, sitename=contest_name,
+    contest_url=contest_url, page_url=page_url, event=event,
+    google_verification=google_verification) ]] [% import
+    "components/basejs.html" as basejs %] [[ basejs.print(firebaseapp_contest,
+    firebaseapp_contest_apikey, firebaseapp_contest_senderid) ]]
+
+    <script>
+      app.factory("Auth", [
+        "$firebaseAuth",
+        function ($firebaseAuth) {
+          return $firebaseAuth();
+        },
+      ]);
+
+      app.controller("AuthCtrl", [
+        "$scope",
+        "$firebaseObject",
+        "Auth",
+        function ($scope, $firebaseObject, Auth) {
+          $scope.message = null;
+          $scope.authData = null;
+          $scope.userData = null;
+          $scope.usersecretData = null;
+          $scope.isLoggingin = false;
+          $scope.authLoading = false;
+
+          Auth.$onAuthStateChanged(function (authData) {
+            if (authData) {
+              $scope.message =
+                "Logged in as: " + authData.uid + " (" + authData.email + ")";
+              $scope.authData = authData;
+              $scope.userData = $firebaseObject(
+                contestRef.child("users").child(authData.uid)
+              );
+              $scope.usersecretData = $firebaseObject(
+                contestRef.child("usersecrets").child(authData.uid)
+              );
+              $scope.isLoggingin = true;
+              contestRef
+                .child("users")
+                .child(authData.uid)
+                .once("value", function (userSnap) {
+                  if (userSnap.exists()) {
+                    // Second or more time
+                    console.log("No need for first setting: " + authData.uid);
+                    location.href = "[[url_for('index')]]";
+                  }
+                });
+            } else {
+              $scope.message = "Logged out";
+              $scope.authData = null;
+              $scope.userData = null;
+              $scope.usersecretData = null;
+              $scope.isLoggingin = false;
+              location.href = "[[url_for('index')]]";
+            }
+            $scope.authLoaded = true;
+          });
+        },
+      ]);
+
+      app.controller("AuthFirstSettingCtrl", [
+        "$scope",
+        "Auth",
+        function ($scope, Auth) {
+          $scope.updateFirstSetting = function () {
+            $scope.message = null;
+            $scope.error = null;
+            var _username = $scope.username ? $scope.username : "";
+            var _displayname = $scope.displayname ? $scope.displayname : "";
+            var _organization = $scope.organization
+              ? $scope.organization
+              : null;
+
+            // ユーザID、使用文字と長さチェック
+            if (!_username.match(/^[a-zA-Z0-9_]{1,15}$/)) {
+              //console.error('Invalid username');
+              $scope.error =
+                "ユーザIDが不正なフォーマットです (1文字以上 15文字以内)。";
+              return;
+            }
+            // 表示名、長さチェック
+            if (!_displayname.match(/^.{1,30}$/)) {
+              //console.error('Invalid displayname');
+              $scope.error =
+                "表示名の長さが正しくありません (1文字以上 30文字以内)。";
+              return;
+            }
+            // 表示名、使用文字チェック
+            for (var i = 0, l = _displayname.length; i < l; i++) {
+              var ch = _displayname.charAt(i);
+              var ucode = ch.charCodeAt(0);
+              /* http://www.asahi-net.or.jp/~ax2s-kmtn/ref/unicode/index.html */
+              if (
+                !(
+                  (0x0000 <= ucode && ucode <= 0x007f) ||
+                  (0x0080 <= ucode && ucode <= 0x1dbf)
+                )
+              ) {
+                //console.error('Invalid displayname');
+                $scope.error =
+                  "表示名が正しくありません。文字「" +
+                  String.fromCharCode(ucode) +
+                  "」は使用できません。";
+                return;
+              }
+            }
+            // 所属、長さチェック
+            if (!(_organization == null || _organization.length <= 30)) {
+              //console.error('Invalid organization');
+              $scope.error = "所属が正しくありません (30文字以内)。";
+              return;
+            }
+
+            Auth.$onAuthStateChanged(function (authData) {
+              if (authData) {
+                contestRef
+                  .child("users")
+                  .child(authData.uid)
+                  .once("value", function (userSnap) {
+                    if (userSnap.exists()) {
+                      // Second or more time
+                      console.log("No need for first setting: " + authData.uid);
+                      location.href = "[[url_for('index')]]";
+                    } else {
+                      // Really the first time
+                      contestRef
+                        .child("usernames")
+                        .child(_username)
+                        .once("value", function (usernameSnap) {
+                          if (usernameSnap.exists()) {
+                            // Username already used
+                            //console.error('Username already exists: ' + _username);
+                            $scope.error =
+                              "すでに存在するユーザIDです: " + _username;
+                          } else {
+                            // Set new data to usernames DB and users DB
+                            contestRef
+                              .child("usernames")
+                              .child(_username)
+                              .set(
+                                {
+                                  uid: authData.uid,
+                                  createdAt:
+                                    firebase.database.ServerValue.TIMESTAMP,
+                                },
+                                function (error) {
+                                  if (error) {
+                                    console.error(error);
+                                    Auth.$signOut();
+                                  } else {
+                                    contestRef
+                                      .child("users")
+                                      .child(authData.uid)
+                                      .set(
+                                        {
+                                          createdAt:
+                                            firebase.database.ServerValue
+                                              .TIMESTAMP,
+                                          username: _username,
+                                          displayname: _displayname,
+                                          organization: _organization,
+                                        },
+                                        function (error) {
+                                          if (error) {
+                                            console.error(error);
+                                            Auth.$signOut();
+                                          } else {
+                                            contestRef
+                                              .child("usersecrets")
+                                              .child(authData.uid)
+                                              .set(
+                                                {
+                                                  loggedinAt:
+                                                    firebase.database
+                                                      .ServerValue.TIMESTAMP,
+                                                },
+                                                function (error) {
+                                                  if (error) {
+                                                    console.error(error);
+                                                    Auth.$signOut();
+                                                  } else {
+                                                    console.log(
+                                                      "Update successfully: " +
+                                                        authData.uid +
+                                                        " (" +
+                                                        _username +
+                                                        ")"
+                                                    );
+                                                    location.href =
+                                                      "[[url_for('setting_verify')]]?showskip=1";
+                                                  }
+                                                }
+                                              );
+                                          }
+                                        }
+                                      );
+                                  }
+                                }
+                              );
+                          }
+                        });
+                    }
+                  });
+              } else {
+                console.log("Logged out");
+                location.href = "[[url_for('login')]]";
+              }
+            });
+          };
+        },
+      ]);
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      [% import "components/bodyheader.html" as bodyheader %] [[
+      bodyheader.print(title=title, contest_name=contest_name) ]]
+
+      <div ng-controller="AuthCtrl">
+        <div ng-controller="AuthFirstSettingCtrl">
+          <div ng-hide="authLoaded">
+            <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+            <span class="sr-only">Loading...</span>
+            Loading...
+          </div>
+          <div ng-show="authLoaded">
+            [% import "components/authinfo.html" as authinfo %] [[
+            authinfo.print() ]]
+
+            <h2>初期設定</h2>
+
+            <p>初期設定が必要です。</p>
+
+            <form name="firstSettingForm" ng-submit="updateFirstSetting()">
+              <!--<div class="color-dark margin-bottom-20" ng-if="message">
+                Message: {{ message }}
+            </div>-->
+
+              <div class="color-error margin-bottom-20" ng-if="error">
+                エラー: {{ error }}
+              </div>
+
+              <div class="margin-top-30">
+                <label>ユーザID <span class="color-error">(必須)</span></label>
+                <input class="form-control" type="text" ng-model="username" />
+                <p>
+                  1文字以上15文字以内で設定してください。<br />
+                  <a
+                    href="https://ja.wikipedia.org/wiki/ISO%E5%9F%BA%E6%9C%AC%E3%83%A9%E3%83%86%E3%83%B3%E3%82%A2%E3%83%AB%E3%83%95%E3%82%A1%E3%83%99%E3%83%83%E3%83%88"
+                    >ISO基本ラテンアルファベット</a
+                  >、 数字、記号（アンダーバー）のみ使用できます。<br />
+                  他のアカウントのユーザIDと重複できません。 個人ページのURLは
+                  [[ contest_url | trim('/') ]]/user/[[ username ]]
+                  になります。<br />
+                  あとで変更できます。
+                </p>
+              </div>
+              <div class="margin-top-30">
+                <label>名前 <span class="color-error">(必須)</span></label>
+                <input
+                  class="form-control"
+                  type="text"
+                  ng-model="displayname"
+                />
+                <p>
+                  ランキング等で表示される名前です。<br />
+                  1文字以上30文字以内で設定してください。<br />
+                  <a
+                    href="https://ja.wikipedia.org/wiki/%E3%83%A9%E3%83%86%E3%83%B3%E6%96%87%E5%AD%97"
+                    >ラテン文字</a
+                  >、 数字、記号、スペースのみ使用できます。
+                  あとで変更できます。
+                </p>
+              </div>
+              <div class="margin-top-30">
+                <label>所属</label>
+                <input
+                  class="form-control"
+                  type="text"
+                  ng-model="organization"
+                />
+                <p>
+                  ご所属を公開したい場合は入力してください。<br />
+                  30文字以内で設定してください。<br />
+                  日本語使用可能です。 あとで変更できます。
+                </p>
+              </div>
+
+              <input class="btn" type="submit" value="設定する" />
+            </form>
+          </div>
+        </div>
+      </div>
+
+      [% include "components/bodyfooter.html" %]
+    </div>
+  </body>
+</html>
