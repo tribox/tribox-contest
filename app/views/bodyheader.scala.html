@@ -1,81 +1,120 @@
 @(title: String, contestName: String, cid: String = "", eid: String = "")
 
 <div id="header">
-    <div id="header-logo">
-        <a href="/">
-            <img src="/assets/images/TORIBO-Contest_60x604.png" height="30" title="triboxContest" alt="triboxContest" class="mb-hide" />
-            <img src="/assets/images/TORIBO-Contest_60x604.png" height="20" title="triboxContest" alt="triboxContest" class="tb-hide pc-hide" />
-            <span>@contestName</span>
-        </a>
-    </div>
-    @if(cid == "" || eid == "") {
-        <div id="header-menu" ng-controller="AuthCtrl">
-            <span ng-show="!isLoggingin && authLoaded">
-                <a href="@routes.HomeController.login">ログイン</a> /
-                <a href="@routes.HomeController.join">会員登録</a>
-            </span>
-            <span ng-show="isLoggingin && authLoaded && userData.username">
-                <a href="/user/{{ userData.username }}">マイページ</a> /
-                <a href="@routes.SettingController.setting">設定</a> /
-                <a href="@routes.HomeController.logout">ログアウト</a>
-            </span>
-            <span ng-show="isLoggingin && authLoaded && !(userData.username)">
-                <a href="@routes.SettingController.setting">設定</a> /
-                <a href="@routes.HomeController.logout">ログアウト</a>
-            </span>
-        </div>
-    } else { @if(cid != "demo" && eid != "demo") {
-        <div id="header-menu">
-            <a href="/contest/@{cid}?suspended=@{eid}">中断</a>
-        </div>
-    } else {
-        <div id="header-menu">
-            <a href="@routes.HomeController.index">中断</a>
-        </div>
-    } }
+  <div id="header-logo">
+    <a href="/">
+      <img
+        src="/assets/images/TORIBO-Contest_60x604.png"
+        height="64"
+        title="triboxContest"
+        alt="triboxContest"
+        class="mb-hide"
+      />
+      <img
+        src="/assets/images/TORIBO-Contest_60x604.png"
+        height="48"
+        title="triboxContest"
+        alt="triboxContest"
+        class="tb-hide pc-hide"
+      />
+      <span>@contestName</span>
+    </a>
+  </div>
+  @if(cid == "" || eid == "") {
+  <div id="header-menu" ng-controller="AuthCtrl">
+    <span ng-show="!isLoggingin && authLoaded">
+      <a href="@routes.HomeController.login">ログイン</a> /
+      <a href="@routes.HomeController.join">会員登録</a>
+    </span>
+    <span ng-show="isLoggingin && authLoaded && userData.username">
+      <a href="/user/{{ userData.username }}">マイページ</a> /
+      <a href="@routes.SettingController.setting">設定</a> /
+      <a href="@routes.HomeController.logout">ログアウト</a>
+    </span>
+    <span ng-show="isLoggingin && authLoaded && !(userData.username)">
+      <a href="@routes.SettingController.setting">設定</a> /
+      <a href="@routes.HomeController.logout">ログアウト</a>
+    </span>
+  </div>
+  } else { @if(cid != "demo" && eid != "demo") {
+  <div id="header-menu">
+    <a href="/contest/@{cid}?suspended=@{eid}">中断</a>
+  </div>
+  } else {
+  <div id="header-menu">
+    <a href="@routes.HomeController.index">中断</a>
+  </div>
+  } }
 </div>
 
 @if(cid == "") {
-    <div id="main-menu" class="row" ng-controller="InProgressCtrl">
-        <div id="main-menu-1" class="col xs-3">
-            <a href="@routes.HomeController.about">トリコンとは</a>
-        </div>
-        <div id="main-menu-2" class="col xs-3">
-            <a href="/contest/{{ inProgress.lastContest | removeHead }}" ng-show="inProgress.lastContest != 'cxxxxxxx'">リザルト</a>
-            <a href="#" ng-show="inProgress.lastContest == 'cxxxxxxx'">リザルト</a>
-        </div>
-        <div id="main-menu-3" class="col xs-3">
-            <a href="/ranking/{{ inProgressContest.year }}{{ inProgressContest.season }}" ng-show="inProgress.lastContest != 'cxxxxxxx'">SPランキング</a>
-            <a href="#" ng-show="inProgress.lastContest == 'cxxxxxxx'">SPランキング</a>
-        </div>
-        <div id="main-menu-4" class="col xs-3">
-            <a href="/ranking/{{ inProgressContest.year }}{{ inProgressContest.season }}/puzzle" ng-show="inProgress.lastContest != 'cxxxxxxx'">パズルシェア</a>
-            <a href="#" ng-show="inProgress.lastContest == 'cxxxxxxx'">パズルシェア</a>
-        </div>
-    </div>
+<div id="main-menu" class="row" ng-controller="InProgressCtrl">
+  <div id="main-menu-1" class="col xs-3">
+    <a href="@routes.HomeController.about">トリコンとは</a>
+  </div>
+  <div id="main-menu-2" class="col xs-3">
+    <a
+      href="/contest/{{ inProgress.lastContest | removeHead }}"
+      ng-show="inProgress.lastContest != 'cxxxxxxx'"
+      >リザルト</a
+    >
+    <a href="#" ng-show="inProgress.lastContest == 'cxxxxxxx'">リザルト</a>
+  </div>
+  <div id="main-menu-3" class="col xs-3">
+    <a
+      href="/ranking/{{ inProgressContest.year }}{{ inProgressContest.season }}"
+      ng-show="inProgress.lastContest != 'cxxxxxxx'"
+      >SPランキング</a
+    >
+    <a href="#" ng-show="inProgress.lastContest == 'cxxxxxxx'">SPランキング</a>
+  </div>
+  <div id="main-menu-4" class="col xs-3">
+    <a
+      href="/ranking/{{ inProgressContest.year }}{{ inProgressContest.season }}/puzzle"
+      ng-show="inProgress.lastContest != 'cxxxxxxx'"
+      >パズルシェア</a
+    >
+    <a href="#" ng-show="inProgress.lastContest == 'cxxxxxxx'">パズルシェア</a>
+  </div>
+</div>
 <script>
-app.controller('InProgressCtrl', ['$scope', '$timeout', function($scope, $timeout) {
-    // 初期値はデフォルトページへ飛ばす値
-    $scope.inProgress = { 'lastContest': 'cdefault' };
-    $scope.inProgressContest = { 'year': 'default', 'season': '' };
+  app.controller("InProgressCtrl", [
+    "$scope",
+    "$timeout",
+    function ($scope, $timeout) {
+      // 初期値はデフォルトページへ飛ばす値
+      $scope.inProgress = { lastContest: "cdefault" };
+      $scope.inProgressContest = { year: "default", season: "" };
 
-    contestRef.child('inProgress').once('value', function(snapInProgress) {
-        contestRef.child('contests').child(snapInProgress.val().contest).once('value', function(snapContest) {
-            $timeout(function() {
-                $scope.inProgress = snapInProgress.val();
-                $scope.inProgressContest = snapContest.val();
+      contestRef.child("inProgress").once("value", function (snapInProgress) {
+        contestRef
+          .child("contests")
+          .child(snapInProgress.val().contest)
+          .once("value", function (snapContest) {
+            $timeout(function () {
+              $scope.inProgress = snapInProgress.val();
+              $scope.inProgressContest = snapContest.val();
             });
-        });
-    });
+          });
+      });
 
-    var refHeight = document.getElementById('main-menu-1').offsetHeight;
-    angular.element(document.getElementById('main-menu-1')).css('height', refHeight + 'px');
-    angular.element(document.getElementById('main-menu-2')).css('height', refHeight + 'px');
-    angular.element(document.getElementById('main-menu-3')).css('height', refHeight + 'px');
-    angular.element(document.getElementById('main-menu-4')).css('height', refHeight + 'px');
-}]);
+      var refHeight = document.getElementById("main-menu-1").offsetHeight;
+      angular
+        .element(document.getElementById("main-menu-1"))
+        .css("height", refHeight + "px");
+      angular
+        .element(document.getElementById("main-menu-2"))
+        .css("height", refHeight + "px");
+      angular
+        .element(document.getElementById("main-menu-3"))
+        .css("height", refHeight + "px");
+      angular
+        .element(document.getElementById("main-menu-4"))
+        .css("height", refHeight + "px");
+    },
+  ]);
 </script>
 
 } else {
-    <hr id="header-line">
+<hr id="header-line" />
 }
