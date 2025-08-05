@@ -37,7 +37,7 @@ h6 {
  * Header
  */
 #header {
-  margin-top: 22px;
+  margin-top: 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -84,7 +84,7 @@ hr#header-line {
 
 #main-menu {
   clear: both;
-  margin-top: 20px;
+  margin-top: 12px;
   margin-bottom: 20px;
 }
 @media screen and (max-width: 480px) {
