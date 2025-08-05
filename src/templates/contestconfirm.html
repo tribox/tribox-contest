@@ -1,0 +1,502 @@
+[% set title = "Contest Confirm" + cid + " (" + eid + ")" %] [% set page_url =
+contest_url + '/contest/' + 'cid' + "/" + "eid" + "/confirm" %]
+
+<!DOCTYPE html>
+<html lang="ja" ng-app="contestApp">
+  <head
+    prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#"
+  >
+    [% import "components/header.html" as header %] [[ header.print(title=title,
+    description=contest_description, sitename=contest_name,
+    contest_url=contest_url, page_url=page_url) ]] [% import
+    "components/basejs.html" as basejs %] [[ basejs.print(firebaseapp_contest,
+    firebaseapp_contest_apikey, firebaseapp_contest_senderid) ]]
+  </head>
+  <body>
+    <div class="container">
+      [% import "components/bodyheader.html" as bodyheader %] [[
+      bodyheader.print(title=title, contest_name=contest_name, cid=cid) ]]
+
+      <div ng-controller="AuthCtrl">
+        <div ng-controller="ContestCtrl">
+          <div ng-controller="ContestConfirmCtrl">
+            <div ng-hide="authLoaded && contestLoaded && contestConfirmLoaded">
+              <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+              <span class="sr-only">Loading...</span>
+              Loading...
+            </div>
+            <div ng-show="authLoaded && contestLoaded && contestConfirmLoaded">
+              [% import "components/authinfo.html" as authinfo %] [[
+              authinfo.print(eid=eid) ]]
+
+              <div ng-hide="existsContest">
+                <p class="color-error">存在しないコンテストです。</p>
+              </div>
+              <div ng-hide="existsEvent">
+                <p class="color-error">存在しない競技です。</p>
+              </div>
+              <div ng-hide="inProgress.contest == 'c[[cid]]'">
+                <p class="color-error">開催中のコンテストではありません。</p>
+              </div>
+
+              <div
+                ng-show="existsContest && existsEvent && inProgress.contest == 'c[[cid]]'"
+              >
+                <div class="color-error margin-bottom-20" ng-if="error">
+                  エラー: {{ error }}
+                </div>
+
+                <!--<div>
+            <p>brandsPuzzles:</p>
+            <ul>
+                @for((brandId, puzzles) <- brandsPuzzles){
+                    <li>@brandId : @puzzleBrandsMap(brandId)</li>
+                    <ul>
+                        @for(puzzle <- puzzles){
+                            <li>@puzzle.productId : @puzzle.name</li>
+                        }
+                    </ul>
+                }
+            </ul>
+        </div>-->
+
+                <!--<div>
+            <p>cubes: @{cubes.length}</p>
+            <ul>
+                @for(cube:Cube <- cubes){
+                    <li>@cube.product_id : @cube.name : @cube.category_id : @cube.parent_category_id</li>
+                }
+            </ul>
+        </div>-->
+
+                <!--<div>
+            <p>puzzles: @{puzzles.length}</p>
+            <ul>
+                @for(puzzle:Puzzle <- puzzles){
+                    <li>@puzzle.productId : @puzzle.name : @puzzle.categoryId : @puzzle.brandId</li>
+                }
+            </ul>
+        </div>-->
+
+                <!--<div>
+            <p>puzzleCategories: @{puzzleCategories.length}</p>
+            <ul>
+                @for(puzzleCategory:PuzzleCategory <- puzzleCategories){
+                    <li>@puzzleCategory.category_id : @puzzleCategory.category_name</li>
+                }
+            </ul>
+        </div>-->
+
+                <!--<div>
+            <p>puzzleBrands: @{puzzleBrands.length}</p>
+            <ul>
+                @for(puzzleBrand:PuzzleBrand <- puzzleBrands){
+                    <li>@puzzleBrand.category_id : @puzzleBrand.category_name</li>
+                }
+            </ul>
+        </div>-->
+
+                <form name="submitForm" ng-submit="submitResult()">
+                  <div class="row">
+                    <div class="col md-6">
+                      [%if(eid == "333fm") %]
+                      <p>
+                        3×3×3
+                        最少手数種目では、メインで使用したキューブを1つ選んで選択してください。
+                      </p>
+                      [% endif %]
+                      <label class="fancy-radio">
+                        <input
+                          name="puzzle-type"
+                          type="radio"
+                          value="database"
+                          ng-model="puzzle.type"
+                        />
+                        <span>使用キューブをデータベースから選択</span>
+                      </label>
+                      <div ng-show="puzzle.type == 'database'">
+                        <label>ブランド</label>
+                        <select class="form-control" ng-model="puzzle.brand">
+                          [% for puzzleBrand in puzzleBrands %] [% if
+                          brandsPuzzles.get(puzzleBrand.category_id) is not none
+                          %]
+                          <option
+                            id="brand-[[ puzzleBrand.category_id ]]"
+                            value="[[ puzzleBrand.category_id ]]"
+                          >
+                            [[ puzzleBrand.category_name ]]
+                          </option>
+                          [% endif %] [% endfor %]
+                        </select>
+                        <label>キューブ</label>
+                        <select class="form-control" ng-model="puzzle.product">
+                          [% for brandId, puzzles in brandsPuzzles %] [% for
+                          puzzle in puzzles %]
+                          <option
+                            id="product-[[ puzzle.productId ]]"
+                            value="[[ puzzle.productId ]]"
+                            ng-if="puzzle.brand == [[ brandId ]]"
+                          >
+                            [[ puzzle.name ]]
+                          </option>
+                          [% endfor %] [% endfor %]
+                        </select>
+                      </div>
+
+                      <label class="fancy-radio">
+                        <input
+                          name="puzzle-type"
+                          type="radio"
+                          value="unknown"
+                          ng-model="puzzle.type"
+                        />
+                        <span>その他・不明</span>
+                      </label>
+                    </div>
+                    <div class="col md-6">
+                      <div ng-show="resultsData.type != 'solution'">
+                        <p class="margin-bottom-0" style="font-size: 24px">
+                          {{ resultTitle | uppercaseHead }}: {{ resultResult }}
+                        </p>
+                        <p class="margin-bottom-20" ng-show="resultResultAlt">
+                          {{ resultTitleAlt | uppercaseHead }}: {{
+                          resultResultAlt }}
+                        </p>
+                      </div>
+                      <div ng-show="resultsData.type == 'solution'">
+                        <p>
+                          <span style="font-size: 24px">解答:</span><br />
+                          {{ resultsData.details[0].solution }}
+                        </p>
+                      </div>
+                      <p>
+                        <input
+                          type="submit"
+                          value="この内容で送信する"
+                          class="btn"
+                          style="cursor: pointer"
+                        />
+                        <a
+                          href="/contest/[[cid]]/[[eid]]/{{ resultsData.type }}"
+                          class="btn btn-light btn-empty"
+                          >戻って修正する</a
+                        >
+                      </p>
+                      <p>ビデオへのリンクはマイページから追加できます。</p>
+                    </div>
+                  </div>
+                </form>
+
+                [% if(eid != "333fm") %] [% import "contesttimeform.html" as
+                contesttimeform %] [[ contesttimeform.print(eid=eid,
+                useInput=False, clickable=False) ]] [% endif %]
+                <!--<p>@cid -> contestData:</p>
+        <pre>{{ contestData | json }}</pre>-->
+
+                <!--<p>inProgress / countdown:</p>
+        <pre>{{ inProgress | json }}</pre>
+        <pre>{{ countdown | json }}</pre>-->
+
+                <!--<p>@cid -> scramblesData:</p>
+        <pre>{{ scramblesData | json }}</pre>-->
+
+                <!--<p>@cid -> resultsData:</p>
+        <pre>{{ resultsData | json }}</pre>-->
+
+                <!--<p>events:</p>
+        <pre>{{ events | json }}</pre>-->
+
+                <!--<p>results:</p>
+        <pre>{{ result | json }}</pre>
+        <pre>{{ resultsData | json }}</pre>
+        <pre>{{ resultsDetail | json }}</pre>
+        <pre>{{ resultResult | json }}</pre>
+        <pre>{{ resultResultAlt | json }}</pre>-->
+
+                <!--<p>puzzle:</p>
+        <pre>{{ puzzle | json }}</pre>-->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      [% include "components/bodyfooter.html" %] [% import
+      "components/authjs.html" as authjs %] [[ authjs.print(redirect_login="",
+      redirect_logout="", check_first=True) ]] [% import
+      "components/contestjs.html" as contestjs %] [[ contestjs.print(cid=cid,
+      eid=eid, fetch_scrambles=False, fetch_results_top3=False,
+      fetch_results_all=False)]]
+
+      <script>
+        app.controller("ContestConfirmCtrl", [
+          "$scope",
+          "$timeout",
+          function ($scope, $timeout) {
+            firebase.auth().onAuthStateChanged(function (authData) {
+              $scope.result = null;
+              $scope.resultsData = null;
+              $scope.resultsDetail = null;
+              $scope.contestConfirmLoaded = false;
+
+              // 結果表示
+              $scope.resultTitle = null;
+              $scope.resultResult = null;
+              $scope.resultTitleAlt = null;
+              $scope.resultResultAlt = null;
+
+              // パズル選択の初期値
+              $scope.puzzle = {};
+
+              contestRef
+                .child("events")
+                .child("e[[eid]]")
+                .once(
+                  "value",
+                  function (snapEvent) {
+                    if (!snapEvent.exists()) {
+                      $timeout(function () {
+                        $scope.contestConfirmLoaded = true;
+                      });
+                    } else {
+                      var e = snapEvent.val();
+                      $timeout(function () {
+                        $scope.resultTitle = e.method + " of " + e.attempts;
+                        if (e.method == "average") {
+                          $scope.resultTitleAlt = "best";
+                        }
+                      });
+
+                      // Read personal results
+                      if (authData) {
+                        // パズル選択の初期値
+                        contestRef
+                          .child("users")
+                          .child(authData.uid)
+                          .child("lastUsedPuzzles")
+                          .child("e[[eid]]")
+                          .once("value", function (snapLastUsedPuzzle) {
+                            var lastUsedPuzzle = snapLastUsedPuzzle.val();
+                            if (lastUsedPuzzle) {
+                              $scope.puzzle.type = lastUsedPuzzle.type;
+                              if (lastUsedPuzzle.type == "database") {
+                                $scope.puzzle.brand = "" + lastUsedPuzzle.brand;
+                                $scope.puzzle.product =
+                                  "" + lastUsedPuzzle.product;
+                              } else if (lastUsedPuzzle.type == "nodatabase") {
+                                $scope.puzzle.input = lastUsedPuzzle.input;
+                              } else if (lastUsedPuzzle.type == "unknown") {
+                              }
+                            }
+
+                            contestRef
+                              .child("results")
+                              .child("c[[cid]]")
+                              .child("e[[eid]]")
+                              .child(authData.uid)
+                              .once(
+                                "value",
+                                function (snapResult) {
+                                  if (snapResult.exists()) {
+                                    var resultsData = snapResult.val();
+                                    $timeout(function () {
+                                      $scope.result = calcResult(
+                                        e.method,
+                                        e.format,
+                                        resultsData.details.slice(0, e.attempts)
+                                      );
+                                      // FMC: Calculate later
+                                      if ("[[eid]]" == "333fm") {
+                                        $scope.result.condition = "NOTYET";
+                                        $scope.result.best = 0; // validation 回避
+                                      }
+                                      $scope.resultsData = resultsData;
+                                      if ($scope.result.condition == "DNF") {
+                                        $scope.resultResult = "DNF";
+                                      } else if (e.format == "time") {
+                                        $scope.resultResult =
+                                          TriboxContest.formatTime(
+                                            $scope.result.record
+                                          );
+                                      } else if (e.format == "number") {
+                                        $scope.resultResult =
+                                          $scope.result.record;
+                                      }
+                                      if (e.method == "average") {
+                                        var best =
+                                          resultsData.details[
+                                            $scope.result.best
+                                          ];
+                                        if (best.condition == "DNF") {
+                                          $scope.resultResultAlt = "DNF";
+                                        } else if (e.format == "time") {
+                                          if (best.condition == "OK") {
+                                            $scope.resultResultAlt =
+                                              TriboxContest.formatTime(
+                                                best.record
+                                              );
+                                          } else if (best.condition == "+2") {
+                                            $scope.resultResultAlt =
+                                              TriboxContest.formatTime(
+                                                best.record + 2.0
+                                              );
+                                          } else {
+                                            $scope.resultResultAlt = "DNF";
+                                          }
+                                        } else if (e.format == "number") {
+                                          $scope.resultResultAlt = best.record;
+                                        }
+                                      }
+                                      $scope.resultsDetail =
+                                        $scope.turnOnButtons(
+                                          e.format,
+                                          resultsData.details
+                                        );
+                                      $scope.contestConfirmLoaded = true;
+                                    });
+                                  } else {
+                                    $timeout(function () {
+                                      $scope.contestConfirmLoaded = true;
+                                    });
+                                  }
+                                },
+                                function (error) {
+                                  console.error(error);
+                                }
+                              );
+                          });
+                      } else {
+                        $timeout(function () {
+                          $scope.contestConfirmLoaded = true;
+                        });
+                      }
+                    }
+                  },
+                  function (error) {
+                    console.error(error);
+                  }
+                );
+
+              var toFixedForPriority = function (n) {
+                nstr = String(n);
+                if (nstr.indexOf(".") != -1) {
+                  var p0 = nstr.split(".")[0];
+                  var p1 = nstr.split(".")[1];
+                  return ("000" + p0).slice(-3) + (p1 + "000").slice(0, 3);
+                } else {
+                  return ("000" + nstr).slice(-3) + "000";
+                }
+              };
+
+              $scope.submitResult = function () {
+                firebase.auth().onAuthStateChanged(function (authData) {
+                  if (authData) {
+                    if (!$scope.puzzle || !$scope.puzzle.type) {
+                      $scope.error = "使用キューブを選択してください。";
+                      return;
+                    }
+
+                    /*
+                    各項目で、指定IDがDOM上に存在するかチェックしている。
+                    これは $scope の値と実際に選択されている項目のずれを検出する意味を持つ。
+                    ng-if が成り立たない <option> はDOM上から消されるからこれがうまくいく。
+                    */
+                    var puzzle = { type: $scope.puzzle.type };
+                    if ($scope.puzzle.type == "database") {
+                      if (
+                        !$scope.puzzle.brand ||
+                        document.getElementById(
+                          "brand-" + $scope.puzzle.brand
+                        ) == null ||
+                        parseInt($scope.puzzle.brand) < 0
+                      ) {
+                        $scope.error = "ブランドを選択してください。";
+                        return;
+                      }
+                      if (
+                        !$scope.puzzle.product ||
+                        document.getElementById(
+                          "product-" + $scope.puzzle.product
+                        ) == null ||
+                        parseInt($scope.puzzle.product) < 0
+                      ) {
+                        $scope.error = "キューブを選択してください。";
+                        return;
+                      }
+                      puzzle.brand = parseInt($scope.puzzle.brand);
+                      puzzle.product = parseInt($scope.puzzle.product);
+                    } else if ($scope.puzzle.type == "nodatabase") {
+                      $scope.error = "パズルを選択してください。";
+                      return;
+                    } else if ($scope.puzzle.type == "unknown") {
+                    } else {
+                      return;
+                    }
+
+                    // Calc priority: (record as string) + (best as string)
+                    // The letter '+' forces it to be string
+                    var priority =
+                      toFixedForPriority($scope.result.record) +
+                      "+" +
+                      toFixedForPriority(
+                        $scope.resultsData.details[$scope.result.best].record
+                      );
+
+                    // Save results
+                    contestRef
+                      .child("results")
+                      .child("c[[cid]]")
+                      .child("e[[eid]]")
+                      .child(authData.uid)
+                      .update(
+                        {
+                          endAt: firebase.database.ServerValue.TIMESTAMP,
+                          result: $scope.result,
+                          puzzle: puzzle,
+                        },
+                        function (error) {
+                          if (!error) {
+                            // And set priority
+                            contestRef
+                              .child("results")
+                              .child("c[[cid]]")
+                              .child("e[[eid]]")
+                              .child(authData.uid)
+                              .setPriority(priority, function (error) {
+                                if (!error) {
+                                  // Save last used puzzle
+                                  contestRef
+                                    .child("users")
+                                    .child(authData.uid)
+                                    .child("lastUsedPuzzles")
+                                    .child("e[[eid]]")
+                                    .set(puzzle, function (error) {
+                                      if (!error) {
+                                        console.log("Complete!");
+                                        location.href =
+                                          "/contest/[[cid]]?done==[[eid]]";
+                                      } else {
+                                        console.error(error);
+                                      }
+                                    });
+                                } else {
+                                  console.error(error);
+                                }
+                              });
+                          } else {
+                            console.error(error);
+                          }
+                        }
+                      );
+                  } else {
+                    location.href = "[[ url_for('index') ]]?logout=1";
+                  }
+                }); // onAuthStateChange
+              };
+            }); // onAuthStateChange
+          },
+        ]);
+      </script>
+    </div>
+  </body>
+</html>
