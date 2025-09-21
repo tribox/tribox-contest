@@ -1,174 +1,283 @@
-[% set title = "About" %]
-[% set page_url = contest_url + 'about' %]
+[% set title = "About" %] [% set page_url = contest_url + 'about' %]
 
 <!DOCTYPE html>
 <html lang="ja" ng-app="contestApp">
-<head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
-    [% import "components/header.html" as header %]
-    [[ header.print(title=title, description=contest_description, sitename=contest_name, contest_url=contest_url, page_url=page_url) ]]
+  <head
+    prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#"
+  >
+    [% import "components/header.html" as header %] [[ header.print(title=title,
+    description=contest_description, sitename=contest_name,
+    contest_url=contest_url, page_url=page_url) ]] [% import
+    "components/basejs.html" as basejs %] [[ basejs.print(firebaseapp_contest,
+    firebaseapp_contest_apikey, firebaseapp_contest_senderid) ]] [% import
+    "components/authjs.html" as authjs %] [[ authjs.print(redirect_login="",
+    redirect_logout="", check_first=True) ]]
 
-[% import "components/basejs.html" as basejs %]
-[[ basejs.print(firebaseapp_contest, firebaseapp_contest_apikey, firebaseapp_contest_senderid) ]]
+    <link
+      rel="stylesheet"
+      media="screen"
+      href="[[ url_for('static', filename='stylesheets/about.css') ]]"
+    />
+  </head>
+  <body>
+    <div class="container">
+      [% import "components/bodyheader.html" as bodyheader %] [[
+      bodyheader.print(title=title, contest_name=contest_name) ]]
 
-[% import "components/authjs.html" as authjs %]
-[[ authjs.print(redirect_login="", redirect_logout="", check_first=True) ]]
-
-<style>
-    h4 {
-        margin-top: 30px;
-    }
-
-    table {
-        width: auto !important;
-        margin-left: auto;
-        margin-right: auto;
-    }
-    th.color-header, td.color-header {
-        background-color: #F7F7F7;
-    }
-    th.color-gold {
-        background-color: rgb(255, 255, 0);
-        /*background-color: #C98910;*/
-    }
-    th.color-silver {
-        background-color: rgb(217, 217, 217);
-        /*background-color: #A8A8A8;*/
-    }
-    th.color-bronze {
-        background-color: rgb(255, 153, 0);
-        /*background-color: #965A38;*/
-    }
-
-    p {
-        line-height: 1.6em;
-    }
-</style>
-
-</head>
-<body><div class="container">
-    [% import "components/bodyheader.html" as bodyheader %]
-    [[ bodyheader.print(title=title, contest_name=contest_name) ]]
-
-    <div ng-controller="AuthCtrl">
+      <div ng-controller="AuthCtrl">
         <div ng-hide="authLoaded">
-            <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
-            <span class="sr-only">Loading...</span>
-            Loading...
+          <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
+          <span class="sr-only">Loading...</span>
+          Loading...
         </div>
         <div ng-show="authLoaded">
+          [% import "components/authinfo.html" as authinfo %] [[
+          authinfo.print() ]]
 
-            [% import "components/authinfo.html" as authinfo %]
-            [[ authinfo.print() ]]
-
-            <h2>トリコン: TORIBOコンテストとは</h2>
-
-            <p>
-                スピードキューブのオンラインコンテスト「トリコン」へようこそ！<br>
-                10分以内にキューブを解ける方なら誰でも参加可能です。<br>
-                参加費は無料。しかもお得な特典がたっぷりです。皆さまのご参加をお待ちしています。
+          <!-- Simple Hero Section -->
+          <div class="about-hero-section">
+            <h2 class="about-hero-title">トリコン: TORIBOコンテストとは</h2>
+            <p class="about-hero-subtitle">
+              スピードキューブのオンラインコンテスト「トリコン」へようこそ！<br />
+              10分以内にキューブを解ける方なら誰でも参加可能です。<br />
+              参加費は無料。しかもお得な特典がたっぷりです。皆さまのご参加をお待ちしています。
             </p>
-            <ul>
-                <li><b><a href="[[ url_for('join') ]]">新規会員登録ページ</a></b></li>
-                <li><b><a href="[[ url_for('regulations') ]]">参加方法とルール</a></b></li>
-            </ul>
+            <div class="about-cta-container">
+              <a href="[[ url_for('join') ]]" class="about-cta-button">
+                <i class="fa fa-user-plus"></i>
+                新規会員登録
+              </a>
+              <a
+                href="[[ url_for('regulations') ]]"
+                class="about-cta-button about-cta-button-secondary"
+              >
+                <i class="fa fa-book"></i>
+                参加方法とルール
+              </a>
+            </div>
+          </div>
 
-            <hr>
+          <!-- Cards Section -->
+          <div class="about-card-container">
+            <!-- Store Connection Card -->
+            <div class="about-card">
+              <div class="about-card-header">
+                <div class="about-card-icon">
+                  <i class="fa fa-link"></i>
+                </div>
+                <h3 class="about-card-title">ストア&コンテスト連携</h3>
+              </div>
+              <div class="about-card-content">
+                <p>
+                  トリコンアカウントは、<a
+                    href="https://store.tribox.com/"
+                    class="about-icon-store"
+                    ><i class="fa fa-shopping-cart"></i> TORIBOストア</a
+                  >アカウントと結びつけることができます。
+                </p>
+                <div class="about-info-box">
+                  <div class="about-info-box-title">連携で受け取れる特典</div>
+                  <div class="about-info-box-content">
+                    <i class="fa fa-check"></i> 抽選ポイント (毎週161名)<br />
+                    <i class="fa fa-check"></i> 皆勤賞 (半年ごと)<br />
+                    <i class="fa fa-check"></i> 入賞賞金 (半年ごと)
+                  </div>
+                </div>
+                <div class="about-cta-container">
+                  <a
+                    href="[[ url_for('setting_verify') ]]"
+                    class="about-cta-button"
+                  >
+                    <i class="fa fa-cog"></i>
+                    ストア&コンテスト連携設定
+                  </a>
+                </div>
+              </div>
+            </div>
 
-            <h4>ポイントが当たる「ストア&コンテスト連携」</h4>
-            <p>
-                トリコンアカウントは、<b><a href="https://store.tribox.com/">TORIBOストア</a></b>アカウントと結びつけることができます。<br>
-                以下の特典を受け取るには「<b><a href="[[ url_for('setting_verify') ]]">ストア&コンテスト連携</a></b>」が必要です。<br>
-                &#x1f4b0;抽選ポイント (毎週161名)<br>
-                &#x1f4b0;皆勤賞 (半年ごと)<br>
-                &#x1f4b0;入賞賞金 (半年ごと)
+            <!-- Contest and Season Card -->
+            <div class="about-card">
+              <div class="about-card-header">
+                <div class="about-card-icon">
+                  <i class="fa fa-calendar"></i>
+                </div>
+                <h3 class="about-card-title">コンテストとシーズン</h3>
+              </div>
+              <div class="about-card-content">
+                <p>
+                  「コンテスト (節)
+                  」は毎週日曜21時に始まり、1週間後に終了します。つまり、コンテストは常に開催されています。
+                </p>
+                <div class="about-info-box">
+                  <div class="about-info-box-title">
+                    <i class="fa fa-info-circle"></i> SNSについてのお願い
+                  </div>
+                  <div class="about-info-box-content">
+                    皆様の記録やスクランブルの特徴などは、毎週日曜21時の結果発表まで公表しないようお願いいたします。
+                  </div>
+                </div>
+                <p>
+                  半年間（およそ26週間）で「シーズン」が切り替わります。<br />
+                  1〜6月が前半期、7〜12月が後半期です。
+                </p>
+              </div>
+            </div>
+
+            <!-- Lottery Points Card -->
+            <div class="about-card">
+              <div class="about-card-header">
+                <div class="about-card-icon">
+                  <i class="fa fa-gift"></i>
+                </div>
+                <h3 class="about-card-title">抽選ポイント</h3>
+              </div>
+              <div class="about-card-content">
+                <p>
+                  毎週抽選で<strong>161名様に100ポイント</strong>が進呈されます。<br />
+                  ポイントは<a href="https://store.tribox.com/">TORIBOストア</a
+                  >アカウントに自動進呈され、<strong>1ポイント=1円</strong>としてご使用頂けます。
+                </p>
+                <p>
+                  複数の種目に参加すると、同時に複数当選する可能性もあります!
+                </p>
+                <div class="about-info-box">
+                  <div class="about-info-box-content">
+                    ※ 抽選ポイントを受け取るには「<a
+                      href="[[ url_for('setting_verify') ]]"
+                      >ストア&コンテスト連携</a
+                    >」が必要です。
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Perfect Attendance Award Card -->
+            <div class="about-card">
+              <div class="about-card-header">
+                <div class="about-card-icon">
+                  <i class="fa fa-star"></i>
+                </div>
+                <h3 class="about-card-title">皆勤賞</h3>
+              </div>
+              <div class="about-card-content">
+                <p>
+                  各種目に毎週参加された方には、最大4種目まで<strong
+                    >皆勤賞 (500ポイント)</strong
+                  >が進呈されます。
+                </p>
+                <div class="about-info-box">
+                  <div class="about-info-box-title">
+                    皆勤賞の条件 (種目ごと)
+                  </div>
+                  <div class="about-info-box-content">
+                    • 参加しなかった節が2回以下<br />
+                    • DNFが3回以下<br />
+                    ※「個々の記録」のDNFはカウントされません
+                  </div>
+                </div>
+                <p>
+                  ※ 皆勤賞を受け取るには「<a
+                    href="[[ url_for('setting_verify') ]]"
+                    >ストア&コンテスト連携</a
+                  >」が必要です。
+                </p>
+              </div>
+            </div>
+
+            <!-- Prize Money Card -->
+            <div class="about-card">
+              <div class="about-card-header">
+                <div class="about-card-icon">
+                  <i class="fa fa-trophy"></i>
+                </div>
+                <h3 class="about-card-title">入賞賞金</h3>
+              </div>
+              <div class="about-card-content">
+                <p>
+                  シーズン終了後、SPランキングの1〜3位には、種目ごとに設定された賞金
+                  (TORIBOポイント) が授与されます。
+                </p>
+                <div class="about-info-box">
+                  <div class="about-info-box-title">
+                    シーズンポイント (SP) の配分
+                  </div>
+                  <div class="about-info-box-content">
+                    毎週のコンテストの入賞者 (1位〜12位)
+                    に以下の通り与えられます：<br />
+                    <strong>1位:</strong> 20pts、<strong>2位:</strong>
+                    15pts、<strong>3位:</strong> 12pts<br />
+                    <strong>4位:</strong> 10pts、<strong>5位:</strong>
+                    8pts、<strong>6位:</strong> 7pts<br />
+                    <strong>7位:</strong> 6pts、<strong>8位:</strong>
+                    5pts、<strong>9位:</strong> 4pts<br />
+                    <strong>10位:</strong> 3pts、<strong>11位:</strong>
+                    2pts、<strong>12位:</strong> 1pt
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Prize Table Section -->
+          <div class="about-prize-section">
+            <h2 class="about-prize-title">入賞賞金</h2>
+            <p class="about-prize-subtitle">
+              各種目の賞金額 (総額32万ポイント)
             </p>
-            <p>
-                <b><a href="[[ url_for('setting_verify') ]]">ストア&コンテスト連携設定ページ</a></b>
-            </p>
 
-            <h4>コンテストとシーズン</h4>
-            <p>
-                「コンテスト (節) 」は毎週日曜21時に始まり、1週間後に終了します。つまり、コンテストは常に開催されています。<br>
-                SNSについて: 皆様の記録やスクランブルの特徴などは、毎週日曜21時の結果発表まで公表しないようお願いいたします。<br>
-                半年間（およそ26週間）で「シーズン」が切り替わります。1〜6月が前半期、7〜12月が後半期です。
-            </p>
-
-            <hr>
-
-            <h4>&#x1f4b0;抽選ポイント</h4>
-            <p>
-                毎週抽選で161名様に100ポイントが進呈されます。<br>
-                ポイントは<b><a href="https://store.tribox.com/">TORIBOストア</a></b>アカウントに自動進呈され、1ポイント=1円としてご使用頂けます。<br>
-                複数の種目に参加すると、同時に複数当選する可能性もあります!<br>
-                抽選ポイントを受け取るには「<b><a href="[[ url_for('setting_verify') ]]">ストア&コンテスト連携</a></b>」が必要です。
-            </p>
-
-            <h4>&#x1f4b0;皆勤賞</h4>
-            <p>
-                各種目に毎週参加された方には、最大4種目まで皆勤賞 (500ポイント) が進呈されます。<br>
-                皆勤賞の条件 (種目ごと) : 参加しなかった節が2回以下 かつ DNFが3回以下 (「個々の記録」のDNFはカウントされません)<br>
-                皆勤賞を受け取るには「<b><a href="[[ url_for('setting_verify') ]]">ストア&コンテスト連携</a></b>」が必要です。
-            </p>
-
-            <h4>&#x1f4b0;入賞賞金</h4>
-            <p>
-                シーズン終了後、SPランキングの1〜3位には、種目ごとに設定された賞金 (TORIBOポイント) が授与されます。<br>
-                このランキングの元となるSP (シーズンポイント) は、毎週のコンテストの入賞者 (1位〜12位) に以下の通り与えられます。<br>
-                1位: 20pts、2位: 15、3位: 12、4位: 10、5位: 8、6位: 7、7位: 6、8位: 5、9位: 4、10位: 3、11位: 2、12位: 1
-            </p>
-
-            <table class="table table-bordered">
-                <caption>各種目の賞金額 (総額32万ポイント)</caption>
+            <div class="about-prize-table-container">
+              <table class="about-prize-table">
                 <thead>
-                    <tr>
-                        <th class="color-header text-center">種目</th>
-                        <th class="color-gold text-center">1位</th>
-                        <th class="color-silver text-center">2位</th>
-                        <th class="color-bronze text-center">3位</th>
-                    </tr>
+                  <tr>
+                    <th>種目</th>
+                    <th class="about-gold">1位</th>
+                    <th class="about-silver">2位</th>
+                    <th class="about-bronze">3位</th>
+                  </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td class="color-header">
-                            <i class="cubing-icon event-333"></i>
-                        </td>
-                        <td class="text-right">30,000</td>
-                        <td class="text-right">15,000</td>
-                        <td class="text-right">8,000</td>
-                    </tr>
-                    <tr>
-                        <td class="color-header">
-                            <i class="cubing-icon event-222"></i>
-                            <i class="cubing-icon event-444"></i>
-                            <i class="cubing-icon event-555"></i>
-                            <i class="cubing-icon event-333oh"></i>
-                            <i class="cubing-icon event-pyram"></i>
-                            <i class="cubing-icon event-skewb"></i>
-                        </td>
-                        <td class="text-right">15,000</td>
-                        <td class="text-right">7,500</td>
-                        <td class="text-right">4,000</td>
-                    </tr>
-                    <tr>
-                        <td class="color-header">
-                            <i class="cubing-icon event-666"></i>
-                            <i class="cubing-icon event-777"></i>
-                            <i class="cubing-icon event-333bf"></i>
-                            <i class="cubing-icon event-333fm"></i>
-                            <i class="cubing-icon event-minx"></i>
-                            <i class="cubing-icon event-sq1"></i>
-                        </td>
-                        <td class="text-right">10,000</td>
-                        <td class="text-right">5,000</td>
-                        <td class="text-right">3,000</td>
-                    </tr>
+                  <tr>
+                    <td>
+                      <i class="cubing-icon event-333"></i>
+                    </td>
+                    <td class="about-prize-amount">30,000</td>
+                    <td class="about-prize-amount">15,000</td>
+                    <td class="about-prize-amount">8,000</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <i class="cubing-icon event-222"></i>
+                      <i class="cubing-icon event-444"></i>
+                      <i class="cubing-icon event-555"></i>
+                      <i class="cubing-icon event-333oh"></i>
+                      <i class="cubing-icon event-pyram"></i>
+                      <i class="cubing-icon event-skewb"></i>
+                    </td>
+                    <td class="about-prize-amount">15,000</td>
+                    <td class="about-prize-amount">7,500</td>
+                    <td class="about-prize-amount">4,000</td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <i class="cubing-icon event-666"></i>
+                      <i class="cubing-icon event-777"></i>
+                      <i class="cubing-icon event-333bf"></i>
+                      <i class="cubing-icon event-333fm"></i>
+                      <i class="cubing-icon event-minx"></i>
+                      <i class="cubing-icon event-sq1"></i>
+                    </td>
+                    <td class="about-prize-amount">10,000</td>
+                    <td class="about-prize-amount">5,000</td>
+                    <td class="about-prize-amount">3,000</td>
+                  </tr>
                 </tbody>
-            </table>
-
+              </table>
+            </div>
+          </div>
         </div>
+      </div>
+
+      [% include "components/bodyfooter.html" %]
     </div>
-
-    [% include "components/bodyfooter.html" %]
-
-</div></body>
+  </body>
 </html>
