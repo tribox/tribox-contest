@@ -37,55 +37,101 @@ h6 {
   font-weight: bold;
 }
 
-/**
- * Header
- */
 #header {
-  margin-top: 22px;
-  display: flex;
-  justify-content: space-between;
   align-items: center;
+  display: flex;
+  height: 64px;
+  justify-content: space-between;
+  margin-bottom: 32px;
+  position: relative;
 }
 
-@media screen and (max-width: 480px) {
-  #header-logo {
-    display: inline-block;
-    height: 48px;
+#header-background {
+  background: linear-gradient(-15deg, #009678, #0096af);
+  height: 64px;
+  left: 50%;
+  position: absolute;
+  top: 0px;
+  transform: translateX(-50%);
+  width: 100vw;
+  z-index: -1;
+}
+
+#header-logo {
+  height: 64px;
+}
+
+@media screen and (max-width: 697px) {
+  #header {
+    margin-bottom: 24px;
   }
 }
-@media screen and (min-width: 481px) {
-  #header-logo {
-    display: inline-block;
-    height: 64px;
-  }
+
+#main-menu {
+  display: flex;
+  gap: 24px;
+  justify-content: center;
+  margin-bottom: 32px;
+  width: 100%;
 }
-#header-logo span {
+
+#main-menu a {
+  align-items: center;
+  border-radius: 8px;
+  box-shadow: 0 0 8px #bbbbbb;
+  box-sizing: border-box;
+  color: #808080;
+  display: flex;
+  flex-shrink: 0;
+  gap: 2px;
+  padding: 8px;
+  font-size: 12px;
+  font-weight: bold;
+  height: 34px;
+  line-height: 18px;
+}
+
+#main-menu .active {
+  background: linear-gradient(-15deg, #009678, #0096af);
+  color: #ffffff;
+}
+
+#main-menu-icon-white {
   display: none;
 }
 
-@media screen and (max-width: 480px) {
-  #header-menu {
-    display: inline-block;
-    height: auto;
-    float: right;
+#main-menu .active #main-menu-icon {
+  display: none;
+}
+
+#main-menu .active #main-menu-icon-white {
+  display: initial;
+}
+
+#main-menu-text-sm {
+  display: none;
+}
+
+@media screen and (max-width: 697px) {
+  #main-menu {
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  #main-menu-2 {
+    display: none !important;
+  }
+  #main-menu-3 {
+    display: none !important;
+  }
+  #main-menu-text-bg {
+    display: none;
+  }
+  #main-menu-text-sm {
+    display: initial;
   }
 }
-@media screen and (min-width: 481px) {
-  #header-menu {
-    display: inline-block;
-    height: 30px;
-    float: right;
-  }
-}
 
-#header-menu a {
-  color: #555;
-}
-
-hr#header-line {
-  margin-top: 22px;
-}
-
+/*
 #main-menu {
   clear: both;
   margin-top: 20px;
@@ -114,6 +160,7 @@ hr#header-line {
     padding-right: 5px;
   }
 }
+*/
 
 /**
  * Footer

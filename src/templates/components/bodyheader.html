@@ -1,82 +1,135 @@
 [% macro print(title, contest_name, cid='', eid='') -%]
 
 <div id="header">
-  <div id="header-logo">
-    <a href="/">
-      <img
-        src="/assets/images/tribox-contest-280x128-turquoise.png"
-        height="64"
-        title="triboxContest"
-        alt="triboxContest"
-        class="mb-hide"
-      />
-      <img
-        src="/assets/images/tribox-contest-280x128-turquoise.png"
-        height="48"
-        title="triboxContest"
-        alt="triboxContest"
-        class="tb-hide pc-hide"
-      />
-      <span>[[ contest_name ]]</span>
-    </a>
-  </div>
-  [% if (cid == '') or (eid == '') %]
-  <div id="header-menu" ng-controller="AuthCtrl">
-    <span ng-show="!isLoggingin && authLoaded">
-      <a href="[[ url_for('login') ]]">ログイン</a> /
-      <a href="[[ url_for('join') ]]">会員登録</a>
-    </span>
-    <span ng-show="isLoggingin && authLoaded && userData.username">
-      <a href="/user/{{ userData.username }}">マイページ</a> /
-      <a href="[[ url_for('setting') ]]">設定</a> /
-      <a href="[[ url_for('logout') ]]">ログアウト</a>
-    </span>
-    <span ng-show="isLoggingin && authLoaded && !(userData.username)">
-      <a href="[[ url_for('setting') ]]">設定</a> /
-      <a href="[[ url_for('logout') ]]">ログアウト</a>
-    </span>
-  </div>
-  [% else %] [% if (cid != 'demo') and (eid != 'demo') %]
-  <div id="header-menu">
-    <a href="/contest/[[ cid ]]?suspended=[[ eid ]]">中断</a>
-  </div>
-  [% else %]
-  <div id="header-menu">
-    <a href="[[ url_for('index') ]]">中断</a>
-  </div>
-  [% endif %] [% endif %]
+  <div id="header-background"></div>
+  <img
+    src="/assets/images/logo-tribox-contest_222x128_white.svg"
+    alt="triboxContest"
+    id="header-logo"
+  />
 </div>
 
 [% if cid == '' %]
-<div id="main-menu" class="row" ng-controller="InProgressCtrl">
-  <div id="main-menu-1" class="col xs-3">
-    <a href="[[ url_for('about') ]]">トリコンとは</a>
-  </div>
-  <div id="main-menu-2" class="col xs-3">
-    <a
-      href="/contest/{{ inProgress.lastContest | removeHead }}"
-      ng-show="inProgress.lastContest != 'cxxxxxxx'"
-      >リザルト</a
-    >
-    <a href="#" ng-show="inProgress.lastContest == 'cxxxxxxx'">リザルト</a>
-  </div>
-  <div id="main-menu-3" class="col xs-3">
-    <a
-      href="/ranking/{{ inProgressContest.year }}{{ inProgressContest.season }}"
-      ng-show="inProgress.lastContest != 'cxxxxxxx'"
-      >SPランキング</a
-    >
-    <a href="#" ng-show="inProgress.lastContest == 'cxxxxxxx'">SPランキング</a>
-  </div>
-  <div id="main-menu-4" class="col xs-3">
-    <a
-      href="/ranking/{{ inProgressContest.year }}{{ inProgressContest.season }}/puzzle"
-      ng-show="inProgress.lastContest != 'cxxxxxxx'"
-      >パズルシェア</a
-    >
-    <a href="#" ng-show="inProgress.lastContest == 'cxxxxxxx'">パズルシェア</a>
-  </div>
+<div id="main-menu" ng-controller="InProgressCtrl">
+  <a href="[[ url_for('index') ]]" id="main-menu-1">参加！</a>
+  <a id="main-menu-2" href="[[ url_for('about') ]]">
+    <img
+      src="/assets/images/icons/exclamation_mark.svg"
+      height="18"
+      id="main-menu-icon"
+      title="exclamationMark"
+      alt="exlcamationMark"
+    />
+    <img
+      src="/assets/images/icons/exclamation_mark_white.svg"
+      height="18"
+      id="main-menu-icon-white"
+      title="exclamationMark"
+      alt="exlcamationMark"
+    />
+    <div>トリコンとは</div></a
+  >
+  <a id="main-menu-3">
+    <img
+      src="/assets/images/icons/rule_book.svg"
+      height="18"
+      id="main-menu-icon"
+      title="ruleBook"
+      alt="ruleBook"
+    />
+    <img
+      src="/assets/images/icons/rule_book_white.svg"
+      height="18"
+      id="main-menu-icon-white"
+      title="ruleBook"
+      alt="ruleBook"
+    />
+    <div>ルール</div></a
+  >
+  <a
+    href="/contest/{{ inProgress.lastContest | removeHead }}"
+    id="main-menu-4"
+    ng-show="inProgress.lastContest != 'cxxxxxxx'"
+  >
+    <img
+      src="/assets/images/icons/result.svg"
+      height="18"
+      id="main-menu-icon"
+      title="result"
+      alt="result"
+    />
+    <img
+      src="/assets/images/icons/result_white.svg"
+      height="18"
+      id="main-menu-icon-white"
+      title="result"
+      alt="result"
+    />
+    <div>リザルト</div></a
+  >
+  <a href="#" id="main-menu-4" ng-show="inProgress.lastContest == 'cxxxxxxx'">
+    <img
+      src="/assets/images/icons/result.svg"
+      height="18"
+      id="main-menu-icon"
+      title="result"
+      alt="result"
+    />
+    <img
+      src="/assets/images/icons/result_white.svg"
+      height="18"
+      id="main-menu-icon-white"
+      title="result"
+      alt="result"
+    />
+    <div>リザルト</div></a
+  >
+  <a
+    href="/ranking/{{ inProgressContest.year }}{{ inProgressContest.season }}"
+    id="main-menu-5"
+    ng-show="inProgress.lastContest != 'cxxxxxxx'"
+  >
+    <img
+      src="/assets/images/icons/trophy.svg"
+      height="18"
+      id="main-menu-icon"
+      title="trophy"
+      alt="trophy"
+    />
+    <img
+      src="/assets/images/icons/trophy_white.svg"
+      height="18"
+      id="main-menu-icon-white"
+      title="trophy"
+      alt="trophy"
+    />
+    <div id="main-menu-text-bg">SPランキング</div>
+    <div id="main-menu-text-sm">ランキング</div></a
+  >
+  <a
+    href="/ranking/{{ inProgressContest.year }}{{ inProgressContest.season }}/puzzle"
+    id="main-menu-6"
+    ng-show="inProgress.lastContest != 'cxxxxxxx'"
+  >
+    <img
+      src="/assets/images/icons/circle_graph.svg"
+      height="18"
+      id="main-menu-icon"
+      title="circleGraph"
+      alt="circleGraph"
+    />
+    <img
+      src="/assets/images/icons/circle_graph_white.svg"
+      height="18"
+      id="main-menu-icon-white"
+      title="circleGraph"
+      alt="circleGraph"
+    />
+    <div id="main-menu-text-bg">パズルシェア</div>
+    <div id="main-menu-text-sm">シェア</div></a
+  >
 </div>
+
 <script>
   app.controller("InProgressCtrl", [
     "$scope",
@@ -113,6 +166,22 @@
         .css("height", refHeight + "px");
     },
   ]);
+
+  //表示しているページに対応するmenuアイテムにclass="active"を付与する
+  var currentPath = window.location.pathname;
+  if (currentPath.includes("/about")) {
+    document.getElementById("main-menu-2").classList.add("active");
+  } else if (currentPath.includes("/rules")) {
+    document.getElementById("main-menu-3").classList.add("active");
+  } else if (currentPath.includes("/contest")) {
+    document.getElementById("main-menu-4").classList.add("active");
+  } else if (currentPath.includes("/ranking")) {
+    document.getElementById("main-menu-5").classList.add("active");
+  } else if (currentPath.includes("/puzzle")) {
+    document.getElementById("main-menu-6").classList.add("active");
+  } else {
+    document.getElementById("main-menu-1").classList.add("active");
+  }
 </script>
 
 [% else %]
