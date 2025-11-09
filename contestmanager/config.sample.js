@@ -69,7 +69,7 @@ exports.NUM_LOTTERY_EVENT = {
 // 抽選ポイント数
 exports.LOTTERY_POINT = 100;
 // 抽選ポイント数 (スペシャル、全員当選時)
-exports.LOTTERY_POINT_SP = 100;
+exports.LOTTERY_POINT_SP = 472;
 // 契約アカウントへ加算するポイント数
 exports.TRIBOXTEAM_POINT = TODO;
 
