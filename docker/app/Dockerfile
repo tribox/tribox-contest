@@ -13,9 +13,9 @@ RUN apt update \
 
 WORKDIR /app
 
-# Poetry
-RUN curl -sSL https://install.python-poetry.org | python -
-ENV PATH /root/.local/bin:$PATH
+# Poetryをシステム全体にインストール
+RUN pip install --no-cache-dir poetry
+ENV PATH /usr/local/bin:$PATH
 RUN poetry config virtualenvs.create false
 
 # Python App
@@ -23,5 +23,13 @@ ENV FLASK_APP=src.app:app
 COPY pyproject.toml poetry.lock README.md ./
 COPY src src
 RUN poetry install
+
+# セキュリティ対策: 非rootユーザーを作成して切り替え
+# RUN addgroup --system --gid 1000 triboxcontest \
+#     && adduser --system --uid 1000 --ingroup triboxcontest triboxcontest \
+#     && chown -R triboxcontest:triboxcontest /app
+RUN addgroup --system --gid 1000 triboxcontest \
+    && adduser --system --uid 1000 --ingroup triboxcontest triboxcontest
+USER triboxcontest
 
 EXPOSE 5000
