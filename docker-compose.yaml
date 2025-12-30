@@ -26,6 +26,7 @@ services:
       context: .
       dockerfile: ./docker/app/Dockerfile
     volumes:
+      - ./contestmanager:/app/contestmanager
       - ./src:/app/src
     ports:
       - 5000:5000
