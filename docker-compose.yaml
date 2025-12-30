@@ -35,12 +35,12 @@ services:
       - .env
     environment:
       # FLASK_DEBUG (0: production / 1: development)
-      - FLASK_DEBUG=0
+      - FLASK_DEBUG=1
     working_dir: /app
     # flask コマンドで起動 (開発向け)
-    # command: "flask run --host=0.0.0.0 --port=5000"
+    command: "flask run --host=0.0.0.0 --port=5000"
     # gunicorn で起動 (本番向け)
-    command: "gunicorn -w 4 -b 0.0.0.0:5000 src.app:app"
+    # command: "gunicorn -w 4 -b 0.0.0.0:5000 src.app:app"
     networks:
       - default
 
