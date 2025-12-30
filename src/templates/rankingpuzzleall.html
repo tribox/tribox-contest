@@ -70,7 +70,7 @@
               </p>
 
               <p>
-                <a href="@routes.RankingController.rankingpuzzle(sid)"
+                <a href="/ranking/[[ sid ]]/puzzle"
                   ><i class="fa fa-pie-chart"></i>
                   入賞者のキューブ使用率ランキング</a
                 >
@@ -99,7 +99,7 @@
                     <ol>
                       <li ng-repeat="p in usedPuzzlesSummary[eid]">
                         <a
-                          href="http://store.tribox.com/products/detail.php?product_id={{ p.productId }}"
+                          href="https://store.tribox.com/products/detail.php?product_id={{ p.productId }}"
                           target="_blank"
                           ng-show="p.productId != -1"
                         >

@@ -71,7 +71,7 @@ page_url = contest_url + "ranking/" + sid + "/puzzle" %]
               </p>
 
               <p>
-                <a href="@routes.RankingController.rankingpuzzleall(sid)"
+                <a href="/ranking/[[ sid ]]/puzzle/all"
                   ><i class="fa fa-pie-chart"></i>
                   参加者全員のキューブ使用率ランキング</a
                 >
@@ -100,7 +100,7 @@ page_url = contest_url + "ranking/" + sid + "/puzzle" %]
                     <ol>
                       <li ng-repeat="p in usedPuzzlesSummary[eid]">
                         <a
-                          href="http://store.tribox.com/products/detail.php?product_id={{ p.productId }}"
+                          href="http://stores.tribox.com/products/detail.php?product_id={{ p.productId }}"
                           target="_blank"
                           ng-show="p.productId != -1"
                         >

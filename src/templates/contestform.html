@@ -154,7 +154,7 @@ firebase.auth().onAuthStateChanged(function(authData) {
             console.error(error);
         });
     } else {
-        location.href = '@routes.HomeController.index?logout=1';
+        location.href = '/?logout=1';
     }
 
     // On Reuslts blur

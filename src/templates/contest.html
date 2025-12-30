@@ -93,7 +93,7 @@ cid %]
                   要件を満たすビデオを提出いただいた方のうち上位5名に追加のSP（シーズンポイント）が与えられます！<br />
                   ビデオボーナス節についての詳細は
                   <b
-                    ><a href="@routes.HomeController.regulations"
+                    ><a href="/regulations"
                       >参加方法とルール</a
                     ></b
                   >
@@ -250,7 +250,7 @@ cid %]
                           ><i class="fa fa-check-circle"></i> 参加済みです</span
                         >
                         <a
-                          href="@routes.HomeController.login"
+                          href="/login"
                           ng-if="countdown == 0 && authData == null"
                           ><i class="fa fa-sign-in"></i>
                           ログインして参加してください</a
@@ -356,7 +356,7 @@ cid %]
                           </td>
                           <td ng-show="r.puzzle.type == 'database'">
                             <a
-                              href="http://store.tribox.com/products/detail.php?product_id={{ r.puzzle.product }}"
+                              href="https://store.tribox.com/products/detail.php?product_id={{ r.puzzle.product }}"
                               target="_blank"
                               >{{ r.puzzleF }}</a
                             >

@@ -52,7 +52,7 @@
               .then(function (userData) {
                 //$scope.joinMessage = 'User created with uid: ' + userData.uid;
                 $scope.joinMessage = "ユーザ登録が完了しました。";
-                location.href = "@routes.HomeController.login?join=1";
+                location.href = "/login?join=1";
               })
               .catch(function (error) {
                 $scope.error = TriboxContest.convErrorCodes(error.code);
@@ -88,7 +88,7 @@
             <p>
               メールアドレスとパスワードを入力してください。<br />
               すでにアカウントを作成済みの場合は、<a
-                href="@routes.HomeController.login"
+                href="/login"
                 >ログインページ</a
               >からログインしてください。<br />
               hotmailでは確認メールが受信できない場合があります。
