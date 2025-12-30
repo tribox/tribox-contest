@@ -1,7 +1,13 @@
 import mysql.connector
 import os
+import re
+import secrets
+import subprocess
 
 from flask import Flask, make_response, render_template, request
+
+from models.verifying import Verifying
+from models.customer import Customer
 
 
 app = Flask(
@@ -49,7 +55,13 @@ GOOGLE_VERIFICATION = os.environ.get("GOOGLE_VERIFICATION", default="")
 ########################################
 
 # contest
-# TODO
+def get_contest_db_connection():
+    return mysql.connector.connect(
+        host=os.environ.get("MYSQL_CONTEST_HOST"),
+        user=os.environ.get("MYSQL_CONTEST_USER"),
+        password=os.environ.get("MYSQL_CONTEST_PASSWORD"),
+        database=os.environ.get("MYSQL_CONTEST_DATABASE"),
+    )
 
 # store
 def get_store_db_connection():
@@ -376,6 +388,30 @@ def forgot():
 
 
 ########################################
+# Helper functions for verification
+########################################
+
+def gen_token() -> str:
+    """32文字のランダムな英数字トークンを生成"""
+    # SecureRandom().alphanumeric.take(32).mkString に相当
+    # 32文字の英数字を生成
+    return ''.join(secrets.choice('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789') for _ in range(32))
+
+
+def send_email(email: str, token: str):
+    """メール送信（PHPスクリプトを呼び出し）"""
+    # メールアドレスの正規表現チェック
+    email_pattern = r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$"
+    if re.match(email_pattern, email):
+        php_script = os.path.join(CONTEST_PATH, "contestmanager", "send-verifyingemail.php")
+        subprocess.Popen(
+            ["/usr/bin/php", php_script, email, token, CONTEST_URL],
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL
+        )
+
+
+########################################
 # Setting: Setting / First setting
 ########################################
 @app.route("/setting")
@@ -459,8 +495,45 @@ def setting_username():
     )
 
 
-@app.route("/setting/verify")
+@app.route("/setting/verify", methods=["GET", "POST"])
 def setting_verify():
+    message = ""
+    error_message = ""
+
+    if request.method == "POST":
+        email = request.form.get("email", "")
+        user_id = request.form.get("userId", "")
+
+        if (email != "") and (user_id != ""):
+            # contest DB接続
+            with get_contest_db_connection() as contest_conn:
+                # 既に認証済みかチェック
+                verifying_user_id = Verifying.get_ones_by_user_id(contest_conn, user_id)
+                if verifying_user_id:
+                    error_message = "このコンテストアカウントはすでに認証済みです。"
+                else:
+                    # store DB接続
+                    with get_store_db_connection() as store_conn:
+                        # メールアドレスがストアに存在するかチェック
+                        customers = Customer.get_ones_by_email(store_conn, email)
+                        if customers:
+                            # 入力されたメールアドレスがストアに存在
+                            customer_id = customers[0].customer_id
+
+                            # そのメールアドレスが他のアカウントに結びつけられていないかチェック
+                            verifying_customer_id = Verifying.get_ones_by_customer_id(contest_conn, customer_id)
+                            if verifying_customer_id:
+                                error_message = "このストアアカウントはすでに他のコンテストアカウントに結びつけられています。"
+                            else:
+                                # トークンを生成してメール送信
+                                token = gen_token()
+                                send_email(email, token)
+                                Verifying.insert_verifying(contest_conn, token, user_id, customer_id)
+                                message = email + " 宛にメールを送信しました。メール内に書かれているリンクをクリックして認証を完了させてください。しばらく経ってもメールが届かない場合はお問い合わせください。"
+                        else:
+                            # ストアにメールアドレスが存在しない場合
+                            error_message = email + " は存在しないアカウントです。"
+
     return render_template(
         "verify.html",
         contest_description=CONTEST_DESCRIPTION,
@@ -472,11 +545,72 @@ def setting_verify():
         firebaseapp_wca=FIREBASEAPP_WCA,
         firebaseapp_wca_apikey=FIREBASEAPP_WCA_APIKEY,
         firebaseapp_wca_senderid=FIREBASEAPP_WCA_SENDERID,
+        message=message,
+        errorMessage=error_message,
     )
 
 
-@app.route("/setting/unverify")
+@app.route("/setting/verify/<token>")
+def setting_verifyclick(token: str):
+    """メール記載のURLにアクセスすることにより、認証トークンで認証を完了するエンドポイント"""
+    message = ""
+    error_message = ""
+    user_id = ""
+    customer_id = -1
+
+    # トークンが32文字の英数字かチェック
+    if not re.match(r'^[a-zA-Z0-9]{32}$', token):
+        error_message = "無効なURLです。"
+    else:
+        with get_contest_db_connection() as contest_conn:
+            status = Verifying.get_ones_by_token(contest_conn, token)
+
+            if not status:
+                error_message = "無効なURLです。"
+            else:
+                verify_record = status[0]
+                record_id = verify_record.id
+                user_id = verify_record.user_id
+                customer_id = verify_record.customer_id
+
+                Verifying.mark_verify(contest_conn, record_id)
+                message = "認証が完了しました。"
+
+    return render_template(
+        "verifyclick.html",
+        userId=user_id,
+        customerId=customer_id,
+        contest_description=CONTEST_DESCRIPTION,
+        contest_name=CONTEST_NAME,
+        contest_url=CONTEST_URL,
+        firebaseapp_contest=FIREBASEAPP_CONTEST,
+        firebaseapp_contest_apikey=FIREBASEAPP_CONTEST_APIKEY,
+        firebaseapp_contest_senderid=FIREBASEAPP_CONTEST_SENDERID,
+        firebaseapp_wca=FIREBASEAPP_WCA,
+        firebaseapp_wca_apikey=FIREBASEAPP_WCA_APIKEY,
+        firebaseapp_wca_senderid=FIREBASEAPP_WCA_SENDERID,
+        message=message,
+        errorMessage=error_message,
+    )
+
+
+@app.route("/setting/unverify", methods=["GET", "POST"])
 def setting_unverify():
+    user_id = ""
+    customer_id = -1
+
+    if request.method == "POST":
+        user_id = request.form.get("userId", "")
+        customer_id_str = request.form.get("customerId", "-1")
+        try:
+            customer_id = int(customer_id_str)
+        except ValueError:
+            customer_id = -1
+
+        if (user_id != "") and (customer_id != -1):
+            with get_contest_db_connection() as contest_conn:
+                Verifying.mark_unverify(contest_conn, user_id, customer_id)
+
     return render_template(
         "unverify.html",
         contest_description=CONTEST_DESCRIPTION,
@@ -488,9 +622,10 @@ def setting_unverify():
         firebaseapp_wca=FIREBASEAPP_WCA,
         firebaseapp_wca_apikey=FIREBASEAPP_WCA_APIKEY,
         firebaseapp_wca_senderid=FIREBASEAPP_WCA_SENDERID,
-        userId="",
-        customerId=-1
+        userId=user_id,
+        customerId=customer_id,
     )
+
 
 
 ########################################
