@@ -6,8 +6,8 @@ import subprocess
 
 from flask import Flask, make_response, render_template, request
 
-from models.verifying import Verifying
-from models.customer import Customer
+from src.models.verifying import Verifying
+from src.models.customer import Customer
 
 
 app = Flask(
@@ -57,10 +57,10 @@ GOOGLE_VERIFICATION = os.environ.get("GOOGLE_VERIFICATION", default="")
 # contest
 def get_contest_db_connection():
     return mysql.connector.connect(
-        host=os.environ.get("MYSQL_CONTEST_HOST"),
-        user=os.environ.get("MYSQL_CONTEST_USER"),
-        password=os.environ.get("MYSQL_CONTEST_PASSWORD"),
-        database=os.environ.get("MYSQL_CONTEST_DATABASE"),
+        host=os.environ.get("MYSQL_HOST"),
+        user=os.environ.get("MYSQL_USER"),
+        password=os.environ.get("MYSQL_PASSWORD"),
+        database=os.environ.get("MYSQL_DATABASE"),
     )
 
 # store
