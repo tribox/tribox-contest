@@ -24,12 +24,12 @@ COPY pyproject.toml poetry.lock README.md ./
 COPY src src
 RUN poetry install
 
-# セキュリティ対策: 非rootユーザーを作成して切り替え
-# RUN addgroup --system --gid 1000 triboxcontest \
-#     && adduser --system --uid 1000 --ingroup triboxcontest triboxcontest \
-#     && chown -R triboxcontest:triboxcontest /app
+# セキュリティ対策: アプリケーションユーザーとして非rootユーザーを作成
 RUN addgroup --system --gid 1000 triboxcontest \
-    && adduser --system --uid 1000 --ingroup triboxcontest triboxcontest
+    && adduser --system --uid 1000 --ingroup triboxcontest triboxcontest \
+    && chown -R triboxcontest:triboxcontest /app
+
+# アプリケーションユーザーへ切り替え
 USER triboxcontest
 
 EXPOSE 5000
