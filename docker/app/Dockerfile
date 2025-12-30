@@ -8,7 +8,6 @@ ENV PYTHONUNBUFFERED=1 \
 RUN apt update \
     && apt install -y default-mysql-client \
     && apt install --no-install-recommends -y tzdata curl \
-    && apt install -y nodejs \
     && apt clean \
     && rm -rf /var/lib/apt/lists/*
 
