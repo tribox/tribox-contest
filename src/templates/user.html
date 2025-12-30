@@ -9,7 +9,7 @@
     description=contest_description, sitename=contest_name,
     contest_url=contest_url, page_url=page_url) ]] [% import
     "components/basejs.html" as basejs %] [[ basejs.print(firebaseapp_contest,
-    firebaseapp_contest_apikey, firebaseapp_contest_senderid) ]] [% import
+    firebaseapp_contest_apikey, firebaseapp_contest_senderid, firebaseapp_wca) ]] [% import
     "components/authjs.html" as authjs %] [[
     authjs.print(redirect_login="",redirect_logout="", check_first=False) ]]
 
