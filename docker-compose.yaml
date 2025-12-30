@@ -4,7 +4,7 @@ services:
   # MySQLデータベースは外部で動いているものに接続するためDockerコンテナで起動不要
   # db:
   #   container_name: "tribox-contest-mysql"
-  #   hostname: "tribox-contestmysql-server"
+  #   hostname: "tribox-contest-mysql-server"
   #   platform: linux/amd64
   #   build:
   #     context: .

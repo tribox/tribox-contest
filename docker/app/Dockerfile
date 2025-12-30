@@ -8,7 +8,6 @@ ENV PYTHONUNBUFFERED=1 \
 RUN apt update \
     && apt install -y default-mysql-client \
     && apt install --no-install-recommends -y tzdata curl \
-    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt install -y nodejs \
     && apt clean \
     && rm -rf /var/lib/apt/lists/*
@@ -25,12 +24,5 @@ ENV FLASK_APP=src.app:app
 COPY pyproject.toml poetry.lock README.md ./
 COPY src src
 RUN poetry install
-
-# Node.js for contestmanager
-COPY contestmanager/package.json contestmanager/package-lock.json ./contestmanager/
-WORKDIR /app/contestmanager
-RUN npm install
-COPY contestmanager/ ./contestmanager/
-WORKDIR /app
 
 EXPOSE 5000
