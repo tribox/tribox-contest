@@ -190,9 +190,11 @@ target
 /contestmanager/appendlogs/*.log
 /contestmanager/deletelogs/*.log
 /contestmanager/PHPMailer
+/contestmanager/send-email-config.php
 
 # FMC images
 /public/333fm/*.png
+/src/public/333fm/*.png
 
 # Backup
 /backup/*.json

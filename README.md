@@ -24,7 +24,7 @@ URL: https://contest.tribox.com/
 Play Framework 版:
 ```bash
 cp conf/prod.conf.sample conf/prod.conf
-# and edit conf/prod.conf
+# and please edit conf/prod.conf
 ```
 
 Python 版:
@@ -41,7 +41,10 @@ cd contestmanager
 npm install
 
 cp config.sample.js config.js
-# and edit contestmanager/config.js
+# and please edit contestmanager/config.js
+
+cp send-email-config.sample.php send-email-config.php
+# and please edit contestmanager/send-email-config.php
 ```
 
 Firebase Admin SDK サービスアカウントの秘密鍵をダウンロードして `contestmanager/secret/serviceAccountKey.json` に保存する。
