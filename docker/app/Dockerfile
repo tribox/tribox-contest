@@ -10,11 +10,14 @@ RUN apt update \
     && apt install -y --no-install-recommends \
         default-mysql-client \
         tzdata curl ca-certificates gnupg \
-        php-cli \
+        php-cli php-mbstring \
     && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt install -y --no-install-recommends nodejs \
     && apt clean \
     && rm -rf /var/lib/apt/lists/*
+
+# PHP設定ファイル追加
+COPY docker/app/99-mbstring.ini /etc/php/7.4/cli/conf.d/99-mbstring.ini
 
 # Admin App
 WORKDIR /app

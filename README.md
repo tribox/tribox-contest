@@ -57,7 +57,7 @@ TODO
 
 ## Run
 
-### http サーバ起動 (Play Framework 版)
+### アプリケーションサーバ起動 (Play Framework 版)
 
 #### 開発
 
@@ -77,7 +77,7 @@ activator clean stage
 ./play-kill.sh
 ```
 
-### http サーバ起動 (Python 版)
+### アプリケーションサーバ起動 (Python 版)
 
 ```bash
 docker compose up -d --build
