@@ -136,7 +136,7 @@
                       <span ng-show="!(thisUserData.iso2)">Loading...</span>
                       <span ng-show="thisUserData.iso2">
                         <img
-                          src="[[ url_for('static', filename='flags/flags-iso/shiny/24/[[thisUserData.iso2]].png') ]]"
+                          src="/assets/flags/flags-iso/shiny/24/{{ thisUserData.iso2 }}.png"
                           height="24"
                           style="vertical-align: middle"
                           ng-show="thisUserData.iso2"
