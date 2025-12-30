@@ -31,7 +31,7 @@ $to_name = $argv[2];
 $events_name = $argv[3];
 $point = $argv[4];
 
-$subject = '[TORIBO Contest] 通算100節記念皆勤賞ポイント進呈のお知らせ';
+$subject = '[' . MY_EMAIL_CONTEST_NAME . '] 通算100節記念皆勤賞ポイント進呈のお知らせ';
 $body = $to_name . " 様\n\n"
       . "いつもトリボコンテストにご参加頂き、誠にありがとうございます。\n"
       . "通算100節記念皆勤賞についてのお知らせです。\n\n"

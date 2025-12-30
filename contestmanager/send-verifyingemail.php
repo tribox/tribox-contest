@@ -30,7 +30,7 @@ $to = $argv[1];
 $token = $argv[2];
 $domain = $argv[3];
 
-$subject = 'アカウント認証のためのメールアドレス確認';
+$subject = '[' . MY_EMAIL_CONTEST_NAME . '] アカウント認証のためのメールアドレス確認';
 $body = $to . " 様\n\n"
       . "アカウント認証を完了するためにTORIBOコンテストにログイン済みのデバイス・Webブラウザで以下のURLにアクセスしてください。\n"
       . $domain . "/setting/verify/" . $token . "\n\n"

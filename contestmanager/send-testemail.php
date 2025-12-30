@@ -29,7 +29,7 @@ require_once('send-email-config.php');
 // Prepare email contents
 $to = $argv[1];
 
-$subject = '【テスト】サーバーからのテストメール';
+$subject = '【' . MY_EMAIL_CONTEST_NAME . '】テストメール';
 $body = $to . " 様\n\n"
       . "サーバーからのテストメールです。\n\n"
       . "TORIBOコンテスト\n";

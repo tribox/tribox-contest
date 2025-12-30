@@ -38,7 +38,7 @@ if ($point_type == 1) {
     $text = "参加ありがとうございます。\n契約アカウントの皆様に、ポイント進呈のお知らせです。\n\n";
 }
 
-$subject = '[TORIBO Contest] ポイント進呈のお知らせ';
+$subject = '[' . MY_EMAIL_CONTEST_NAME . '] ポイント進呈のお知らせ';
 $body = $to_name . " 様\n\n"
       . $text
       . "コンテスト名: " . $contest_name . "\n"

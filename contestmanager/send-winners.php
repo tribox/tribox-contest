@@ -42,7 +42,7 @@ if (substr($season, 4, 1) === '1') {
 $winnerslist = str_replace('+', "\n", $events_name);
 $winnerslist = str_replace('_', ' ', $winnerslist);
 
-$subject = '[TORIBO Contest] 入賞賞金 (TORIBOポイント) 進呈のお知らせ';
+$subject = '[' . MY_EMAIL_CONTEST_NAME . '] 入賞賞金 (TORIBOポイント) 進呈のお知らせ';
 $body = $to_name . " 様\n\n"
       . "トリボコンテストにご参加頂き、誠にありがとうございます。\n"
       . $seasonstr . "のシーズンランキング入賞者のみなさまに、入賞賞金 (TORIBOポイント) についてお知らせ致します。\n\n"

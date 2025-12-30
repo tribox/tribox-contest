@@ -39,7 +39,7 @@ if (substr($season, 4, 1) === '1') {
     $seasonstr .= '後半期';
 }
 
-$subject = '[TORIBO Contest] 皆勤賞ポイント進呈のお知らせ';
+$subject = '[' . MY_EMAIL_CONTEST_NAME . '] 皆勤賞ポイント進呈のお知らせ';
 $body = $to_name . " 様\n\n"
       . "トリボコンテストにご参加頂き、誠にありがとうございます。\n"
       . $seasonstr . "の皆勤賞についてのお知らせです。\n\n"
