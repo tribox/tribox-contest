@@ -13,18 +13,18 @@ class Verifying:
         self.customer_type = customer_type
         self.customer_id = customer_id
 
-    # @staticmethod
-    # def get_all(conn) -> List['Verifying']:
-    #     """テーブル全体を取得"""
-    #     cursor = conn.cursor(dictionary=True)
-    #     cursor.execute("""
-    #         SELECT id, user_id, customer_type, customer_id
-    #         FROM verifying
-    #         ORDER BY id ASC
-    #     """)
-    #     results = cursor.fetchall()
-    #     cursor.close()
-    #     return [Verifying(**row) for row in results]
+    @staticmethod
+    def get_all(conn) -> List['Verifying']:
+        """テーブル全体を取得"""
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("""
+            SELECT id, user_id, customer_type, customer_id
+            FROM verifying
+            ORDER BY id ASC
+        """)
+        results = cursor.fetchall()
+        cursor.close()
+        return [Verifying(**row) for row in results]
 
     @staticmethod
     def get_ones_by_user_id(conn, user_id: str) -> List['Verifying']:
