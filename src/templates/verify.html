@@ -94,7 +94,7 @@
 
               <form
                 name="verifyForm"
-                action="[[url_for('setting_verify')]]"
+                action="[[ url_for('setting_verify') ]]"
                 method="POST"
               >
                 <div>
@@ -104,7 +104,7 @@
                 <input type="hidden" name="userId" value="{{ authData.uid }}" />
                 <input class="btn" type="submit" value="認証する" />
                 <a
-                  href="[[url_for('index')]]"
+                  href="[[ url_for('index') ]]"
                   class="padding-left-20"
                   ng-show="showSkip"
                   >あとで</a

@@ -49,7 +49,7 @@
                   if (userSnap.exists()) {
                     // Second or more time
                     console.log("No need for first setting: " + authData.uid);
-                    location.href = "[[url_for('index')]]";
+                    location.href = "[[ url_for('index') ]]";
                   }
                 });
             } else {
@@ -58,7 +58,7 @@
               $scope.userData = null;
               $scope.usersecretData = null;
               $scope.isLoggingin = false;
-              location.href = "[[url_for('index')]]";
+              location.href = "[[ url_for('index') ]]";
             }
             $scope.authLoaded = true;
           });
@@ -127,7 +127,7 @@
                     if (userSnap.exists()) {
                       // Second or more time
                       console.log("No need for first setting: " + authData.uid);
-                      location.href = "[[url_for('index')]]";
+                      location.href = "[[ url_for('index') ]]";
                     } else {
                       // Really the first time
                       contestRef
@@ -194,7 +194,7 @@
                                                         ")"
                                                     );
                                                     location.href =
-                                                      "[[url_for('setting_verify')]]?showskip=1";
+                                                      "[[ url_for('setting_verify') ]]?showskip=1";
                                                   }
                                                 }
                                               );
@@ -210,7 +210,7 @@
                   });
               } else {
                 console.log("Logged out");
-                location.href = "[[url_for('login')]]";
+                location.href = "[[ url_for('login') ]]";
               }
             });
           };
@@ -239,9 +239,9 @@
             <p>初期設定が必要です。</p>
 
             <form name="firstSettingForm" ng-submit="updateFirstSetting()">
-              <!--<div class="color-dark margin-bottom-20" ng-if="message">
+              [# <!--<div class="color-dark margin-bottom-20" ng-if="message">
                 Message: {{ message }}
-            </div>-->
+              </div>--> #]
 
               <div class="color-error margin-bottom-20" ng-if="error">
                 エラー: {{ error }}

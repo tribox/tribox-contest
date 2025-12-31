@@ -52,7 +52,7 @@
                     }
                   });
               } else {
-                location.href = '[[url_for("index")]]?logout=1';
+                location.href = '[[ url_for("index") ]]?logout=1';
               }
 
             [% else %]
@@ -99,7 +99,7 @@
                   });
                 }
               } else {
-                location.href = "[[url_for('index')]]?logout=1";
+                location.href = "[[ url_for('index') ]]?logout=1";
               }
             [% endif %]
           }); // onAuthStateChange
@@ -145,7 +145,7 @@
 
               <form
                 name="verifyForm"
-                action="[[url_for('setting_verify')]]"
+                action="[[ url_for('setting_verify') ]]"
                 method="POST"
               >
                 <input type="hidden" name="userId" value="{{ authData.uid }}" />

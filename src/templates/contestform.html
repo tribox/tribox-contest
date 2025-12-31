@@ -1,13 +1,5 @@
-
-<!--
-@**
-* 結果投稿ページ（タイム手入力）
-*@
--->
-
 [% set title => "Contest Form " + cid + " (" + eid + ")  %]
 [% set page_url = contest_url + "/contest/" + cid + "/" + eid + "/form" %]
-
 
 <!DOCTYPE html>
 <html lang="ja" ng-app="contestApp">
@@ -65,25 +57,25 @@
             <a href="/contest/[[ cid ]]/[[ eid ]]/confirm" class="btn margin-top-10">確認ページへ</a>
         </p>
 
-        @* <!--<p>@cid -> contestData:</p>
-        <pre>{{ contestData | json }}</pre>--> *@
+        [# <!--<p>@cid -> contestData:</p>
+        <pre>{{ contestData | json }}</pre>--> #]
 
-        @* <!--<p>inProgress / countdown:</p>
+        [# <!--<p>inProgress / countdown:</p>
         <pre>{{ inProgress | json }}</pre>
-        <pre>{{ countdown | json }}</pre>--> *@
+        <pre>{{ countdown | json }}</pre>--> #]
 
-        @* <!--<p>@cid -> scramblesData:</p>
-        <pre>{{ scramblesData | json }}</pre>--> *@
+        [# <!--<p>@cid -> scramblesData:</p>
+        <pre>{{ scramblesData | json }}</pre>--> #]
 
-        @* <!--<p>@cid -> resultsData:</p>
-        <pre>{{ resultsData | json }}</pre>--> *@
+        [# <!--<p>@cid -> resultsData:</p>
+        <pre>{{ resultsData | json }}</pre>--> #]
 
-        @* <!--<p>events:</p>
-        <pre>{{ events | json }}</pre>--> *@
+        [# <!--<p>events:</p>
+        <pre>{{ events | json }}</pre>--> #]
 
-        @* <!--<p>results:</p>
+        [# <!--<p>results:</p>
         <pre>{{ resultsForm | json }}</pre>
-        <pre>{{ results | json }}</pre>--> *@
+        <pre>{{ results | json }}</pre>--> #]
 
     </div></div></div></div></div>
 

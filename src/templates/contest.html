@@ -250,7 +250,7 @@ cid %]
                           ><i class="fa fa-check-circle"></i> 参加済みです</span
                         >
                         <a
-                          href="/login"
+                          href="[[ url_for('login') ]]"
                           ng-if="countdown == 0 && authData == null"
                           ><i class="fa fa-sign-in"></i>
                           ログインして参加してください</a
@@ -385,30 +385,30 @@ cid %]
                       </a>
                     </p>
 
-                    <!--<pre>{{ resultsData[e] | json }}</pre>-->
+                    [# <!--<pre>{{ resultsData[e] | json }}</pre>--> #]
 
-                    <!--<pre>{{ resultsTop3[e] | json }}</pre>-->
+                    [# <!--<pre>{{ resultsTop3[e] | json }}</pre>--> #]
                   </div>
                 </div>
 
-                <!--<p>usersecretData:</p>
-        <pre>{{ usersecretData | json }}</pre>-->
+                [# <!--<p>usersecretData:</p>
+                <pre>{{ usersecretData | json }}</pre>--> #]
 
-                <!--<p>@cid -> contestData:</p>
-        <pre>{{ contestData | json }}</pre>-->
+                [# <!--<p>@cid -> contestData:</p>
+                <pre>{{ contestData | json }}</pre>--> #]
 
-                <!--<p>inProgress / countdown:</p>
-        <pre>{{ inProgress | json }}</pre>
-        <pre>{{ countdown | json }}</pre>-->
+                [# <!--<p>inProgress / countdown:</p>
+                <pre>{{ inProgress | json }}</pre>
+                <pre>{{ countdown | json }}</pre>--> #]
 
-                <!--<p>@cid -> scramblesData:</p>
-        <pre>{{ scramblesData | json }}</pre>-->
+                [# <!--<p>@cid -> scramblesData:</p>
+                <pre>{{ scramblesData | json }}</pre>--> #]
 
-                <!--<p>@cid -> resultsData:</p>
-        <pre>{{ resultsData | json }}</pre>-->
+                [# <!--<p>@cid -> resultsData:</p>
+                <pre>{{ resultsData | json }}</pre>--> #]
 
-                <!--<p>events:</p>
-        <pre>{{ events | json }}</pre>-->
+                [# <!--<p>events:</p>
+                <pre>{{ events | json }}</pre>--> #]
               </div>
             </div>
           </div>

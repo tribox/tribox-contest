@@ -93,7 +93,7 @@ app.controller('AuthSettingCtrl', ['$scope', '$firebaseObject', 'Auth', function
                 console.error(error);
             } else {
                 console.log('Updated setting successfully!');
-                location.href = '[[url_for("setting")]]';
+                location.href = '[[ url_for("setting") ]]';
             }
         });
 
@@ -118,9 +118,9 @@ app.controller('AuthSettingCtrl', ['$scope', '$firebaseObject', 'Auth', function
 
         <h2>設定</h2>
 
-        <!--<div class="color-dark margin-bottom-20"ng-if="message">
+        [# <!--<div class="color-dark margin-bottom-20"ng-if="message">
             Message: {{ message }}
-        </div>-->
+        </div>--> #]
         <div class="color-error margin-bottom-20" ng-if="error">
             エラー: {{ error }}
         </div>
@@ -129,15 +129,15 @@ app.controller('AuthSettingCtrl', ['$scope', '$firebaseObject', 'Auth', function
             <table class="setting">
                 <tr>
                     <th><label>メールアドレス</label></th>
-                    <td>{{ authData.password.email }} <a href='[[url_for("setting_email")]]'>変更する</a></td>
+                    <td>{{ authData.password.email }} <a href='[[ url_for("setting_email") ]]'>変更する</a></td>
                 </tr>
                 <tr>
                     <th><label>パスワード</label></th>
-                    <td>******** <a href='[[url_for("setting_password")]]'>変更する</a></td>
+                    <td>******** <a href='[[ url_for("setting_password") ]]'>変更する</a></td>
                 </tr>
                 <tr>
                     <th><label>ユーザID</label></th>
-                    <td>{{ userData.username }} <a href='[[url_for("setting_username")]]'>変更する</a></td>
+                    <td>{{ userData.username }} <a href='[[ url_for("setting_username") ]]'>変更する</a></td>
                 </tr>
                 <tr>
                     <th><label>表示名<label></th>
@@ -171,14 +171,14 @@ app.controller('AuthSettingCtrl', ['$scope', '$firebaseObject', 'Auth', function
                 </tr>
                 <tr>
                     <th>ストア&コンテスト連携</th>
-                    <td ng-if="userData.isTriboxCustomer != true">未認証 <a href='[[url_for("setting_verify")]]'>認証する</a></td>
-                    <td ng-if="userData.isTriboxCustomer == true">承認済み <a href='[[url_for("setting_unverify")]]'>解除する</a></td>
+                    <td ng-if="userData.isTriboxCustomer != true">未認証 <a href='[[ url_for("setting_verify") ]]'>認証する</a></td>
+                    <td ng-if="userData.isTriboxCustomer == true">承認済み <a href='[[ url_for("setting_unverify") ]]'>解除する</a></td>
                 </tr>
-                <!--<tr>
+                [# <!--<tr>
                     <th>スポンサーアカウント</th>
                     <td ng-if="userData.isTriboxTeam == true">Yes</td>
                     <td ng-if="userData.isTriboxTeam != true">No</td>
-                </tr>-->
+                </tr>--> #]
             </table>
             <input class="btn" type="submit" value="更新">
         </form>
