@@ -187,9 +187,11 @@ contest_url + '/contest/' + 'cid' + "/" + "eid" + "/confirm" %]
                   </div>
                 </form>
 
-                [% if(eid != "333fm") %] [% import "contesttimeform.html" as
-                contesttimeform %] [[ contesttimeform.print(eid=eid,
-                useInput=False, clickable=False) ]] [% endif %]
+                [% if eid != "333fm" %]
+                  [% import "contesttimeform.html" as
+                  contesttimeform %] [[ contesttimeform.print(eid=eid,
+                  useInput=False, clickable=False) ]]
+                [% endif %]
 
                 [# <!--<p>@cid -> contestData:</p>
                 <pre>{{ contestData | json }}</pre>--> #]

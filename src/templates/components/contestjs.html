@@ -193,7 +193,7 @@ fetch_results_all=False) -%]
                               $scope.countdown = '[[ cid ]]' - parseInt(snapInProgress.val().contest.substr(1));
 
                               $scope.existsContest = true;
-                              [% if (eid != "") %]
+                              [% if eid != "" %]
                                   if ((snapEvents.val())['e[[ eid ]]']) {
                                       $scope.existsEvent = true;
                                   }
@@ -228,7 +228,7 @@ fetch_results_all=False) -%]
               if (snapScrambles.exists() && snapScrambles.val()._dummy == null) {
                   $timeout(function() {
                       var scramblesVal = snapScrambles.val();
-                      [% if (eid == "minx") %]
+                      [% if eid == "minx" %]
                           Object.keys(scramblesVal.eminx).forEach(function(index) {
                               scramblesVal.eminx[index] = scramblesVal.eminx[index].replace(/\n/g, '<br>');
                           });

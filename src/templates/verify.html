@@ -67,12 +67,13 @@
 
             <h2>ストア&コンテスト連携</h2>
 
-            [% if(message != "") %]
+            [% if message != "" %]
             <div class="notice-success margin-bottom-20">
               <i class="fa fa-check"></i>
               {{ message }}
             </div>
-            [% endif %] [% if(errorMessage) %]
+            [% endif %]
+            [% if errorMessage %]
             <div class="color-error margin-bottom-20">
               エラー: [[ errorMessage ]]
             </div>

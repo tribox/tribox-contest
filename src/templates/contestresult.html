@@ -406,7 +406,7 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
             };
 
             var showDetailList = [];
-            if ("[[ eid ]]" == "333fm") {
+            [% if eid == "333fm" %]
               $scope.showDetail = function (index) {
                 if (!showDetailList[index]) {
                   showDetailList[index] = true;
@@ -436,7 +436,7 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                     .remove();
                 }
               };
-            } else {
+            [% else %]
               $scope.showDetail = function (index) {
                 if (!showDetailList[index]) {
                   showDetailList[index] = true;
@@ -458,7 +458,7 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                     .remove();
                 }
               };
-            }
+            [% endif %]
 
             $scope.deleteResult = function (username, displayname, url) {
               var ok = confirm(
