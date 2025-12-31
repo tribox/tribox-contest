@@ -407,7 +407,7 @@ def send_email(email: str, token: str):
         subprocess.Popen(
             ["/usr/bin/php", php_script, email, token, CONTEST_URL],
             stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL
+            stderr=subprocess.DEVNULL,
         )
 
 
