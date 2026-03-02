@@ -23,6 +23,8 @@ require_once('PHPMailer/src/Exception.php');
 require_once('PHPMailer/src/PHPMailer.php');
 require_once('PHPMailer/src/SMTP.php');
 
+require_once('send-email-config.php');
+
 // Prepare email contents
 $to_email = $argv[1];
 $to_name = $argv[2];
@@ -40,7 +42,7 @@ if (substr($season, 4, 1) === '1') {
 $winnerslist = str_replace('+', "\n", $events_name);
 $winnerslist = str_replace('_', ' ', $winnerslist);
 
-$subject = '[TORIBO Contest] 入賞賞金 (TORIBOポイント) 進呈のお知らせ';
+$subject = '[' . MY_EMAIL_CONTEST_NAME . '] 入賞賞金 (TORIBOポイント) 進呈のお知らせ';
 $body = $to_name . " 様\n\n"
       . "トリボコンテストにご参加頂き、誠にありがとうございます。\n"
       . $seasonstr . "のシーズンランキング入賞者のみなさまに、入賞賞金 (TORIBOポイント) についてお知らせ致します。\n\n"
@@ -60,13 +62,13 @@ $mailer = new PHPMailer(true);
 $mailer->CharSet = 'UTF-8';
 $mailer->SMTPDebug = 0;
 $mailer->isSMTP();
-$mailer->Host = 'localhost';
-$mailer->Port = 25;
+$mailer->Host = MY_EMAIL_HOST;
+$mailer->Port = MY_EMAIL_PORT;
 
-$mailer->setFrom('support@tribox.jp', mb_encode_mimeheader('TORIBO Contest'));
+$mailer->setFrom(MY_EMAIL_FROM_ADDRESS, mb_encode_mimeheader(MY_EMAIL_FROM_NAME));
 $mailer->addAddress($to_email);
-$mailer->addReplyTo('support@tribox.jp');
-$mailer->addCC('support@tribox.jp');
+$mailer->addReplyTo(MY_EMAIL_FROM_ADDRESS);
+$mailer->addCC(MY_EMAIL_FROM_ADDRESS);
 
 $mailer->isHTML(false);
 $mailer->Subject = mb_encode_mimeheader($subject);
@@ -74,7 +76,7 @@ $mailer->Subject = mb_encode_mimeheader($subject);
 $mailer->Body = $body;
 
 if (!$mailer->send()) {
-    echo 'Mailer Error: ' . $mail->ErrorInfo;
+    echo 'Mailer Error: ' . $mailer->ErrorInfo . "\n";
 } else {
-    echo 'Message sent!';
+    echo 'Message sent!' . "\n";
 }

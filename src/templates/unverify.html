@@ -24,7 +24,7 @@
             $scope.customerId = -1;
             $scope.unverifyLoaded = false;
 
-            if (userId == "" && customerId == -1) {
+            [% if (userId == "") and (customerId == -1) %]
               // Read personal results
               if (authData) {
                 contestRef
@@ -52,9 +52,10 @@
                     }
                   });
               } else {
-                location.href = '[[url_for("index")]]?logout=1';
+                location.href = '[[ url_for("index") ]]?logout=1';
               }
-            } else {
+
+            [% else %]
               if (authData) {
                 if (authData.uid == "[[ userId ]]") {
                   // 認証アカウントを解除する
@@ -98,11 +99,11 @@
                   });
                 }
               } else {
-                location.href = "[[url_for('index')]]?logout=1";
+                location.href = "[[ url_for('index') ]]?logout=1";
               }
-            }
+            [% endif %]
           }); // onAuthStateChange
-        },
+        }
       ]);
     </script>
   </head>
@@ -144,7 +145,7 @@
 
               <form
                 name="verifyForm"
-                action="[[url_for('setting_verify')]]"
+                action="[[ url_for('setting_verify') ]]"
                 method="POST"
               >
                 <input type="hidden" name="userId" value="{{ authData.uid }}" />

@@ -26,7 +26,7 @@
                 $scope.oldEmail = authData.email;
                 $scope.settingLoaded = true;
               } else {
-                location.href = "[[url_for('index')]]";
+                location.href = "[[ url_for('index') ]]";
               }
             }
           });
@@ -65,7 +65,7 @@
                   .then(function () {
                     $scope.message = "Email changed successfully!";
                     authProcessing = true;
-                    location.href = "[[url_for('setting')]]";
+                    location.href = "[[ url_for('setting') ]]";
                   })
                   .catch(function (error) {
                     //console.error(error);
@@ -106,9 +106,9 @@
             <h2>メールアドレス設定</h2>
 
             <form name="emailForm" ng-submit="changeEmail()">
-              <!--<div class="color-dark margin-bottom-20"ng-if="message">
+              [# <!--<div class="color-dark margin-bottom-20"ng-if="message">
                 Message: {{ message }}
-            </div>-->
+              </div>--> #]
 
               <div class="color-error margin-bottom-20" ng-if="error">
                 エラー: {{ error }}

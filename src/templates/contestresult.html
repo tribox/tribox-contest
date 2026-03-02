@@ -155,7 +155,7 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                     <ol>
                       <li ng-repeat="p in resultsPuzzlesAll.e[[ eid ]]">
                         <a
-                          href="http://store.tribox.com/products/detail.php?product_id={{ p.productId }}"
+                          href="https://store.tribox.com/products/detail.php?product_id={{ p.productId }}"
                           target="_blank"
                           ng-show="p.productId != -1"
                         >
@@ -176,7 +176,7 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                     <ol>
                       <li ng-repeat="p in resultsPuzzles.e[[ eid ]]">
                         <a
-                          href="http://store.tribox.com/products/detail.php?product_id={{ p.productId }}"
+                          href="https://store.tribox.com/products/detail.php?product_id={{ p.productId }}"
                           target="_blank"
                           ng-show="p.productId != -1"
                         >
@@ -302,7 +302,7 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
 
                       <td ng-show="r.puzzle.type == 'database'">
                         <a
-                          href="http://store.tribox.com/products/detail.php?product_id={{ r.puzzle.product }}"
+                          href="https://store.tribox.com/products/detail.php?product_id={{ r.puzzle.product }}"
                           target="_blank"
                           >{{ r.puzzleF }}</a
                         >
@@ -343,19 +343,14 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                   </tbody>
                 </table>
 
-                <!--<p>usersecretData:</p>
-        <pre>{{ usersecretData | json }}</pre>-->
-
-                <!--<p>[[ cid ]] -> contestData:</p>
-        <pre>{{ contestData | json }}</pre>-->
-
-                <!--<pre>{{ resultsAll.e[[ eid ]] | json }}</pre>-->
-
-                <!--<pre>{{ resultsPuzzles.e[[ eid ]] | json }}</pre>-->
-
-                <!--<pre>{{ resultsTop3.e[[ eid ]] | json }}</pre>-->
-
-                <!--<pre>{{ scramblesData | json }}</pre>-->
+                [# <!--<p>usersecretData:</p>
+                <pre>{{ usersecretData | json }}</pre>--> #]
+                [# <!--<p>[[ cid ]] -> contestData:</p>
+                <pre>{{ contestData | json }}</pre>--> #]
+                [# <!--<pre>{{ resultsAll.e[[ eid ]] | json }}</pre>--> #]
+                [# <!--<pre>{{ resultsPuzzles.e[[ eid ]] | json }}</pre>--> #]
+                [# <!--<pre>{{ resultsTop3.e[[ eid ]] | json }}</pre>--> #]
+                [# <!--<pre>{{ scramblesData | json }}</pre>--> #]
               </div>
             </div>
           </div>
@@ -411,7 +406,7 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
             };
 
             var showDetailList = [];
-            if ("[[ eid ]]" == "333fm") {
+            [% if eid == "333fm" %]
               $scope.showDetail = function (index) {
                 if (!showDetailList[index]) {
                   showDetailList[index] = true;
@@ -441,7 +436,7 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                     .remove();
                 }
               };
-            } else {
+            [% else %]
               $scope.showDetail = function (index) {
                 if (!showDetailList[index]) {
                   showDetailList[index] = true;
@@ -450,7 +445,7 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                     index +
                     '" class="row-detail"><td colspan="7">' +
                     TriboxContest.escapeHTML(
-                      $scope.resultsAll["[[ eid ]]"][index].detailsF
+                      $scope.resultsAll["e[[ eid ]]"][index].detailsF
                     );
                   angular
                     .element(document.getElementById("e[[ eid ]]-" + index))
@@ -463,7 +458,7 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                     .remove();
                 }
               };
-            }
+            [% endif %]
 
             $scope.deleteResult = function (username, displayname, url) {
               var ok = confirm(
@@ -480,7 +475,7 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
           },
         ]);
       </script>
-      <script type="text/javascript" src="/js/products.js"></script>
+      <script type="text/javascript" src="[[ url_for('products_js') ]]"></script>
     </div>
   </body>
 </html>

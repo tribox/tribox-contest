@@ -6,12 +6,12 @@
   <head
     prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#"
   >
-    [% import "components/header.html" as header %]
-    [[ header.print(title=title, description=contest_description, sitename=contest_name, contest_url=contest_url, page_url=page_url) ]]
-    [% import "components/basejs.html" as basejs %]
-    [[ basejs.print(firebaseapp_contest, firebaseapp_contest_apikey, firebaseapp_contest_senderid) ]]
-    [% import "components/authjs.html" as authjs %]
-    [[ authjs.print(redirect_login="", redirect_logout="", check_first=True) ]]
+  [% import "components/header.html" as header %]
+  [[ header.print(title=title, description=contest_description, sitename=contest_name, contest_url=contest_url, page_url=page_url) ]]
+  [% import "components/basejs.html" as basejs %]
+  [[ basejs.print(firebaseapp_contest, firebaseapp_contest_apikey, firebaseapp_contest_senderid, firebaseapp_wca) ]]
+  [% import "components/authjs.html" as authjs %]
+  [[ authjs.print(redirect_login="", redirect_logout="", check_first=True) ]]
 
   </html>
 
@@ -21,10 +21,6 @@
       margin-top: 40px;
     }
   </style>
-
-
-
-
 </head>
 <body><div class="container">
   [% import "components/bodyheader.html" as bodyheader %]
@@ -37,28 +33,95 @@
         <span class="sr-only">Loading...</span>
         Loading...
       </div>
-    <div ng-show="authLoaded && rankingLoaded">
-      [% import "components/authinfo.html" as authinfo %]
-      [[ authinfo.print() ]]
+      <div ng-show="authLoaded && rankingLoaded">
+        [% import "components/authinfo.html" as authinfo %]
+        [[ authinfo.print() ]]
 
-      <div ng-hide="existsSeason">
-        <p class="color-error">存在しないシーズンです。</p>
+        <div ng-hide="existsSeason">
+          <p class="color-error">存在しないシーズンです。</p>
+        </div>
+
+        <div ng-show="existsSeason">
+          <h2>{{ seasonName }} SPランキング</h2>
+
+          <p>
+            集計対象コンテスト:<br />
+            <b>{{ targetContestFrom.contestName }}</b> ({{
+            targetContestFrom.beginAt | toDateShort }} 開始) ~
+            <b>{{ targetContestTo.contestName }}</b> ({{
+            targetContestTo.endAt | toDateShort }} 終了)
+          </p>
+
+          <h4>競技一覧</h4>
+            <p>
+              <span ng-repeat="(eid, e) in events">
+                <span ng-show="$index != 0"> / </span>
+                <a href="#{{ eid | removeHead }}">{{ events[eid].name }}</a>
+              </span>
+            </p>
+
+            <div ng-repeat="(eid, e) in events">
+              <h4 id="{{ eid | removeHead }}"><span class="cubing-icon event-{{ eid | removeHead }}" style="vertical-align: baseline;"></span> {{ events[eid].name }}</h4>
+
+              <table class="table table-bordered tribox-contest ranking">
+                <thead>
+                  <tr>
+                    <th><i class="fa fa-hashtag"></i></th>
+                    <th>名前</th>
+                    <th>所属</th>
+                    <th>SP</th>
+                    <th>パズル</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="data in seasonPointsSorted[eid]">
+                    <td>{{ data.rank }}</td>
+                    <td>
+                      <img src="/assets/flags/flags-iso/shiny/24/{{ data.user.iso2 }}.png" height="24" style="vertical-align: middle;" ng-show="data.user.iso2">
+                      <a href="/user/{{ data.user.username }}">{{ data.user.displayname }}</a>
+                    </td>
+                    <td>{{ data.user.organization }}</td>
+                    <td>{{ data.seasonPoint }}</td>
+                    <td>
+                      <a href="https://store.tribox.com/products/detail.php?product_id={{ data.lastUsedPuzzleId }}" target="_blank" ng-show="data.lastUsedPuzzleId != -1">
+                        {{ data.lastUsedPuzzleName }}
+                      </a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <hr>
+          <h3>過去のシーズンのランキング</h3>
+          <a class="cursor-pointer btn btn-empty btn-success" href="/ranking/20252">2025 後半期</a>
+          <a class="cursor-pointer btn btn-empty" href="/ranking/20251">2025 前半期</a>
+          <a class="cursor-pointer btn btn-empty btn-success" href="/ranking/20242">2024 後半期</a>
+          <a class="cursor-pointer btn btn-empty" href="/ranking/20241">2024 前半期</a>
+          <a class="cursor-pointer btn btn-empty btn-success" href="/ranking/20232">2023 後半期</a>
+          <a class="cursor-pointer btn btn-empty" href="/ranking/20231">2023 前半期</a>
+          <a class="cursor-pointer btn btn-empty btn-success" href="/ranking/20222">2022 後半期</a>
+          <a class="cursor-pointer btn btn-empty" href="/ranking/20221">2022 前半期</a>
+          <a class="cursor-pointer btn btn-empty btn-success" href="/ranking/20212">2021 後半期</a>
+          <a class="cursor-pointer btn btn-empty" href="/ranking/20211">2021 前半期</a>
+          <a class="cursor-pointer btn btn-empty btn-success" href="/ranking/20202">2020 後半期</a>
+          <a class="cursor-pointer btn btn-empty" href="/ranking/20201">2020 前半期</a>
+          <a class="cursor-pointer btn btn-empty btn-success" href="/ranking/20192">2019 後半期</a>
+          <a class="cursor-pointer btn btn-empty" href="/ranking/20191">2019 前半期</a>
+          <a class="cursor-pointer btn btn-empty btn-success" href="/ranking/20182">2018 後半期</a>
+          <a class="cursor-pointer btn btn-empty" href="/ranking/20181">2018 前半期</a>
+          <a class="cursor-pointer btn btn-empty btn-success" href="/ranking/20172">2017 後半期</a>
+          <a class="cursor-pointer btn btn-empty" href="/ranking/20171">2017 前半期</a>
+          <a class="cursor-pointer btn btn-empty btn-success" href="/ranking/20162">2016 後半期</a>
+
+        </div>
       </div>
-
-      <div ng-show="existsSeason">
-        <h2>{{ seasonName }} SPランキング</h2>
-
-        <p>
-          集計対象コンテスト:<br />
-          <b>{{ targetContestFrom.contestName }}</b> ({{
-          targetContestFrom.beginAt | toDateShort }} 開始) ~
-          <b>{{ targetContestTo.contestName }}</b> ({{
-          targetContestTo.endAt | toDateShort }} 終了)
-        </p>
     </div>
-  </div>
 
-  [% include "components/bodyfooter.html" %]
+    [% include "components/bodyfooter.html" %] [% import
+    "components/authjs.html" as authjs %] [[ authjs.print(redirect_login="",
+    redirect_logout="", check_first=True) ]]
 
 <script>
     app.controller('RankingCtrl', ['$scope', '$timeout', function($scope, $timeout) {
@@ -88,7 +151,7 @@
             var targetContestFrom = '';
             var targetContestTo = '';
             Object.keys(contests).forEach(function(cid) {
-                if ('' + contests[cid].year + contests[cid].season == '[[ cid ]]') {
+                if ('' + contests[cid].year + contests[cid].season == '[[ sid ]]') {
                     if (cid < inProgress.contest) {
                         targetContests.push(cid);
 
@@ -284,7 +347,7 @@
         });
     }]);
     </script>
-    <script type="text/javascript" src="/js/products.js"></script>
+    <script type="text/javascript" src="[[ url_for('products_js') ]]"></script>
 
 </div></body>
 </html>

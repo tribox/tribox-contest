@@ -8,43 +8,60 @@ URL: https://contest.tribox.com/
 
 ## Requirements
 
-* Java 8
-* Scala 2.11.8
-* Node.js v8.14.0
+* Docker
+* Docker Compose
+* Node.js v20
 * [TNoodle](https://github.com/cubing/tnoodle) v0.14.0
 * [Sarumawashi](https://github.com/kotarot/Sarumawashi)
 * wca-importer
 * [PHPMailer](https://github.com/PHPMailer/PHPMailer) is needed in the `contestmanager` directory.
 
+
 ## Setup
 
-Install required node modules:
+### アプリケーションの設定
+
+Play Framework 版:
+```bash
+cp conf/prod.conf.sample conf/prod.conf
+# and please edit conf/prod.conf
 ```
+
+Python 版:
+```bash
+cp .env.example .env
+# and edit .env
+```
+
+管理用:
+```bash
 cd contestmanager
+
+# Install required node modules
 npm install
-```
 
-コンフィグファイルを設定する:
-```
-cp conf/prod.conf.sample conf/prod.conf  # and edit conf/prod.conf
-cp contestmanager/config.sample.js contestmanager/config.js  # and edit contestmanager/config.js
-```
+cp config.sample.js config.js
+# and please edit contestmanager/config.js
 
-データベースの用意:
-```
-TODO
+cp send-email-config.sample.php send-email-config.php
+# and please edit contestmanager/send-email-config.php
 ```
 
 Firebase Admin SDK サービスアカウントの秘密鍵をダウンロードして `contestmanager/secret/serviceAccountKey.json` に保存する。
 
+### データベースの用意
+```bash
+TODO
+```
+
 
 ## Run
 
-### http サーバ起動
+### アプリケーションサーバ起動 (Play Framework 版)
 
 #### 開発
 
-```
+```bash
 activator run -Dconfig.resource=dev.conf
 ```
 
@@ -55,9 +72,25 @@ activator run -Dconfig.resource=dev.conf
 すると、あとは放置してればそのうち play が再起動する。  
 本当はコンパイル済みのjarをデプロイしたいけど、まだできてない。
 
-```
+```bash
 activator clean stage
 ./play-kill.sh
+```
+
+### アプリケーションサーバ起動 (Python 版)
+
+```bash
+docker compose up -d --build
+```
+
+ログを確認する:
+```bash
+docker compose logs -f
+```
+
+起動したDockerコンテナにログインする:
+```bash
+docker exec -it tribox-contest-app /bin/bash
 ```
 
 ### :alarm_clock: 1週間に1回 -- 日曜日午後9時 (JST) 自動実行
@@ -66,7 +99,7 @@ activator clean stage
 
 inProgressのコンテストを書き換える。
 毎週日曜日の午後9時0分0.001秒に実行すればよいが、実行時刻に合わせるだけなのでいつでも好きなだけ実行して大丈夫。
-```
+```bash
 node contestmanager/update-inprogress.js --tweet
 ```
 * `--tweet` オプションで、コンテスト開始告知をツイートする。
@@ -74,7 +107,7 @@ node contestmanager/update-inprogress.js --tweet
 #### 結果集計
 
 結果の集計をする。
-```
+```bash
 node contestmanager/collect-results.js --contest=2016121 --check --checkfmc --resetlottery --lottery --triboxteam --tweet
 node contestmanager/collect-results.js --lastcontest --check --checkfmc --resetlottery --lottery --triboxteam --tweet
 ```
@@ -92,7 +125,7 @@ node contestmanager/collect-results.js --lastcontest --check --checkfmc --resetl
 #### ポイント進呈
 
 ポイント進呈する。
-```
+```bash
 node contestmanager/append-points.js
 ```
 上の `collect-results.js` スクリプトを実行して該当者を待ちレコードに記録した後に実行する。
@@ -105,7 +138,7 @@ node contestmanager/append-points.js
 #### リマインダ
 
 24時間後にコンテスト終了するというリマインダ。
-```
+```bash
 node contestmanager/reminder.js
 ```
 
@@ -113,18 +146,18 @@ node contestmanager/reminder.js
 
 Adminアカウントでログインして、最新コンテストの結果を確認する。Adminアカウントでログインしないと「集計中」ステータスとなり、結果が閲覧できない。
 結果が問題なければ次のスクリプトを実行し、結果ページを集計中から公開にする。
-```
+```bash
 node contestmanager/publish-result.js --contest=2023101
 node contestmanager/publish-result.js --contest=2023101 --unpublish  # 公開したコンテスト結果を非公開にする場合
 ```
 
 スクリプトではなく手動でデータを操作する場合は、以下のようにデータを変更する。
-```
+```bash
 $.contests.<contest_id>.resultsStatus = "public"
 ```
 
 参考: Adminアカウントにするには以下のデータを設定する。
-```
+```bash
 $.usersecrets.<UID>.isAdmin = true
 $.usersecrets.<UID>.adminToken = "****"
 ```
@@ -134,7 +167,7 @@ $.usersecrets.<UID>.adminToken = "****"
 #### バックアップのアーカイブ
 
 例えば、今が2019年2月の月はじめだとする。1月分のバックアップのアーカイブを作成する。
-```
+```bash
 mkdir backup.archives/201901
 mv backup/tribox-contest-curl.201901* backup.archives/201901/
 cd backup.archives
@@ -147,7 +180,7 @@ rm -rf 201901
 一応、シーズン開始の少し前に実行する想定だが、いつやっても大丈夫。
 
 まず、別のシェルもしくは別のホストでtnoodleを立ち上げる。
-```
+```bash
 cd /path/to/tnoodle
 ./tmt make dist -p wca  # これはビルドコマンドなので不必要なら省略
 java -jar wca/dist/TNoodle-WCA.jar  # TNoodle起動
@@ -155,7 +188,7 @@ java -jar wca/dist/TNoodle-WCA.jar  # TNoodle起動
 
 スクランブルデータ生成して、firebaseデータベースに書き込む。
 引数は、シーズン。例えば、20161 (2016年前半期)、20162 (2016年後半期)、20171 (2017年前半期)、......
-```
+```bash
 node --max-old-space-size=3000 contestmanager/create-season.js 20162
 node --max-old-space-size=3000 contestmanager/generate-fmcimages.js -s 20162
 ```
@@ -168,24 +201,24 @@ node --max-old-space-size=3000 contestmanager/generate-fmcimages.js -s 20162
 #### 皆勤賞ポイント進呈
 
 次のコマンドを実行して `kaikin` テーブルの内容をチェックする。
-```
+```bash
 node --max-old-space-size=3000 contestmanager/tabulate-kaikin.js --season=20162
 ```
 
 よければ、次のコマンドでポイント加算とメール送信。
-```
+```bash
 node contestmanager/append-kaikin.js
 ```
 
 #### 入賞賞金ポイント進呈
 
 次のコマンドを実行して `winners` テーブルの内容をチェックする。
-```
+```bash
 node --max-old-space-size=3000 contestmanager/tabulate-winners.js --season=20162
 ```
 
 よければ、次のコマンドでポイント加算とメール送信。
-```
+```bash
 node contestmanager/append-winners.js
 ```
 
@@ -202,13 +235,13 @@ node contestmanager/append-winners.js
 #### 参加済み人数の更新
 
 参加済み人数を表示するために、適当な間隔でポーリングする。カウント結果はfirebaseデータベースに書き込まれる。
-```
+```bash
 node contestmanager/count-participants.js --inprogress --save
 ```
 
 #### WCAデータベースインポートとWCA APPの更新
 wca-importer を用いる。
-```
+```bash
 php -f /path/to/wca-importer/import.php
 node contestmanager/update-wcaapp.js
 ```

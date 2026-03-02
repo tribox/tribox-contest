@@ -32,7 +32,7 @@
                     });
                   });
               } else {
-                location.href = "[[url_for('index')]]?logout=1";
+                location.href = "[[ url_for('index') ]]?logout=1";
               }
             }
           });
@@ -147,7 +147,7 @@
                                                           "Completed updating!"
                                                         );
                                                         location.href =
-                                                          "[[url_for('setting')]]";
+                                                          "[[ url_for('setting') ]]";
                                                       }
                                                     }
                                                   );
@@ -218,7 +218,7 @@
                                                           "Completed updating!"
                                                         );
                                                         location.href =
-                                                          "[[url_for('setting')]]";
+                                                          "[[ url_for('setting') ]]";
                                                       }
                                                     }
                                                   );
@@ -235,7 +235,7 @@
                     }
                   });
               } else {
-                location.href = "[[url_for('index')]]?logout=1";
+                location.href = "[[ url_for('index') ]]?logout=1";
               }
             }); // onAuthStateChange
           };
@@ -271,9 +271,9 @@
             </p>
 
             <form name="usernameForm" ng-submit="changeUsername()">
-              <!--<div class="color-dark margin-bottom-20"ng-if="message">
+              [# <!--<div class="color-dark margin-bottom-20"ng-if="message">
                 Message: {{ message }}
-            </div>-->
+              </div>--> #]
 
               <div class="color-error margin-bottom-20" ng-if="error">
                 エラー: {{ error }}

@@ -1,24 +1,23 @@
-version: "3.8"
-
 services:
-  db:
-    container_name: "tribox-contest-mysql"
-    hostname: "tribox-contestmysql-server"
-    platform: linux/amd64
-    build:
-      context: .
-      dockerfile: ./docker/db/Dockerfile
-    env_file:
-      - .env
-    volumes:
-      - ./docker/db/my.cnf:/etc/mysql/conf.d/my.cnf
-      - ./log/db:/var/log/mysql
-      - mysql:/var/lib/mysql
-    ports:
-      - 3306:3306
-    command: --default-authentication-plugin=mysql_native_password
-    networks:
-      - default
+  # MySQLデータベースは外部で動いているものに接続するためDockerコンテナで起動不要
+  # db:
+  #   container_name: "tribox-contest-mysql"
+  #   hostname: "tribox-contest-mysql-server"
+  #   platform: linux/amd64
+  #   build:
+  #     context: .
+  #     dockerfile: ./docker/db/Dockerfile
+  #   env_file:
+  #     - .env
+  #   volumes:
+  #     - ./docker/db/my.cnf:/etc/mysql/conf.d/my.cnf
+  #     - ./log/db:/var/log/mysql
+  #     - mysql:/var/lib/mysql
+  #   ports:
+  #     - 3306:3306
+  #   command: --default-authentication-plugin=mysql_native_password
+  #   networks:
+  #     - default
 
   app:
     container_name: "tribox-contest-app"
@@ -27,20 +26,24 @@ services:
       context: .
       dockerfile: ./docker/app/Dockerfile
     volumes:
+      - ./contestmanager:/app/contestmanager
       - ./src:/app/src
     ports:
       - 5000:5000
-    depends_on:
-      - db
+    # depends_on:
+    #   - db
     env_file:
       - .env
+    environment:
+      # FLASK_DEBUG (0: production / 1: development)
+      - FLASK_DEBUG=1
     working_dir: /app
     # flask コマンドで起動 (開発向け)
     command: "flask run --host=0.0.0.0 --port=5000"
     # gunicorn で起動 (本番向け)
-    # command: "gunicorn -w 1 -b 0.0.0.0:5000 src.app:app"
+    # command: "gunicorn -w 4 -b 0.0.0.0:5000 src.app:app"
     networks:
       - default
 
-volumes:
-  mysql:
+# volumes:
+#   mysql:

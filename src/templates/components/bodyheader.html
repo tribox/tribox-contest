@@ -2,16 +2,16 @@
 
 <div id="header">
   <div id="header-logo">
-    <a href="/">
+    <a href="[[ url_for('index') ]]">
       <img
-        src="/assets/images/tribox-contest-280x128-turquoise.png"
+        src="[[ url_for('static', filename='images/tribox-contest-280x128-turquoise.png') ]]"
         height="64"
         title="triboxContest"
         alt="triboxContest"
         class="mb-hide"
       />
       <img
-        src="/assets/images/tribox-contest-280x128-turquoise.png"
+        src="[[ url_for('static', filename='images/tribox-contest-280x128-turquoise.png') ]]"
         height="48"
         title="triboxContest"
         alt="triboxContest"
@@ -21,30 +21,32 @@
     </a>
   </div>
   [% if (cid == '') or (eid == '') %]
-  <div id="header-menu" ng-controller="AuthCtrl">
-    <span ng-show="!isLoggingin && authLoaded">
-      <a href="[[ url_for('login') ]]">ログイン</a> /
-      <a href="[[ url_for('join') ]]">会員登録</a>
-    </span>
-    <span ng-show="isLoggingin && authLoaded && userData.username">
-      <a href="/user/{{ userData.username }}">マイページ</a> /
-      <a href="[[ url_for('setting') ]]">設定</a> /
-      <a href="[[ url_for('logout') ]]">ログアウト</a>
-    </span>
-    <span ng-show="isLoggingin && authLoaded && !(userData.username)">
-      <a href="[[ url_for('setting') ]]">設定</a> /
-      <a href="[[ url_for('logout') ]]">ログアウト</a>
-    </span>
-  </div>
-  [% else %] [% if (cid != 'demo') and (eid != 'demo') %]
-  <div id="header-menu">
-    <a href="/contest/[[ cid ]]?suspended=[[ eid ]]">中断</a>
-  </div>
+    <div id="header-menu" ng-controller="AuthCtrl">
+      <span ng-show="!isLoggingin && authLoaded">
+        <a href="[[ url_for('login') ]]">ログイン</a> /
+        <a href="[[ url_for('join') ]]">会員登録</a>
+      </span>
+      <span ng-show="isLoggingin && authLoaded && userData.username">
+        <a href="/user/{{ userData.username }}">マイページ</a> /
+        <a href="[[ url_for('setting') ]]">設定</a> /
+        <a href="[[ url_for('logout') ]]">ログアウト</a>
+      </span>
+      <span ng-show="isLoggingin && authLoaded && !(userData.username)">
+        <a href="[[ url_for('setting') ]]">設定</a> /
+        <a href="[[ url_for('logout') ]]">ログアウト</a>
+      </span>
+    </div>
   [% else %]
-  <div id="header-menu">
-    <a href="[[ url_for('index') ]]">中断</a>
-  </div>
-  [% endif %] [% endif %]
+    [% if (cid != 'demo') and (eid != 'demo') %]
+      <div id="header-menu">
+        <a href="/contest/[[ cid ]]?suspended=[[ eid ]]">中断</a>
+      </div>
+    [% else %]
+      <div id="header-menu">
+        <a href="[[ url_for('index') ]]">中断</a>
+      </div>
+    [% endif %]
+  [% endif %]
 </div>
 
 [% if cid == '' %]

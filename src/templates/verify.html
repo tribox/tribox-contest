@@ -67,14 +67,15 @@
 
             <h2>ストア&コンテスト連携</h2>
 
-            [% if(message != "") %]
+            [% if message != "" %]
             <div class="notice-success margin-bottom-20">
               <i class="fa fa-check"></i>
               {{ message }}
             </div>
-            [% endif %] [% if(errorMessage) %]
+            [% endif %]
+            [% if errorMessage %]
             <div class="color-error margin-bottom-20">
-              エラー: {{ errorMessage }}
+              エラー: [[ errorMessage ]]
             </div>
             [% endif %]
 
@@ -94,7 +95,7 @@
 
               <form
                 name="verifyForm"
-                action="[[url_for('setting_verify')]]"
+                action="[[ url_for('setting_verify') ]]"
                 method="POST"
               >
                 <div>
@@ -104,7 +105,7 @@
                 <input type="hidden" name="userId" value="{{ authData.uid }}" />
                 <input class="btn" type="submit" value="認証する" />
                 <a
-                  href="[[url_for('index')]]"
+                  href="[[ url_for('index') ]]"
                   class="padding-left-20"
                   ng-show="showSkip"
                   >あとで</a

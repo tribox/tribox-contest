@@ -23,6 +23,8 @@ require_once('PHPMailer/src/Exception.php');
 require_once('PHPMailer/src/PHPMailer.php');
 require_once('PHPMailer/src/SMTP.php');
 
+require_once('send-email-config.php');
+
 // Prepare email contents
 $to_email = $argv[1];
 $to_name = $argv[2];
@@ -38,9 +40,9 @@ if (substr($contest_id, 4, 1) === '1') {
 }
 $contest_num = (string)((int)substr($contest_id, 5, 2));
 
-$subject = '[TORIBO Contest] 不正記録判断のため記録削除のお知らせ';
+$subject = '[' . MY_EMAIL_CONTEST_NAME . '] 不正記録判断のため記録削除のお知らせ';
 $body = $to_name . " 様\n\n"
-      . "TORIBO Contest " . $contest_year . " ". $contest_season . " "
+      . MY_EMAIL_CONTEST_NAME . " " . $contest_year . " ". $contest_season . " "
       . $contest_num . "節 " . $event_name . "種目 "
       . "におけるあなたの記録が不正と判断されたため、削除されました。\n"
       . "参加者本人が小さなお子様である場合、保護者の皆様にはその監督をお願いいたします。\n\n"
@@ -53,13 +55,13 @@ $mailer = new PHPMailer(true);
 $mailer->CharSet = 'UTF-8';
 $mailer->SMTPDebug = 0;
 $mailer->isSMTP();
-$mailer->Host = 'localhost';
-$mailer->Port = 25;
+$mailer->Host = MY_EMAIL_HOST;
+$mailer->Port = MY_EMAIL_PORT;
 
-$mailer->setFrom('support@tribox.jp', mb_encode_mimeheader('TORIBO Contest'));
+$mailer->setFrom(MY_EMAIL_FROM_ADDRESS, mb_encode_mimeheader(MY_EMAIL_FROM_NAME));
 $mailer->addAddress($to_email);
-$mailer->addReplyTo('support@tribox.jp');
-$mailer->addCC('support@tribox.jp');
+$mailer->addReplyTo(MY_EMAIL_FROM_ADDRESS);
+$mailer->addCC(MY_EMAIL_FROM_ADDRESS);
 
 $mailer->isHTML(false);
 $mailer->Subject = mb_encode_mimeheader($subject);
@@ -67,7 +69,7 @@ $mailer->Subject = mb_encode_mimeheader($subject);
 $mailer->Body = $body;
 
 if (!$mailer->send()) {
-    echo 'Mailer Error: ' . $mail->ErrorInfo;
+    echo 'Mailer Error: ' . $mailer->ErrorInfo . "\n";
 } else {
-    echo 'Message sent!';
+    echo 'Message sent!' . "\n";
 }

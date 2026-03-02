@@ -10,7 +10,7 @@ cid %]
     description=contest_description, sitename=contest_name,
     contest_url=contest_url, page_url=page_url) ]] [% import
     "components/basejs.html" as basejs %] [[ basejs.print(firebaseapp_contest,
-    firebaseapp_contest_apikey, firebaseapp_contest_messagingsenderid) ]] [%
+    firebaseapp_contest_apikey, firebaseapp_contest_messagingsenderid, firebaseapp_wca) ]] [%
     import "components/authjs.html" as authjs %] [[
     authjs.print(redirect_login="", redirect_logout="", check_first=True) ]] [%
     import "components/contestjs.html" as contestjs %] [[
@@ -93,7 +93,7 @@ cid %]
                   要件を満たすビデオを提出いただいた方のうち上位5名に追加のSP（シーズンポイント）が与えられます！<br />
                   ビデオボーナス節についての詳細は
                   <b
-                    ><a href="@routes.HomeController.regulations"
+                    ><a href="/regulations"
                       >参加方法とルール</a
                     ></b
                   >
@@ -250,7 +250,7 @@ cid %]
                           ><i class="fa fa-check-circle"></i> 参加済みです</span
                         >
                         <a
-                          href="@routes.HomeController.login"
+                          href="[[ url_for('login') ]]"
                           ng-if="countdown == 0 && authData == null"
                           ><i class="fa fa-sign-in"></i>
                           ログインして参加してください</a
@@ -356,7 +356,7 @@ cid %]
                           </td>
                           <td ng-show="r.puzzle.type == 'database'">
                             <a
-                              href="http://store.tribox.com/products/detail.php?product_id={{ r.puzzle.product }}"
+                              href="https://store.tribox.com/products/detail.php?product_id={{ r.puzzle.product }}"
                               target="_blank"
                               >{{ r.puzzleF }}</a
                             >
@@ -385,30 +385,30 @@ cid %]
                       </a>
                     </p>
 
-                    <!--<pre>{{ resultsData[e] | json }}</pre>-->
+                    [# <!--<pre>{{ resultsData[e] | json }}</pre>--> #]
 
-                    <!--<pre>{{ resultsTop3[e] | json }}</pre>-->
+                    [# <!--<pre>{{ resultsTop3[e] | json }}</pre>--> #]
                   </div>
                 </div>
 
-                <!--<p>usersecretData:</p>
-        <pre>{{ usersecretData | json }}</pre>-->
+                [# <!--<p>usersecretData:</p>
+                <pre>{{ usersecretData | json }}</pre>--> #]
 
-                <!--<p>@cid -> contestData:</p>
-        <pre>{{ contestData | json }}</pre>-->
+                [# <!--<p>@cid -> contestData:</p>
+                <pre>{{ contestData | json }}</pre>--> #]
 
-                <!--<p>inProgress / countdown:</p>
-        <pre>{{ inProgress | json }}</pre>
-        <pre>{{ countdown | json }}</pre>-->
+                [# <!--<p>inProgress / countdown:</p>
+                <pre>{{ inProgress | json }}</pre>
+                <pre>{{ countdown | json }}</pre>--> #]
 
-                <!--<p>@cid -> scramblesData:</p>
-        <pre>{{ scramblesData | json }}</pre>-->
+                [# <!--<p>@cid -> scramblesData:</p>
+                <pre>{{ scramblesData | json }}</pre>--> #]
 
-                <!--<p>@cid -> resultsData:</p>
-        <pre>{{ resultsData | json }}</pre>-->
+                [# <!--<p>@cid -> resultsData:</p>
+                <pre>{{ resultsData | json }}</pre>--> #]
 
-                <!--<p>events:</p>
-        <pre>{{ events | json }}</pre>-->
+                [# <!--<p>events:</p>
+                <pre>{{ events | json }}</pre>--> #]
               </div>
             </div>
           </div>
@@ -725,6 +725,7 @@ cid %]
           },
         ]);
       </script>
+      <script type="text/javascript" src="[[ url_for('products_js') ]]"></script>
     </div>
   </body>
 </html>

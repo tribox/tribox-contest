@@ -9,7 +9,7 @@
     description=contest_description, sitename=contest_name,
     contest_url=contest_url, page_url=page_url) ]] [% import
     "components/basejs.html" as basejs %] [[ basejs.print(firebaseapp_contest,
-    firebaseapp_contest_apikey, firebaseapp_contest_senderid) ]] [% import
+    firebaseapp_contest_apikey, firebaseapp_contest_senderid, firebaseapp_wca) ]] [% import
     "components/authjs.html" as authjs %] [[
     authjs.print(redirect_login="",redirect_logout="", check_first=False) ]]
 
@@ -136,7 +136,7 @@
                       <span ng-show="!(thisUserData.iso2)">Loading...</span>
                       <span ng-show="thisUserData.iso2">
                         <img
-                          src="[[ url_for('static', filename='flags/flags-iso/shiny/24/[[thisUserData.iso2]].png') ]]"
+                          src="/assets/flags/flags-iso/shiny/24/{{ thisUserData.iso2 }}.png"
                           height="24"
                           style="vertical-align: middle"
                           ng-show="thisUserData.iso2"
@@ -347,7 +347,7 @@
                         </td>
                         <td ng-show="c.result.puzzle.type == 'database'">
                           <a
-                            href="http://store.tribox.com/products/detail.php?product_id={{ c.result.puzzle.product }}"
+                            href="https://store.tribox.com/products/detail.php?product_id={{ c.result.puzzle.product }}"
                             target="_blank"
                             >{{ c.result.puzzleF }}</a
                           >
@@ -385,6 +385,30 @@
 
               <hr />
               <h3>過去のシーズンのコンテスト参加履歴</h3>
+              <a
+                class="cursor-pointer btn btn-empty btn-success"
+                id="show-past-20252"
+                ng-click="showPastSeason(20252)"
+                >2025 後半期</a
+              >
+              <a
+                class="cursor-pointer btn btn-empty"
+                id="show-past-20251"
+                ng-click="showPastSeason(20251)"
+                >2025 前半期</a
+              >
+              <a
+                class="cursor-pointer btn btn-empty btn-success"
+                id="show-past-20242"
+                ng-click="showPastSeason(20242)"
+                >2024 後半期</a
+              >
+              <a
+                class="cursor-pointer btn btn-empty"
+                id="show-past-20241"
+                ng-click="showPastSeason(20241)"
+                >2024 前半期</a
+              >
               <a
                 class="cursor-pointer btn btn-empty btn-success"
                 id="show-past-20232"
@@ -576,7 +600,7 @@
                           </td>
                           <td ng-show="c.result.puzzle.type == 'database'">
                             <a
-                              href="http://store.tribox.com/products/detail.php?product_id={{ c.result.puzzle.product }}"
+                              href="https://store.tribox.com/products/detail.php?product_id={{ c.result.puzzle.product }}"
                               target="_blank"
                               >{{ c.result.puzzleF }}</a
                             >
@@ -611,41 +635,42 @@
                 </div>
               </div>
 
-              <!--<p>[[id]] -> thisUserData:</p>
-        <pre>{{ thisUserData | json }}</pre>
-        <p>[[id]] -> thisUsername:</p>
-        <pre>{{ thisUsername | json }}</pre>-->
+              [# <!--<p>[[id]] -> thisUserData:</p>
+              <pre>{{ thisUserData | json }}</pre>
+              <p>[[id]] -> thisUsername:</p>
+              <pre>{{ thisUsername | json }}</pre>--> #]
 
-              <!--<p>history:</p>
-        <pre>{{ history | json }}</pre>-->
+              [# <!--<p>history:</p>
+              <pre>{{ history | json }}</pre>--> #]
 
-              <!--<p>historyInProgress:</p>
-        <pre>{{ historyInProgress | json }}</pre>-->
+              [# <!--<p>historyInProgress:</p>
+              <pre>{{ historyInProgress | json }}</pre>--> #]
 
-              <!--<p>tocHtml:</p>
-        <pre>{{ tocHtml | json }}</pre>-->
+              [# <!--<p>tocHtml:</p>
+              <pre>{{ tocHtml | json }}</pre>--> #]
 
-              <!--<p>videoUrlInput:</p>
-        <pre>{{ videoUrlInput | json }}</pre>-->
+              [# <!--<p>videoUrlInput:</p>
+              <pre>{{ videoUrlInput | json }}</pre>--> #]
 
-              <!--<p>events:</p>
-        <pre>{{ events | json }}</pre>-->
+              [# <!--<p>events:</p>
+              <pre>{{ events | json }}</pre>--> #]
 
-              <!--<p>inProgress:</p>
-        <pre>{{ inProgress | json }}</pre>-->
+              [# <!--<p>inProgress:</p>
+              <pre>{{ inProgress | json }}</pre>--> #]
 
-              <!--<p>inProgressContest:</p>
-        <pre>{{ inProgressContest | json }}</pre>-->
+              [# <!--<p>inProgressContest:</p>
+              <pre>{{ inProgressContest | json }}</pre>--> #]
 
-              <!--<p>contests:</p>
-        <pre>{{ contests | json }}</pre>-->
+              [# <!--<p>contests:</p>
+              <pre>{{ contests | json }}</pre>--> #]
 
-              <!--<p>authData:</p>
-        <pre>{{ authData | json }}</pre>
-        <p>userData:</p>
-        <pre>{{ userData | json }}</pre>
-        <p>usersecretData:</p>
-        <pre>{{ usersecretData | json }}</pre>-->
+              [# <!--<p>authData:</p>
+              <pre>{{ authData | json }}</pre>
+              <p>userData:</p>
+              <pre>{{ userData | json }}</pre>
+              <p>usersecretData:</p>
+              <pre>{{ usersecretData | json }}</pre>--> #]
+
             </div>
           </div>
         </div>
@@ -1377,7 +1402,7 @@
           },
         ]);
       </script>
-      <script type="text/javascript" src="/js/products.js"></script>
+      <script type="text/javascript" src="[[ url_for('products_js') ]]"></script>
     </div>
   </body>
 </html>

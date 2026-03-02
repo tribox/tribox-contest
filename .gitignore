@@ -1,6 +1,6 @@
-################
+########################################
 # macOS
-################
+########################################
 
 # General
 .DS_Store
@@ -27,9 +27,9 @@ Temporary Items
 .apdisk
 
 
-################
+########################################
 # Python
-################
+########################################
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -162,9 +162,14 @@ dmypy.json
 .pyre/
 
 
-################
-# This project
-################
+########################################
+# Project-specific rules
+########################################
+
+# Environments
+.env*
+!.env.example
+!.env.sample
 
 # Play stuffs
 logs
@@ -190,9 +195,11 @@ target
 /contestmanager/appendlogs/*.log
 /contestmanager/deletelogs/*.log
 /contestmanager/PHPMailer
+/contestmanager/send-email-config.php
 
 # FMC images
 /public/333fm/*.png
+/src/public/333fm/*.png
 
 # Backup
 /backup/*.json
