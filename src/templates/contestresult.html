@@ -81,77 +81,78 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
               <div
                 ng-show="existsContest && existsEvent && countdown < 0 && (contestData.resultsStatus == 'public' || usersecretData.isAdmin)"
               >
-                <!-- <h2>{{ contestData.contestName }}</h2>
+                <div class="contestresult-info">
+                  <div class="contestresult-info-title">{{ contestData.contestName }}</div>
 
-                <p
-                  ng-if="contestData.videoBonusStatus && (countdown >= 0) && ('[[ eid ]]' == '333')"
-                >
-                  <i class="em em-tada"></i> <b>ビデオボーナス節</b>
-                  <i class="em em-tada"></i>
-                </p>
-                <p
-                  ng-if="(contestData.videoBonusStatus == 'checking') && (countdown < 0) && ('[[ eid ]]' == '333')"
-                >
-                  <i class="em em-tada"></i>
-                  <b>ビデオボーナス節（ビデオチェック中）</b>
-                  <i class="em em-tada"></i>
-                </p>
-                <p
-                  ng-if="(contestData.videoBonusStatus == 'done') && (countdown < 0) && ('[[ eid ]]' == '333')"
-                >
-                  <i class="em em-tada"></i>
-                  <b>ビデオボーナス節（ビデオチェック完了）</b>
-                  <i class="em em-tada"></i>
-                </p>
-
-                <p>
-                  <i class="fa fa-calendar"></i> 開催期間:
-                  <b>{{ contestData.beginAt | toDate }}</b> ~
-                  <b>{{ contestData.endAt | toDate }}</b>
-                </p>
-
-                <p>
-                  別のコンテスト・競技種目の結果を見る<br />
-                  <select
-                    class="form-control"
-                    style="margin-bottom: 5px"
-                    ng-model="currentContest"
-                    ng-change="currentContestChange()"
+                  <p
+                    ng-if="contestData.videoBonusStatus && (countdown >= 0) && ('[[ eid ]]' == '333')"
+                    class="contestresult-info-bonus"
                   >
-                    <option
-                      ng-repeat="c in contestsList"
-                      value="{{ c.id | removeHead}}"
-                    >
-                      {{ c.shortName }}
-                    </option></select
-                  ><br />
-                  <select
-                    class="form-control"
-                    style="margin-bottom: 5px"
-                    ng-model="currentEvent"
-                    ng-change="currentEventChange()"
+                    <i class="em em-tada"></i> <b>ビデオボーナス節</b>
+                    <i class="em em-tada"></i>
+                  </p>
+                  <p
+                    ng-if="(contestData.videoBonusStatus == 'checking') && (countdown < 0) && ('[[ eid ]]' == '333')"
+                    class="contestresult-info-bonus"
                   >
-                    <option
-                      ng-repeat="e in contestData.events"
-                      value="{{ e | removeHead}}"
-                    >
-                      {{ events[e].name }}
-                    </option>
-                  </select>
-                </p>
+                    <i class="em em-tada"></i>
+                    <b>ビデオボーナス節（ビデオチェック中）</b>
+                    <i class="em em-tada"></i>
+                  </p>
+                  <p
+                    ng-if="(contestData.videoBonusStatus == 'done') && (countdown < 0) && ('[[ eid ]]' == '333')"
+                    class="contestresult-info-bonus"
+                  >
+                    <i class="em em-tada"></i>
+                    <b>ビデオボーナス節（ビデオチェック完了）</b>
+                    <i class="em em-tada"></i>
+                  </p>
 
-                <h3>
-                  <span
-                    class="cubing-icon event-[[ eid ]]"
-                    style="vertical-align: baseline"
-                  ></span>
-                  {{ events.e[[ eid ]].name }}
-                </h3>
-                <p>
-                  計測方法: {{ events.e[[ eid ]].method | uppercaseHead }} of {{
-                  events.e[[ eid ]].attempts }}<br />
-                  参加人数: {{ resultsPersons.e[[ eid ]] }} 人
-                </p> -->
+                  <div class="contestresult-info-meta">
+                    <div class="contestresult-info-meta-row">
+                      <i class="fa fa-calendar"></i>
+                      <b>{{ contestData.beginAt | toDate }}</b> ~ <b>{{ contestData.endAt | toDate }}</b>
+                    </div>
+                    <div class="contestresult-info-meta-row">
+                      <span
+                        class="cubing-icon event-[[ eid ]]"
+                        style="vertical-align: baseline"
+                      ></span>
+                      {{ events.e[[ eid ]].name }}
+                    </div>
+                    <div class="contestresult-info-meta-row">
+                      計測方法: {{ events.e[[ eid ]].method | uppercaseHead }} of {{ events.e[[ eid ]].attempts }}
+                      / 参加人数: {{ resultsPersons.e[[ eid ]] }} 人
+                    </div>
+                  </div>
+
+                  <div class="contestresult-info-selectors">
+                    <select
+                      class="contestresult-info-select"
+                      ng-model="currentContest"
+                      ng-change="currentContestChange()"
+                    >
+                      <option
+                        ng-repeat="c in contestsList"
+                        value="{{ c.id | removeHead}}"
+                      >
+                        {{ c.shortName }}
+                      </option>
+                    </select>
+                    <select
+                      class="contestresult-info-select"
+                      ng-model="currentEvent"
+                      ng-change="currentEventChange()"
+                    >
+                      <option
+                        ng-repeat="e in contestData.events"
+                        value="{{ e | removeHead}}"
+                      >
+                        {{ events[e].name }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
 
                 <!-- <h4>キューブ使用率ランキング</h4>
                 <div class="row">

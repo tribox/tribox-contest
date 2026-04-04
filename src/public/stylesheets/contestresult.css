@@ -1,3 +1,57 @@
+/* コンテスト情報 */
+.contestresult-info {
+  color: #808080;
+  margin-bottom: 20px;
+}
+
+.contestresult-info-title {
+  font-size: 1.25em;
+  font-weight: bold;
+  color: #555;
+  margin-bottom: 8px;
+}
+
+.contestresult-info-bonus {
+  margin: 4px 0;
+}
+
+.contestresult-info-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.9em;
+  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #CCC;
+}
+
+.contestresult-info-meta-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 6px;
+}
+
+.contestresult-info-selectors {
+  display: flex;
+  gap: 8px;
+}
+
+.contestresult-info-select {
+  flex: 1;
+  padding: 6px 8px;
+  font-size: 0.9em;
+  color: #808080;
+  border: 1px solid #CCC;
+  border-radius: 4px;
+  background-color: #fff;
+  outline: none;
+}
+
+.contestresult-info-select:focus {
+  border-color: #0088CC;
+}
+
 .contestresult-table {
   color: #808080;
   table-layout: fixed;
@@ -238,5 +292,13 @@
   .contestresult-table-col-puzzle {
     width: 32px;
     text-align: center;
+  }
+
+  .contestresult-info-meta {
+    font-size: 0.85em;
+  }
+
+  .contestresult-info-selectors {
+    flex-direction: column;
   }
 }
