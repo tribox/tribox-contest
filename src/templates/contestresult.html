@@ -234,12 +234,12 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                       class="contestresult-table-header"
                   >
                     <tr>
-                      <th class="contestresult-table-text-align-center contestresult-table-col-sp">SP</th>
+                      <th class="contestresult-table-text-align-center contestresult-table-col-sp contestresult-table-hide-mobile">SP</th>
                       <th class="contestresult-table-text-align-end contestresult-table-col-place">順位</th>
                       [% if eid != "333fm" %]
                       <th class="contestresult-table-text-align-end contestresult-table-col-avg">Avg. of 5</th>
                       [% endif %]
-                      <th class="contestresult-table-col-deploy">
+                      <th class="[% if eid == '333fm' %]contestresult-table-col-detail-body[% else %]contestresult-table-col-deploy[% endif %]">
                         [% if eid != "333fm" %]
                         <div class="contestresult-table-deploy-button-container">
                           <button class="contestresult-table-deploy-button">
@@ -255,7 +255,10 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                       </th>
                       <th class="contestresult-table-detail-records contestresult-table-cell-padded">個々の記録</th>
                       <th class="contestresult-table-cell-padded">競技者 / 所属</th>
-                      <th class="contestresult-table-cell-padded">パズル</th>
+                      <th class="contestresult-table-cell-padded contestresult-table-col-puzzle">
+                        <img class="contestresult-table-show-mobile" src="/assets/images/icons/cube_empty.png" height="24" title="パズル" alt="パズル" />
+                        <span class="contestresult-table-hide-mobile">パズル</span>
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
@@ -264,7 +267,7 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                       id="e[[ eid ]]-{{ $index }}"
                       ng-repeat="r in resultsAll.e[[ eid ]]"
                     >
-                      <td>
+                      <td class="contestresult-table-hide-mobile">
                         <div class="contestresult-table-placement">
                           <span></span>
                           <span ng-if="r.seasonPoint + r.seasonPointVideoBonus">
@@ -279,7 +282,7 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                       [% if eid != "333fm" %]
                       <td class="contestresult-table-text-align-end contestresult-table-font-bold">{{ r.resultF }}</td>
                       [% endif %]
-                      <td>
+                      <td class="[% if eid == '333fm' %]contestresult-table-col-detail-body[% else %]contestresult-table-col-deploy-body[% endif %]">
                         [% if eid == "333fm" %]
                         <div class="contestresult-table-deploy-button-container">
                           <button class="contestresult-table-deploy-button" ng-click="showDetail($index)">
@@ -316,7 +319,7 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                         </div>
 
                       </td>
-                      <td class="contestresult-table-cell-padded">
+                      <td class="contestresult-table-cell-padded contestresult-table-col-puzzle">
                         <div class="contestresult-table-puzzle">
                           <img
                             src="https://store.tribox.com/user_data/img/category/{{ r.puzzle.brand }}.png"
@@ -324,12 +327,12 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                             height="24"
                           />
                           <a
-                            class="contestresult-table-line-clamp contestresult-table-link-default-color"
+                            class="contestresult-table-line-clamp contestresult-table-link-default-color contestresult-table-hide-mobile"
                             ng-if="r.puzzle.type == 'database'"
                             href="https://store.tribox.com/products/detail.php?product_id={{ r.puzzle.product }}"
                             target="_blank"
                           >{{ r.puzzleF }}</a>
-                          <span ng-if="r.puzzle.type != 'database'">{{ r.puzzleF }}</span>
+                          <span class="contestresult-table-hide-mobile" ng-if="r.puzzle.type != 'database'">{{ r.puzzleF }}</span>
                         </div>
                       </td>
                     </tr>
@@ -419,15 +422,29 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
             [% if eid == "333fm" %]
             var showDetailList = [];
 
+            function getVisibleColspan() {
+              var row = document.querySelector('.contestresult-table-header tr');
+              if (!row) return 6;
+              var count = 0;
+              var cells = row.children;
+              for (var i = 0; i < cells.length; i++) {
+                if (window.getComputedStyle(cells[i]).display !== 'none') {
+                  count++;
+                }
+              }
+              return count;
+            }
+
             $scope.showDetail = function (index) {
               var rowId = 'row-detail-' + index;
               var existing = document.getElementById(rowId);
 
               if (!showDetailList[index]) {
                 showDetailList[index] = true;
+                var colspan = getVisibleColspan();
                 var html =
                   '<tr id="' + rowId + '" class="row-detail">' +
-                  '<td colspan="6" style="padding:0;border:none;">' +
+                  '<td colspan="' + colspan + '" style="padding:0;border:none;">' +
                   '<div class="contestresult-table-detail-slide">' +
                   '<p><b>解答:</b><br>' +
                   TriboxContest.escapeHTML(

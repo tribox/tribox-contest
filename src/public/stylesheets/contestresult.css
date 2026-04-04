@@ -153,3 +153,90 @@
 .contestresult-table-col-deploy {
   width: 32px;
 }
+
+.contestresult-table-col-detail-body {
+  width: 32px;
+}
+
+.contestresult-table-show-mobile {
+  display: none;
+}
+
+/* タブレット */
+@media screen and (max-width: 1024px) {
+  .contestresult-table-detail-records.deploy {
+    width: 240px;
+  }
+
+  .contestresult-table-record-items {
+    width: 48px;
+    font-size: 0.85em;
+  }
+}
+
+/* スマホ */
+@media screen and (max-width: 768px) {
+  .contestresult-table-col-sp {
+    width: 36px;
+  }
+
+  .contestresult-table-col-place {
+    width: 40px;
+  }
+
+  .contestresult-table-col-avg {
+    width: 72px;
+    font-size: 0.85em;
+  }
+
+  .contestresult-table-col-deploy {
+    width: 28px;
+  }
+
+  /* deploy 列を非表示 (333fm の detail ボタンは別クラスで残す) */
+  .contestresult-table-col-deploy,
+  .contestresult-table-col-deploy-body {
+    display: none;
+  }
+
+  .contestresult-table-col-detail-body {
+    display: table-cell;
+  }
+
+  .contestresult-table-hide-mobile {
+    display: none;
+  }
+
+  .contestresult-table-show-mobile {
+    display: inline;
+  }
+
+  /* 横開きの個々の記録を無効化 */
+  .contestresult-table-detail-records,
+  .contestresult-table-detail-records.deploy {
+    display: none;
+  }
+
+  .contestresult-table-body-item {
+    height: 40px;
+  }
+
+  .contestresult-table-placement,
+  .contestresult-table-name,
+  .contestresult-table-puzzle {
+    height: 40px;
+  }
+
+  .contestresult-table-name img {
+    height: 12px;
+  }
+
+  .contestresult-table-puzzle {
+    justify-content: center;
+  }
+
+  .contestresult-table-col-puzzle {
+    width: 32px;
+    text-align: center;
+  }
+}
