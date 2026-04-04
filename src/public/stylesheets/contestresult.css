@@ -1,0 +1,155 @@
+.contestresult-table {
+  color: #808080;
+  table-layout: fixed;
+  width: 100%;
+}
+
+.contestresult-table-header {
+  font-weight: bold;
+  border-bottom: 1px solid #CCC;
+  height: 40px;
+}
+
+.contestresult-table-header th {
+  vertical-align: middle !important;
+}
+
+.contestresult-table-body-item {
+  height: 48px;
+}
+
+.contestresult-table-body-item td {
+  vertical-align: middle;
+}
+
+.contestresult-table-body-item:nth-child(5n) {
+  border-bottom: 1px solid #CCC;
+}
+
+/* 共通: flexで中央揃え・高さ48pxのセル内レイアウト */
+.contestresult-table-placement,
+.contestresult-table-name,
+.contestresult-table-puzzle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 48px;
+}
+
+.contestresult-table-line-clamp {
+  display: block;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.contestresult-table-text-align-center {
+  text-align: center;
+}
+
+.contestresult-table-text-align-end {
+  text-align: end;
+}
+
+.contestresult-table-font-bold {
+  font-weight: bold;
+}
+
+.contestresult-table-cell-padded {
+  padding-left: 4px;
+}
+
+.contestresult-table-link,
+.contestresult-table-link:hover {
+  color: #0088CC;
+}
+
+.contestresult-table-link-default-color,
+.contestresult-table-link-default-color:hover {
+  color: #808080;
+}
+
+.contestresult-table-deploy-button {
+  width: 24px;
+  margin: 0;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  display: flex;
+  cursor: pointer;
+}
+
+.contestresult-table-deploy-button-container {
+  display: flex;
+  align-items: end;
+  justify-content: end;
+}
+
+/* deploy/undeploy トグルのアニメーション */
+.contestresult-table-detail-records {
+  width: 0;
+  padding: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  color: transparent;
+  transition: all 0.3s ease, padding 0.3s ease;
+}
+
+.contestresult-table-detail-records.deploy {
+  width: 408px;
+  padding-left: 4px;
+  color: #808080;
+}
+
+/* 詳細行: main.css の row-detail border を打ち消し */
+.contestresult-table .row-detail {
+  border: none;
+}
+
+.contestresult-table .row-detail td {
+  padding: 0;
+  border: none;
+}
+
+/* 詳細行のスライドアニメーション */
+.contestresult-table-detail-slide {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  padding: 0 8px;
+  transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
+}
+
+.contestresult-table-detail-slide.open {
+  max-height: 500px;
+  opacity: 1;
+  padding: 8px;
+}
+
+.contestresult-table-records {
+  display: flex;
+}
+
+.contestresult-table-record-items {
+  flex-shrink: 0;
+  width: 80px;
+  text-align: center;
+}
+
+/* thead の各カラム幅 */
+.contestresult-table-col-sp {
+  width: 54px;
+}
+
+.contestresult-table-col-place {
+  width: 56px;
+}
+
+.contestresult-table-col-avg {
+  width: 96px;
+}
+
+.contestresult-table-col-deploy {
+  width: 32px;
+}

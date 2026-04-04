@@ -32,6 +32,11 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
         margin-top: 1em;
       }
     </style>
+    <link
+      rel="stylesheet"
+      media="screen"
+      href="[[ url_for('static', filename='stylesheets/contestresult.css') ]]"
+    />
   </head>
   <body>
     <div class="container">
@@ -76,7 +81,7 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
               <div
                 ng-show="existsContest && existsEvent && countdown < 0 && (contestData.resultsStatus == 'public' || usersecretData.isAdmin)"
               >
-                <h2>{{ contestData.contestName }}</h2>
+                <!-- <h2>{{ contestData.contestName }}</h2>
 
                 <p
                   ng-if="contestData.videoBonusStatus && (countdown >= 0) && ('[[ eid ]]' == '333')"
@@ -146,9 +151,9 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                   計測方法: {{ events.e[[ eid ]].method | uppercaseHead }} of {{
                   events.e[[ eid ]].attempts }}<br />
                   参加人数: {{ resultsPersons.e[[ eid ]] }} 人
-                </p>
+                </p> -->
 
-                <h4>キューブ使用率ランキング</h4>
+                <!-- <h4>キューブ使用率ランキング</h4>
                 <div class="row">
                   <div class="col sm-12"><b>集計対象: 参加者全員</b></div>
                   <div class="col sm-4">
@@ -220,113 +225,112 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                       });
                     }
                   };
-                </script>
+                </script> -->
 
-                <h4>コンテスト結果</h4>
-                <p><i class="fa fa-star color-star"></i>: 当選ポイント獲得</p>
-                <table class="table table-bordered result tribox-contest">
-                  <thead>
+                <!-- <h4>コンテスト結果</h4>
+                <p><i class="fa fa-star color-star"></i>: 当選ポイント獲得</p> -->
+                <table class="contestresult-table">
+                  <thead
+                      class="contestresult-table-header"
+                  >
                     <tr>
-                      <th><i class="fa fa-hashtag"></i></th>
-                      <th>SP</th>
-                      <th>名前</th>
-                      <th class="mb-hide">所属</th>
-                      <th>記録</th>
-                      <th class="mb-hide"></th>
-                      <th>パズル</th>
-                      <th class="mb-hide">
-                        <i class="fa fa-video-camera"></i>
+                      <th class="contestresult-table-text-align-center contestresult-table-col-sp">SP</th>
+                      <th class="contestresult-table-text-align-end contestresult-table-col-place">順位</th>
+                      [% if eid != "333fm" %]
+                      <th class="contestresult-table-text-align-end contestresult-table-col-avg">Avg. of 5</th>
+                      [% endif %]
+                      <th class="contestresult-table-col-deploy">
+                        [% if eid != "333fm" %]
+                        <div class="contestresult-table-deploy-button-container">
+                          <button class="contestresult-table-deploy-button">
+                            <img
+                              src="/assets/images/icons/deploy.png"
+                              height="24"
+                              title="deploy"
+                              alt="deploy"
+                            />
+                          </button>
+                        </div>
+                        [% endif %]
                       </th>
-                      <th ng-if="usersecretData.isAdmin">運営用</th>
+                      <th class="contestresult-table-detail-records contestresult-table-cell-padded">個々の記録</th>
+                      <th class="contestresult-table-cell-padded">競技者 / 所属</th>
+                      <th class="contestresult-table-cell-padded">パズル</th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr
+                      class="contestresult-table-body-item"
                       id="e[[ eid ]]-{{ $index }}"
                       ng-repeat="r in resultsAll.e[[ eid ]]"
                     >
                       <td>
-                        {{ r.place }}
-                        <span class="lottery" ng-show="r.lottery">
-                          <i class="fa fa-star color-star"></i>
-                        </span>
+                        <div class="contestresult-table-placement">
+                          <span></span>
+                          <span ng-if="r.seasonPoint + r.seasonPointVideoBonus">
+                            {{ r.seasonPoint + r.seasonPointVideoBonus }}p
+                          </span>
+                          <span class="lottery" ng-show="r.lottery">
+                            <i class="fa fa-star color-star"></i>
+                          </span>
+                        </div>
                       </td>
+                      <td class="contestresult-table-text-align-end">{{ r.place }}位</td>
+                      [% if eid != "333fm" %]
+                      <td class="contestresult-table-text-align-end contestresult-table-font-bold">{{ r.resultF }}</td>
+                      [% endif %]
                       <td>
-                        <span
-                          ng-if="(r.seasonPoint || r.seasonPointVideoBonus) && (r.seasonPoint + r.seasonPointVideoBonus) > 0"
-                          >{{ r.seasonPoint + r.seasonPointVideoBonus }}</span
-                        >
+                        [% if eid == "333fm" %]
+                        <div class="contestresult-table-deploy-button-container">
+                          <button class="contestresult-table-deploy-button" ng-click="showDetail($index)">
+                            <img
+                              src="/assets/images/icons/detail.png"
+                              height="18"
+                              title="detail"
+                              alt="detail"
+                            />
+                          </button>
+                        </div>
+                        [% endif %]
                       </td>
-                      <td>
-                        <img
-                          src="/assets/flags/flags-iso/shiny/24/{{ r.user.iso2 }}.png"
-                          height="24"
-                          style="vertical-align: middle"
-                          ng-show="r.user.iso2"
-                        />
-                        <a href="/user/{{ r.user.username }}"
-                          >{{ r.user.displayname }}</a
-                        >
+                      <td class="contestresult-table-detail-records contestresult-table-cell-padded">
+                        <div class="contestresult-table-records">
+                          <div class="contestresult-table-record-items" ng-repeat="d in r.detailsF.split(' ')">{{ d }}</div>
+                        </div>
                       </td>
-                      <td class="mb-hide ellipsis">
-                        {{ r.user.organization }}
-                      </td>
-                      <td class="mb-hide"><b>{{ r.resultF }}</b></td>
-                      <td class="tb-hide pc-hide">
-                        <a class="cursor-pointer" ng-click="showDetail($index)"
-                          ><b style="color: rgb(85, 85, 85)"
-                            >{{ r.resultF }}</b
-                          ></a
-                        >
-                      </td>
+                      <td class="contestresult-table-cell-padded">
+                        <div class="contestresult-table-name">
+                          <img
+                            src="https://flagcdn.com/{{ r.user.iso2.toLowerCase() }}.svg"
+                            ng-show="r.user.iso2"
+                            height="16"
+                          />
+                          <a
+                            class="contestresult-table-line-clamp contestresult-table-link "
+                            href="/user/{{ r.user.username }}"
+                          >
+                            <span ng-if="r.user.organization">
+                              {{ r.user.organization }} /
+                            </span>{{ r.user.displayname }}
+                          </a>
+                        </div>
 
-                      <td
-                        ng-if="'[[ eid ]]' != '333fm'"
-                        id="e[[ eid ]]-{{ $index }}-show"
-                        class="mb-hide"
-                      >
-                        <a class="cursor-pointer" ng-click="showDetail($index)"
-                          >詳細</a
-                        >
                       </td>
-
-                      <td
-                        ng-if="'[[ eid ]]' == '333fm'"
-                        id="e[[ eid ]]-{{ $index }}-show"
-                        class="mb-hide"
-                      >
-                        <a class="cursor-pointer" ng-click="showDetail($index)"
-                          >解答</a
-                        >
-                      </td>
-
-                      <td ng-show="r.puzzle.type == 'database'">
-                        <a
-                          href="https://store.tribox.com/products/detail.php?product_id={{ r.puzzle.product }}"
-                          target="_blank"
-                          >{{ r.puzzleF }}</a
-                        >
-                      </td>
-                      <td
-                        ng-show="r.puzzle.type == 'nodatabase' || r.puzzle.type == 'unknown'"
-                      >
-                        {{ r.puzzleF }}
-                      </td>
-                      <td class="mb-hide" ng-if="r.videoUrl">
-                        <a href="{{ r.videoUrl | encodeURI }}" target="_blank"
-                          ><i class="fa fa-video-camera"></i
-                        ></a>
-                      </td>
-                      <td class="mb-hide" ng-if="!(r.videoUrl)"></td>
-                      <td ng-if="usersecretData.isAdmin">
-                        <a
-                          class="btn btn-small btn-error"
-                          style="margin: 0"
-                          href="javascript:void(0);"
-                          ng-click="deleteResult(r.user.username, r.user.displayname, '/admin-api/contest/result/delete?c=[[ cid ]]&e=[[ eid ]]&u=' + r.user.username + '&token=' + usersecretData.adminToken)"
-                        >
-                          削除
-                        </a>
+                      <td class="contestresult-table-cell-padded">
+                        <div class="contestresult-table-puzzle">
+                          <img
+                            src="https://store.tribox.com/user_data/img/category/{{ r.puzzle.brand }}.png"
+                            ng-show="r.user.iso2"
+                            height="24"
+                          />
+                          <a
+                            class="contestresult-table-line-clamp contestresult-table-link-default-color"
+                            ng-if="r.puzzle.type == 'database'"
+                            href="https://store.tribox.com/products/detail.php?product_id={{ r.puzzle.product }}"
+                            target="_blank"
+                          >{{ r.puzzleF }}</a>
+                          <span ng-if="r.puzzle.type != 'database'">{{ r.puzzleF }}</span>
+                        </div>
                       </td>
                     </tr>
                   </tbody>
@@ -343,14 +347,21 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                   </tbody>
                 </table>
 
-                [# <!--<p>usersecretData:</p>
-                <pre>{{ usersecretData | json }}</pre>--> #]
-                [# <!--<p>[[ cid ]] -> contestData:</p>
-                <pre>{{ contestData | json }}</pre>--> #]
-                [# <!--<pre>{{ resultsAll.e[[ eid ]] | json }}</pre>--> #]
-                [# <!--<pre>{{ resultsPuzzles.e[[ eid ]] | json }}</pre>--> #]
-                [# <!--<pre>{{ resultsTop3.e[[ eid ]] | json }}</pre>--> #]
-                [# <!--<pre>{{ scramblesData | json }}</pre>--> #]
+                [#
+                <!--<p>usersecretData:</p>
+                <pre>{{ usersecretData | json }}</pre>-->
+                #] [#
+                <!--<p>[[ cid ]] -> contestData:</p>
+                <pre>{{ contestData | json }}</pre>-->
+                #] [#
+                <!--<pre>{{ resultsAll.e[[ eid ]] | json }}</pre>-->
+                #] [#
+                <!--<pre>{{ resultsPuzzles.e[[ eid ]] | json }}</pre>-->
+                #] [#
+                <!--<pre>{{ resultsTop3.e[[ eid ]] | json }}</pre>-->
+                #] [#
+                <!--<pre>{{ scramblesData | json }}</pre>-->
+                #]
               </div>
             </div>
           </div>
@@ -405,59 +416,50 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                 "/contest/result/[[ cid ]]/" + $scope.currentEvent;
             };
 
-            var showDetailList = [];
             [% if eid == "333fm" %]
-              $scope.showDetail = function (index) {
-                if (!showDetailList[index]) {
-                  showDetailList[index] = true;
-                  var html =
-                    '<tr id="row-detail-' +
-                    index +
-                    '" class="row-detail"><td colspan="7">' +
-                    "<p><b>解答:</b><br>" +
-                    TriboxContest.escapeHTML(
-                      $scope.resultsAll["e333fm"][index].details[0].solution
-                    ) +
-                    "</p>" +
-                    "<p><b>解説コメント:</b><br>" +
-                    TriboxContest.escapeHTML(
-                      $scope.resultsAll["e333fm"][index].details[0].note
-                    ) +
-                    "</p>";
-                  angular
-                    .element(document.getElementById("e333fm-" + index))
-                    .after(html);
-                  //angular.element(document.getElementById('e333fm-' + index + '-show')).text('表示済み');
-                  fadeIn(document.getElementById("row-detail-" + index));
-                } else {
-                  showDetailList[index] = false;
-                  angular
-                    .element(document.getElementById("row-detail-" + index))
-                    .remove();
+            var showDetailList = [];
+
+            $scope.showDetail = function (index) {
+              var rowId = 'row-detail-' + index;
+              var existing = document.getElementById(rowId);
+
+              if (!showDetailList[index]) {
+                showDetailList[index] = true;
+                var html =
+                  '<tr id="' + rowId + '" class="row-detail">' +
+                  '<td colspan="6" style="padding:0;border:none;">' +
+                  '<div class="contestresult-table-detail-slide">' +
+                  '<p><b>解答:</b><br>' +
+                  TriboxContest.escapeHTML(
+                    $scope.resultsAll["e333fm"][index].details[0].solution
+                  ) +
+                  '</p>' +
+                  '<p><b>解説コメント:</b><br>' +
+                  TriboxContest.escapeHTML(
+                    $scope.resultsAll["e333fm"][index].details[0].note
+                  ) +
+                  '</p>' +
+                  '</div></td></tr>';
+                angular
+                  .element(document.getElementById("e333fm-" + index))
+                  .after(html);
+                var slideEl = document.getElementById(rowId).querySelector('.contestresult-table-detail-slide');
+                requestAnimationFrame(function() {
+                  requestAnimationFrame(function() {
+                    slideEl.classList.add('open');
+                  });
+                });
+              } else {
+                showDetailList[index] = false;
+                if (existing) {
+                  var slideEl = existing.querySelector('.contestresult-table-detail-slide');
+                  slideEl.classList.remove('open');
+                  slideEl.addEventListener('transitionend', function() {
+                    angular.element(existing).remove();
+                  }, { once: true });
                 }
-              };
-            [% else %]
-              $scope.showDetail = function (index) {
-                if (!showDetailList[index]) {
-                  showDetailList[index] = true;
-                  var html =
-                    '<tr id="row-detail-' +
-                    index +
-                    '" class="row-detail"><td colspan="7">' +
-                    TriboxContest.escapeHTML(
-                      $scope.resultsAll["e[[ eid ]]"][index].detailsF
-                    );
-                  angular
-                    .element(document.getElementById("e[[ eid ]]-" + index))
-                    .after(html);
-                  fadeIn(document.getElementById("row-detail-" + index));
-                } else {
-                  showDetailList[index] = false;
-                  angular
-                    .element(document.getElementById("row-detail-" + index))
-                    .remove();
-                }
-              };
+              }
+            };
             [% endif %]
 
             $scope.deleteResult = function (username, displayname, url) {
@@ -475,7 +477,14 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
           },
         ]);
       </script>
-      <script type="text/javascript" src="[[ url_for('products_js') ]]"></script>
+      <script
+        type="text/javascript"
+        src="[[ url_for('products_js') ]]"
+      ></script>
+      <script
+        type="text/javascript"
+        src="[[ url_for('static', filename='javascripts/contestresult.js') ]]"
+      ></script>
     </div>
   </body>
 </html>
