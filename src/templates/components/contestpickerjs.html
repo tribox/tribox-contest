@@ -7,6 +7,12 @@
       e333oh: "OH", eminx: "Mega", epyram: "Pyra", eskewb: "Skewb",
       esq1: "SQ-1", eclock: "Clock"
     };
+    var eventFullNames = {
+      e333: "3x3x3", e222: "2x2x2", e444: "4x4x4", e555: "5x5x5",
+      e666: "6x6x6", e777: "7x7x7", e333bf: "3\u00d73\u00d73 目隠し", e333fm: "3\u00d73\u00d73 最少手数",
+      e333oh: "3\u00d73\u00d73 片手", eminx: "Megaminx", epyram: "Pyraminx",
+      eskewb: "Skewb", esq1: "SQ-1", eclock: "Clock"
+    };
     var eventIcons = {
       e333: "event_3x3.png", e222: "event_2x2.png", e444: "event_4x4.png",
       e555: "event_5x5.png", e666: "event_6x6.png", e777: "event_7x7.png",
@@ -17,9 +23,11 @@
 
     window.ContestPicker = {
       eventShortNames: eventShortNames,
+      eventFullNames: eventFullNames,
       eventIcons: eventIcons,
       initScope: function($scope) {
         $scope.eventShortNames = eventShortNames;
+        $scope.eventFullNames = eventFullNames;
         $scope.eventIcons = eventIcons;
       },
       loadSeasons: function($scope, contestRef, cid, callback) {
