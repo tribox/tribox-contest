@@ -650,11 +650,32 @@ def demo_timer():
 
 
 ########################################
-# Static JavaScripts
+# Dynamic JavaScripts
 ########################################
 @app.route("/js/products.js")
 def products_js():
-    return app.send_static_file("javascripts/products.js")
+    # Store DB から商品情報を取得
+    # TODO: これはとりあえずの実装なのでDBへのコネクションはコネクションプールを使うなどしたい
+    with get_store_db_connection() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(
+                "SELECT `product_id`, `name`" \
+                " FROM `dtb_products`" \
+                " WHERE `del_flg` != 1" \
+                " ORDER BY `product_id` ASC"
+            )
+            products = cursor.fetchall()
+
+    # 動的javascriptのテンプレート読み込み
+    rendered_js = render_template("javascripts/products.js", products=products)
+
+    # Content-Typeを "application/javascript" としてレスポンス作成＆返却
+    # Cache-Controlヘッダ: 1時間のキャッシュを許可
+    response = make_response(rendered_js)
+    response.headers["Content-Type"] = "application/javascript; charset=utf-8"
+    response.headers["Cache-Control"] = "public, max-age=3600"
+
+    return response
 
 
 ########################################
