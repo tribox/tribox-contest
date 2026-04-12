@@ -76,61 +76,8 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
               <div
                 ng-show="existsContest && existsEvent && countdown < 0 && (contestData.resultsStatus == 'public' || usersecretData.isAdmin)"
               >
-                <div class="contestresult-info">
-                  <div class="contestresult-picker-nav">
-                    <div class="contestresult-picker-season">
-                      <a
-                        class="contestresult-picker-season-arrow"
-                        ng-if="prevSeason"
-                        href="/contest/result/{{ prevSeason.firstCid }}/[[ eid ]]"
-                      ><img src="/assets/images/icons/chevron_right_arrow.png" class="contestresult-picker-season-arrow-flip" width="32" height="32" alt="前へ" /></a>
-                      <span class="contestresult-picker-season-arrow" ng-if="!prevSeason"
-                      ><img src="/assets/images/icons/chevron_right_gray.png" class="contestresult-picker-season-arrow-flip" width="32" height="32" alt="前へ" /></span>
-                      <span class="contestresult-picker-season-label contestresult-gradient-border">{{ currentSeasonLabel }}</span>
-                      <a
-                        class="contestresult-picker-season-arrow"
-                        ng-if="nextSeason"
-                        href="/contest/result/{{ nextSeason.firstCid }}/[[ eid ]]"
-                      ><img src="/assets/images/icons/chevron_right_arrow.png" width="32" height="32" alt="次へ" /></a>
-                      <span class="contestresult-picker-season-arrow" ng-if="!nextSeason"
-                      ><img src="/assets/images/icons/chevron_right_gray.png" width="32" height="32" alt="次へ" /></span>
-                    </div>
-                    <div class="contestresult-picker-contest">
-                      <span ng-repeat="c in contestsList">
-                        <a
-                          class="contestresult-picker-contest-item"
-                          ng-class="{'active contestresult-gradient-border': (c.id | removeHead) == '[[ cid ]]'}"
-                          ng-if="!c.disabled"
-                          href="/contest/result/{{ c.id | removeHead }}/[[ eid ]]"
-                        >{{ c.number }}</a>
-                        <span
-                          class="contestresult-picker-contest-item disabled"
-                          ng-if="c.disabled"
-                        >{{ c.number }}</span>
-                      </span>
-                    </div>
-                  </div>
-                  <div class="contestresult-info-title">{{ currentSeasonLabel }} 第{{ currentContestNumber }}節</div>
-
-                  <div class="contestresult-picker-event">
-                    <a
-                      class="contestresult-picker-event-item"
-                      href="/contest/[[ cid ]]"
-                    >
-                      <span class="contestresult-picker-event-label">TOP</span>
-                      <img class="contestresult-picker-event-icon" src="/assets/images/icons/event_top.png" width="24" height="24" alt="TOP" />
-                    </a>
-                    <a
-                      class="contestresult-picker-event-item"
-                      ng-class="{'active contestresult-gradient-border': (e | removeHead) == '[[ eid ]]'}"
-                      ng-repeat="e in contestData.events"
-                      href="/contest/result/[[ cid ]]/{{ e | removeHead }}"
-                    >
-                      <span class="contestresult-picker-event-label">{{ eventShortNames[e] || events[e].name }}</span>
-                      <img class="contestresult-picker-event-icon" ng-src="/assets/images/icons/{{ eventIcons[e] }}" width="24" height="24" alt="{{ eventShortNames[e] }}" />
-                    </a>
-                  </div>
-                </div>
+                [% import "components/contestpicker.html" as contestpicker %]
+                [[ contestpicker.print(cid=cid, eid=eid, active_event=eid) ]]
 
                 <div class="contestresult-puzzle-section">
                   <div class="contestresult-puzzle-section-title contestresult-hide-mobile">参加者全員のパズル</div>
@@ -431,70 +378,16 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
       "components/contestjs.html" as contestjs %] [[ contestjs.print(cid=cid,
       eid=eid, fetch_scrambles=True, fetch_results_top3=False,
       fetch_results_all=True)]]
+      [% import "components/contestpickerjs.html" as contestpickerjs %]
+      [[ contestpickerjs.print(cid=cid, eid=eid) ]]
       <script>
         app.controller("ContestResultCtrl", [
           "$scope",
           function ($scope) {
             $scope.contestResultLoaded = false;
-            $scope.currentContest = "[[ cid ]]";
-            $scope.currentEvent = "[[ eid ]]";
-            $scope.contestsList = null;
-            $scope.eventShortNames = {
-              e333: "3x3", e222: "2x2", e444: "4x4", e555: "5x5",
-              e666: "6x6", e777: "7x7", e333bf: "BF", e333fm: "FMC",
-              e333oh: "OH", eminx: "Mega", epyram: "Pyra", eskewb: "Skewb",
-              esq1: "SQ-1", eclock: "Clock"
-            };
-            $scope.eventIcons = {
-              e333: "event_3x3.png", e222: "event_2x2.png", e444: "event_4x4.png",
-              e555: "event_5x5.png", e666: "event_6x6.png", e777: "event_7x7.png",
-              e333bf: "event_bld.png", e333fm: "event_fmc.png", e333oh: "event_oh.png",
-              eminx: "event_megaminx.png", epyram: "event_pyraminx.png",
-              eskewb: "event_skewb.png", esq1: "event_sq1.png", eclock: "event_clock.png"
-            };
-
-            // 今シーズンの開催済みコンテストリスト
-            // とりあえず contests テーブルから引っ張ってくる
-            contestRef.child("contests").once("value", function (snapContests) {
-              contestRef
-                .child("inProgress")
-                .once("value", function (snapInProgress) {
-                  var lastContest = snapInProgress.val().lastContest;
-                  var contests = snapContests.val();
-                  var currentSeason = "[[ cid ]]".slice(0, 5);
-                  var _contestsList = [];
-                  var seasonsMap = {};
-                  Object.keys(snapContests.val()).forEach(function (contestId) {
-                    var cid = contestId.replace(/^c/, "");
-                    var season = cid.slice(0, 5);
-                    if (contestId <= lastContest) {
-                      if (!seasonsMap[season]) {
-                        var year = season.slice(0, 4);
-                        var half = season.charAt(4) === "1" ? "前半期" : "後半期";
-                        seasonsMap[season] = { id: season, label: year + " " + half, firstCid: cid };
-                      }
-                    }
-                    if (season === currentSeason) {
-                      _contestsList.push({
-                        id: contestId,
-                        number: parseInt(cid.slice(5), 10),
-                        disabled: contestId > lastContest,
-                      });
-                    }
-                  });
-                  var sortedSeasons = Object.keys(seasonsMap).sort().map(function(k) { return seasonsMap[k]; });
-                  var currentIndex = -1;
-                  for (var i = 0; i < sortedSeasons.length; i++) {
-                    if (sortedSeasons[i].id === currentSeason) { currentIndex = i; break; }
-                  }
-                  $scope.currentSeasonLabel = currentIndex >= 0 ? sortedSeasons[currentIndex].label : "";
-                  $scope.prevSeason = currentIndex > 0 ? sortedSeasons[currentIndex - 1] : null;
-                  $scope.nextSeason = currentIndex < sortedSeasons.length - 1 ? sortedSeasons[currentIndex + 1] : null;
-                  $scope.currentSeason = currentSeason;
-                  $scope.currentContestNumber = parseInt("[[ cid ]]".slice(5), 10);
-                  $scope.contestsList = _contestsList;
-                  $scope.contestResultLoaded = true;
-                });
+            ContestPicker.initScope($scope);
+            ContestPicker.loadSeasons($scope, contestRef, "[[ cid ]]", function() {
+              $scope.contestResultLoaded = true;
             });
 
             // 円グラフ描画 (contestjs.html から drawChart が呼ばれる)

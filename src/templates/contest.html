@@ -16,6 +16,11 @@ cid %]
     import "components/contestjs.html" as contestjs %] [[
     contestjs.print(cid=cid, fetch_scrambles=false, fetch_results_top3=true,
     fetch_results_all=false)]]
+    <link
+      rel="stylesheet"
+      media="screen"
+      href="[[ url_for('static', filename='stylesheets/contestresult.css') ]]"
+    />
   </head>
   <body>
     <div class="container">
@@ -83,7 +88,8 @@ cid %]
               </div>
 
               <div ng-show="existsContest">
-                <h2>{{ contestData.contestName }}</h2>
+                [% import "components/contestpicker.html" as contestpicker %]
+                [[ contestpicker.print(cid=cid) ]]
 
                 <p ng-if="contestData.videoBonusStatus && (countdown >= 0)">
                   <i class="em em-tada"></i><i class="em em-tada"></i
@@ -178,22 +184,6 @@ cid %]
                   <hr />
                 </div>
 
-                <p ng-show="countdown < 0">
-                  別のコンテスト結果を見る<br />
-                  <select
-                    class="form-control"
-                    style="margin-bottom: 5px"
-                    ng-model="currentContest"
-                    ng-change="currentContestChange()"
-                  >
-                    <option
-                      ng-repeat="c in contestsList"
-                      value="{{ c.id | removeHead}}"
-                    >
-                      {{ c.shortName }}
-                    </option>
-                  </select>
-                </p>
 
                 <table
                   class="table table-bordered tribox-contest"
@@ -417,6 +407,8 @@ cid %]
 
       [% include "components/bodyfooter.html" %]
 
+      [% import "components/contestpickerjs.html" as contestpickerjs %]
+      [[ contestpickerjs.print(cid=cid) ]]
       <script>
         app.controller("ContestIndexCtrl", [
           "$scope",
@@ -431,8 +423,8 @@ cid %]
 
               $scope.contestIndexLoaded = true;
 
-              $scope.currentContest = "[[ cid ]]";
-              $scope.contestsList = null;
+              ContestPicker.initScope($scope);
+              ContestPicker.loadSeasons($scope, contestRef, "[[ cid ]]");
 
               // Read personal results
               if (authData) {
@@ -604,38 +596,6 @@ cid %]
                 }
               }
 
-              // 今シーズンの開催済みコンテストリスト
-              // とりあえず contests テーブルから引っ張ってくる
-              contestRef
-                .child("contests")
-                .once("value", function (snapContests) {
-                  var contests = snapContests.val();
-                  contestRef
-                    .child("inProgress")
-                    .once("value", function (snapInProgress) {
-                      var lastContest = snapInProgress.val().lastContest;
-                      var _contestsList = [];
-                      Object.keys(snapContests.val()).forEach(function (
-                        contestId
-                      ) {
-                        if (contestId <= lastContest) {
-                          _contestsList.push({
-                            id: contestId,
-                            name: contests[contestId].contestName,
-                            shortName:
-                              contests[contestId].contestName.slice(15),
-                          });
-                        }
-                      });
-                      $timeout(function () {
-                        $scope.contestsList = _contestsList;
-                      });
-                    });
-                });
-
-              $scope.currentContestChange = function () {
-                location.href = "/contest/" + $scope.currentContest;
-              };
 
               var showDetailList = [];
               $scope.showDetail = function (eid, index) {
