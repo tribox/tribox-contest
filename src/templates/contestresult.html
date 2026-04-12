@@ -132,6 +132,80 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                   </div>
                 </div>
 
+                <div class="contestresult-puzzle-section">
+                  <div class="contestresult-puzzle-section-title contestresult-hide-mobile">参加者全員のパズル</div>
+                  <div class="contestresult-puzzle-content">
+                    <div class="contestresult-puzzle-chart">
+                      <div id="chartall"></div>
+                    </div>
+                    <div class="contestresult-puzzle-list">
+                      <div
+                        class="contestresult-puzzle-item"
+                        ng-repeat="p in resultsPuzzlesAll.e[[ eid ]]"
+                      >
+                        <span class="contestresult-puzzle-color" ng-style="{'background-color': puzzleColors[$index] || '#808080'}"></span>
+                        <span class="contestresult-puzzle-pct">{{ p.percentage }}%</span>
+                        <img
+                          class="contestresult-puzzle-brand"
+                          ng-if="p.brand"
+                          ng-src="https://store.tribox.com/user_data/img/category/{{ p.brand }}.png"
+                          height="24"
+                        />
+                        <span class="contestresult-puzzle-brand-placeholder" ng-if="!p.brand"></span>
+                        <div class="contestresult-puzzle-bar-wrapper">
+                          <a
+                            class="contestresult-puzzle-name"
+                            ng-if="p.productId != -1"
+                            href="https://store.tribox.com/products/detail.php?product_id={{ p.productId }}"
+                            target="_blank"
+                          >{{ p.productName }}</a>
+                          <span class="contestresult-puzzle-name contestresult-puzzle-name-other" ng-if="p.productId == -1">その他</span>
+                          <div class="contestresult-puzzle-bar">
+                            <div class="contestresult-puzzle-bar-fill" style="width: {{ p.percentage }}%"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="contestresult-puzzle-section">
+                  <div class="contestresult-puzzle-section-title contestresult-hide-mobile">入賞者のパズル</div>
+                  <div class="contestresult-puzzle-content">
+                    <div class="contestresult-puzzle-chart">
+                      <div id="chart"></div>
+                    </div>
+                    <div class="contestresult-puzzle-list">
+                      <div
+                        class="contestresult-puzzle-item"
+                        ng-repeat="p in resultsPuzzles.e[[ eid ]]"
+                      >
+                        <span class="contestresult-puzzle-color" ng-style="{'background-color': puzzleColors[$index] || '#808080'}"></span>
+                        <span class="contestresult-puzzle-pct">{{ p.percentage }}%</span>
+                        <img
+                          class="contestresult-puzzle-brand"
+                          ng-if="p.brand"
+                          ng-src="https://store.tribox.com/user_data/img/category/{{ p.brand }}.png"
+                          height="24"
+                        />
+                        <span class="contestresult-puzzle-brand-placeholder" ng-if="!p.brand"></span>
+                        <div class="contestresult-puzzle-bar-wrapper">
+                          <a
+                            class="contestresult-puzzle-name"
+                            ng-if="p.productId != -1"
+                            href="https://store.tribox.com/products/detail.php?product_id={{ p.productId }}"
+                            target="_blank"
+                          >{{ p.productName }}</a>
+                          <span class="contestresult-puzzle-name contestresult-puzzle-name-other" ng-if="p.productId == -1">その他</span>
+                          <div class="contestresult-puzzle-bar">
+                            <div class="contestresult-puzzle-bar-fill" style="width: {{ p.percentage }}%"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 <!-- <h4>キューブ使用率ランキング</h4>
                 <div class="row">
                   <div class="col sm-12"><b>集計対象: 参加者全員</b></div>
@@ -420,6 +494,46 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                   $scope.contestResultLoaded = true;
                 });
             });
+
+            // 円グラフ描画 (contestjs.html から drawChart が呼ばれる)
+            var pieColors = ["#2690D9", "#E87D7E", "#FF8000", "#29A329", "#B470C2"];
+            $scope.puzzleColors = pieColors;
+            var pieOtherColor = "#808080";
+
+            function getPieColorMap(columns) {
+              var map = {};
+              columns.forEach(function(col, i) {
+                if (col[0] === "その他") {
+                  map[col[0]] = pieOtherColor;
+                } else {
+                  map[col[0]] = pieColors[i] || pieOtherColor;
+                }
+              });
+              return map;
+            }
+
+            window.drawChart = function(dataall, data) {
+              if (dataall && dataall.length > 0) {
+                c3.generate({
+                  bindto: "#chartall",
+                  data: { columns: dataall, type: "pie", order: null, labels: false, colors: getPieColorMap(dataall) },
+                  size: { height: 240 },
+                  legend: { show: false },
+                  pie: { label: { show: false } },
+                  tooltip: { format: { value: function(v) { return v + "%"; } } }
+                });
+              }
+              if (data && data.length > 0) {
+                c3.generate({
+                  bindto: "#chart",
+                  data: { columns: data, type: "pie", order: null, labels: false, colors: getPieColorMap(data) },
+                  size: { height: 240 },
+                  legend: { show: false },
+                  pie: { label: { show: false } },
+                  tooltip: { format: { value: function(v) { return v + "%"; } } }
+                });
+              }
+            };
 
             [% if eid == "333fm" %]
             var showDetailList = [];

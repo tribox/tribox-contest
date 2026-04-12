@@ -50,7 +50,6 @@
 }
 
 .contestresult-picker-season-label {
-  position: relative;
   font-size: 12px;
   font-weight: bold;
   color: #808080;
@@ -60,8 +59,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 8px;
-  background: #fff;
 }
 
 /* 共通: グラデーションボーダー (::before で使用) */
@@ -168,7 +165,6 @@
 
 .contestresult-picker-event-item.active {
   color: #808080;
-  border-color: transparent;
 }
 
 .contestresult-picker-event-icon {
@@ -184,6 +180,115 @@
   line-height: 1;
   margin: 0;
   padding: 0;
+}
+
+/* 円グラフツールチップ */
+.contestresult-puzzle-chart .c3-tooltip {
+  white-space: nowrap;
+  font-size: 12px;
+}
+
+.contestresult-puzzle-chart .c3-tooltip td {
+  padding: 4px 8px;
+}
+
+.contestresult-puzzle-section {
+  margin-bottom: 16px;
+}
+
+.contestresult-puzzle-section-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: #808080;
+  margin-bottom: 8px;
+}
+
+/* パズル使用率 */
+.contestresult-puzzle-content {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 16px;
+}
+
+.contestresult-puzzle-list {
+  flex: 1;
+  min-width: 0;
+}
+
+.contestresult-puzzle-chart {
+  width: 280px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.contestresult-puzzle-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+}
+
+.contestresult-puzzle-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.contestresult-puzzle-brand,
+.contestresult-puzzle-brand-placeholder {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.contestresult-puzzle-bar-wrapper {
+  flex: 1;
+  min-width: 0;
+}
+
+.contestresult-puzzle-name {
+  font-size: 16px;
+  font-weight: bold;
+  color: #0088CC;
+  text-decoration: none;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+a.contestresult-puzzle-name:hover {
+  color: #006699;
+}
+
+.contestresult-puzzle-name-other {
+  color: #808080;
+}
+
+.contestresult-puzzle-bar {
+  height: 6px;
+  background: #eee;
+  border-radius: 3px;
+  margin-top: 2px;
+}
+
+.contestresult-puzzle-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(to right, #0096AF, #009678);
+}
+
+.contestresult-puzzle-pct {
+  width: 48px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #808080;
+  text-align: right;
+  flex-shrink: 0;
 }
 
 /* テーブル */
@@ -379,6 +484,10 @@
     height: 40px;
   }
 
+  .contestresult-puzzle-bar {
+    display: none;
+  }
+
   .contestresult-info-title {
     font-size: 24px;
   }
@@ -442,6 +551,10 @@
     display: inline;
   }
 
+  .contestresult-hide-mobile {
+    display: none;
+  }
+
   /* 横開きの個々の記録を無効化 */
   .contestresult-table-detail-records,
   .contestresult-table-detail-records.deploy {
@@ -474,5 +587,9 @@
   .contestresult-picker-event-item {
     width: 48px;
     height: 48px;
+  }
+
+  .contestresult-puzzle-chart {
+    width: 100%;
   }
 }
