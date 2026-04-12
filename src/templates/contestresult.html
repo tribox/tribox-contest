@@ -27,11 +27,6 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
     basejs.print(firebaseapp_contest, firebaseapp_contest_apikey,
     firebaseapp_contest_senderid, firebaseapp_wca) ]]
 
-    <style>
-      h4 {
-        margin-top: 1em;
-      }
-    </style>
     <link
       rel="stylesheet"
       media="screen"
@@ -91,7 +86,7 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                       ><img src="/assets/images/icons/chevron_right_arrow.png" class="contestresult-picker-season-arrow-flip" width="32" height="32" alt="前へ" /></a>
                       <span ng-if="!prevSeason"
                       ><img src="/assets/images/icons/chevron_right_gray.png" class="contestresult-picker-season-arrow-flip" width="32" height="32" alt="前へ" /></span>
-                      <span class="contestresult-picker-season-label">{{ currentSeasonLabel }}</span>
+                      <span class="contestresult-picker-season-label contestresult-gradient-border">{{ currentSeasonLabel }}</span>
                       <a
                         class="contestresult-picker-season-arrow"
                         ng-if="nextSeason"
@@ -104,7 +99,7 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                       <span ng-repeat="c in contestsList">
                         <a
                           class="contestresult-picker-contest-item"
-                          ng-class="{'active': (c.id | removeHead) == '[[ cid ]]'}"
+                          ng-class="{'active contestresult-gradient-border': (c.id | removeHead) == '[[ cid ]]'}"
                           ng-if="!c.disabled"
                           href="/contest/result/{{ c.id | removeHead }}/[[ eid ]]"
                         >{{ c.number }}</a>
@@ -122,17 +117,17 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                       class="contestresult-picker-event-item"
                       href="/contest/[[ cid ]]"
                     >
-                      <span class="contestresult-picker-event-icon">🏆</span>
                       <span class="contestresult-picker-event-label">TOP</span>
+                      <img class="contestresult-picker-event-icon" src="/assets/images/icons/event_top.png" width="24" height="24" alt="TOP" />
                     </a>
                     <a
                       class="contestresult-picker-event-item"
-                      ng-class="{'active': (e | removeHead) == '[[ eid ]]'}"
+                      ng-class="{'active contestresult-gradient-border': (e | removeHead) == '[[ eid ]]'}"
                       ng-repeat="e in contestData.events"
                       href="/contest/result/[[ cid ]]/{{ e | removeHead }}"
                     >
-                      <span class="cubing-icon {{ e }} contestresult-picker-event-icon"></span>
-                      <span class="contestresult-picker-event-label">{{ events[e].name }}</span>
+                      <span class="contestresult-picker-event-label">{{ eventShortNames[e] || events[e].name }}</span>
+                      <img class="contestresult-picker-event-icon" ng-src="/assets/images/icons/{{ eventIcons[e] }}" width="24" height="24" alt="{{ eventShortNames[e] }}" />
                     </a>
                   </div>
                 </div>
@@ -301,7 +296,6 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                             </span>{{ r.user.displayname }}
                           </a>
                         </div>
-
                       </td>
                       <td class="contestresult-table-cell-padded contestresult-table-col-puzzle">
                         <div class="contestresult-table-puzzle">
@@ -369,6 +363,19 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
             $scope.currentContest = "[[ cid ]]";
             $scope.currentEvent = "[[ eid ]]";
             $scope.contestsList = null;
+            $scope.eventShortNames = {
+              e333: "3x3", e222: "2x2", e444: "4x4", e555: "5x5",
+              e666: "6x6", e777: "7x7", e333bf: "BF", e333fm: "FMC",
+              e333oh: "OH", eminx: "Mega", epyram: "Pyra", eskewb: "Skewb",
+              esq1: "SQ-1", eclock: "Clock"
+            };
+            $scope.eventIcons = {
+              e333: "event_3x3.png", e222: "event_2x2.png", e444: "event_4x4.png",
+              e555: "event_5x5.png", e666: "event_6x6.png", e777: "event_7x7.png",
+              e333bf: "event_bld.png", e333fm: "event_fmc.png", e333oh: "event_oh.png",
+              eminx: "event_megaminx.png", epyram: "event_pyraminx.png",
+              eskewb: "event_skewb.png", esq1: "event_sq1.png", eclock: "event_clock.png"
+            };
 
             // 今シーズンの開催済みコンテストリスト
             // とりあえず contests テーブルから引っ張ってくる
