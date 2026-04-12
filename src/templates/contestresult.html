@@ -84,7 +84,7 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                         ng-if="prevSeason"
                         href="/contest/result/{{ prevSeason.firstCid }}/[[ eid ]]"
                       ><img src="/assets/images/icons/chevron_right_arrow.png" class="contestresult-picker-season-arrow-flip" width="32" height="32" alt="前へ" /></a>
-                      <span ng-if="!prevSeason"
+                      <span class="contestresult-picker-season-arrow" ng-if="!prevSeason"
                       ><img src="/assets/images/icons/chevron_right_gray.png" class="contestresult-picker-season-arrow-flip" width="32" height="32" alt="前へ" /></span>
                       <span class="contestresult-picker-season-label contestresult-gradient-border">{{ currentSeasonLabel }}</span>
                       <a
@@ -92,7 +92,7 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                         ng-if="nextSeason"
                         href="/contest/result/{{ nextSeason.firstCid }}/[[ eid ]]"
                       ><img src="/assets/images/icons/chevron_right_arrow.png" width="32" height="32" alt="次へ" /></a>
-                      <span ng-if="!nextSeason"
+                      <span class="contestresult-picker-season-arrow" ng-if="!nextSeason"
                       ><img src="/assets/images/icons/chevron_right_gray.png" width="32" height="32" alt="次へ" /></span>
                     </div>
                     <div class="contestresult-picker-contest">

@@ -355,6 +355,44 @@
   display: none;
 }
 
+/* PC */
+@media screen and (min-width: 769px) {
+  .contestresult-picker-season-label,
+  .contestresult-picker-contest-item {
+    font-size: 16px;
+  }
+
+  .contestresult-picker-event-label {
+    font-size: 14px;
+  }
+
+  .contestresult-picker-event-item {
+    gap: 4px;
+  }
+
+  .contestresult-picker-season-arrow {
+    height: 40px;
+  }
+
+  .contestresult-picker-season-arrow img {
+    width: 40px;
+    height: 40px;
+  }
+
+  .contestresult-info-title {
+    font-size: 24px;
+  }
+
+  .contestresult-picker-season-label {
+    height: 40px;
+  }
+
+  .contestresult-picker-contest-item {
+    width: 40px;
+    height: 40px;
+  }
+}
+
 /* タブレット */
 @media screen and (max-width: 1024px) {
   .contestresult-table-detail-records.deploy {
