@@ -353,14 +353,22 @@ a.contestresult-puzzle-name:hover {
   padding-left: 4px;
 }
 
-.contestresult-table-link,
-.contestresult-table-link:hover {
+.contestresult-table-link {
   color: #0088CC;
+  font-weight: bold;
 }
 
-.contestresult-table-link-default-color,
+.contestresult-table-link:hover {
+  color: #006699;
+}
+
+.contestresult-table-link-default-color {
+  color: #0088CC;
+  font-weight: bold;
+}
+
 .contestresult-table-link-default-color:hover {
-  color: #808080;
+  color: #006699;
 }
 
 .contestresult-table-deploy-button {
