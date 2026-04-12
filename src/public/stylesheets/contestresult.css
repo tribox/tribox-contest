@@ -286,11 +286,47 @@ a.contestresult-puzzle-name:hover {
   flex-shrink: 0;
 }
 
-/* テーブル */
-.contestresult-info + h4 {
-  margin-top: 1em;
+/* スクランブル */
+.contestresult-scramble-section {
+  margin-top: 24px;
+  margin-bottom: 16px;
 }
 
+.contestresult-scramble-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: #808080;
+  margin-bottom: 8px;
+}
+
+.contestresult-scramble-table {
+  width: 100%;
+  color: #808080;
+}
+
+.contestresult-scramble-item {
+  height: 40px;
+}
+
+.contestresult-scramble-item:nth-child(odd) {
+  background-color: #f9f9f9;
+}
+
+.contestresult-scramble-number {
+  width: 32px;
+  font-weight: bold;
+  text-align: center;
+  vertical-align: middle;
+  color: #808080;
+}
+
+.contestresult-scramble-text {
+  font-size: 14px;
+  vertical-align: middle;
+  padding: 4px 8px;
+}
+
+/* テーブル */
 .contestresult-table {
   color: #808080;
   table-layout: fixed;

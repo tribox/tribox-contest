@@ -389,16 +389,20 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                   </tbody>
                 </table>
 
-                <h4>スクランブル</h4>
-
-                <table class="table table-striped">
-                  <tbody>
-                    <tr ng-repeat="s in scramblesData.e[[ eid ]]">
-                      <td>{{ $index + 1 }}</td>
-                      <td ng-bind-html="s"></td>
-                    </tr>
-                  </tbody>
-                </table>
+                <div class="contestresult-scramble-section">
+                  <div class="contestresult-scramble-title">スクランブル</div>
+                  <table class="contestresult-scramble-table">
+                    <tbody>
+                      <tr
+                        class="contestresult-scramble-item"
+                        ng-repeat="s in scramblesData.e[[ eid ]]"
+                      >
+                        <td class="contestresult-scramble-number">{{ $index + 1 }}</td>
+                        <td class="contestresult-scramble-text" ng-bind-html="s"></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
 
                 [#
                 <!--<p>usersecretData:</p>
