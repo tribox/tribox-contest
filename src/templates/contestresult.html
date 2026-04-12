@@ -82,75 +82,58 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                 ng-show="existsContest && existsEvent && countdown < 0 && (contestData.resultsStatus == 'public' || usersecretData.isAdmin)"
               >
                 <div class="contestresult-info">
-                  <div class="contestresult-info-title">{{ contestData.contestName }}</div>
-
-                  <p
-                    ng-if="contestData.videoBonusStatus && (countdown >= 0) && ('[[ eid ]]' == '333')"
-                    class="contestresult-info-bonus"
-                  >
-                    <i class="em em-tada"></i> <b>ビデオボーナス節</b>
-                    <i class="em em-tada"></i>
-                  </p>
-                  <p
-                    ng-if="(contestData.videoBonusStatus == 'checking') && (countdown < 0) && ('[[ eid ]]' == '333')"
-                    class="contestresult-info-bonus"
-                  >
-                    <i class="em em-tada"></i>
-                    <b>ビデオボーナス節（ビデオチェック中）</b>
-                    <i class="em em-tada"></i>
-                  </p>
-                  <p
-                    ng-if="(contestData.videoBonusStatus == 'done') && (countdown < 0) && ('[[ eid ]]' == '333')"
-                    class="contestresult-info-bonus"
-                  >
-                    <i class="em em-tada"></i>
-                    <b>ビデオボーナス節（ビデオチェック完了）</b>
-                    <i class="em em-tada"></i>
-                  </p>
-
-                  <div class="contestresult-info-meta">
-                    <div class="contestresult-info-meta-row">
-                      <i class="fa fa-calendar"></i>
-                      <b>{{ contestData.beginAt | toDate }}</b> ~ <b>{{ contestData.endAt | toDate }}</b>
+                  <div class="contestresult-picker-nav">
+                    <div class="contestresult-picker-season">
+                      <a
+                        class="contestresult-picker-season-arrow"
+                        ng-if="prevSeason"
+                        href="/contest/result/{{ prevSeason.firstCid }}/[[ eid ]]"
+                      ><img src="/assets/images/icons/chevron_right_arrow.png" class="contestresult-picker-season-arrow-flip" width="32" height="32" alt="前へ" /></a>
+                      <span ng-if="!prevSeason"
+                      ><img src="/assets/images/icons/chevron_right_gray.png" class="contestresult-picker-season-arrow-flip" width="32" height="32" alt="前へ" /></span>
+                      <span class="contestresult-picker-season-label">{{ currentSeasonLabel }}</span>
+                      <a
+                        class="contestresult-picker-season-arrow"
+                        ng-if="nextSeason"
+                        href="/contest/result/{{ nextSeason.firstCid }}/[[ eid ]]"
+                      ><img src="/assets/images/icons/chevron_right_arrow.png" width="32" height="32" alt="次へ" /></a>
+                      <span ng-if="!nextSeason"
+                      ><img src="/assets/images/icons/chevron_right_gray.png" width="32" height="32" alt="次へ" /></span>
                     </div>
-                    <div class="contestresult-info-meta-row">
-                      <span
-                        class="cubing-icon event-[[ eid ]]"
-                        style="vertical-align: baseline"
-                      ></span>
-                      {{ events.e[[ eid ]].name }}
-                    </div>
-                    <div class="contestresult-info-meta-row">
-                      計測方法: {{ events.e[[ eid ]].method | uppercaseHead }} of {{ events.e[[ eid ]].attempts }}
-                      / 参加人数: {{ resultsPersons.e[[ eid ]] }} 人
+                    <div class="contestresult-picker-contest">
+                      <span ng-repeat="c in contestsList">
+                        <a
+                          class="contestresult-picker-contest-item"
+                          ng-class="{'active': (c.id | removeHead) == '[[ cid ]]'}"
+                          ng-if="!c.disabled"
+                          href="/contest/result/{{ c.id | removeHead }}/[[ eid ]]"
+                        >{{ c.number }}</a>
+                        <span
+                          class="contestresult-picker-contest-item disabled"
+                          ng-if="c.disabled"
+                        >{{ c.number }}</span>
+                      </span>
                     </div>
                   </div>
+                  <div class="contestresult-info-title">{{ currentSeasonLabel }} 第{{ currentContestNumber }}節</div>
 
-                  <div class="contestresult-info-selectors">
-                    <select
-                      class="contestresult-info-select"
-                      ng-model="currentContest"
-                      ng-change="currentContestChange()"
+                  <div class="contestresult-picker-event">
+                    <a
+                      class="contestresult-picker-event-item"
+                      href="/contest/[[ cid ]]"
                     >
-                      <option
-                        ng-repeat="c in contestsList"
-                        value="{{ c.id | removeHead}}"
-                      >
-                        {{ c.shortName }}
-                      </option>
-                    </select>
-                    <select
-                      class="contestresult-info-select"
-                      ng-model="currentEvent"
-                      ng-change="currentEventChange()"
+                      <span class="contestresult-picker-event-icon">🏆</span>
+                      <span class="contestresult-picker-event-label">TOP</span>
+                    </a>
+                    <a
+                      class="contestresult-picker-event-item"
+                      ng-class="{'active': (e | removeHead) == '[[ eid ]]'}"
+                      ng-repeat="e in contestData.events"
+                      href="/contest/result/[[ cid ]]/{{ e | removeHead }}"
                     >
-                      <option
-                        ng-repeat="e in contestData.events"
-                        value="{{ e | removeHead}}"
-                      >
-                        {{ events[e].name }}
-                      </option>
-                    </select>
+                      <span class="cubing-icon {{ e }} contestresult-picker-event-icon"></span>
+                      <span class="contestresult-picker-event-label">{{ events[e].name }}</span>
+                    </a>
                   </div>
                 </div>
 
@@ -310,7 +293,7 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                             height="16"
                           />
                           <a
-                            class="contestresult-table-line-clamp contestresult-table-link "
+                            class="contestresult-table-line-clamp contestresult-table-link"
                             href="/user/{{ r.user.username }}"
                           >
                             <span ng-if="r.user.organization">
@@ -395,30 +378,41 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                 .once("value", function (snapInProgress) {
                   var lastContest = snapInProgress.val().lastContest;
                   var contests = snapContests.val();
+                  var currentSeason = "[[ cid ]]".slice(0, 5);
                   var _contestsList = [];
+                  var seasonsMap = {};
                   Object.keys(snapContests.val()).forEach(function (contestId) {
+                    var cid = contestId.replace(/^c/, "");
+                    var season = cid.slice(0, 5);
                     if (contestId <= lastContest) {
+                      if (!seasonsMap[season]) {
+                        var year = season.slice(0, 4);
+                        var half = season.charAt(4) === "1" ? "前半期" : "後半期";
+                        seasonsMap[season] = { id: season, label: year + " " + half, firstCid: cid };
+                      }
+                    }
+                    if (season === currentSeason) {
                       _contestsList.push({
                         id: contestId,
-                        name: contests[contestId].contestName,
-                        shortName: contests[contestId].contestName.slice(15),
+                        number: parseInt(cid.slice(5), 10),
+                        disabled: contestId > lastContest,
                       });
                     }
                   });
+                  var sortedSeasons = Object.keys(seasonsMap).sort().map(function(k) { return seasonsMap[k]; });
+                  var currentIndex = -1;
+                  for (var i = 0; i < sortedSeasons.length; i++) {
+                    if (sortedSeasons[i].id === currentSeason) { currentIndex = i; break; }
+                  }
+                  $scope.currentSeasonLabel = currentIndex >= 0 ? sortedSeasons[currentIndex].label : "";
+                  $scope.prevSeason = currentIndex > 0 ? sortedSeasons[currentIndex - 1] : null;
+                  $scope.nextSeason = currentIndex < sortedSeasons.length - 1 ? sortedSeasons[currentIndex + 1] : null;
+                  $scope.currentSeason = currentSeason;
+                  $scope.currentContestNumber = parseInt("[[ cid ]]".slice(5), 10);
                   $scope.contestsList = _contestsList;
                   $scope.contestResultLoaded = true;
                 });
             });
-
-            $scope.currentContestChange = function () {
-              location.href =
-                "/contest/result/" + $scope.currentContest + "/[[ eid ]]";
-            };
-
-            $scope.currentEventChange = function () {
-              location.href =
-                "/contest/result/[[ cid ]]/" + $scope.currentEvent;
-            };
 
             [% if eid == "333fm" %]
             var showDetailList = [];
