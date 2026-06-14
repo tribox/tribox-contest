@@ -16,6 +16,11 @@ cid %]
     import "components/contestjs.html" as contestjs %] [[
     contestjs.print(cid=cid, fetch_scrambles=false, fetch_results_top3=true,
     fetch_results_all=false)]]
+    <link
+      rel="stylesheet"
+      media="screen"
+      href="[[ url_for('static', filename='stylesheets/contestresult.css') ]]"
+    />
   </head>
   <body>
     <div class="container">
@@ -83,7 +88,12 @@ cid %]
               </div>
 
               <div ng-show="existsContest">
-                <h2>{{ contestData.contestName }}</h2>
+                [% import "components/contestpicker.html" as contestpicker %]
+                [[ contestpicker.print(cid=cid) ]]
+
+                <div class="contestresult-divider">
+                  <img src="/assets/images/icons/trophy.png" class="contestresult-divider-icon" width="36" height="36" alt="trophy" />
+                </div>
 
                 <p ng-if="contestData.videoBonusStatus && (countdown >= 0)">
                   <i class="em em-tada"></i><i class="em em-tada"></i
@@ -114,15 +124,7 @@ cid %]
                   <i class="em em-tada"></i>
                 </p>
 
-                <p>
-                  <i class="fa fa-calendar"></i> 開催期間:
-                  <b>{{ contestData.beginAt | toDate }}</b> ~
-                  <b>{{ contestData.endAt | toDate }}</b>
-                </p>
                 <p ng-if="countdown == 0">現在開催中のコンテストです。</p>
-                <p class="color-error" ng-if="countdown < 0">
-                  このコンテストは終了しました。
-                </p>
                 <p class="color-error" ng-if="countdown > 0">
                   このコンテストはまだ開始されていません。
                 </p>
@@ -178,22 +180,6 @@ cid %]
                   <hr />
                 </div>
 
-                <p ng-show="countdown < 0">
-                  別のコンテスト結果を見る<br />
-                  <select
-                    class="form-control"
-                    style="margin-bottom: 5px"
-                    ng-model="currentContest"
-                    ng-change="currentContestChange()"
-                  >
-                    <option
-                      ng-repeat="c in contestsList"
-                      value="{{ c.id | removeHead}}"
-                    >
-                      {{ c.shortName }}
-                    </option>
-                  </select>
-                </p>
 
                 <table
                   class="table table-bordered tribox-contest"
@@ -270,124 +256,69 @@ cid %]
                 <div
                   ng-if="(countdown < 0) && (contestData.resultsStatus == 'public' || usersecretData.isAdmin)"
                 >
-                  <div ng-repeat="e in contestData.events">
-                    <h3>
-                      <span
-                        class="cubing-icon event-{{ e | removeHead }}"
-                        style="vertical-align: baseline"
-                      ></span>
-                      {{ events[e].name }}
-                    </h3>
-                    <p>
-                      計測方法: {{ events[e].method | uppercaseHead }} of {{
-                      events[e].attempts }}<br />
-                      参加人数: {{ resultsPersons[e] }} 人
-                    </p>
-                    <table class="table table-bordered result tribox-contest">
-                      <thead>
-                        <tr>
-                          <th><i class="fa fa-hashtag"></i></th>
-                          <th>SP</th>
-                          <th>名前</th>
-                          <th class="mb-hide">所属</th>
-                          <th>記録</th>
-                          <th class="mb-hide"></th>
-                          <th>パズル</th>
-                        </tr>
-                      </thead>
+                  <div class="contest-event-card" ng-repeat="e in contestData.events">
+                    <a class="contest-event-card-header" href="/contest/result/[[ cid ]]/{{ e | removeHead }}">
+                      <img class="contest-event-card-icon" ng-src="/assets/images/icons/{{ eventIcons[e] }}" width="24" height="24" alt="{{ eventShortNames[e] }}" />
+                      <span class="contest-event-card-title">{{ eventFullNames[e] || events[e].name }}</span>
+                      <span class="contest-event-card-right">
+                        <img src="/assets/images/icons/people.png" width="24" height="24" alt="参加者" />
+                        <span class="contest-event-card-participants">{{ resultsPersons[e] }}</span>
+                      </span>
+                    </a>
+                    <table class="contestresult-table">
                       <tbody>
                         <tr
-                          id="{{ e }}-{{ $index }}"
+                          class="contestresult-table-body-item"
                           ng-repeat="r in resultsTop3[e]"
                         >
-                          <td>{{ r.place }}</td>
+                          <td class="contestresult-table-text-align-end" style="width:40px">{{ r.place }}位</td>
+                          <td class="contestresult-table-text-align-end" style="width:80px">{{ r.resultF }}</td>
                           <td>
-                            <span
-                              ng-if="(r.seasonPoint || r.seasonPointVideoBonus) && (r.seasonPoint + r.seasonPointVideoBonus) > 0"
-                              >{{ r.seasonPoint + r.seasonPointVideoBonus
-                              }}</span
-                            >
+                            <div class="contestresult-table-name">
+                              <img
+                                class="contest-event-card-flag"
+                                src="https://flagcdn.com/{{ r.user.iso2.toLowerCase() }}.svg"
+                                ng-show="r.user.iso2"
+                                height="16"
+                              />
+                              <span class="contest-event-card-flag-placeholder" ng-hide="r.user.iso2"></span>
+                              <a
+                                class="contestresult-table-line-clamp contestresult-table-link"
+                                href="/user/{{ r.user.username }}"
+                              >
+                                {{ r.user.displayname }}<span ng-if="r.user.organization"> / {{ r.user.organization }}</span>
+                              </a>
+                            </div>
                           </td>
-                          <td>
-                            <img
-                              src="/assets/flags/flags-iso/shiny/24/{{ r.user.iso2 }}.png"
-                              height="24"
-                              style="vertical-align: middle"
-                              ng-show="r.user.iso2"
-                            />
-                            <a href="/user/{{ r.user.username }}"
-                              >{{ r.user.displayname }}</a
-                            >
-                          </td>
-                          <td class="mb-hide ellipsis">
-                            {{ r.user.organization }}
-                          </td>
-                          <td class="mb-hide"><b>{{ r.resultF }}</b></td>
-                          <td class="tb-hide pc-hide">
-                            <a
-                              class="cursor-pointer"
-                              ng-click="showDetail(e, $index)"
-                              ><b style="color: rgb(85, 85, 85)"
-                                >{{ r.resultF }}</b
-                              ></a
-                            >
-                          </td>
-                          <td
-                            class="mb-hide"
-                            id="{{ e }}-{{ $index }}-show"
-                            ng-if="e != 'e333fm'"
-                          >
-                            <a
-                              class="cursor-pointer"
-                              ng-click="showDetail(e, $index)"
-                              >詳細</a
-                            >
-                          </td>
-                          <td
-                            class="mb-hide"
-                            id="{{ e }}-{{ $index }}-show"
-                            ng-if="e == 'e333fm'"
-                          >
-                            <a
-                              class="cursor-pointer"
-                              ng-click="showDetail(e, $index)"
-                              >解答</a
-                            >
-                          </td>
-                          <td ng-show="r.puzzle.type == 'database'">
-                            <a
-                              href="https://store.tribox.com/products/detail.php?product_id={{ r.puzzle.product }}"
-                              target="_blank"
-                              >{{ r.puzzleF }}</a
-                            >
-                          </td>
-                          <td
-                            ng-show="r.puzzle.type == 'nodatabase' || r.puzzle.type == 'unknown'"
-                          >
-                            {{ r.puzzleF }}
+                          <td class="contestresult-table-col-puzzle">
+                            <div class="contestresult-table-puzzle">
+                              <a
+                                ng-if="r.puzzle.type == 'database'"
+                                href="https://store.tribox.com/products/detail.php?product_id={{ r.puzzle.product }}"
+                                target="_blank"
+                              ><img
+                                src="https://store.tribox.com/user_data/img/category/{{ r.puzzle.brand }}.png"
+                                ng-show="r.puzzle.brand"
+                                height="24"
+                              /></a>
+                              <img
+                                ng-if="r.puzzle.type != 'database'"
+                                src="https://store.tribox.com/user_data/img/category/{{ r.puzzle.brand }}.png"
+                                ng-show="r.puzzle.brand"
+                                height="24"
+                              />
+                              <a
+                                class="contestresult-table-line-clamp contestresult-table-link-default-color contestresult-table-hide-mobile"
+                                ng-if="r.puzzle.type == 'database'"
+                                href="https://store.tribox.com/products/detail.php?product_id={{ r.puzzle.product }}"
+                                target="_blank"
+                              >{{ r.puzzleF }}</a>
+                              <span class="contestresult-table-hide-mobile" ng-if="r.puzzle.type != 'database'">{{ r.puzzleF }}</span>
+                            </div>
                           </td>
                         </tr>
                       </tbody>
                     </table>
-                    <p>
-                      <a
-                        class="btn mb-hide"
-                        href="/contest/result/[[ cid ]]/{{ e | removeHead }}"
-                      >
-                        {{ events[e].name }} のすべての結果を見る
-                      </a>
-                      <a
-                        class="btn tb-hide pc-hide"
-                        href="/contest/result/[[ cid ]]/{{ e | removeHead }}"
-                        style="padding: 10px 15px"
-                      >
-                        {{ events[e].name }} すべての結果
-                      </a>
-                    </p>
-
-                    [# <!--<pre>{{ resultsData[e] | json }}</pre>--> #]
-
-                    [# <!--<pre>{{ resultsTop3[e] | json }}</pre>--> #]
                   </div>
                 </div>
 
@@ -417,6 +348,8 @@ cid %]
 
       [% include "components/bodyfooter.html" %]
 
+      [% import "components/contestpickerjs.html" as contestpickerjs %]
+      [[ contestpickerjs.print(cid=cid) ]]
       <script>
         app.controller("ContestIndexCtrl", [
           "$scope",
@@ -431,8 +364,8 @@ cid %]
 
               $scope.contestIndexLoaded = true;
 
-              $scope.currentContest = "[[ cid ]]";
-              $scope.contestsList = null;
+              ContestPicker.initScope($scope);
+              ContestPicker.loadSeasons($scope, contestRef, "[[ cid ]]");
 
               // Read personal results
               if (authData) {
@@ -604,38 +537,6 @@ cid %]
                 }
               }
 
-              // 今シーズンの開催済みコンテストリスト
-              // とりあえず contests テーブルから引っ張ってくる
-              contestRef
-                .child("contests")
-                .once("value", function (snapContests) {
-                  var contests = snapContests.val();
-                  contestRef
-                    .child("inProgress")
-                    .once("value", function (snapInProgress) {
-                      var lastContest = snapInProgress.val().lastContest;
-                      var _contestsList = [];
-                      Object.keys(snapContests.val()).forEach(function (
-                        contestId
-                      ) {
-                        if (contestId <= lastContest) {
-                          _contestsList.push({
-                            id: contestId,
-                            name: contests[contestId].contestName,
-                            shortName:
-                              contests[contestId].contestName.slice(15),
-                          });
-                        }
-                      });
-                      $timeout(function () {
-                        $scope.contestsList = _contestsList;
-                      });
-                    });
-                });
-
-              $scope.currentContestChange = function () {
-                location.href = "/contest/" + $scope.currentContest;
-              };
 
               var showDetailList = [];
               $scope.showDetail = function (eid, index) {

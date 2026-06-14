@@ -1,0 +1,77 @@
+[% macro print(cid, eid='') -%]
+<script>
+  (function() {
+    var eventShortNames = {
+      e333: "3x3", e222: "2x2", e444: "4x4", e555: "5x5",
+      e666: "6x6", e777: "7x7", e333bf: "BF", e333fm: "FMC",
+      e333oh: "OH", eminx: "Mega", epyram: "Pyra", eskewb: "Skewb",
+      esq1: "SQ-1", eclock: "Clock"
+    };
+    var eventFullNames = {
+      e333: "3x3x3", e222: "2x2x2", e444: "4x4x4", e555: "5x5x5",
+      e666: "6x6x6", e777: "7x7x7", e333bf: "3\u00d73\u00d73 目隠し", e333fm: "3\u00d73\u00d73 最少手数",
+      e333oh: "3\u00d73\u00d73 片手", eminx: "Megaminx", epyram: "Pyraminx",
+      eskewb: "Skewb", esq1: "SQ-1", eclock: "Clock"
+    };
+    var eventIcons = {
+      e333: "event_3x3.png", e222: "event_2x2.png", e444: "event_4x4.png",
+      e555: "event_5x5.png", e666: "event_6x6.png", e777: "event_7x7.png",
+      e333bf: "event_bld.png", e333fm: "event_fmc.png", e333oh: "event_oh.png",
+      eminx: "event_megaminx.png", epyram: "event_pyraminx.png",
+      eskewb: "event_skewb.png", esq1: "event_sq1.png", eclock: "event_clock.png"
+    };
+
+    window.ContestPicker = {
+      eventShortNames: eventShortNames,
+      eventFullNames: eventFullNames,
+      eventIcons: eventIcons,
+      initScope: function($scope) {
+        $scope.eventShortNames = eventShortNames;
+        $scope.eventFullNames = eventFullNames;
+        $scope.eventIcons = eventIcons;
+      },
+      loadSeasons: function($scope, contestRef, cid, callback) {
+        var currentSeason = cid.slice(0, 5);
+        contestRef.child("contests").once("value", function(snapContests) {
+          contestRef.child("inProgress").once("value", function(snapInProgress) {
+            var lastContest = snapInProgress.val().lastContest;
+            var contests = snapContests.val();
+            var _contestsList = [];
+            var seasonsMap = {};
+            Object.keys(contests).forEach(function(contestId) {
+              var cidStr = contestId.replace(/^c/, "");
+              var season = cidStr.slice(0, 5);
+              if (contestId <= lastContest) {
+                if (!seasonsMap[season]) {
+                  var year = season.slice(0, 4);
+                  var half = season.charAt(4) === "1" ? "前半期" : "後半期";
+                  seasonsMap[season] = { id: season, label: year + " " + half, firstCid: cidStr };
+                }
+              }
+              if (season === currentSeason) {
+                _contestsList.push({
+                  id: contestId,
+                  number: parseInt(cidStr.slice(5), 10),
+                  disabled: contestId > lastContest,
+                });
+              }
+            });
+            var sortedSeasons = Object.keys(seasonsMap).sort().map(function(k) { return seasonsMap[k]; });
+            var currentIndex = -1;
+            for (var i = 0; i < sortedSeasons.length; i++) {
+              if (sortedSeasons[i].id === currentSeason) { currentIndex = i; break; }
+            }
+            $scope.currentSeasonLabel = currentIndex >= 0 ? sortedSeasons[currentIndex].label : "";
+            $scope.prevSeason = currentIndex > 0 ? sortedSeasons[currentIndex - 1] : null;
+            $scope.nextSeason = currentIndex < sortedSeasons.length - 1 ? sortedSeasons[currentIndex + 1] : null;
+            $scope.currentSeason = currentSeason;
+            $scope.currentContestNumber = parseInt(cid.slice(5), 10);
+            $scope.contestsList = _contestsList;
+            if (callback) callback();
+          });
+        });
+      }
+    };
+  })();
+</script>
+[%- endmacro %]
