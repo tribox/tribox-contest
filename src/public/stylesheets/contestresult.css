@@ -610,13 +610,20 @@ a.contestresult-puzzle-name:hover {
     height: 40px;
   }
 
+  .contestresult-puzzle-chart {
+    display: none;
+  }
+
   .contestresult-puzzle-color-wrapper {
-    width: 16px;
+    width: 100px;
     height: 16px;
+    display: flex;
+    justify-content: flex-end;
   }
 
   .contestresult-puzzle-color {
-    width: 100% !important;
+    border-radius: 4px;
+    min-width: 4px;
   }
 
   .contestresult-info-title {
