@@ -465,13 +465,11 @@ fetch_results_all=False) -%]
                               });
                               // 上位5パズル以外はその他にする
                               var _resultsPuzzlesAllSummary = [];
-                              var jsdataall = [];
                               var countOthersAll = 0;
                               _resultsPuzzlesAll.forEach(function(puzzleObj, index) {
                                   if (index < 5) {
                                       puzzleObj.percentage = Math.round(puzzleObj.count / _resultsPuzzlesAllSum * 100);
                                       _resultsPuzzlesAllSummary.push(puzzleObj);
-                                      jsdataall.push([puzzleObj.productName, puzzleObj.count]);
                                   } else {
                                       countOthersAll += puzzleObj.count;
                                   }
@@ -483,7 +481,6 @@ fetch_results_all=False) -%]
                                       'count': countOthersAll,
                                       'percentage': Math.round(countOthersAll / _resultsPuzzlesAllSum * 100)
                                   });
-                                  jsdataall.push(['その他', countOthersAll]);
                               }
                               $scope.resultsPuzzlesAll['e[[ eid ]]'] = _resultsPuzzlesAllSummary;
 
@@ -502,13 +499,11 @@ fetch_results_all=False) -%]
                               });
                               // 上位5パズル以外はその他にする
                               var _resultsPuzzlesSummary = [];
-                              var jsdata = [];
                               var countOthers = 0;
                               _resultsPuzzles.forEach(function(puzzleObj, index) {
                                   if (index < 5) {
                                       puzzleObj.percentage = Math.round(puzzleObj.count / _resultsPuzzlesSum * 100);
                                       _resultsPuzzlesSummary.push(puzzleObj);
-                                      jsdata.push([puzzleObj.productName, puzzleObj.count]);
                                   } else {
                                       countOthers += puzzleObj.count;
                                   }
@@ -520,12 +515,8 @@ fetch_results_all=False) -%]
                                       'count': countOthers,
                                       'percentage': Math.round(countOthers / _resultsPuzzlesSum * 100)
                                   });
-                                  jsdata.push(['その他', countOthers]);
                               }
                               $scope.resultsPuzzles['e[[ eid ]]'] = _resultsPuzzlesSummary;
-
-                              // 円グラフ描画
-                              drawChart(jsdataall, jsdata);
 
                           });
                       });

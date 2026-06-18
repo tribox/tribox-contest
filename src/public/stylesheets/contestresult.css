@@ -210,16 +210,6 @@
   box-sizing: content-box;
 }
 
-/* 円グラフツールチップ */
-.contestresult-puzzle-chart .c3-tooltip {
-  white-space: nowrap;
-  font-size: 12px;
-}
-
-.contestresult-puzzle-chart .c3-tooltip td {
-  padding: 4px 8px;
-}
-
 .contestresult-puzzle-section {
   margin-bottom: 16px;
 }
@@ -244,14 +234,6 @@
   min-width: 0;
 }
 
-.contestresult-puzzle-chart {
-  width: 280px;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .contestresult-puzzle-item {
   display: flex;
   align-items: center;
@@ -260,16 +242,18 @@
 }
 
 .contestresult-puzzle-color-wrapper {
-  width: 16px;
+  width: 100px;
   height: 16px;
   flex-shrink: 0;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .contestresult-puzzle-color {
   display: block;
-  width: 100%;
   height: 100%;
-  border-radius: 2px;
+  border-radius: 4px;
+  min-width: 4px;
 }
 
 .contestresult-puzzle-brand,
@@ -610,15 +594,6 @@ a.contestresult-puzzle-name:hover {
     height: 40px;
   }
 
-  .contestresult-puzzle-color-wrapper {
-    width: 16px;
-    height: 16px;
-  }
-
-  .contestresult-puzzle-color {
-    width: 100% !important;
-  }
-
   .contestresult-info-title {
     font-size: 24px;
   }
@@ -718,23 +693,6 @@ a.contestresult-puzzle-name:hover {
   .contestresult-picker-event-item {
     width: 48px;
     height: 48px;
-  }
-
-  .contestresult-puzzle-chart {
-    display: none;
-  }
-
-
-  .contestresult-puzzle-color-wrapper {
-    width: 100px;
-    height: 16px;
-    display: flex;
-    justify-content: flex-end;
-  }
-
-  .contestresult-puzzle-color {
-    border-radius: 4px;
-    min-width: 4px;
   }
 
   .contestresult-puzzle-name,
