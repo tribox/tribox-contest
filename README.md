@@ -86,6 +86,10 @@ docker compose up -d --build
 ログを確認する:
 ```bash
 docker compose logs -f
+
+# appのみ、schedulerのみ
+docker compose logs -f app
+docker compose logs -f scheduler
 ```
 
 起動したDockerコンテナにログインする:
