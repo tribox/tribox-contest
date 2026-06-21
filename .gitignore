@@ -210,3 +210,6 @@ target
 # SSL auth file
 fileauth.txt
 fileauth_*.txt
+
+# ローカル開発用の静的 products.js (本番は /js/products.js で動的生成)
+/src/javascripts/products.js

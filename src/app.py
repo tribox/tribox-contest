@@ -4,7 +4,7 @@ import re
 import secrets
 import subprocess
 
-from flask import Flask, make_response, render_template, request
+from flask import Flask, make_response, render_template, request, send_from_directory
 
 from src.models.verifying import Verifying
 from src.models.customer import Customer
@@ -654,6 +654,13 @@ def demo_timer():
 ########################################
 @app.route("/js/products.js")
 def products_js():
+    # ローカル開発などで Store DB に接続できない場合は、静的ファイルにフォールバックする。
+    # src/javascripts/products.js を配置しておくとそれを配信する (gitignore 対象)。
+    if not os.environ.get("MYSQL_STORE_HOST"):
+        return send_from_directory(
+            os.path.join(app.root_path, "javascripts"), "products.js"
+        )
+
     # Store DB から商品情報を取得
     # TODO: これはとりあえずの実装なのでDBへのコネクションはコネクションプールを使うなどしたい
     with get_store_db_connection() as conn:
