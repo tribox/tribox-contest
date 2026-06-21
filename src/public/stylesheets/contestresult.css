@@ -212,10 +212,14 @@
   box-sizing: content-box;
 }
 
-.contestresult-puzzle-section {
+.contestresult-puzzle-sections {
   width: fit-content;
   max-width: 100%;
-  margin: 0 auto 16px;
+  margin: 0 auto;
+}
+
+.contestresult-puzzle-section {
+  margin-bottom: 16px;
 }
 
 .contestresult-puzzle-section-title {
