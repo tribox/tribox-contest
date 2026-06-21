@@ -8,6 +8,7 @@
     [[ header.print(title=title, description=contest_description, sitename=contest_name, contest_url=contest_url, page_url=page_url, event=event, google_verification=google_verification) ]]
 
     <link rel="stylesheet" media="screen" href="/assets/stylesheets/modal.css">
+    <link rel="stylesheet" media="screen" href="[[ url_for('static', filename='stylesheets/index.css') ]]">
 
 [% import "components/basejs.html" as basejs %]
 [[ basejs.print(firebaseapp_contest, firebaseapp_contest_apikey, firebaseapp_contest_senderid) ]]
@@ -17,7 +18,7 @@
     [% import "components/bodyheader.html" as bodyheader %]
     [[ bodyheader.print(title=title, contest_name=contest_name) ]]
 
-    <div ng-controller="AuthCtrl"><div ng-controller="IndexCtrl">
+    <div ng-controller="AuthCtrl"><div ng-controller="IndexCtrl" class="index-content">
 
         <div id="modal-overlay" class="hide" ng-show="justLogout || pleaseLogin"></div>
         <div id="modal-logout" class="modal-content hide" ng-show="justLogout || pleaseLogin">
@@ -42,14 +43,6 @@
     <div ng-show="authLoaded && indexLoaded">
 
         [% import "components/authinfo.html" as authinfo %]
-        [[ authinfo.print() ]]
-
-        <p>
-            トリコンは誰でも参加可能。毎週開催の "お得な" ネットコンテストです。<br>
-            <a href="[[ url_for('about') ]]">もっと詳しく</a>
-        </p>
-
-        <hr>
 
         <div ng-show="inProgressContest._dummy">
             <h4>triboxコンテストへようこそ!</h4>
@@ -104,90 +97,67 @@
             </p>
         </div>
 
-        <div ng-show="!(inProgressContest._dummy)">
+        <div ng-show="!(inProgressContest._dummy)" class="index-main">
 
-        <p><b>開催中のコンテスト</b></p>
-        <h4><a href="/contest/{{ inProgressContest.contestId }}">{{ inProgressContest.contestName }}</a></h4>
-
+        <div class="index-main-left">
         <p ng-if="inProgressContest.videoBonusStatus">
             <i class="em em-tada"></i><i class="em em-tada"></i><i class="em em-tada"></i> <b>ビデオボーナス節 (3×3×3のみ)</b> <i class="em em-tada"></i><i class="em em-tada"></i><i class="em em-tada"></i><br>
             要件を満たすビデオを提出いただいた方のうち上位5名に追加のSP（シーズンポイント）が与えられます！<br>
             ビデオボーナス節についての詳細は <b><a href="[[ url_for('regulations') ]]">参加方法とルール</a></b> をご覧ください。
         </p>
 
-        <p>
-            <i class="fa fa-calendar"></i> 開催期間: <b>{{ inProgressContest.beginAt | toDate }}</b> ~ <b>{{ inProgressContest.endAt | toDate }}</b><br>
-            <i class="fa fa-clock-o"></i> 残り時間: <span>{{ remainingTime }}</span>
+        <div class="index-contest-card">
+            <div class="index-contest-title">{{ inProgressContest.contestName.replace('tribox Contest ', '') }} 開催中！</div>
+            <div class="index-contest-deadline">{{ inProgressContest.endAt | toDeadline }} 締め切り</div>
+            <div class="index-event-list">
+                <div class="index-event-section" ng-repeat="group in eventGroups">
+                    <a
+                        class="index-event-row"
+                        ng-class="{'index-event-done': eventsDone[e] == true}"
+                        ng-repeat="e in group"
+                        ng-href="{{ authData ? ('/contest/' + inProgressContest.contestId + '/' + (e | removeHead) + ((eventsDone[e] && eventsDone[e] !== true) ? ('/' + eventsDone[e]) : '')) : '[[ url_for('login') ]]' }}"
+                    >
+                        <span class="index-event-check">
+                            <img ng-if="eventsDone[e] == true" class="index-event-check-icon" src="/assets/images/icons/check-circle.png" alt="参加済み" />
+                            <i ng-if="eventsDone[e] && eventsDone[e] !== true" class="fa fa-play-circle index-event-resume-icon"></i>
+                        </span>
+                        <span class="cubing-icon event-{{ e | removeHead }} index-event-icon"></span>
+                        <span class="index-event-name">{{ events[e].name }}</span>
+                        <span class="index-event-format" ng-class="e == 'e333bf' ? 'index-format-average' : ('index-format-' + events[e].method + (events[e].method == 'best' ? events[e].attempts : ''))">{{ e == 'e333bf' ? 'Avg. of 5' : ({'average':'Avg.','mean':'Mean','best':'Best'}[events[e].method] + ' of ' + events[e].attempts) }}</span>
+                        <span class="index-event-count"><img class="index-event-count-icon" src="/assets/images/icons/users.png" alt="" /> {{ participants[e] }}</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+        </div>
+
+        <div class="index-main-right">
+        <div class="index-main-head">
+        [[ authinfo.print() ]]
+
+        <p class="index-lead">
+            トリコンは誰でも参加可能。毎週開催の "お得な" ネットコンテストです。<br>
+            <a href="[[ url_for('about') ]]">もっと詳しく</a>
         </p>
+        </div>
 
-        <table class="table table-bordered tribox-contest">
-            <thead>
-                <tr>
-                    <th>競技種目</th>
-                    <th>計測フォーマット</th>
-                    <th>参加</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr ng-repeat="e in inProgressContest.events">
-                    <td>
-                        <span class="cubing-icon event-{{ e | removeHead }}" style="vertical-align: baseline; font-size: 18px;"></span>
-                        {{ events[e].name }}
-                    </td>
-                    <td>{{ events[e].method | uppercaseHead }} of {{ events[e].attempts }}</td>
-                    <td>
-                        <a class="font-bold" href="/contest/{{ inProgressContest.contestId }}/{{ e | removeHead }}" ng-if="authData != null && eventsDone[e] == false"><i class="fa fa-play-circle"></i> 参加する</a>
-                        <a class="font-bold color-error" href="/contest/{{ inProgressContest.contestId }}/{{ e | removeHead }}/timer" ng-if="authData != null && eventsDone[e] == 'timer'"><i class="fa fa-play-circle"></i> 再開する</a>
-                        <a class="font-bold color-error" href="/contest/{{ inProgressContest.contestId }}/{{ e | removeHead }}/form" ng-if="authData != null && eventsDone[e] == 'form'"><i class="fa fa-play-circle"></i> 再開する</a>
-                        <a class="font-bold color-error" href="/contest/{{ inProgressContest.contestId }}/{{ e | removeHead }}/solution" ng-if="authData != null && eventsDone[e] == 'solution'"><i class="fa fa-play-circle"></i> 再開する</a>
-                        <span style="color: #ccc;" ng-if="authData != null && eventsDone[e] == true"><i class="fa fa-check-circle"></i> 参加済みです</span>
-                        <a href="[[ url_for('login') ]]" ng-if="authData == null"><i class="fa fa-sign-in"></i> ログインして参加してください</a>
-                        <span>({{ participants[e] }}名参加済)</span>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="index-info-card">
+            <div class="index-info-title"><i class="fa fa-clock-o"></i> コンテストタイマー体験</div>
+            <p>
+                本番のコンテストで使用するコンテストタイマーを体験してみましょう。<br>
+                （※コンテストでは使い慣れたタイマーを使用してタイムを手入力して記録を送信することもできます。）
+            </p>
+            <a class="index-info-btn" href="[[ url_for('demo_timer') ]]">練習用コンテストタイマー</a>
+        </div>
 
-        <p>
-            コンテスト開始のアナウンスや結果発表、ニュースの告知はtwitterでも行います。<br>
-            ぜひ <a href="https://twitter.com/triboxContest" target="_blank">@triboxContest</a> をフォローしてください！
-        </p>
-
-        <p>
-            <a class="twitter-timeline" data-width="480" data-height="480" data-theme="light" href="https://twitter.com/triboxContest?ref_src=twsrc%5Etfw">Tweets by triboxContest</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-        </p>
-
-        <h5>コンテストタイマー体験</h5>
-        <p>
-            <a href="[[ url_for('demo_timer') ]]">練習用コンテストタイマー</a><br>
-            本番のコンテストで使用するコンテストタイマーを体験してみましょう。<br>
-            （※コンテストでは使い慣れたタイマーを使用してタイムを手入力して記録を送信することもできます。）
-        </p>
-
-        <hr>
-
-        <h5>過去のシーズンランキング</h5>
-        <ul>
-            <li><a href="/ranking/20252">2025 後半期</a></li>
-            <li><a href="/ranking/20251">2025 前半期</a></li>
-            <li><a href="/ranking/20242">2024 後半期</a></li>
-            <li><a href="/ranking/20241">2024 前半期</a></li>
-            <li><a href="/ranking/20232">2023 後半期</a></li>
-            <li><a href="/ranking/20231">2023 前半期</a></li>
-            <li><a href="/ranking/20222">2022 後半期</a></li>
-            <li><a href="/ranking/20221">2022 前半期</a></li>
-            <li><a href="/ranking/20212">2021 後半期</a></li>
-            <li><a href="/ranking/20211">2021 前半期</a></li>
-            <li><a href="/ranking/20202">2020 後半期</a></li>
-            <li><a href="/ranking/20201">2020 前半期</a></li>
-            <li><a href="/ranking/20192">2019 後半期</a></li>
-            <li><a href="/ranking/20191">2019 前半期</a></li>
-            <li><a href="/ranking/20182">2018 後半期</a></li>
-            <li><a href="/ranking/20181">2018 前半期</a></li>
-            <li><a href="/ranking/20172">2017 後半期</a></li>
-            <li><a href="/ranking/20171">2017 前半期</a></li>
-            <li><a href="/ranking/20162">2016 後半期</a></li>
-        </ul>
+        <div class="index-info-card">
+            <p>
+                コンテスト開始のアナウンスや結果発表、ニュースの告知は X でも行います。<br>
+                ぜひ <a href="https://twitter.com/triboxContest" target="_blank">@triboxContest</a> をフォローしてください！
+            </p>
+            <a class="twitter-timeline" data-width="480" data-height="480" data-theme="light" href="https://twitter.com/triboxContest?ref_src=twsrc%5Etfw">Posts by triboxContest</a> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+        </div>
+        </div>
 
         [# <!--<p>inProgressContest:</p>
         <pre>{{ inProgressContest | json }}</pre>
@@ -222,6 +192,21 @@ app.controller('IndexCtrl', ['$scope', '$timeout', '$interval', function($scope,
                     var participants = snapParticipants.val();
                     contestRef.child('contests').child(inProgress).once('value', function(snapContest) {
                         var inProgressContest = snapContest.val();
+
+                        // 種目を表示グループに分割 (7x7x7 と 3x3x3片手 の後で区切る)
+                        var eventGroups = [];
+                        if (inProgressContest && inProgressContest.events) {
+                            var groupBoundaries = ['e777', 'e333oh'];
+                            eventGroups = [ [] ];
+                            inProgressContest.events.forEach(function(e) {
+                                eventGroups[eventGroups.length - 1].push(e);
+                                if (groupBoundaries.indexOf(e) !== -1) {
+                                    eventGroups.push([]);
+                                }
+                            });
+                            eventGroups = eventGroups.filter(function(g) { return g.length > 0; });
+                        }
+
                         if (!(inProgressContest._dummy) && authData) {
                             inProgressContest.events.forEach(function(e) {
                                 contestRef.child('results').child(inProgress).child(e).child(authData.uid).once('value', function(snapResult) {
@@ -240,6 +225,7 @@ app.controller('IndexCtrl', ['$scope', '$timeout', '$interval', function($scope,
                                         $scope.events = events;
                                         $scope.inProgress = inProgress;
                                         $scope.inProgressContest = inProgressContest;
+                                        $scope.eventGroups = eventGroups;
                                         $scope.participants = participants;
                                         $scope.eventsDone[e] = _eventsDone;
                                         $scope.indexLoaded = true;
@@ -253,6 +239,7 @@ app.controller('IndexCtrl', ['$scope', '$timeout', '$interval', function($scope,
                                 $scope.events = events;
                                 $scope.inProgress = inProgress;
                                 $scope.inProgressContest = inProgressContest;
+                                $scope.eventGroups = eventGroups;
                                 $scope.participants = participants;
                                 $scope.indexLoaded = true;
                             });

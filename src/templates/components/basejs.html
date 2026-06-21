@@ -266,6 +266,17 @@
         return timestampToDateShort;
     }]);
 
+    var timestampToDeadline = function(timestamp) {
+        var weekDaysJa = ['日曜日', '月曜日', '火曜日', '水曜日', '木曜日', '金曜日', '土曜日'];
+        var d = new Date(timestamp);
+        var hour = d.getHours() % 12;
+        if (hour === 0) { hour = 12; }
+        return d.getFullYear() + '/' + (d.getMonth() + 1) + '/' + d.getDate() + ' ' + weekDaysJa[d.getDay()] + ' ' + hour + '時';
+    };
+    app.filter('toDeadline', [function() {
+        return timestampToDeadline;
+    }]);
+
     /**
      * Filter: removeHead
      */
