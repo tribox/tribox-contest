@@ -21,6 +21,17 @@
   margin-bottom: 24px;
 }
 
+.auth-desc {
+  font-size: 13px;
+  color: #808080;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+
+.auth-desc a {
+  color: #0088cc;
+}
+
 .auth-field {
   margin-bottom: 16px;
 }
