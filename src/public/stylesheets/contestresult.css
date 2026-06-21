@@ -346,16 +346,6 @@ a.contestresult-puzzle-name:hover {
   color: #808080;
 }
 
-.contest-event-card-flag,
-.contest-event-card-flag-placeholder {
-  margin-left: 8px;
-}
-
-.contest-event-card-flag-placeholder {
-  display: inline-block;
-  width: 24px;
-}
-
 
 /* スクランブル */
 .contestresult-scramble-section {
@@ -434,6 +424,19 @@ a.contestresult-puzzle-name:hover {
   align-items: center;
   gap: 4px;
   height: 48px;
+}
+
+/* 国旗は幅が国ごとに異なるため、固定幅の枠を確保して中央揃えにし、後続の名前位置がズレないようにする */
+.contestresult-table-flag {
+  flex: 0 0 32px;
+  width: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.contestresult-table-flag img {
+  max-width: 100%;
 }
 
 .contestresult-table-line-clamp {

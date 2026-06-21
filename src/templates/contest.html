@@ -275,13 +275,13 @@ cid %]
                           <td class="contestresult-table-text-align-end" style="width:80px">{{ r.resultF }}</td>
                           <td>
                             <div class="contestresult-table-name">
-                              <img
-                                class="contest-event-card-flag"
-                                src="https://flagcdn.com/{{ r.user.iso2.toLowerCase() }}.svg"
-                                ng-show="r.user.iso2"
-                                height="16"
-                              />
-                              <span class="contest-event-card-flag-placeholder" ng-hide="r.user.iso2"></span>
+                              <div class="contestresult-table-flag">
+                                <img
+                                  src="https://flagcdn.com/{{ r.user.iso2.toLowerCase() }}.svg"
+                                  ng-show="r.user.iso2"
+                                  height="16"
+                                />
+                              </div>
                               <a
                                 class="contestresult-table-line-clamp contestresult-table-link"
                                 href="/user/{{ r.user.username }}"
