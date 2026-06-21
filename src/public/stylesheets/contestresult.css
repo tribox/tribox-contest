@@ -574,6 +574,10 @@ a.contestresult-puzzle-name:hover {
   width: 96px;
 }
 
+.contestresult-table-col-moves {
+  width: 64px;
+}
+
 .contestresult-table-col-deploy {
   width: 32px;
 }

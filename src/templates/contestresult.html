@@ -142,6 +142,8 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                       <th class="contestresult-table-text-align-end contestresult-table-col-place">順位</th>
                       [% if eid != "333fm" %]
                       <th class="contestresult-table-text-align-end contestresult-table-col-avg">Avg. of 5</th>
+                      [% else %]
+                      <th class="contestresult-table-text-align-center contestresult-table-col-moves">手数</th>
                       [% endif %]
                       <th class="[% if eid == '333fm' %]contestresult-table-col-detail-body[% else %]contestresult-table-col-deploy[% endif %]">
                         [% if eid != "333fm" %]
@@ -187,9 +189,7 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                         </div>
                       </td>
                       <td class="contestresult-table-text-align-end">{{ r.place }}位</td>
-                      [% if eid != "333fm" %]
-                      <td class="contestresult-table-text-align-end contestresult-table-font-bold">{{ r.resultF }}</td>
-                      [% endif %]
+                      <td class="[% if eid == '333fm' %]contestresult-table-text-align-center[% else %]contestresult-table-text-align-end[% endif %] contestresult-table-font-bold">{{ r.resultF }}</td>
                       <td class="[% if eid == '333fm' %]contestresult-table-col-detail-body[% else %]contestresult-table-col-deploy-body[% endif %]">
                         [% if eid == "333fm" %]
                         <div class="contestresult-table-deploy-button-container">
