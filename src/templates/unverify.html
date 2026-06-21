@@ -115,9 +115,7 @@
       <div ng-controller="AuthCtrl">
         <div ng-controller="UnverifyCtrl">
           <div ng-hide="authLoaded && unverifyLoaded">
-            <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
-            <span class="sr-only">Loading...</span>
-            Loading...
+            <div class="cube-loader"><div class="cube-loader-grid"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="cube-loader-text">Loading...</div></div>
           </div>
           <div ng-show="authLoaded && unverifyLoaded">
             [% import "components/authinfo.html" as authinfo %] [[

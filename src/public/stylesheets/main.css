@@ -600,3 +600,54 @@ table.profile td {
   font-size: 0.8em;
   line-height: 1.2em;
 }
+
+/**
+ * Loading (Rubik's cube, 2D)
+ */
+.cube-loader {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  text-align: center;
+}
+
+.cube-loader-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 16px);
+  grid-template-rows: repeat(3, 16px);
+  gap: 4px;
+  margin: 0 auto;
+}
+
+.cube-loader-grid span {
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  background-image: linear-gradient(-15deg, #009678, #0096af);
+  background-size: 56px 56px;
+  opacity: 0.2;
+  animation: cube-loader-pulse 1.2s infinite ease-in-out;
+}
+
+.cube-loader-grid span:nth-child(1) { background-position: 0 0; animation-delay: 0s; }
+.cube-loader-grid span:nth-child(2) { background-position: -20px 0; animation-delay: 0.12s; }
+.cube-loader-grid span:nth-child(3) { background-position: -40px 0; animation-delay: 0.24s; }
+.cube-loader-grid span:nth-child(4) { background-position: 0 -20px; animation-delay: 0.12s; }
+.cube-loader-grid span:nth-child(5) { background-position: -20px -20px; animation-delay: 0.24s; }
+.cube-loader-grid span:nth-child(6) { background-position: -40px -20px; animation-delay: 0.36s; }
+.cube-loader-grid span:nth-child(7) { background-position: 0 -40px; animation-delay: 0.24s; }
+.cube-loader-grid span:nth-child(8) { background-position: -20px -40px; animation-delay: 0.36s; }
+.cube-loader-grid span:nth-child(9) { background-position: -40px -40px; animation-delay: 0.48s; }
+
+@keyframes cube-loader-pulse {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 1; }
+}
+
+.cube-loader-text {
+  margin-top: 12px;
+  color: #808080;
+  font-size: 14px;
+}
