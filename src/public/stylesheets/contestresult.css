@@ -477,6 +477,14 @@ a.contestresult-puzzle-name:hover {
   max-width: 100%;
 }
 
+.contestresult-lottery-crown {
+  height: 16px;
+  width: auto;
+  max-width: none;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
 .contestresult-table-line-clamp {
   display: block;
   max-width: 100%;
