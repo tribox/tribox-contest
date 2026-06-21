@@ -218,9 +218,9 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                             class="contestresult-table-line-clamp contestresult-table-link"
                             href="/user/{{ r.user.username }}"
                           >
-                            <span ng-if="r.user.organization">
-                              {{ r.user.organization }} /
-                            </span>{{ r.user.displayname }}
+                            {{ r.user.displayname }}<span ng-if="r.user.organization">
+                              / {{ r.user.organization }}
+                            </span>
                           </a>
                         </div>
                       </td>
