@@ -28,9 +28,7 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
         <div ng-controller="ContestCtrl">
           <div ng-controller="ContestResultCtrl">
             <div ng-hide="authLoaded && contestLoaded && contestResultLoaded">
-              <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
-              <span class="sr-only">Loading...</span>
-              Loading...
+              <div class="cube-loader"><div class="cube-loader-grid"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="cube-loader-text">Loading...</div></div>
             </div>
             <div
               id="main-content"

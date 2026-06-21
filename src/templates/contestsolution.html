@@ -29,9 +29,7 @@ contest_url + '/contest/' + cid + "/" + eid + "/solution" %]
         <div ng-controller="ContestCtrl">
           <div ng-controller="ContestSolutionCtrl">
             <div ng-hide="authLoaded && contestLoaded && contestSolutionLoaded">
-              <i class="fa fa-spinner fa-pulse fa-2x fa-fw"></i>
-              <span class="sr-only">Loading...</span>
-              Loading...
+              <div class="cube-loader"><div class="cube-loader-grid"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="cube-loader-text">Loading...</div></div>
             </div>
             <div ng-show="authLoaded && contestLoaded && contestSolutionLoaded">
               [% import "components/authinfo.html" as authinfo %] [[
