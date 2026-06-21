@@ -220,21 +220,6 @@ body > .container {
   gap: 12px 24px;
 }
 
-@media screen and (max-width: 697px) {
-  #footer {
-    min-height: 107px;
-  }
-  #footer-inner {
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-  }
-  #footer-copyright {
-    text-align: center;
-    font-size: 12px;
-  }
-}
-
 #footer-nav {
   display: flex;
   align-items: center;
@@ -280,6 +265,21 @@ body > .container {
 #footer-copyright a {
   color: #e6e6e6;
   text-decoration: underline;
+}
+
+@media screen and (max-width: 697px) {
+  #footer {
+    min-height: 107px;
+  }
+  #footer-inner {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  #footer-copyright {
+    text-align: center;
+    font-size: 12px;
+  }
 }
 
 /**
