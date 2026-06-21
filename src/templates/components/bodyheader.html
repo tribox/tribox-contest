@@ -171,18 +171,20 @@
 
   //表示しているページに対応するmenuアイテムにclass="active"を付与する
   var currentPath = window.location.pathname;
-  if (currentPath.includes("/about")) {
+  if (currentPath === "/") {
+    document.getElementById("main-menu-1").classList.add("active");
+  } else if (currentPath.includes("/about")) {
     document.getElementById("main-menu-2").classList.add("active");
-  } else if (currentPath.includes("/rules")) {
+  } else if (currentPath.includes("/regulations")) {
     document.getElementById("main-menu-3").classList.add("active");
+  } else if (currentPath.includes("/ranking")) {
+    if (currentPath.includes("/puzzle")) {
+      document.getElementById("main-menu-6").classList.add("active");
+    } else {
+      document.getElementById("main-menu-5").classList.add("active");
+    }
   } else if (currentPath.includes("/contest")) {
     document.getElementById("main-menu-4").classList.add("active");
-  } else if (currentPath.includes("/ranking")) {
-    document.getElementById("main-menu-5").classList.add("active");
-  } else if (currentPath.includes("/puzzle")) {
-    document.getElementById("main-menu-6").classList.add("active");
-  } else {
-    document.getElementById("main-menu-1").classList.add("active");
   }
 </script>
 
