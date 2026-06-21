@@ -29,6 +29,19 @@ html {
   margin-bottom: 0;
 }
 
+.ranking-puzzle-switch {
+  font-size: 13px;
+  margin-bottom: 24px;
+}
+
+.ranking-puzzle-switch a {
+  color: #0088cc;
+}
+
+.ranking-puzzle-switch a:hover {
+  color: #006699;
+}
+
 .ranking-event-section {
   margin-bottom: 32px;
 }

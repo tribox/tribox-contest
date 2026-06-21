@@ -9,30 +9,20 @@
     [% import "components/header.html" as header %] [[ header.print(title=title,
     description=contest_description, sitename=contest_name,
     contest_url=contest_url, page_url=page_url) ]]
-    <!-- Load c3.css -->
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.11/c3.min.css"
-      rel="stylesheet"
-      type="text/css"
-    />
-
-    <!-- Load d3.js and c3.js -->
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js"
-      charset="utf-8"
-    ></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.11/c3.min.js"></script>
-
     [% import "components/basejs.html" as basejs %] [[
     basejs.print(firebaseapp_contest, firebaseapp_contest_apikey,
     firebaseapp_contest_senderid, firebaseapp_wca) ]]
 
-    <style>
-      h3,
-      h4 {
-        margin-top: 40px;
-      }
-    </style>
+    <link
+      rel="stylesheet"
+      media="screen"
+      href="[[ url_for('static', filename='stylesheets/contestresult.css') ]]"
+    />
+    <link
+      rel="stylesheet"
+      media="screen"
+      href="[[ url_for('static', filename='stylesheets/ranking.css') ]]"
+    />
   </head>
   <body>
     <div class="container">
@@ -55,63 +45,85 @@
             </div>
 
             <div ng-show="existsSeason">
-              <h2>{{ seasonName }} キューブ使用率ランキング</h2>
+              <div class="ranking-head">
+                <div class="ranking-head-text">
+                  <h2 class="ranking-title">{{ seasonName }} キューブ使用率ランキング</h2>
+                  <p class="ranking-period">
+                    対象: <b>参加者全員</b><br />
+                    <b>{{ targetContestFrom.contestName }}</b> ({{
+                    targetContestFrom.beginAt | toDateShort }} 開始) ~
+                    <b>{{ targetContestTo.contestName }}</b> ({{
+                    targetContestTo.endAt | toDateShort }} 終了)
+                  </p>
+                </div>
 
-              <p>
-                集計対象コンテスト:<br />
-                <b>{{ targetContestFrom.contestName }}</b> ({{
-                targetContestFrom.beginAt | toDateShort }} 開始) ~
-                <b>{{ targetContestTo.contestName }}</b> ({{
-                targetContestTo.endAt | toDateShort }} 終了)
-              </p>
-              <p>
-                対象者:<br />
-                <b>参加者全員</b>
+                <div class="contestresult-picker-season ranking-season-picker">
+                  <a
+                    class="contestresult-picker-season-arrow"
+                    ng-if="prevSeason"
+                    href="/ranking/{{ prevSeason.id }}/puzzle/all"
+                  ><img src="/assets/images/icons/chevron_right_arrow.png" class="contestresult-picker-season-arrow-flip" width="32" height="32" alt="前へ" /></a>
+                  <span class="contestresult-picker-season-arrow" ng-if="!prevSeason"
+                  ><img src="/assets/images/icons/chevron_right_gray.png" class="contestresult-picker-season-arrow-flip" width="32" height="32" alt="前へ" /></span>
+                  <span class="contestresult-picker-season-label contestresult-gradient-border">{{ currentSeasonLabel }}</span>
+                  <a
+                    class="contestresult-picker-season-arrow"
+                    ng-if="nextSeason"
+                    href="/ranking/{{ nextSeason.id }}/puzzle/all"
+                  ><img src="/assets/images/icons/chevron_right_arrow.png" width="32" height="32" alt="次へ" /></a>
+                  <span class="contestresult-picker-season-arrow" ng-if="!nextSeason"
+                  ><img src="/assets/images/icons/chevron_right_gray.png" width="32" height="32" alt="次へ" /></span>
+                </div>
+              </div>
+
+              <p class="ranking-puzzle-switch">
+                <a href="/ranking/[[ sid ]]/puzzle">入賞者のキューブ使用率ランキングに切り替える</a>
               </p>
 
-              <p>
-                <a href="/ranking/[[ sid ]]/puzzle"
-                  ><i class="fa fa-pie-chart"></i>
-                  入賞者のキューブ使用率ランキング</a
+              <div class="contestresult-picker-event">
+                <a
+                  class="contestresult-picker-event-item"
+                  ng-repeat="(eid, e) in events"
+                  href="#{{ eid | removeHead }}"
                 >
-                に切り替える
-              </p>
+                  <span class="contestresult-picker-event-label">{{ eventShortNames[eid] || events[eid].name }}</span>
+                  <img class="contestresult-picker-event-icon" ng-src="/assets/images/icons/{{ eventIcons[eid] }}" width="24" height="24" alt="{{ events[eid].name }}" />
+                </a>
+              </div>
 
-              <h4>競技一覧</h4>
-              <p>
-                <span ng-repeat="(eid, e) in events">
-                  <span ng-show="$index != 0"> / </span>
-                  <a href="#{{ eid | removeHead }}">{{ events[eid].name }}</a>
-                </span>
-              </p>
-
-              <div ng-repeat="(eid, e) in events">
-                <h4 id="{{ eid | removeHead }}">
-                  <span
-                    class="cubing-icon event-{{ eid | removeHead }}"
-                    style="vertical-align: baseline"
-                  ></span>
+              <div class="ranking-event-section" ng-repeat="(eid, e) in events">
+                <h3 class="ranking-event-title" id="{{ eid | removeHead }}">
+                  <span class="cubing-icon event-{{ eid | removeHead }}"></span>
                   {{ events[eid].name }}
-                </h4>
+                </h3>
 
-                <div class="row">
-                  <div class="col sm-4">
-                    <ol>
-                      <li ng-repeat="p in usedPuzzlesSummary[eid]">
+                <div class="contestresult-puzzle-content">
+                  <div class="contestresult-puzzle-list">
+                    <div
+                      class="contestresult-puzzle-item"
+                      ng-repeat="p in usedPuzzlesSummary[eid]"
+                    >
+                      <span class="contestresult-puzzle-color-wrapper">
+                        <span class="contestresult-puzzle-color" ng-style="{'background-color': puzzleColors[$index] || '#808080', 'width': p.percentage + '%'}"></span>
+                      </span>
+                      <span class="contestresult-puzzle-pct">{{ p.percentage }}%</span>
+                      <img
+                        class="contestresult-puzzle-brand"
+                        ng-if="p.brand"
+                        ng-src="https://store.tribox.com/user_data/img/category/{{ p.brand }}.png"
+                        height="24"
+                      />
+                      <span class="contestresult-puzzle-brand-placeholder" ng-if="!p.brand"></span>
+                      <div class="contestresult-puzzle-bar-wrapper">
                         <a
+                          class="contestresult-puzzle-name"
+                          ng-if="p.productId != -1"
                           href="https://store.tribox.com/products/detail.php?product_id={{ p.productId }}"
                           target="_blank"
-                          ng-show="p.productId != -1"
-                        >
-                          {{ p.productName }}
-                        </a>
-                        <span ng-show="p.productId == -1"> その他 </span>
-                        ({{ p.percentage }}%)
-                      </li>
-                    </ol>
-                  </div>
-                  <div class="col sm-8">
-                    <div id="chart-{{ eid }}"></div>
+                        >{{ p.productName }}</a>
+                        <span class="contestresult-puzzle-name contestresult-puzzle-name-other" ng-if="p.productId == -1">その他</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -123,30 +135,18 @@
       [% include "components/bodyfooter.html" %] [% import
       "components/authjs.html" as authjs %] [[ authjs.print(redirect_login="",
       redirect_logout="", check_first=True) ]]
+      [% import "components/contestpickerjs.html" as contestpickerjs %]
+      [[ contestpickerjs.print(cid=sid, eid="") ]]
       <script>
-        var chart = {};
-        var drawChart = function (eid, data) {
-          if (0 < data.length) {
-            chart[eid] = c3.generate({
-              bindto: "#chart-" + eid,
-              data: {
-                columns: data,
-                type: "pie",
-                order: null,
-              },
-              size: {
-                height: 240,
-              },
-            });
-          }
-        };
-
         app.controller("RankingPuzzleCtrl", [
           "$scope",
           "$timeout",
           function ($scope, $timeout) {
             $scope.rankingPuzzleLoaded = false;
             $scope.existsSeason = false;
+            ContestPicker.initScope($scope);
+            ContestPicker.loadSeasons($scope, contestRef, '[[ sid ]]', function() {});
+            $scope.puzzleColors = ["#2690D9", "#E87D7E", "#FF8000", "#29A329", "#B470C2"];
 
             $scope.seasonName = null;
             $scope.targetContestFrom = null;
@@ -225,8 +225,10 @@
 
                                   // 使用キューブ集計
                                   var usedPuzzles = {};
+                                  var puzzleBrands = {};
                                   Object.keys(events).forEach(function (eid) {
                                     usedPuzzles[eid] = {};
+                                    puzzleBrands[eid] = {};
                                   });
                                   Object.keys(results).forEach(function (cid) {
                                     Object.keys(results[cid]).forEach(function (
@@ -249,6 +251,8 @@
                                                 usedPuzzles[eid][productId] = 0;
                                               }
                                               usedPuzzles[eid][productId]++;
+                                              puzzleBrands[eid][productId] =
+                                                results[cid][eid][uid].puzzle.brand;
                                             }
                                           }
                                         }
@@ -260,7 +264,6 @@
                                   // 配列化・ソート
                                   var usedPuzzlesSorted = {};
                                   var usedPuzzlesSummary = {};
-                                  var jsdata = {};
                                   Object.keys(usedPuzzles).forEach(function (
                                     eid
                                   ) {
@@ -279,6 +282,7 @@
                                         usedPuzzlesSorted[eid].push({
                                           productId: productId,
                                           productName: productName,
+                                          brand: puzzleBrands[eid][productId],
                                           count: usedPuzzles[eid][productId],
                                         });
                                         usedPuzzlesSum +=
@@ -299,7 +303,6 @@
                                     });
 
                                     // 上位5パズル以外はその他にする
-                                    jsdata[eid] = [];
                                     var countOthers = 0;
                                     usedPuzzlesSorted[eid].forEach(function (
                                       puzzleObj,
@@ -311,10 +314,6 @@
                                             100
                                         );
                                         usedPuzzlesSummary[eid].push(puzzleObj);
-                                        jsdata[eid].push([
-                                          puzzleObj.productName,
-                                          puzzleObj.count,
-                                        ]);
                                       } else {
                                         countOthers += puzzleObj.count;
                                       }
@@ -328,7 +327,6 @@
                                           (countOthers / usedPuzzlesSum) * 100
                                         ),
                                       });
-                                      jsdata[eid].push(["その他", countOthers]);
                                     }
                                   });
 
@@ -346,15 +344,6 @@
                                     $scope.usedPuzzlesSummary =
                                       usedPuzzlesSummary;
                                   });
-
-                                  // 円グラフ描画 (DOMが生成される前に呼ばれると表示されないから適当に遅らせる)
-                                  setTimeout(function () {
-                                    Object.keys(usedPuzzles).forEach(function (
-                                      eid
-                                    ) {
-                                      drawChart(eid, jsdata[eid]);
-                                    });
-                                  }, 1000);
                                 }
                               });
                           });
