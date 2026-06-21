@@ -1,0 +1,152 @@
+html {
+  scroll-behavior: smooth;
+}
+
+.ranking-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  margin-bottom: 24px;
+}
+
+.ranking-head-text {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.ranking-title {
+  font-size: 22px;
+  font-weight: bold;
+  color: #808080;
+  margin-bottom: 4px;
+}
+
+.ranking-period {
+  font-size: 13px;
+  color: #808080;
+  margin-bottom: 0;
+}
+
+.ranking-event-section {
+  margin-bottom: 32px;
+}
+
+.ranking-event-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #808080;
+  margin: 0 0 8px;
+}
+
+.ranking-table {
+  color: #808080;
+  table-layout: fixed;
+  width: 100%;
+}
+
+.ranking-table-header {
+  font-weight: bold;
+  border-bottom: 1px solid #ccc;
+  height: 40px;
+}
+
+.ranking-table-header th {
+  vertical-align: middle;
+  text-align: left;
+}
+
+.ranking-table-row {
+  height: 48px;
+}
+
+.ranking-table-row td {
+  vertical-align: middle;
+}
+
+.ranking-table-row:nth-child(5n) {
+  border-bottom: 1px solid #ccc;
+}
+
+.ranking-cell-padded {
+  padding: 0 8px;
+}
+
+.ranking-col-rank {
+  width: 48px;
+  text-align: center;
+}
+
+.ranking-col-sp {
+  width: 48px;
+  text-align: center;
+}
+
+.ranking-table-header th.ranking-col-sp {
+  text-align: center;
+}
+
+.ranking-name {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 48px;
+}
+
+.ranking-link {
+  display: block;
+  max-width: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #0088cc;
+  text-decoration: none;
+}
+
+.ranking-puzzle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.ranking-puzzle-brand-link {
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.ranking-puzzle-brand {
+  max-width: none;
+  display: block;
+}
+
+.ranking-link:hover {
+  color: #006699;
+}
+
+.ranking-season-picker {
+  flex-shrink: 0;
+}
+
+.ranking-show-mobile {
+  display: none;
+}
+
+@media screen and (max-width: 697px) {
+  .ranking-hide-mobile {
+    display: none;
+  }
+  .ranking-show-mobile {
+    display: inline;
+  }
+  .ranking-col-puzzle {
+    width: 40px;
+    text-align: center;
+  }
+  .ranking-puzzle {
+    justify-content: center;
+  }
+}
