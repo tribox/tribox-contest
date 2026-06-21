@@ -272,6 +272,14 @@ body > .container {
   color: #808080;
 }
 
+#event-info {
+  color: #808080;
+}
+
+.contestform-page {
+  color: #808080;
+}
+
 a.underlined {
   color: #e74c3c;
   text-decoration: underline;
