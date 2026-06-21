@@ -135,6 +135,7 @@
 .contestresult-picker-event {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   padding: 8px;
   margin-bottom: 16px;
   background-color: #fff;
