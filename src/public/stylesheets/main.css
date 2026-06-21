@@ -14,6 +14,10 @@ body {
   font-family: "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", "メイリオ",
     Meiryo, "ＭＳ Ｐゴシック", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
+
+.contesttimer-page {
+  color: #808080;
+}
 h1,
 h2,
 h3,
