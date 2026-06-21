@@ -1,0 +1,49 @@
+.regulations-content {
+  color: #808080;
+}
+
+.regulations-content h2 {
+  font-size: 22px;
+  font-weight: bold;
+  color: #808080;
+  margin-bottom: 12px;
+}
+
+.regulations-content h4 {
+  font-size: 16px;
+  font-weight: bold;
+  color: #808080;
+  margin-top: 32px;
+  margin-bottom: 8px;
+}
+
+.regulations-content p {
+  font-size: 14px;
+  line-height: 1.9;
+}
+
+.regulations-content ol {
+  font-size: 14px;
+  line-height: 1.9;
+}
+
+.regulations-content ol.alpha,
+.regulations-content ol.alpha li {
+  list-style-type: upper-alpha;
+}
+
+.regulations-content a {
+  color: #0088cc;
+}
+
+.regulations-content hr {
+  border: none;
+  border-top: 1px solid #e6e6e6;
+  margin: 32px 0;
+}
+
+@media screen and (max-width: 480px) {
+  .regulations-content h2 {
+    font-size: 20px;
+  }
+}
