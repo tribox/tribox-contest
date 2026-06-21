@@ -163,6 +163,10 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                         <img class="contestresult-table-show-mobile" src="/assets/images/icons/cube_empty.png" height="24" title="パズル" alt="パズル" />
                         <span class="contestresult-table-hide-mobile">パズル</span>
                       </th>
+                      <th class="contestresult-table-cell-padded contestresult-table-hide-mobile contestresult-table-col-video">
+                        <i class="fa fa-video-camera"></i>
+                      </th>
+                      <th class="contestresult-table-cell-padded contestresult-table-col-admin" ng-if="usersecretData.isAdmin">運営用</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -239,6 +243,21 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                           >{{ r.puzzleF }}</a>
                           <span class="contestresult-table-hide-mobile" ng-if="r.puzzle.type != 'database'">{{ r.puzzleF }}</span>
                         </div>
+                      </td>
+                      <td class="contestresult-table-cell-padded contestresult-table-hide-mobile">
+                        <a ng-if="r.videoUrl" href="{{ r.videoUrl | encodeURI }}" target="_blank">
+                          <i class="fa fa-video-camera"></i>
+                        </a>
+                      </td>
+                      <td class="contestresult-table-cell-padded" ng-if="usersecretData.isAdmin">
+                        <a
+                          class="btn btn-small btn-error"
+                          style="margin: 0"
+                          href="javascript:void(0);"
+                          ng-click="deleteResult(r.user.username, r.user.displayname, '/admin-api/contest/result/delete?c=[[ cid ]]&e=[[ eid ]]&u=' + r.user.username + '&token=' + usersecretData.adminToken)"
+                        >
+                          削除
+                        </a>
                       </td>
                     </tr>
                   </tbody>
