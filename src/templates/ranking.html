@@ -13,14 +13,16 @@
   [% import "components/authjs.html" as authjs %]
   [[ authjs.print(redirect_login="", redirect_logout="", check_first=True) ]]
 
-  </html>
-
-  <style>
-    h3,
-    h4 {
-      margin-top: 40px;
-    }
-  </style>
+  <link
+    rel="stylesheet"
+    media="screen"
+    href="[[ url_for('static', filename='stylesheets/contestresult.css') ]]"
+  />
+  <link
+    rel="stylesheet"
+    media="screen"
+    href="[[ url_for('static', filename='stylesheets/ranking.css') ]]"
+  />
 </head>
 <body><div class="container">
   [% import "components/bodyheader.html" as bodyheader %]
@@ -42,91 +44,128 @@
         </div>
 
         <div ng-show="existsSeason">
-          <h2>{{ seasonName }} SPランキング</h2>
+          <div class="ranking-head">
+            <div class="ranking-head-text">
+              <h2 class="ranking-title">{{ seasonName }} SPランキング</h2>
+              <p class="ranking-period">
+                <b>{{ targetContestFrom.contestName }}</b> ({{
+                targetContestFrom.beginAt | toDateShort }} 開始) ~
+                <b>{{ targetContestTo.contestName }}</b> ({{
+                targetContestTo.endAt | toDateShort }} 終了)
+              </p>
+            </div>
 
-          <p>
-            集計対象コンテスト:<br />
-            <b>{{ targetContestFrom.contestName }}</b> ({{
-            targetContestFrom.beginAt | toDateShort }} 開始) ~
-            <b>{{ targetContestTo.contestName }}</b> ({{
-            targetContestTo.endAt | toDateShort }} 終了)
-          </p>
-
-          <h4>競技一覧</h4>
-            <p>
-              <span ng-repeat="(eid, e) in events">
-                <span ng-show="$index != 0"> / </span>
-                <a href="#{{ eid | removeHead }}">{{ events[eid].name }}</a>
-              </span>
-            </p>
-
-            <div ng-repeat="(eid, e) in events">
-              <h4 id="{{ eid | removeHead }}"><span class="cubing-icon event-{{ eid | removeHead }}" style="vertical-align: baseline;"></span> {{ events[eid].name }}</h4>
-
-              <table class="table table-bordered tribox-contest ranking">
-                <thead>
-                  <tr>
-                    <th><i class="fa fa-hashtag"></i></th>
-                    <th>名前</th>
-                    <th>所属</th>
-                    <th>SP</th>
-                    <th>パズル</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr ng-repeat="data in seasonPointsSorted[eid]">
-                    <td>{{ data.rank }}</td>
-                    <td>
-                      <img src="/assets/flags/flags-iso/shiny/24/{{ data.user.iso2 }}.png" height="24" style="vertical-align: middle;" ng-show="data.user.iso2">
-                      <a href="/user/{{ data.user.username }}">{{ data.user.displayname }}</a>
-                    </td>
-                    <td>{{ data.user.organization }}</td>
-                    <td>{{ data.seasonPoint }}</td>
-                    <td>
-                      <a href="https://store.tribox.com/products/detail.php?product_id={{ data.lastUsedPuzzleId }}" target="_blank" ng-show="data.lastUsedPuzzleId != -1">
-                        {{ data.lastUsedPuzzleName }}
-                      </a>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+            <div class="contestresult-picker-season ranking-season-picker">
+              <a
+                class="contestresult-picker-season-arrow"
+                ng-if="prevSeason"
+                href="/ranking/{{ prevSeason.id }}"
+              ><img src="/assets/images/icons/chevron_right_arrow.png" class="contestresult-picker-season-arrow-flip" width="32" height="32" alt="前へ" /></a>
+              <span class="contestresult-picker-season-arrow" ng-if="!prevSeason"
+              ><img src="/assets/images/icons/chevron_right_gray.png" class="contestresult-picker-season-arrow-flip" width="32" height="32" alt="前へ" /></span>
+              <span class="contestresult-picker-season-label contestresult-gradient-border">{{ currentSeasonLabel }}</span>
+              <a
+                class="contestresult-picker-season-arrow"
+                ng-if="nextSeason"
+                href="/ranking/{{ nextSeason.id }}"
+              ><img src="/assets/images/icons/chevron_right_arrow.png" width="32" height="32" alt="次へ" /></a>
+              <span class="contestresult-picker-season-arrow" ng-if="!nextSeason"
+              ><img src="/assets/images/icons/chevron_right_gray.png" width="32" height="32" alt="次へ" /></span>
             </div>
           </div>
 
-          <hr>
-          <h3>過去のシーズンのランキング</h3>
-          <a class="cursor-pointer btn btn-empty btn-success" href="/ranking/20252">2025 後半期</a>
-          <a class="cursor-pointer btn btn-empty" href="/ranking/20251">2025 前半期</a>
-          <a class="cursor-pointer btn btn-empty btn-success" href="/ranking/20242">2024 後半期</a>
-          <a class="cursor-pointer btn btn-empty" href="/ranking/20241">2024 前半期</a>
-          <a class="cursor-pointer btn btn-empty btn-success" href="/ranking/20232">2023 後半期</a>
-          <a class="cursor-pointer btn btn-empty" href="/ranking/20231">2023 前半期</a>
-          <a class="cursor-pointer btn btn-empty btn-success" href="/ranking/20222">2022 後半期</a>
-          <a class="cursor-pointer btn btn-empty" href="/ranking/20221">2022 前半期</a>
-          <a class="cursor-pointer btn btn-empty btn-success" href="/ranking/20212">2021 後半期</a>
-          <a class="cursor-pointer btn btn-empty" href="/ranking/20211">2021 前半期</a>
-          <a class="cursor-pointer btn btn-empty btn-success" href="/ranking/20202">2020 後半期</a>
-          <a class="cursor-pointer btn btn-empty" href="/ranking/20201">2020 前半期</a>
-          <a class="cursor-pointer btn btn-empty btn-success" href="/ranking/20192">2019 後半期</a>
-          <a class="cursor-pointer btn btn-empty" href="/ranking/20191">2019 前半期</a>
-          <a class="cursor-pointer btn btn-empty btn-success" href="/ranking/20182">2018 後半期</a>
-          <a class="cursor-pointer btn btn-empty" href="/ranking/20181">2018 前半期</a>
-          <a class="cursor-pointer btn btn-empty btn-success" href="/ranking/20172">2017 後半期</a>
-          <a class="cursor-pointer btn btn-empty" href="/ranking/20171">2017 前半期</a>
-          <a class="cursor-pointer btn btn-empty btn-success" href="/ranking/20162">2016 後半期</a>
+          <div class="contestresult-picker-event">
+            <a
+              class="contestresult-picker-event-item"
+              ng-repeat="(eid, e) in events"
+              href="#{{ eid | removeHead }}"
+            >
+              <span class="contestresult-picker-event-label">{{ eventShortNames[eid] || events[eid].name }}</span>
+              <img class="contestresult-picker-event-icon" ng-src="/assets/images/icons/{{ eventIcons[eid] }}" width="24" height="24" alt="{{ events[eid].name }}" />
+            </a>
+          </div>
+
+          <div class="ranking-event-section" ng-repeat="(eid, e) in events">
+            <h3 class="ranking-event-title" id="{{ eid | removeHead }}">
+              <span class="cubing-icon event-{{ eid | removeHead }}"></span>
+              {{ events[eid].name }}
+            </h3>
+
+            <table class="ranking-table">
+              <thead class="ranking-table-header">
+                <tr>
+                  <th class="ranking-col-rank">順位</th>
+                  <th class="ranking-cell-padded">競技者 / 所属</th>
+                  <th class="ranking-col-sp">SP</th>
+                  <th class="ranking-cell-padded ranking-col-puzzle">
+                    <img class="ranking-show-mobile" src="/assets/images/icons/cube_empty.png" height="24" alt="パズル" />
+                    <span class="ranking-hide-mobile">パズル</span>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="ranking-table-row" ng-repeat="data in seasonPointsSorted[eid]">
+                  <td class="ranking-col-rank">{{ data.rank }}</td>
+                  <td class="ranking-cell-padded">
+                    <div class="ranking-name">
+                      <div class="contestresult-table-flag">
+                        <img
+                          src="https://flagcdn.com/{{ data.user.iso2.toLowerCase() }}.svg"
+                          ng-show="data.user.iso2"
+                          height="16"
+                        />
+                      </div>
+                      <a class="ranking-link" href="/user/{{ data.user.username }}">
+                        {{ data.user.displayname }}<span ng-if="data.user.organization">
+                          / {{ data.user.organization }}
+                        </span>
+                      </a>
+                    </div>
+                  </td>
+                  <td class="ranking-col-sp">{{ data.seasonPoint }}</td>
+                  <td class="ranking-cell-padded ranking-col-puzzle">
+                    <div class="ranking-puzzle" ng-show="data.lastUsedPuzzleId != -1">
+                      <a
+                        class="ranking-puzzle-brand-link"
+                        ng-show="data.lastUsedPuzzleBrand"
+                        href="https://store.tribox.com/products/detail.php?product_id={{ data.lastUsedPuzzleId }}"
+                        target="_blank"
+                      >
+                        <img
+                          class="ranking-puzzle-brand"
+                          ng-src="https://store.tribox.com/user_data/img/category/{{ data.lastUsedPuzzleBrand }}.png"
+                          height="24"
+                        />
+                      </a>
+                      <a
+                        class="ranking-link ranking-hide-mobile"
+                        href="https://store.tribox.com/products/detail.php?product_id={{ data.lastUsedPuzzleId }}"
+                        target="_blank"
+                      >{{ data.lastUsedPuzzleName }}</a>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
         </div>
       </div>
     </div>
+  </div>
 
     [% include "components/bodyfooter.html" %] [% import
     "components/authjs.html" as authjs %] [[ authjs.print(redirect_login="",
     redirect_logout="", check_first=True) ]]
+    [% import "components/contestpickerjs.html" as contestpickerjs %]
+    [[ contestpickerjs.print(cid=sid, eid="") ]]
 
 <script>
     app.controller('RankingCtrl', ['$scope', '$timeout', function($scope, $timeout) {
         $scope.rankingLoaded = false;
         $scope.existsSeason = false;
+        ContestPicker.initScope($scope);
+        ContestPicker.loadSeasons($scope, contestRef, '[[ sid ]]', function() {});
 
         $scope.seasonName = null;
         $scope.targetContestFrom = null;
@@ -193,10 +232,12 @@
                             var seasonPoints = {};
                             var usedPuzzles = {};
                             var lastUsedPuzzles = {};
+                            var lastUsedPuzzleBrands = {};
                             Object.keys(events).forEach(function(eid) {
                                 seasonPoints[eid] = {};
                                 usedPuzzles[eid] = {};
                                 lastUsedPuzzles[eid] = {};
+                                lastUsedPuzzleBrands[eid] = {};
                             });
                             Object.keys(results).forEach(function(cid) {
                                 Object.keys(results[cid]).forEach(function(eid) {
@@ -225,6 +266,7 @@
                                                     }
                                                     (usedPuzzles[eid][uid][productId])++;
                                                     lastUsedPuzzles[eid][uid] = productId;
+                                                    lastUsedPuzzleBrands[eid][uid] = results[cid][eid][uid].puzzle.brand;
                                                 }
                                             }
                                         }
@@ -274,7 +316,8 @@
                                             'bestUsedPuzzleId': bestUsedPuzzleId,
                                             'bestUsedPuzzleName': bestUsedPuzzleName,
                                             'lastUsedPuzzleId': lastUsedPuzzleId,
-                                            'lastUsedPuzzleName': lastUsedPuzzleName
+                                            'lastUsedPuzzleName': lastUsedPuzzleName,
+                                            'lastUsedPuzzleBrand': lastUsedPuzzleBrands[eid][uid]
                                         });
                                     }
                                 });
