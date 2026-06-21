@@ -578,6 +578,14 @@ a.contestresult-puzzle-name:hover {
   width: 32px;
 }
 
+.contestresult-table-col-video {
+  width: 32px;
+}
+
+.contestresult-table-col-admin {
+  width: 56px;
+}
+
 .contestresult-table-show-mobile {
   display: none;
 }
