@@ -346,16 +346,6 @@ a.contestresult-puzzle-name:hover {
   color: #808080;
 }
 
-.contest-event-card-flag,
-.contest-event-card-flag-placeholder {
-  margin-left: 8px;
-}
-
-.contest-event-card-flag-placeholder {
-  display: inline-block;
-  width: 24px;
-}
-
 
 /* スクランブル */
 .contestresult-scramble-section {
