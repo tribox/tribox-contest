@@ -436,6 +436,19 @@ a.contestresult-puzzle-name:hover {
   height: 48px;
 }
 
+/* 国旗は幅が国ごとに異なるため、固定幅の枠を確保して中央揃えにし、後続の名前位置がズレないようにする */
+.contestresult-table-flag {
+  flex: 0 0 32px;
+  width: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.contestresult-table-flag img {
+  max-width: 100%;
+}
+
 .contestresult-table-line-clamp {
   display: block;
   max-width: 100%;
