@@ -426,6 +426,15 @@ a.contestresult-puzzle-name:hover {
   height: 48px;
 }
 
+.contestresult-table-puzzle > img,
+.contestresult-table-puzzle > a:not(.contestresult-table-line-clamp) {
+  flex-shrink: 0;
+}
+
+.contestresult-table-puzzle img {
+  display: block;
+}
+
 /* 国旗は幅が国ごとに異なるため、固定幅の枠を確保して中央揃えにし、後続の名前位置がズレないようにする */
 .contestresult-table-flag {
   flex: 0 0 32px;
