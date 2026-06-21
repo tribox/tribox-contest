@@ -18,6 +18,11 @@
         $scope.isTemporaryPassword = false;
         $scope.authLoaded = false;
 
+        $scope.logout = function() {
+            Auth.$signOut();
+            location.href = '[[ url_for("index") ]]?logout=1';
+        };
+
         Auth.$onAuthStateChanged(function(authData) {
             if (authData) {
                 angular.element(document.getElementById('auth-info')).removeClass('hide');

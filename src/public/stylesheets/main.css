@@ -61,6 +61,19 @@ h6 {
   height: 64px;
 }
 
+#header-auth {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+#header-auth a {
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: normal;
+  white-space: nowrap;
+}
+
 @media screen and (max-width: 697px) {
   #header {
     margin-bottom: 24px;

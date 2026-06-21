@@ -9,6 +9,25 @@
       id="header-logo"
     />
   </a>
+  <div id="header-auth" ng-controller="AuthCtrl" ng-cloak>
+    <a href="[[ url_for('login') ]]" ng-show="authLoaded && !isLoggingin"
+      >ログイン</a
+    >
+    <a href="[[ url_for('join') ]]" ng-show="authLoaded && !isLoggingin"
+      >新規登録</a
+    >
+    <a
+      href="/user/{{ userData.username }}"
+      ng-show="authLoaded && isLoggingin"
+      >マイページ</a
+    >
+    <a href="[[ url_for('setting') ]]" ng-show="authLoaded && isLoggingin"
+      >設定</a
+    >
+    <a class="cursor-pointer" ng-click="logout()" ng-show="authLoaded && isLoggingin"
+      >ログアウト</a
+    >
+  </div>
 </div>
 
 [% if cid == '' %]
