@@ -30,7 +30,7 @@
   <body>
     <div class="container">
       [% import "components/bodyheader.html" as bodyheader %] [[
-      bodyheader.print(title=title, contest_name=contest_name) ]]
+      bodyheader.print(title=title, contest_name=contest_name, cid="demo") ]]
 
       <div ng-controller="AuthCtrl">
         <div ng-controller="ContestCtrl">
