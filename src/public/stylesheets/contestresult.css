@@ -213,7 +213,9 @@
 }
 
 .contestresult-puzzle-section {
-  margin-bottom: 16px;
+  width: fit-content;
+  max-width: 100%;
+  margin: 0 auto 16px;
 }
 
 .contestresult-puzzle-section-title {
