@@ -27,6 +27,13 @@
     firebaseapp_contest_senderid, firebaseapp_wca) ]] [% import
     "components/authjs.html" as authjs %] [[ authjs.print(redirect_login="",
     redirect_logout="", check_first=True) ]]
+
+    <link
+      rel="stylesheet"
+      media="screen"
+      href="[[ url_for('static', filename='stylesheets/login.css') ]]"
+    />
+
     <script>
       app.controller("AuthJoinCtrl", [
         "$scope",
@@ -74,50 +81,36 @@
             <span class="sr-only">Loading...</span>
             Loading...
           </div>
-          <div ng-show="authLoaded">
-            <h2>新規ユーザ登録</h2>
+          <div ng-show="authLoaded" class="auth-page">
+            <div class="auth-card">
+              <h2 class="auth-title">新規ユーザ登録</h2>
 
-            <div class="notice-success margin-bottom-20" ng-if="joinMessage">
-              <i class="fa fa-check"></i>
-              {{ joinMessage }}
-            </div>
-            <div class="color-error margin-bottom-20" ng-if="error">
-              エラー: {{ error }}
-            </div>
-
-            <p>
-              メールアドレスとパスワードを入力してください。<br />
-              すでにアカウントを作成済みの場合は、<a
-                href="[[ url_for('login') ]]"
-                >ログインページ</a
-              >からログインしてください。<br />
-              hotmailでは確認メールが受信できない場合があります。
-            </p>
-
-            <form name="joinForm" ng-submit="createUser()">
-              <div>
-                <label>メールアドレス</label>
-                <input
-                  class="form-control"
-                  type="email"
-                  name="email"
-                  ng-model="email"
-                />
+              <div class="auth-notice auth-notice-success" ng-if="joinMessage">
+                <i class="fa fa-check"></i>
+                {{ joinMessage }}
+              </div>
+              <div class="auth-notice auth-notice-error" ng-if="error">
+                エラー: {{ error }}
               </div>
 
-              <!--<span ng-show="joinForm.email.$error.email">Not valid email!</span>
-            <span ng-show="joinForm.email.$error.required">Required!</span><br>-->
+              <p class="auth-desc">
+                メールアドレスとパスワードを入力してください。<br />
+                すでにアカウントを作成済みの場合は、<a href="[[ url_for('login') ]]">ログインページ</a>からログインしてください。<br />
+                hotmailでは確認メールが受信できない場合があります。
+              </p>
 
-              <div>
-                <label>パスワード</label>
-                <input
-                  class="form-control"
-                  type="password"
-                  ng-model="password"
-                />
-              </div>
-              <input class="btn" type="submit" value="登録" />
-            </form>
+              <form name="joinForm" ng-submit="createUser()">
+                <div class="auth-field">
+                  <label class="auth-label">メールアドレス</label>
+                  <input class="auth-input" type="email" name="email" ng-model="email" />
+                </div>
+                <div class="auth-field">
+                  <label class="auth-label">パスワード</label>
+                  <input class="auth-input" type="password" ng-model="password" />
+                </div>
+                <button class="auth-submit" type="submit">登録</button>
+              </form>
+            </div>
           </div>
         </div>
       </div>
