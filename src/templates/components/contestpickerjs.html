@@ -30,6 +30,20 @@
         $scope.eventFullNames = eventFullNames;
         $scope.eventIcons = eventIcons;
       },
+      scrollActiveContestIntoCenter: function() {
+        function tryScroll(attempts) {
+          var container = document.querySelector(".contestresult-picker-contest");
+          var active = container && container.querySelector(".contestresult-picker-contest-item.active");
+          if (container && active && container.offsetParent !== null) {
+            var cRect = container.getBoundingClientRect();
+            var aRect = active.getBoundingClientRect();
+            container.scrollLeft += (aRect.left - cRect.left) - (container.clientWidth - active.clientWidth) / 2;
+          } else if (attempts > 0) {
+            requestAnimationFrame(function() { tryScroll(attempts - 1); });
+          }
+        }
+        tryScroll(60);
+      },
       loadSeasons: function($scope, contestRef, cid, callback) {
         var currentSeason = cid.slice(0, 5);
         contestRef.child("contests").once("value", function(snapContests) {
@@ -68,6 +82,7 @@
             $scope.currentContestNumber = parseInt(cid.slice(5), 10);
             $scope.contestsList = _contestsList;
             if (callback) callback();
+            ContestPicker.scrollActiveContestIntoCenter();
           });
         });
       }
