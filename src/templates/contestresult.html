@@ -65,6 +65,7 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                 [% import "components/contestpicker.html" as contestpicker %]
                 [[ contestpicker.print(cid=cid, eid=eid, active_event=eid) ]]
 
+                <div class="contestresult-puzzle-sections">
                 <div class="contestresult-puzzle-section" ng-if="resultsPuzzlesAll.e[[ eid ]]">
                   <div class="contestresult-puzzle-section-title">参加者全員のパズル</div>
                   <div class="contestresult-puzzle-content">
@@ -129,6 +130,7 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                       </div>
                     </div>
                   </div>
+                </div>
                 </div>
 
                 <!-- <h4>コンテスト結果</h4>
