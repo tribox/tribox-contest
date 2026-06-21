@@ -280,6 +280,23 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                   </table>
                 </div>
 
+                [% if eid == "333fm" %]
+                <div class="contestresult-scramble-section contestresult-scramble-section-floating">
+                  <div class="contestresult-scramble-title">スクランブル</div>
+                  <table class="contestresult-scramble-table">
+                    <tbody>
+                      <tr
+                        class="contestresult-scramble-item"
+                        ng-repeat="s in scramblesData.e[[ eid ]]"
+                      >
+                        <td class="contestresult-scramble-number">{{ $index + 1 }}</td>
+                        <td class="contestresult-scramble-text" ng-bind-html="s"></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                [% endif %]
+
                 [#
                 <!--<p>usersecretData:</p>
                 <pre>{{ usersecretData | json }}</pre>-->
