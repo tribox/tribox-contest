@@ -208,7 +208,7 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                       </td>
                       <td class="contestresult-table-detail-records contestresult-table-cell-padded">
                         <div class="contestresult-table-records">
-                          <div class="contestresult-table-record-items" ng-repeat="d in r.detailsF.split(' ')">{{ d }}</div>
+                          <div class="contestresult-table-record-items" ng-repeat="d in r.detailsF.split(' ') track by $index">{{ d }}</div>
                         </div>
                       </td>
                       <td class="contestresult-table-cell-padded">
