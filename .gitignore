@@ -210,6 +210,3 @@ target
 # SSL auth file
 fileauth.txt
 fileauth_*.txt
-
-# 本番環境で都度生成される動的JS
-/src/public/javascripts/products.js
