@@ -1,4 +1,4 @@
-[% set title => "Contest Form " + cid + " (" + eid + ")  %]
+[% set title = "Contest Form " + cid + " (" + eid + ")" %]
 [% set page_url = contest_url + "/contest/" + cid + "/" + eid + "/form" %]
 
 <!DOCTYPE html>
@@ -10,7 +10,7 @@
     [% import "components/basejs.html" as basejs %]
     [[ basejs.print(firebaseapp_contest, firebaseapp_contest_apikey, firebaseapp_contest_senderid, firebaseapp_wca) ]]
 </head>
-<body><div class="container">
+<body class="contestform-page"><div class="container">
     [% import "components/bodyheader.html" as bodyheader %]
     [[ bodyheader.print(title=title, contest_name=contest_name, cid=cid, eid=eid) ]]
 
@@ -50,7 +50,8 @@
 
         [% import "/contestscrambles.html" as contestscrambles %]
         [[ contestscrambles.print(eid=eid) ]]
-        @contesttimeform(eid=eid, useInput=true, clickable=true)
+        [% import "contesttimeform.html" as contesttimeform %]
+        [[ contesttimeform.print(eid=eid, useInput=True, clickable=True) ]]
 
         <p id="input-completed" class="margin-top-20 text-center hide">
             入力が完了しました。間違いがなければ確認ページへ進んでください。<br>
@@ -88,7 +89,7 @@
 <script>
 app.controller('ContestFormCtrl', ['$scope', '$timeout', function($scope, $timeout) {
 
-if(eid == "333fm") {
+if('[[ eid ]]' == "333fm") {
 
     $scope.invalidPage = true;
     $scope.contestFormLoaded = true;
