@@ -357,6 +357,31 @@ a.contestresult-puzzle-name:hover {
   margin-bottom: 16px;
 }
 
+.contestresult-scramble-section-floating {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 16px;
+  z-index: 100;
+  width: calc(100% - 32px);
+  max-width: 1150px;
+  margin: 0;
+  padding: 12px 16px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.2);
+  max-height: 40vh;
+  overflow-y: auto;
+  transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+}
+
+.contestresult-scramble-section-floating.contestresult-scramble-hidden {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-50%) translateY(20px);
+  pointer-events: none;
+}
+
 .contestresult-scramble-title {
   font-size: 16px;
   font-weight: bold;

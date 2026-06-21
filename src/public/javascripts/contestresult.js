@@ -19,6 +19,18 @@ if (headButton) {
   });
 }
 
+// フローティングのスクランブル: 元のスクランブルが見えたら (最下部) 非表示にする
+var inflowScramble = document.querySelector('.contestresult-scramble-section:not(.contestresult-scramble-section-floating)');
+var floatingScramble = document.querySelector('.contestresult-scramble-section-floating');
+if (inflowScramble && floatingScramble && 'IntersectionObserver' in window) {
+  var scrambleObserver = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      floatingScramble.classList.toggle('contestresult-scramble-hidden', entry.isIntersecting);
+    });
+  });
+  scrambleObserver.observe(inflowScramble);
+}
+
 // tbody の detail ボタン (333fm): アイコン切り替え
 document.querySelectorAll('tbody .contestresult-table-deploy-button').forEach(function(button) {
   button.addEventListener('click', function() {
