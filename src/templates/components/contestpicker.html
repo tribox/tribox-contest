@@ -1,0 +1,57 @@
+[% macro print(cid, eid='', active_event='') -%]
+<div class="contestresult-info">
+  <div class="contestresult-picker-nav">
+    <div class="contestresult-picker-season">
+      <a
+        class="contestresult-picker-season-arrow"
+        ng-if="prevSeason"
+        href="[% if eid %]/contest/result/{{ prevSeason.firstCid }}/[[ eid ]][% else %]/contest/{{ prevSeason.firstCid }}[% endif %]"
+      ><img src="/assets/images/icons/chevron_right_arrow.png" class="contestresult-picker-season-arrow-flip" width="32" height="32" alt="前へ" /></a>
+      <span class="contestresult-picker-season-arrow" ng-if="!prevSeason"
+      ><img src="/assets/images/icons/chevron_right_gray.png" class="contestresult-picker-season-arrow-flip" width="32" height="32" alt="前へ" /></span>
+      <span class="contestresult-picker-season-label contestresult-gradient-border">{{ currentSeasonLabel }}</span>
+      <a
+        class="contestresult-picker-season-arrow"
+        ng-if="nextSeason"
+        href="[% if eid %]/contest/result/{{ nextSeason.firstCid }}/[[ eid ]][% else %]/contest/{{ nextSeason.firstCid }}[% endif %]"
+      ><img src="/assets/images/icons/chevron_right_arrow.png" width="32" height="32" alt="次へ" /></a>
+      <span class="contestresult-picker-season-arrow" ng-if="!nextSeason"
+      ><img src="/assets/images/icons/chevron_right_gray.png" width="32" height="32" alt="次へ" /></span>
+    </div>
+    <div class="contestresult-picker-contest">
+      <span ng-repeat="c in contestsList">
+        <a
+          class="contestresult-picker-contest-item"
+          ng-class="{'active contestresult-gradient-border': (c.id | removeHead) == '[[ cid ]]'}"
+          ng-if="!c.disabled"
+          href="[% if eid %]/contest/result/{{ c.id | removeHead }}/[[ eid ]][% else %]/contest/{{ c.id | removeHead }}[% endif %]"
+        >{{ c.number }}</a>
+        <span
+          class="contestresult-picker-contest-item disabled"
+          ng-if="c.disabled"
+        >{{ c.number }}</span>
+      </span>
+    </div>
+  </div>
+  <div class="contestresult-info-title">{{ currentSeasonLabel }} 第{{ currentContestNumber }}節</div>
+
+  <div class="contestresult-picker-event">
+    <a
+      class="contestresult-picker-event-item [% if not eid %]active contestresult-gradient-border[% endif %]"
+      href="/contest/[[ cid ]]"
+    >
+      <span class="contestresult-picker-event-label">TOP</span>
+      <img class="contestresult-picker-event-icon" src="/assets/images/icons/event_top.png" width="24" height="24" alt="TOP" />
+    </a>
+    <a
+      class="contestresult-picker-event-item"
+      ng-class="{'active contestresult-gradient-border': (e | removeHead) == '[[ active_event ]]'}"
+      ng-repeat="e in contestData.events"
+      href="/contest/result/[[ cid ]]/{{ e | removeHead }}"
+    >
+      <span class="contestresult-picker-event-label">{{ eventShortNames[e] || events[e].name }}</span>
+      <img class="contestresult-picker-event-icon" ng-src="/assets/images/icons/{{ eventIcons[e] }}" width="24" height="24" alt="{{ eventShortNames[e] }}" />
+    </a>
+  </div>
+</div>
+[%- endmacro %]

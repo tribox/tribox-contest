@@ -1,0 +1,7 @@
+MAILTO=""
+
+# 動作確認 (cron)
+*/1 * * * * echo "$(date) cron alive" >> /app/logs/cron-alive.log
+
+# 動作確認 (node)
+*/1 * * * * cd /app/contestmanager && echo "===== $(date) =====" >> /app/logs/cron-test.log && node --version >> /app/logs/cron-test.log 2>&1 && npm list --depth=0 >> /app/logs/cron-test.log 2>&1

@@ -172,7 +172,8 @@ dmypy.json
 !.env.sample
 
 # Play stuffs
-logs
+logs/*.log
+logs/*.txt
 target
 /.idea
 /.idea_modules

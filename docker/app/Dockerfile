@@ -16,6 +16,11 @@ RUN apt update \
     && apt clean \
     && rm -rf /var/lib/apt/lists/*
 
+# supercronicをインストール
+RUN curl -fsSLo /usr/local/bin/supercronic \
+    https://github.com/aptible/supercronic/releases/latest/download/supercronic-linux-amd64 \
+    && chmod +x /usr/local/bin/supercronic
+
 # PHP設定ファイル追加
 COPY docker/app/99-mbstring.ini /etc/php/7.4/cli/conf.d/99-mbstring.ini
 
