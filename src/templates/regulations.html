@@ -13,24 +13,11 @@
 [% import "components/authjs.html" as authjs %]
 [[ authjs.print(redirect_login="", redirect_logout="", check_first=True) ]]
 
-<style>
-    @media screen and (max-width: 480px) {
-        h2 {
-            font-size: 1.8em;
-        }
-    }
-    h4 {
-        margin-top: 30px;
-    }
-    ol.alpha,
-    ol.alpha li {
-        list-style-type: upper-alpha !important;
-    }
-
-    p {
-        line-height: 1.6em;
-    }
-</style>
+<link
+  rel="stylesheet"
+  media="screen"
+  href="[[ url_for('static', filename='stylesheets/regulations.css') ]]"
+/>
 
 </head>
 <body><div class="container">
@@ -43,7 +30,7 @@
             <span class="sr-only">Loading...</span>
             Loading...
         </div>
-        <div ng-show="authLoaded">
+        <div ng-show="authLoaded" class="regulations-content">
 
             [% import "components/authinfo.html" as authinfo %]
             [[ authinfo.print() ]]
