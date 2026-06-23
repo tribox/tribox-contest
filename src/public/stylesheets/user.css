@@ -79,6 +79,13 @@ html {
   white-space: nowrap;
 }
 
+/* 記録なしの案内 */
+.user-empty-note {
+  font-size: 14px;
+  color: #808080;
+  margin: 8px 0 24px;
+}
+
 /* 種目見出し */
 .user-event-title {
   display: flex;
@@ -97,8 +104,57 @@ html {
 }
 
 /* 参加履歴テーブル (contestresult-table を流用) */
+/* 固定レイアウト＋各列に幅を持たせ、狭い時は横スクロール（潰さない） */
 .user-history-table {
   margin-bottom: 40px;
+  table-layout: fixed;
+}
+
+/* 入りきらない時だけ横スクロール */
+.user-history-table-wrap {
+  overflow-x: auto;
+}
+
+/* PC幅では各列を十分に確保し、足りない時だけ横スクロール（モバイルは既存の縮小ルールに任せる） */
+@media screen and (min-width: 769px) {
+  .user-history-table {
+    min-width: 760px;
+  }
+}
+
+/* 個々の記録は1行で表示する（列幅は固定） */
+.user-history-details {
+  white-space: nowrap;
+}
+
+.user-history-col-details {
+  width: 340px;
+}
+
+/* キューブ名は列幅に収め、長い時は省略表示(…) */
+.user-history-table .contestresult-table-puzzle,
+.user-history-table .contestresult-table-line-clamp {
+  min-width: 0;
+}
+
+/* ビデオ公開予約の注意書き */
+.user-video-note {
+  font-size: 14px;
+  color: #808080;
+  line-height: 1.8;
+  margin: 8px 0 40px;
+}
+
+.user-video-note i.fa-hand-o-up {
+  margin-right: 4px;
+}
+
+.user-video-note a {
+  color: #0088cc;
+}
+
+.user-video-note a:hover {
+  color: #006699;
 }
 
 /* カラムの揃えを左に統一 */
@@ -124,10 +180,10 @@ html {
   width: 88px;
 }
 
-/* 開催中テーブルは内容にあわせて伸縮させる */
+/* 開催中テーブル: 4列を均等幅に */
 .user-inprogress-table {
-  table-layout: auto;
-  width: auto;
+  table-layout: fixed;
+  width: 100%;
 }
 
 /* ビデオURL入力 */
