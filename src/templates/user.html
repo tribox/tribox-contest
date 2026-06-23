@@ -143,8 +143,8 @@
                       <span ng-show="!(thisUserData.iso2)">Loading...</span>
                       <span ng-show="thisUserData.iso2">
                         <img
-                          src="/assets/flags/flags-iso/shiny/24/{{ thisUserData.iso2 }}.png"
-                          height="24"
+                          src="https://flagcdn.com/{{ thisUserData.iso2.toLowerCase() }}.svg"
+                          height="16"
                           style="vertical-align: middle"
                           ng-show="thisUserData.iso2"
                         />
@@ -266,18 +266,19 @@
                       </tr>
                     </tbody>
                   </table>
-                  <p ng-show="historyInProgress[eid]">
-                    <i class="fa fa-hand-o-up" style="font-weight: bold"></i>
+                  <p class="user-video-note" ng-show="historyInProgress[eid]">
+                    <i class="fa fa-hand-o-up"></i>
                     <a
                       href="https://support.google.com/youtube/answer/1270709?hl=ja"
                       target="_blank"
                       >動画の公開時刻を予約して</a
                     >、 コンテストの終了時刻
-                    <i>{{ inProgressContest.endAt | toDate }}</i>
+                    <b>{{ inProgressContest.endAt | toDate }}</b>
                     にビデオが公開されるように設定してください。
                   </p>
 
-                  <table class="contestresult-table user-history-table" ng-if="history[eid]">
+                  <div class="user-history-table-wrap" ng-if="history[eid]">
+                  <table class="contestresult-table user-history-table">
                     <thead class="contestresult-table-header">
                       <tr>
                         <th class="contestresult-table-cell-padded user-history-col-contest">節</th>
@@ -285,7 +286,7 @@
                         <th class="contestresult-table-text-align-center contestresult-table-col-sp">SP</th>
                         <th class="contestresult-table-text-align-center contestresult-table-col-moves" ng-if="eid == 'e333fm'">手数</th>
                         <th class="contestresult-table-text-align-end contestresult-table-col-avg" ng-if="eid != 'e333fm'">記録</th>
-                        <th class="contestresult-table-cell-padded contestresult-table-hide-mobile">
+                        <th class="contestresult-table-cell-padded contestresult-table-hide-mobile user-history-col-details">
                           <span ng-if="eid != 'e333fm'">個々の記録</span>
                           <span ng-if="eid == 'e333fm'">解答・解説コメント</span>
                         </th>
@@ -324,7 +325,7 @@
                           class="contestresult-table-font-bold"
                           ng-class="eid == 'e333fm' ? 'contestresult-table-text-align-center' : 'contestresult-table-text-align-end'"
                         >{{ c.result.resultF }}</td>
-                        <td class="contestresult-table-cell-padded contestresult-table-hide-mobile" ng-if="eid != 'e333fm'">
+                        <td class="contestresult-table-cell-padded contestresult-table-hide-mobile user-history-details" ng-if="eid != 'e333fm'">
                           {{ c.result.detailsF }}
                         </td>
                         <td
@@ -368,6 +369,7 @@
                       </tr>
                     </tbody>
                   </table>
+                  </div>
                 </div>
               </div>
 
@@ -388,6 +390,12 @@
               </div>
 
               <div ng-show="isShownPastSeason">
+                <p
+                  class="user-empty-note"
+                  ng-show="pastSeasonLoaded && !hasParticipatedEventsPast"
+                >
+                  このシーズンの記録はありません。
+                </p>
                 <div ng-show="hasParticipatedEventsPast">
                   <h4 class="user-subtitle">競技一覧</h4>
                   <div class="contestresult-picker-event">
@@ -415,7 +423,8 @@
                       <b>{{ sumSeasonPointPast[eid] }}</b> ポイント
                     </p>
 
-                    <table class="contestresult-table user-history-table" ng-if="historyPast[eid]">
+                    <div class="user-history-table-wrap" ng-if="historyPast[eid]">
+                    <table class="contestresult-table user-history-table">
                       <thead class="contestresult-table-header">
                         <tr>
                           <th class="contestresult-table-cell-padded user-history-col-contest">節</th>
@@ -423,7 +432,7 @@
                           <th class="contestresult-table-text-align-center contestresult-table-col-sp">SP</th>
                           <th class="contestresult-table-text-align-center contestresult-table-col-moves" ng-if="eid == 'e333fm'">手数</th>
                           <th class="contestresult-table-text-align-end contestresult-table-col-avg" ng-if="eid != 'e333fm'">記録</th>
-                          <th class="contestresult-table-cell-padded contestresult-table-hide-mobile">
+                          <th class="contestresult-table-cell-padded contestresult-table-hide-mobile user-history-col-details">
                             <span ng-if="eid != 'e333fm'">個々の記録</span>
                             <span ng-if="eid == 'e333fm'">解答・解説コメント</span>
                           </th>
@@ -462,7 +471,7 @@
                             class="contestresult-table-font-bold"
                             ng-class="eid == 'e333fm' ? 'contestresult-table-text-align-center' : 'contestresult-table-text-align-end'"
                           >{{ c.result.resultF }}</td>
-                          <td class="contestresult-table-cell-padded contestresult-table-hide-mobile" ng-if="eid != 'e333fm'">
+                          <td class="contestresult-table-cell-padded contestresult-table-hide-mobile user-history-details" ng-if="eid != 'e333fm'">
                             {{ c.result.detailsF }}
                           </td>
                           <td
@@ -506,6 +515,7 @@
                         </tr>
                       </tbody>
                     </table>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -588,6 +598,7 @@
             $scope.historyPast = {};
             $scope.participatedEventsPast = {};
             $scope.hasParticipatedEventsPast = false;
+            $scope.pastSeasonLoaded = false;
             $scope.sumSeasonPointPast = {};
             $scope.tocHtmlPast = [];
 
@@ -1060,6 +1071,7 @@
               $scope.historyPast = {};
               $scope.participatedEventsPast = {};
               $scope.hasParticipatedEventsPast = false;
+              $scope.pastSeasonLoaded = false;
               $scope.sumSeasonPointPast = {};
               $scope.tocHtmlPast = [];
 
@@ -1101,7 +1113,8 @@
                                       function (snapUserhistories) {
                                         var userHistories =
                                           snapUserhistories.val();
-                                        var participatedPast = {};
+                                        var realPast = {};
+                                        var pendingPast = 0;
 
                                         // 各競技のシーズンポイント初期化
                                         Object.keys(events).forEach(function (
@@ -1128,7 +1141,7 @@
                                                   userHistories[cid][eid]
                                                     .hasCompeted == true
                                                 ) {
-                                                  participatedPast[eid] = true;
+                                                  pendingPast++;
                                                   // 必要な分の結果だけ読み込む
                                                   contestRef
                                                     .child("results")
@@ -1145,6 +1158,7 @@
                                                             !result._dummy &&
                                                             result.endAt
                                                           ) {
+                                                            realPast[eid] = true;
                                                             result.resultF =
                                                               TriboxContest.formatResult(
                                                                 result,
@@ -1207,6 +1221,18 @@
                                                             );
                                                           }
                                                         }
+                                                        pendingPast--;
+                                                        if (pendingPast === 0) {
+                                                          $timeout(function () {
+                                                            $scope.participatedEventsPast =
+                                                              realPast;
+                                                            $scope.hasParticipatedEventsPast =
+                                                              Object.keys(
+                                                                realPast
+                                                              ).length > 0;
+                                                            $scope.pastSeasonLoaded = true;
+                                                          });
+                                                        }
                                                       }
                                                     );
                                                 }
@@ -1215,13 +1241,11 @@
                                           );
                                         });
 
-                                        $timeout(function () {
-                                          $scope.participatedEventsPast =
-                                            participatedPast;
-                                          $scope.hasParticipatedEventsPast =
-                                            Object.keys(participatedPast)
-                                              .length > 0;
-                                        });
+                                        if (pendingPast === 0) {
+                                          $timeout(function () {
+                                            $scope.pastSeasonLoaded = true;
+                                          });
+                                        }
                                       }
                                     );
                                 });
