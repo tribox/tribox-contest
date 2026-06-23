@@ -1,0 +1,162 @@
+/**
+ * user.css - User profile page styles
+ */
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* セクション見出し */
+.user-section-title {
+  font-size: 20px;
+  font-weight: bold;
+  color: #808080;
+  margin: 40px 0 16px;
+}
+
+.user-subtitle {
+  font-size: 16px;
+  font-weight: bold;
+  color: #808080;
+  margin: 0 0 12px;
+}
+
+/* プロフィール */
+.user-name {
+  font-size: 22px;
+  font-weight: bold;
+  color: #808080;
+  margin-bottom: 16px;
+}
+
+.user-name .user-verified {
+  color: #0088cc;
+  font-size: 18px;
+}
+
+.user-name .user-id {
+  font-size: 14px;
+  font-weight: normal;
+  color: #b3b3b3;
+  margin-left: 4px;
+}
+
+.user-profile-table {
+  color: #808080;
+  border-collapse: collapse;
+  margin-bottom: 32px;
+}
+
+.user-profile-table th,
+.user-profile-table td {
+  font-size: 14px;
+  text-align: left;
+  vertical-align: top;
+  padding: 6px 0;
+  line-height: 1.6;
+}
+
+.user-profile-table th {
+  font-weight: bold;
+  white-space: nowrap;
+  width: 1%;
+  padding-right: 24px;
+}
+
+.user-profile-table a {
+  color: #0088cc;
+}
+
+.user-profile-table a:hover {
+  color: #006699;
+}
+
+/* 過去シーズン選択カルーセル (contestresult-picker-contest を流用) */
+.user-season-item {
+  width: auto;
+  min-width: 34px;
+  padding: 0 12px;
+  white-space: nowrap;
+}
+
+/* 種目見出し */
+.user-event-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #808080;
+  margin: 32px 0 8px;
+}
+
+.user-event-sp {
+  font-size: 14px;
+  color: #808080;
+  margin-bottom: 12px;
+}
+
+/* 参加履歴テーブル (contestresult-table を流用) */
+.user-history-table {
+  margin-bottom: 40px;
+}
+
+/* カラムの揃えを左に統一 */
+.user-history-table th,
+.user-history-table td {
+  text-align: left;
+}
+
+/* 順位列: 王冠が折り返さないよう幅を確保して横並びにする */
+.user-history-table .contestresult-table-col-place {
+  width: 76px;
+}
+
+.user-history-table td:nth-child(2) {
+  white-space: nowrap;
+}
+
+.user-history-table td:nth-child(2) .lottery {
+  margin-left: 2px;
+}
+
+.user-history-col-contest {
+  width: 88px;
+}
+
+/* 開催中テーブルは内容にあわせて伸縮させる */
+.user-inprogress-table {
+  table-layout: auto;
+  width: auto;
+}
+
+/* ビデオURL入力 */
+.user-video-input {
+  width: auto;
+  max-width: 220px;
+  margin: 0 8px 0 0;
+  padding: 6px 10px;
+  font-size: 14px;
+  color: #808080;
+  border: 1px solid #e6e6e6;
+  border-radius: 6px;
+  vertical-align: middle;
+}
+
+.user-video-btn {
+  display: inline-block;
+  padding: 7px 16px;
+  background: #0088cc;
+  color: #ffffff !important;
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 6px;
+  text-decoration: none !important;
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+.user-video-btn:hover {
+  opacity: 0.92;
+  color: #ffffff !important;
+}
