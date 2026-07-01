@@ -2,13 +2,6 @@
  * main.css
  */
 
-@media screen and (max-width: 480px) {
-  .container {
-    padding-left: 5px;
-    padding-right: 5px;
-  }
-}
-
 body {
   background-color: #fff;
   font-family: "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", "メイリオ",
