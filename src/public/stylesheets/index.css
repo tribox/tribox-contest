@@ -211,7 +211,7 @@
 
 .index-event-count {
   flex-shrink: 0;
-  margin-left: 64px;
+  margin-left: 24px;
   min-width: 56px;
   text-align: right;
   font-size: 12px;
