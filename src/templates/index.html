@@ -121,7 +121,7 @@
                         </span>
                         <span class="cubing-icon event-{{ e | removeHead }} index-event-icon"></span>
                         <span class="index-event-name">{{ events[e].name }}</span>
-                        <span class="index-event-format" ng-class="e == 'e333bf' ? 'index-format-average' : ('index-format-' + events[e].method + (events[e].method == 'best' ? events[e].attempts : ''))">{{ e == 'e333bf' ? 'Avg. of 5' : ({'average':'Avg.','mean':'Mean','best':'Best'}[events[e].method] + ' of ' + events[e].attempts) }}</span>
+                        <span class="index-event-format" ng-class="'index-format-' + events[e].method + (events[e].method == 'best' ? events[e].attempts : '')">{{ {'average':'Avg.','mean':'Mean','best':'Best'}[events[e].method] + ' of ' + events[e].attempts }}</span>
                         <span class="index-event-count"><img class="index-event-count-icon" src="/assets/images/icons/users.png" alt="" /> {{ participants[e] }}</span>
                     </a>
                 </div>

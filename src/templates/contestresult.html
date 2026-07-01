@@ -142,6 +142,8 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                       <th class="contestresult-table-text-align-end contestresult-table-col-place">順位</th>
                       [% if eid == "333fm" %]
                       <th class="contestresult-table-text-align-center contestresult-table-col-moves">手数</th>
+                      [% elif eid == "333bf" %]
+                      <th class="contestresult-table-text-align-end contestresult-table-col-avg">Best of 3</th>
                       [% elif eid == "666" or eid == "777" %]
                       <th class="contestresult-table-text-align-end contestresult-table-col-avg">Mean of 3</th>
                       [% else %]
