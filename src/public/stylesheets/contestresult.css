@@ -673,95 +673,179 @@ a.contestresult-puzzle-name:hover {
   }
 }
 
-/* タブレット */
+/* ==========================================================================
+   レスポンシブ: 1024px以下 共通
+   ========================================================================== */
 @media screen and (max-width: 1024px) {
-  .contestresult-table-detail-records.deploy {
-    width: 240px;
-  }
-
-  .contestresult-table-record-items {
-    width: 48px;
-    font-size: 0.85em;
-  }
-}
-
-/* スマホ */
-@media screen and (max-width: 768px) {
-  .contestresult-table-col-sp {
-    width: 36px;
+  .contestresult-table {
+    font-size: 14px;
   }
 
   .contestresult-table-col-place {
-    width: 40px;
+    width: 48px;
   }
 
   .contestresult-table-col-avg {
     width: 72px;
-    font-size: 0.85em;
+    font-size: 1em; /* 旧デザインの0.85em指定を無効化 */
   }
 
-  .contestresult-table-col-deploy {
+  .contestresult-table-col-deploy,
+  .contestresult-table-col-deploy-body {
     width: 28px;
   }
 
-  /* deploy 列を非表示 (333fm の detail ボタンは別クラスで残す) */
-  .contestresult-table-col-deploy,
-  .contestresult-table-col-deploy-body {
+  /* SP列・ビデオ列は常に非表示 */
+  .contestresult-table-col-sp,
+  .contestresult-table-col-video {
     display: none;
   }
 
-  .contestresult-table-col-detail-body {
-    display: table-cell;
+  /* 個々の記録: displayではなくwidthで開閉することでアニメーションを効かせる */
+  .contestresult-table-detail-records {
+    width: 0;
+    padding: 0;
   }
 
-  .contestresult-table-hide-mobile {
+  .contestresult-table-header-name-offset {
+    margin-left: 36px;
+    white-space: nowrap;
+  }
+}
+
+/* 個々の記録: 732px以下は競技者列148pxを保証しつつ残りを使用 */
+@media screen and (max-width: 732px) {
+  .contestresult-table-detail-records.deploy {
+    width: calc(100% - 328px);
+  }
+  tr:has(.contestresult-table-detail-records.deploy) .contestresult-table-col-name {
+    width: 148px;
+  }
+}
+
+/* 個々の記録: 733〜1024pxは364px固定、余りは競技者列へ */
+@media screen and (min-width: 733px) and (max-width: 1024px) {
+  .contestresult-table-detail-records.deploy {
+    width: 364px;
+  }
+  .contestresult-table-col-puzzle {
+    width: 200px;
+  }
+}
+
+/* 個々の記録: 常に70px幅・12px固定 */
+.contestresult-table-record-items {
+  width: 70px;
+  font-size: 12px;
+}
+.contestresult-table-records {
+  display: flex;
+  overflow-x: auto;
+  width: 100%;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.contestresult-table-records::-webkit-scrollbar {
+  display: none;
+}
+.contestresult-table-record-items {
+  scroll-snap-align: start;
+  flex: 0 0 auto;
+}
+
+/* 記録形式・競技者見出しの短縮表記 (デフォルト非表示、狭い画面で表示) */
+.contestresult-table-show-narrow {
+  display: none;
+}
+.name-header-short {
+  display: none;
+}
+@media screen and (max-width: 1024px) {
+  .contestresult-table-hide-narrow {
     display: none;
   }
-
-  .contestresult-table-show-mobile {
+  .contestresult-table-show-narrow {
     display: inline;
   }
+}
 
-  .contestresult-hide-mobile {
-    display: none;
+/* 競技者見出しは常に短縮形「競技者」に固定 */
+.name-header-full {
+  display: none;
+}
+.name-header-short {
+  display: inline;
+}
+
+/* パズル: アイコン+名前を包むコンテナは左揃え */
+.contestresult-table-puzzle {
+  justify-content: flex-start;
+}
+
+/* パズル名リンク: displayではなくwidthで開閉(アニメーションのため) */
+.contestresult-table-col-puzzle a {
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  vertical-align: middle;
+  transition: all 0.3s ease, padding 0.3s ease;
+}
+
+.contestresult-table-col-puzzle,
+.contestresult-table-col-name {
+  transition: all 0.3s ease, padding 0.3s ease;
+}
+
+/* パズル名展開時(手動トグル): 競技者列を最低100px確保しつつ、パズル列が残りを使う */
+.contestresult-table.puzzle-deploy .contestresult-table-puzzle {
+  max-width: 328px;
+}
+.contestresult-table.puzzle-deploy .contestresult-table-col-puzzle {
+  text-align: left;
+}
+.contestresult-table.puzzle-deploy .contestresult-table-col-puzzle a {
+  width: 100%;
+}
+@media screen and (min-width: 645px) {
+  .contestresult-table.puzzle-deploy .contestresult-table-col-puzzle {
+    width: 356px;
   }
-
-  /* 横開きの個々の記録を無効化 */
-  .contestresult-table-detail-records,
-  .contestresult-table-detail-records.deploy {
-    display: none;
+}
+@media screen and (max-width: 644px) {
+  .contestresult-table.puzzle-deploy .contestresult-table-col-puzzle {
+    width: calc(100% - 248px);
   }
-
-  .contestresult-table-body-item {
-    height: 40px;
+  .contestresult-table.puzzle-deploy .contestresult-table-col-name {
+    width: 100px;
   }
+}
 
-  .contestresult-table-placement,
-  .contestresult-table-name,
-  .contestresult-table-puzzle {
-    height: 40px;
+/* 769〜1199px: 個々の記録展開時はパズル名を隠してアイコンのみに */
+@media screen and (min-width: 769px) and (max-width: 1199px) {
+  tr:has(.contestresult-table-detail-records.deploy) .contestresult-table-col-puzzle a {
+    width: 0;
   }
-
-  .contestresult-table-name img {
-    height: 12px;
-  }
-
-  .contestresult-table-puzzle {
-    justify-content: center;
-  }
-
-  .contestresult-table-col-puzzle {
+  tr:has(.contestresult-table-detail-records.deploy) .contestresult-table-col-puzzle {
     width: 32px;
     text-align: center;
   }
-
-  .contestresult-picker-event-item {
-    width: 48px;
-    height: 48px;
+  tr:has(.contestresult-table-detail-records.deploy) .contestresult-table-col-puzzle .contestresult-table-show-mobile {
+    display: inline;
   }
+  tr:has(.contestresult-table-detail-records.deploy) .contestresult-table-col-puzzle .contestresult-table-hide-mobile {
+    display: none;
+  }
+}
 
-  .contestresult-puzzle-name,
-  .contestresult-puzzle-pct {
-    font-size: 14px;
+/* 769px未満: パズル名は常に非表示(アイコンのみ) */
+@media screen and (max-width: 768px) {
+  .contestresult-table-col-puzzle a {
+    width: 0;
+  }
+  .contestresult-table-col-puzzle {
+    width: 32px;
+    text-align: center;
   }
 }
