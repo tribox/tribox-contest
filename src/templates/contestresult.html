@@ -143,11 +143,11 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                       [% if eid == "333fm" %]
                       <th class="contestresult-table-text-align-center contestresult-table-col-moves">手数</th>
                       [% elif eid == "333bf" %]
-                      <th class="contestresult-table-text-align-end contestresult-table-col-avg">Best of 3</th>
+                      <th class="contestresult-table-text-align-end contestresult-table-col-avg"><span class="contestresult-table-hide-narrow">Best of 3</span><span class="contestresult-table-show-narrow">Bo3</span></th>
                       [% elif eid == "666" or eid == "777" %]
-                      <th class="contestresult-table-text-align-end contestresult-table-col-avg">Mean of 3</th>
+                      <th class="contestresult-table-text-align-end contestresult-table-col-avg"><span class="contestresult-table-hide-narrow">Mean of 3</span><span class="contestresult-table-show-narrow">Mo3</span></th>
                       [% else %]
-                      <th class="contestresult-table-text-align-end contestresult-table-col-avg">Avg. of 5</th>
+                      <th class="contestresult-table-text-align-end contestresult-table-col-avg"><span class="contestresult-table-hide-narrow">Avg. of 5</span><span class="contestresult-table-show-narrow">Ao5</span></th>
                       [% endif %]
                       <th class="[% if eid == '333fm' %]contestresult-table-col-detail-body[% else %]contestresult-table-col-deploy[% endif %]">
                         [% if eid != "333fm" %]
@@ -164,10 +164,15 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                         [% endif %]
                       </th>
                       <th class="contestresult-table-detail-records contestresult-table-cell-padded">個々の記録</th>
-                      <th class="contestresult-table-cell-padded">競技者 / 所属</th>
+                      <th class="contestresult-table-cell-padded contestresult-table-col-name"><span class="contestresult-table-header-name-offset">競技者</span></th>
                       <th class="contestresult-table-cell-padded contestresult-table-col-puzzle">
-                        <img class="contestresult-table-show-mobile" src="/assets/images/icons/cube_empty.png" height="24" title="パズル" alt="パズル" />
-                        <span class="contestresult-table-hide-mobile">パズル</span>
+                        <div class="contestresult-table-puzzle">
+                          <img class="contestresult-table-show-mobile" src="/assets/images/icons/cube_empty.png" height="24" title="パズル" alt="パズル" />
+                          <span class="contestresult-table-hide-mobile">パズル</span>
+                          <button class="contestresult-table-deploy-button contestresult-puzzle-collapse-button">
+                            <img src="/assets/images/icons/undeploy.png" height="24" title="undeploy" alt="undeploy" />
+                          </button>
+                        </div>
                       </th>
                       <th class="contestresult-table-cell-padded contestresult-table-col-video">
                         <i class="fa fa-video-camera"></i>
@@ -193,7 +198,7 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                         </div>
                       </td>
                       <td class="contestresult-table-text-align-end">{{ r.place }}位</td>
-                      <td class="[% if eid == '333fm' %]contestresult-table-text-align-center[% else %]contestresult-table-text-align-end[% endif %] contestresult-table-font-bold">{{ r.resultF }}</td>
+                      <td class="[% if eid == '333fm' %]contestresult-table-text-align-center[% else %]contestresult-table-text-align-end[% endif %] contestresult-table-font-bold contestresult-table-cell-padded">{{ r.resultF }}</td>
                       <td class="[% if eid == '333fm' %]contestresult-table-col-detail-body[% else %]contestresult-table-col-deploy-body[% endif %]">
                         [% if eid == "333fm" %]
                         <div class="contestresult-table-deploy-button-container">
@@ -213,7 +218,7 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                           <div class="contestresult-table-record-items" ng-repeat="d in r.detailsF.split(' ') track by $index">{{ d }}</div>
                         </div>
                       </td>
-                      <td class="contestresult-table-cell-padded">
+                      <td class="contestresult-table-cell-padded contestresult-table-col-name">
                         <div class="contestresult-table-name">
                           <div class="contestresult-table-flag">
                             <img
