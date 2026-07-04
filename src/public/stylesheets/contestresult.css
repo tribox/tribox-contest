@@ -765,13 +765,53 @@ a.contestresult-puzzle-name:hover {
     height: 12px;
   }
 
+  /* 配置はトグルで切り替えず固定にする (閉じた32px列では中央寄せとの差はほぼ見えず、
+     切り替えると閉じる瞬間にロゴが飛ぶ) */
   .contestresult-table-puzzle {
-    justify-content: center;
+    justify-content: flex-start;
   }
 
   .contestresult-table-col-puzzle {
     width: 32px;
-    text-align: center;
+    text-align: right;
+    transition: width 0.3s ease;
+  }
+
+  .contestresult-table.puzzle-deployed .contestresult-table-col-puzzle {
+    width: 240px;
+  }
+
+  .contestresult-table.puzzle-deployed {
+    min-width: calc(100% + 208px);
+  }
+
+  .contestresult-table.deployed.puzzle-deployed {
+    min-width: calc(100% + 462px);
+  }
+
+  /* rtl でスクロールを右端基準にし、パズル列が左に開いて見えるようにする */
+  .contestresult-table-scroll-pin-right {
+    direction: rtl;
+  }
+
+  .contestresult-table-scroll-pin-right > .contestresult-table {
+    direction: ltr;
+  }
+
+  /* パズル名は display 切り替えでなく max-width と opacity で開閉させる */
+  .contestresult-table-puzzle .contestresult-table-hide-mobile {
+    display: block;
+    max-width: 0;
+    opacity: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: max-width 0.3s ease, opacity 0.3s ease;
+  }
+
+  .contestresult-table.puzzle-deployed .contestresult-table-puzzle .contestresult-table-hide-mobile {
+    max-width: 100%;
+    opacity: 1;
   }
 
   .contestresult-picker-event-item {
