@@ -1,14 +1,18 @@
+var animatingTimer = null;
+function markTableAnimating(table) {
+  table.classList.add('animating');
+  clearTimeout(animatingTimer);
+  animatingTimer = setTimeout(function() {
+    table.classList.remove('animating');
+  }, 350);
+}
+
 // thead の deploy ボタン: 全行の記録を一括横開き
-var headButton = document.querySelector('thead .contestresult-table-deploy-button');
+var headButton = document.querySelector('thead .contestresult-table-deploy-button:not(.contestresult-table-puzzle-toggle)');
 if (headButton) {
-  var animatingTimer = null;
   headButton.addEventListener('click', function() {
     var table = this.closest('table');
-    table.classList.add('animating');
-    clearTimeout(animatingTimer);
-    animatingTimer = setTimeout(function() {
-      table.classList.remove('animating');
-    }, 350);
+    markTableAnimating(table);
 
     var img = this.querySelector('img');
     var isDeployed = img.src.includes('deploy.png') && !img.src.includes('undeploy.png');
@@ -25,6 +29,42 @@ if (headButton) {
       el.classList.toggle('deploy');
     });
     table.classList.toggle('deployed');
+  });
+}
+
+// thead のパズルボタン (スマホ): パズル名の列を一括横開き
+var puzzleButton = document.querySelector('thead .contestresult-table-puzzle-toggle');
+if (puzzleButton) {
+  var pinRightTimer = null;
+  puzzleButton.addEventListener('click', function() {
+    var table = this.closest('table');
+    var wrapper = table.closest('.contestresult-table-scroll');
+    markTableAnimating(table);
+    var opening = !table.classList.contains('puzzle-deployed');
+    table.classList.toggle('puzzle-deployed');
+    var img = this.querySelector('img');
+    if (opening) {
+      img.src = '/assets/images/icons/puzzle_name_close.png';
+      img.title = '閉じる';
+      img.alt = '閉じる';
+    } else {
+      img.src = '/assets/images/icons/cube_empty.png';
+      img.title = 'パズル';
+      img.alt = 'パズル';
+    }
+    clearTimeout(pinRightTimer);
+    if (opening) {
+      wrapper.classList.add('contestresult-table-scroll-pin-right');
+    } else {
+      // 閉じるアニメーションが終わってから rtl を外す (途中で外すと左端にジャンプする)
+      pinRightTimer = setTimeout(function() {
+        // rtl では scrollLeft が右端基準 (0 〜 負値) なので、外す前に見た目の位置を控えて復元する
+        var maxScroll = wrapper.scrollWidth - wrapper.clientWidth;
+        var target = maxScroll + wrapper.scrollLeft;
+        wrapper.classList.remove('contestresult-table-scroll-pin-right');
+        wrapper.scrollLeft = target;
+      }, 350);
+    }
   });
 }
 
