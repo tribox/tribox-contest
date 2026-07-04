@@ -567,8 +567,6 @@ a.contestresult-puzzle-name:hover {
   color: #808080;
 }
 
-/* 開閉アニメーション中は画面外の行を隠して再レイアウトを軽くする
-   (deploy ボタンは thead にあり、クリック時に見えるのは先頭の行だけ) */
 .contestresult-table.animating tbody tr:nth-child(n+41) {
   display: none;
 }
@@ -740,18 +738,15 @@ a.contestresult-puzzle-name:hover {
     font-size: 12px;
   }
 
-  /* 記録を開いてテーブルが画面幅を超えたぶんは横スクロールで見せる */
   .contestresult-table-scroll {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
   }
 
-  /* 記録列の開き分と同じだけテーブル幅を広げ、開閉中に名前・パズル列の幅が変わらないようにする */
   .contestresult-table.deployed {
     min-width: calc(100% + 254px);
   }
 
-  /* スマホは1画面に映る行数が少ないので、アニメーション中に隠す行を増やす */
   .contestresult-table.animating tbody tr:nth-child(n+26) {
     display: none;
   }

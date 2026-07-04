@@ -3,7 +3,6 @@ var headButton = document.querySelector('thead .contestresult-table-deploy-butto
 if (headButton) {
   var animatingTimer = null;
   headButton.addEventListener('click', function() {
-    // 開閉アニメーション中は画面外の行を隠してレイアウト計算を軽くする
     var table = this.closest('table');
     table.classList.add('animating');
     clearTimeout(animatingTimer);
