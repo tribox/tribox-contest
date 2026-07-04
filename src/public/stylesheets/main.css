@@ -265,7 +265,7 @@ body > .container {
   text-decoration: underline;
 }
 
-@media screen and (max-width: 697px) {
+@media screen and (max-width: 969px) {
   #footer {
     min-height: 107px;
   }
