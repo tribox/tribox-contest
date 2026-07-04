@@ -777,6 +777,11 @@ a.contestresult-puzzle-name:hover {
     transition: width 0.3s ease;
   }
 
+  /* 閉じているとき行のブランドロゴと同じ位置に重なるよう右端から 8px ずらす */
+  .contestresult-table-puzzle-toggle {
+    margin-right: 8px;
+  }
+
   .contestresult-table.puzzle-deployed .contestresult-table-col-puzzle {
     width: 240px;
   }
