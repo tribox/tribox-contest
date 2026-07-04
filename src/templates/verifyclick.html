@@ -1,0 +1,109 @@
+[% set title = "Verify Click" %]
+
+<!DOCTYPE html>
+<html lang="ja" ng-app="contestApp">
+  <head>
+    [% import "components/header.html" as header %] [[ header.print(title=title,
+    description=contest_description, sitename=contest_name) ]] [% import
+    "components/basejs.html" as basejs %] [[ basejs.print(firebaseapp_contest,
+    firebaseapp_contest_apikey, firebaseapp_contest_senderid) ]] [% import
+    "components/authjs.html" as authjs %] [[ authjs.print(redirect_login="",
+    redirect_logout="", check_first=True) ]]
+
+    <script>
+      app.controller("VerifyClickCtrl", [
+        "$scope",
+        "$timeout",
+        function ($scope, $timeout) {
+          $scope.error = null;
+          $scope.verifyClickLoaded = false;
+
+          [% if message != "" %]
+          firebase.auth().onAuthStateChanged(function (authData) {
+            if (authData) {
+              if (authData.uid == "[[ userId ]]") {
+                // 認証アカウントをセットする
+                contestRef
+                  .child("users")
+                  .child(authData.uid)
+                  .update({ isTriboxCustomer: true }, function (error) {
+                    if (error) {
+                      console.error(error);
+                    } else {
+                      contestRef
+                        .child("usersecrets")
+                        .child(authData.uid)
+                        .update(
+                          { triboxStoreCustomerId: [[ customerId ]] },
+                          function (error) {
+                            if (error) {
+                              console.error(error);
+                            } else {
+                              $timeout(function () {
+                                $scope.verifyClickLoaded = true;
+                              });
+                            }
+                          }
+                        );
+                    }
+                  });
+              } else {
+                $timeout(function () {
+                  $scope.error = "無効なURLです。";
+                  $scope.verifyClickLoaded = true;
+                });
+              }
+            } else {
+              $timeout(function () {
+                $scope.error =
+                  "ログイン済みのPC・スマートフォン・タブレット端末等で、再度このURLにアクセスしてください。";
+                $scope.verifyClickLoaded = true;
+              });
+            }
+          });
+          [% else %]
+          $timeout(function () {
+            $scope.verifyClickLoaded = true;
+          });
+          [% endif %]
+        },
+      ]);
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      [% import "components/bodyheader.html" as bodyheader %] [[
+      bodyheader.print(title=title, contest_name=contest_name) ]]
+
+      <div ng-controller="AuthCtrl">
+        <div ng-controller="VerifyClickCtrl">
+          <div ng-hide="authLoaded && verifyClickLoaded">
+            <div class="cube-loader"><div class="cube-loader-grid"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="cube-loader-text">Loading...</div></div>
+          </div>
+          <div ng-show="authLoaded && verifyClickLoaded">
+            [% import "components/authinfo.html" as authinfo %] [[
+            authinfo.print() ]]
+
+            <h2>アカウント認証確認</h2>
+
+            [% if message != "" %]
+            <div class="notice-success margin-bottom-20" ng-if="!error">
+              <i class="fa fa-check"></i>
+              [[ message ]]
+            </div>
+            [% endif %] [% if errorMessage != "" %]
+            <div class="color-error margin-bottom-20">
+              エラー: [[ errorMessage ]]
+            </div>
+            [% endif %]
+            <div class="color-error margin-bottom-20" ng-if="error">
+              エラー: {{ error }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      [% include "components/bodyfooter.html" %]
+    </div>
+  </body>
+</html>
