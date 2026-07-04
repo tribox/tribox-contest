@@ -464,6 +464,10 @@ a.contestresult-puzzle-name:hover {
   flex-shrink: 0;
 }
 
+.contestresult-table-puzzle > a:not(.contestresult-table-line-clamp) {
+  display: flex;
+}
+
 .contestresult-table-puzzle img {
   display: block;
 }
