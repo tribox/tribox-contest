@@ -131,8 +131,7 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                 </div>
                 </div>
 
-                <!-- <h4>コンテスト結果</h4>
-                <p><i class="fa fa-star color-star"></i>: 当選ポイント獲得</p> -->
+                <div class="contestresult-table-scroll">
                 <table class="contestresult-table">
                   <thead
                       class="contestresult-table-header"
@@ -169,7 +168,7 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                         <img class="contestresult-table-show-mobile" src="/assets/images/icons/cube_empty.png" height="24" title="パズル" alt="パズル" />
                         <span class="contestresult-table-hide-mobile">パズル</span>
                       </th>
-                      <th class="contestresult-table-cell-padded contestresult-table-col-video">
+                      <th class="contestresult-table-cell-padded contestresult-table-col-video contestresult-table-hide-mobile">
                         <i class="fa fa-video-camera"></i>
                       </th>
                       <th class="contestresult-table-cell-padded contestresult-table-col-admin" ng-if="usersecretData.isAdmin">運営用</th>
@@ -234,9 +233,19 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                       </td>
                       <td class="contestresult-table-cell-padded contestresult-table-col-puzzle">
                         <div class="contestresult-table-puzzle">
+                          <a
+                            ng-if="r.puzzle.brand && r.puzzle.type == 'database'"
+                            href="https://store.tribox.com/products/detail.php?product_id={{ r.puzzle.product }}"
+                            target="_blank"
+                          >
+                            <img
+                              src="https://store.tribox.com/user_data/img/category/{{ r.puzzle.brand }}.png"
+                              height="24"
+                            />
+                          </a>
                           <img
+                            ng-if="r.puzzle.brand && r.puzzle.type != 'database'"
                             src="https://store.tribox.com/user_data/img/category/{{ r.puzzle.brand }}.png"
-                            ng-show="r.puzzle.brand"
                             height="24"
                           />
                           <a
@@ -248,7 +257,7 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                           <span class="contestresult-table-hide-mobile" ng-if="r.puzzle.type != 'database'">{{ r.puzzleF }}</span>
                         </div>
                       </td>
-                      <td class="contestresult-table-cell-padded">
+                      <td class="contestresult-table-cell-padded contestresult-table-hide-mobile">
                         <a ng-if="r.videoUrl" href="{{ r.videoUrl | encodeURI }}" target="_blank">
                           <i class="fa fa-video-camera"></i>
                         </a>
@@ -266,6 +275,7 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                     </tr>
                   </tbody>
                 </table>
+                </div>
 
                 <div class="contestresult-scramble-section">
                   <div class="contestresult-scramble-title">スクランブル</div>
@@ -299,21 +309,6 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                 </div>
                 [% endif %]
 
-                [#
-                <!--<p>usersecretData:</p>
-                <pre>{{ usersecretData | json }}</pre>-->
-                #] [#
-                <!--<p>[[ cid ]] -> contestData:</p>
-                <pre>{{ contestData | json }}</pre>-->
-                #] [#
-                <!--<pre>{{ resultsAll.e[[ eid ]] | json }}</pre>-->
-                #] [#
-                <!--<pre>{{ resultsPuzzles.e[[ eid ]] | json }}</pre>-->
-                #] [#
-                <!--<pre>{{ resultsTop3.e[[ eid ]] | json }}</pre>-->
-                #] [#
-                <!--<pre>{{ scramblesData | json }}</pre>-->
-                #]
               </div>
             </div>
           </div>
