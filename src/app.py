@@ -1,10 +1,13 @@
+import json
 import mysql.connector
 import os
 import re
 import secrets
 import subprocess
+import time
+import urllib.request
 
-from flask import Flask, make_response, render_template, request, send_from_directory
+from flask import Flask, make_response, redirect, render_template, request, send_from_directory
 
 from src.models.verifying import Verifying
 from src.models.customer import Customer
@@ -122,6 +125,33 @@ def regulations():
         firebaseapp_contest_apikey=FIREBASEAPP_CONTEST_APIKEY,
         firebaseapp_contest_senderid=FIREBASEAPP_CONTEST_SENDERID,
     )
+
+# ロード完了前のヘッダーメニューが指す /contest/default, /ranking/default の
+# リダイレクト先 (最新コンテストと現在のシーズン) を Firebase REST から取得する。
+_default_ids_cache = {"expiresAt": 0.0, "lastContest": "", "sid": ""}
+
+def get_default_redirect_ids():
+    now = time.time()
+    if now < _default_ids_cache["expiresAt"]:
+        return _default_ids_cache
+    base_url = "https://" + FIREBASEAPP_CONTEST + ".firebaseio.com"
+    with urllib.request.urlopen(base_url + "/inProgress.json", timeout=3) as res:
+        in_progress = json.load(res)
+    with urllib.request.urlopen(
+        base_url + "/contests/" + in_progress["contest"] + ".json", timeout=3
+    ) as res:
+        contest = json.load(res)
+    _default_ids_cache["lastContest"] = in_progress["lastContest"][1:]
+    _default_ids_cache["sid"] = str(contest["year"]) + str(contest["season"])
+    _default_ids_cache["expiresAt"] = now + 60
+    return _default_ids_cache
+
+@app.route("/contest/default")
+def contestdefault():
+    try:
+        return redirect("/contest/" + get_default_redirect_ids()["lastContest"])
+    except Exception:
+        return contest("default")
 
 @app.route("/contest/<cid>")
 def contest(cid):
@@ -291,6 +321,10 @@ def rankingpuzzleall(sid):
 
 @app.route("/ranking/default")
 def rankingdefault():
+    try:
+        return redirect("/ranking/" + get_default_redirect_ids()["sid"])
+    except Exception:
+        pass
     return render_template(
         "rankingdefault.html",
         contest_description=CONTEST_DESCRIPTION,
@@ -306,6 +340,10 @@ def rankingdefault():
 
 @app.route("/ranking/default/puzzle")
 def rankingpuzzledefault():
+    try:
+        return redirect("/ranking/" + get_default_redirect_ids()["sid"] + "/puzzle")
+    except Exception:
+        pass
     return render_template(
         "rankingpuzzledefault.html",
         contest_description=CONTEST_DESCRIPTION,

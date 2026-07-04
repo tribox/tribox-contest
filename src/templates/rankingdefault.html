@@ -16,8 +16,13 @@
           contestRef
             .child("inProgress")
             .once("value", function (snapInProgress) {
-              window.location =
-                "/contest/" + removeHead(snapInProgress.val().lastContest);
+              contestRef
+                .child("contests")
+                .child(snapInProgress.val().contest)
+                .once("value", function (snapContest) {
+                  var contest = snapContest.val();
+                  window.location = "/ranking/" + contest.year + contest.season;
+                });
             });
         },
       ]);

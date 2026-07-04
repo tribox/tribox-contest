@@ -275,7 +275,7 @@ cid %]
                             <div class="contestresult-table-name">
                               <div class="contestresult-table-flag">
                                 <img
-                                  src="https://flagcdn.com/{{ r.user.iso2.toLowerCase() }}.svg"
+                                  ng-src="https://flagcdn.com/{{ r.user.iso2.toLowerCase() }}.svg"
                                   ng-show="r.user.iso2"
                                   height="16"
                                 />
@@ -295,13 +295,13 @@ cid %]
                                 href="https://store.tribox.com/products/detail.php?product_id={{ r.puzzle.product }}"
                                 target="_blank"
                               ><img
-                                src="https://store.tribox.com/user_data/img/category/{{ r.puzzle.brand }}.png"
+                                ng-src="https://store.tribox.com/user_data/img/category/{{ r.puzzle.brand }}.png"
                                 ng-show="r.puzzle.brand"
                                 height="24"
                               /></a>
                               <img
                                 ng-if="r.puzzle.type != 'database'"
-                                src="https://store.tribox.com/user_data/img/category/{{ r.puzzle.brand }}.png"
+                                ng-src="https://store.tribox.com/user_data/img/category/{{ r.puzzle.brand }}.png"
                                 ng-show="r.puzzle.brand"
                                 height="24"
                               />
