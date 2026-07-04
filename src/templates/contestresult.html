@@ -169,7 +169,7 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                         <img class="contestresult-table-show-mobile" src="/assets/images/icons/cube_empty.png" height="24" title="パズル" alt="パズル" />
                         <span class="contestresult-table-hide-mobile">パズル</span>
                       </th>
-                      <th class="contestresult-table-cell-padded contestresult-table-col-video">
+                      <th class="contestresult-table-cell-padded contestresult-table-col-video contestresult-table-hide-mobile">
                         <i class="fa fa-video-camera"></i>
                       </th>
                       <th class="contestresult-table-cell-padded contestresult-table-col-admin" ng-if="usersecretData.isAdmin">運営用</th>
@@ -258,7 +258,7 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                           <span class="contestresult-table-hide-mobile" ng-if="r.puzzle.type != 'database'">{{ r.puzzleF }}</span>
                         </div>
                       </td>
-                      <td class="contestresult-table-cell-padded">
+                      <td class="contestresult-table-cell-padded contestresult-table-hide-mobile">
                         <a ng-if="r.videoUrl" href="{{ r.videoUrl | encodeURI }}" target="_blank">
                           <i class="fa fa-video-camera"></i>
                         </a>
