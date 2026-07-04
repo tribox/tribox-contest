@@ -205,7 +205,7 @@ body > .container {
   left: 50%;
   transform: translateX(-50%);
   width: 100vw;
-  background: #808080;
+  background: linear-gradient(-15deg, #009678, #0096af);
   z-index: -1;
 }
 
