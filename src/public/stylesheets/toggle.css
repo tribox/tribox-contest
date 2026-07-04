@@ -13,10 +13,10 @@ div.switch {
 }
 
 #sound-off {
-    color: #dddddd;
+    color: var(--color-border-light);
 }
 #sound-on {
-    color: #1bbc9b;
+    color: var(--color-success);
 }
 
 label.toggle-label {
@@ -41,7 +41,7 @@ input.cmn-toggle-round-flat + label {
     padding: 2px;
     width: 45px;
     height: 24px;
-    background-color: #dddddd;
+    background-color: var(--color-border-light);
     border-radius: 30px;
     transition: background 0.4s;
 }
@@ -65,14 +65,14 @@ input.cmn-toggle-round-flat + label:after {
     left: 4px;
     bottom: 4px;
     width: 17px;
-    background-color: #dddddd;
+    background-color: var(--color-border-light);
     border-radius: 17px;
     transition: margin 0.4s, background 0.4s;
 }
 input.cmn-toggle-round-flat:checked + label {
-    background-color: #1bbc9b;
+    background-color: var(--color-success);
 }
 input.cmn-toggle-round-flat:checked + label:after {
     margin-left: 20px;
-    background-color: #1bbc9b;
+    background-color: var(--color-success);
 }

@@ -2,6 +2,46 @@
  * main.css
  */
 
+/**
+ * カラーパレット
+ * 色は必ずここの変数を使う。新しい色が必要な場合はまず変数を追加する。
+ * 詳細は docs/frontend.md を参照。
+ */
+:root {
+  /* ブランドカラー (ヘッダー・フッター・アクティブ状態) */
+  --color-brand-1: #0096af;
+  --color-brand-2: #009678;
+  --gradient-brand: linear-gradient(-15deg, var(--color-brand-2), var(--color-brand-1));
+  --gradient-brand-vertical: linear-gradient(to bottom, var(--color-brand-1), var(--color-brand-2));
+  --gradient-brand-horizontal: linear-gradient(to right, var(--color-brand-1), var(--color-brand-2));
+
+  /* テキスト */
+  --color-text: #808080;         /* 基本テキスト */
+  --color-text-strong: #555;     /* 強調・ホバー */
+  --color-text-muted: #999;      /* 補助テキスト */
+  --color-text-light: #e6e6e6;   /* 濃い背景上の明るいテキスト (フッター等) */
+
+  /* リンク */
+  --color-link: #0088cc;
+  --color-link-hover: #006699;
+
+  /* 背景 */
+  --color-surface-hover: #f5f5f5;  /* ホバー背景 */
+  --color-surface-muted: #f7f7f7;  /* 淡い背景 (パネル・ゼブラ・表ヘッダ) */
+
+  /* ボーダー */
+  --color-border: #ccc;
+  --color-border-light: #ddd;
+  --color-border-lighter: #ececec;
+
+  /* 状態 */
+  --color-error: #e74c3c;
+  --color-success: #1bbc9b;
+
+  /* 影 */
+  --shadow-card: 0 0 8px #bbbbbb;
+}
+
 body {
   background-color: #fff;
   font-family: "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", "メイリオ",
@@ -9,7 +49,7 @@ body {
 }
 
 .contesttimer-page {
-  color: #808080;
+  color: var(--color-text);
 }
 h1,
 h2,
@@ -44,7 +84,7 @@ h6 {
 }
 
 #header-background {
-  background: linear-gradient(-15deg, #009678, #0096af);
+  background: var(--gradient-brand);
   height: 64px;
   left: 50%;
   position: absolute;
@@ -93,9 +133,9 @@ h6 {
 #main-menu a {
   align-items: center;
   border-radius: 8px;
-  box-shadow: 0 0 8px #bbbbbb;
+  box-shadow: var(--shadow-card);
   box-sizing: border-box;
-  color: #808080;
+  color: var(--color-text);
   display: flex;
   flex-shrink: 0;
   gap: 2px;
@@ -107,7 +147,7 @@ h6 {
 }
 
 #main-menu .active {
-  background: linear-gradient(-15deg, #009678, #0096af);
+  background: var(--gradient-brand);
   color: #ffffff;
 }
 
@@ -194,7 +234,7 @@ body > .container {
   display: flex;
   align-items: center;
   padding: 8px 0;
-  color: #e6e6e6;
+  color: var(--color-text-light);
   font-size: 14px;
 }
 
@@ -206,7 +246,7 @@ body > .container {
   left: 50%;
   transform: translateX(-50%);
   width: 100vw;
-  background: linear-gradient(-15deg, #009678, #0096af);
+  background: var(--gradient-brand);
   z-index: -1;
 }
 
@@ -230,7 +270,7 @@ body > .container {
   display: inline-flex;
   align-items: center;
   gap: 2px;
-  color: #e6e6e6;
+  color: var(--color-text-light);
   font-size: 14px;
   font-weight: 600;
   text-decoration: none;
@@ -242,7 +282,7 @@ body > .container {
 }
 
 .footer-nav-item:hover {
-  color: #e6e6e6;
+  color: var(--color-text-light);
   opacity: 0.85;
 }
 
@@ -253,7 +293,7 @@ body > .container {
   width: 100%;
   height: 2px;
   border-radius: 1px;
-  background: #e6e6e6;
+  background: var(--color-text-light);
 }
 
 #footer-copyright {
@@ -262,7 +302,7 @@ body > .container {
 }
 
 #footer-copyright a {
-  color: #e6e6e6;
+  color: var(--color-text-light);
   text-decoration: underline;
 }
 
@@ -285,19 +325,19 @@ body > .container {
  * Auth Info
  */
 #auth-info {
-  color: #808080;
+  color: var(--color-text);
 }
 
 #event-info {
-  color: #808080;
+  color: var(--color-text);
 }
 
 .contestform-page {
-  color: #808080;
+  color: var(--color-text);
 }
 
 a.underlined {
-  color: #e74c3c;
+  color: var(--color-error);
   text-decoration: underline;
 }
 
@@ -307,9 +347,9 @@ a.underlined {
 .notice-error {
   padding: 10px;
   background: none;
-  color: #e74c3c;
-  border: 2px solid #e74c3c;
-  border-top: 5px solid #e74c3c;
+  color: var(--color-error);
+  border: 2px solid var(--color-error);
+  border-top: 5px solid var(--color-error);
   /*-webkit-border-radius: 5px;
        -moz-border-radius: 5px;
             border-radius: 5px;*/
@@ -317,9 +357,9 @@ a.underlined {
 .notice-success {
   padding: 10px;
   background: none;
-  color: #1bbc9b;
-  border: 2px solid #1bbc9b;
-  border-top: 5px solid #1bbc9b;
+  color: var(--color-success);
+  border: 2px solid var(--color-success);
+  border-top: 5px solid var(--color-success);
   /*-webkit-border-radius: 5px;
        -moz-border-radius: 5px;
             border-radius: 5px;*/
@@ -327,9 +367,9 @@ a.underlined {
 .notice-normal {
   padding: 10px;
   background: none;
-  color: #555;
-  border: 2px solid #555;
-  border-top: 5px solid #555;
+  color: var(--color-text-strong);
+  border: 2px solid var(--color-text-strong);
+  border-top: 5px solid var(--color-text-strong);
   /*-webkit-border-radius: 5px;
        -moz-border-radius: 5px;
             border-radius: 5px;*/
@@ -387,7 +427,7 @@ table.scrambles {
   margin-bottom: 20px;
 }
 table.scrambles tr.scramble-done {
-  color: #ddd;
+  color: var(--color-border-light);
 }
 table.scrambles td,
 table.scrambles th {
@@ -421,7 +461,7 @@ table.scrambles th:first-child {
 }
 
 .timeform {
-  border: 1px solid rgb(236, 236, 236);
+  border: 1px solid var(--color-border-lighter);
   -webkit-border-radius: 10px;
   -moz-border-radius: 10;
   border-radius: 10px;
@@ -434,14 +474,14 @@ table.scrambles th:first-child {
   padding-bottom: 10px;
   margin-top: 10px;
   margin-bottom: 10px;
-  border-bottom: 1px solid rgb(236, 236, 236);
+  border-bottom: 1px solid var(--color-border-lighter);
   text-align: center;
 }
 
 .timeform-time input {
   width: 100%;
   font-size: 24px;
-  border: 2px solid #ddd;
+  border: 2px solid var(--color-border-light);
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
@@ -454,13 +494,13 @@ table.scrambles th:first-child {
   outline: none;
 }
 .timeform-time input.format-error {
-  border: 2px solid #e74c3c;
+  border: 2px solid var(--color-error);
 }
 .timeform-time span.result-detail {
   font-size: 24px;
 }
 .timeform-time span.yet {
-  color: #ddd;
+  color: var(--color-border-light);
 }
 .timeform-time span.result-note {
   font-size: 12px;
@@ -475,7 +515,7 @@ table.scrambles th:first-child {
 
 .timeform-cond-btn {
   display: inline-block;
-  border: 1px solid rgb(236, 236, 236);
+  border: 1px solid var(--color-border-lighter);
   width: 40px;
   height: 40px;
   -webkit-border-radius: 20px;
@@ -488,7 +528,7 @@ table.scrambles th:first-child {
 }
 
 .cond-ok-on {
-  background-color: #1bbc9b;
+  background-color: var(--color-success);
   color: #fff;
 }
 .cond-penalty-on {
@@ -496,7 +536,7 @@ table.scrambles th:first-child {
   color: #fff;
 }
 .cond-dnf-on {
-  background-color: #e74c3c;
+  background-color: var(--color-error);
   color: #fff;
 }
 
@@ -504,14 +544,14 @@ table.scrambles th:first-child {
  * Table format
  */
 table.tribox-contest {
-  border-left: 1px solid #ddd;
+  border-left: 1px solid var(--color-border-light);
 }
 table.tribox-contest th,
 table.tribox-contest td {
   border-left: none;
 }
 table.tribox-contest tr:first-child > th {
-  background-color: #f7f7f7;
+  background-color: var(--color-surface-muted);
 }
 
 /**
@@ -524,7 +564,7 @@ table.inProgress {
   font-size: 95%;
 }
 table.inProgress {
-  border-left: 1px solid #ddd;
+  border-left: 1px solid var(--color-border-light);
 }
 table.inProgress th,
 table.inProgress td {
@@ -539,7 +579,7 @@ a.cursor-pointer {
 }
 tr.row-detail {
   background: #fff !important; /*background: #F7F7F9;*/
-  border: 1px solid #e1e1e8;
+  border: 1px solid var(--color-border-lighter);
 }
 
 .color-star {
@@ -624,7 +664,7 @@ table.profile td {
   width: 16px;
   height: 16px;
   border-radius: 3px;
-  background-image: linear-gradient(-15deg, #009678, #0096af);
+  background-image: var(--gradient-brand);
   background-size: 56px 56px;
   opacity: 0.2;
   animation: cube-loader-pulse 1.2s infinite ease-in-out;
@@ -647,6 +687,6 @@ table.profile td {
 
 .cube-loader-text {
   margin-top: 12px;
-  color: #808080;
+  color: var(--color-text);
   font-size: 14px;
 }

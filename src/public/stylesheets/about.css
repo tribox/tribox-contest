@@ -12,13 +12,13 @@
 .about-hero-title {
   font-size: 22px;
   font-weight: bold;
-  color: #808080;
+  color: var(--color-text);
   margin-bottom: 12px;
 }
 
 .about-hero-subtitle {
   font-size: 14px;
-  color: #808080;
+  color: var(--color-text);
   line-height: 1.8;
   max-width: 600px;
   margin: 0 auto;
@@ -34,7 +34,7 @@
 
 .about-card {
   background: #ffffff;
-  border: 1px solid #e6e6e6;
+  border: 1px solid var(--color-text-light);
   border-radius: 12px;
   padding: 20px 24px;
 }
@@ -52,7 +52,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #009678;
+  color: var(--color-brand-2);
   font-size: 22px;
   flex-shrink: 0;
 }
@@ -66,12 +66,12 @@
 .about-card-title {
   font-size: 16px;
   font-weight: bold;
-  color: #808080;
+  color: var(--color-text);
   margin: 0;
 }
 
 .about-card-content {
-  color: #808080;
+  color: var(--color-text);
   font-size: 14px;
   line-height: 1.8;
 }
@@ -81,7 +81,7 @@
 }
 
 .about-card-content a:not(.about-cta-button) {
-  color: #0088cc;
+  color: var(--color-link);
 }
 
 /* Prize Table */
@@ -93,13 +93,13 @@
   font-size: 18px;
   font-weight: bold;
   text-align: center;
-  color: #808080;
+  color: var(--color-text);
   margin-bottom: 8px;
 }
 
 .about-prize-subtitle {
   text-align: center;
-  color: #808080;
+  color: var(--color-text);
   font-size: 13px;
   margin-bottom: 16px;
 }
@@ -113,7 +113,7 @@
   width: 100%;
   max-width: 700px;
   margin: 0 auto;
-  color: #808080;
+  color: var(--color-text);
   border-collapse: collapse;
 }
 
@@ -121,12 +121,12 @@
 .about-prize-table td {
   padding: 12px 16px;
   text-align: center;
-  border-bottom: 1px solid #cccccc;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .about-prize-table th {
   font-weight: bold;
-  color: #808080;
+  color: var(--color-text);
 }
 
 .about-prize-table th.about-gold {
@@ -134,7 +134,7 @@
 }
 
 .about-prize-table th.about-silver {
-  color: #999999;
+  color: var(--color-text-muted);
 }
 
 .about-prize-table th.about-bronze {
@@ -147,7 +147,7 @@
 
 .about-prize-table .about-prize-amount {
   font-weight: bold;
-  color: #808080;
+  color: var(--color-text);
 }
 
 /* CTA Buttons */
@@ -164,7 +164,7 @@
   align-items: center;
   gap: 6px;
   padding: 10px 20px;
-  background: #0088cc;
+  background: var(--color-link);
   color: #ffffff !important;
   border-radius: 8px;
   text-decoration: none !important;
@@ -179,19 +179,19 @@
 
 .about-cta-button-secondary {
   background: #ffffff;
-  color: #0088cc !important;
-  border: 1px solid #0088cc;
+  color: var(--color-link) !important;
+  border: 1px solid var(--color-link);
 }
 
 .about-cta-button-secondary:hover {
   background: #f5fbff;
-  color: #0088cc !important;
+  color: var(--color-link) !important;
   opacity: 1;
 }
 
 /* Info Box */
 .about-info-box {
-  background: #f7f7f7;
+  background: var(--color-surface-muted);
   border-radius: 8px;
   padding: 16px 20px;
   margin: 16px 0;
@@ -199,7 +199,7 @@
 
 .about-info-box-title {
   font-weight: bold;
-  color: #808080;
+  color: var(--color-text);
   margin-bottom: 8px;
   font-size: 14px;
   display: flex;
@@ -208,19 +208,19 @@
 }
 
 .about-info-box-content {
-  color: #808080;
+  color: var(--color-text);
   font-size: 13px;
   line-height: 1.7;
 }
 
 .about-info-box-content i {
-  color: #009678;
+  color: var(--color-brand-2);
   margin-right: 8px;
 }
 
 /* Icon styles */
 .about-icon-store {
-  color: #0088cc;
+  color: var(--color-link);
 }
 
 /* Responsive adjustments */

@@ -62,10 +62,10 @@ body {
 }
 
 .wait {
-    color: #E74C3C !important;
+    color: var(--color-error) !important;
 }
 .ready {
-    color: #1BBC9B !important;
+    color: var(--color-success) !important;
 }
 
 
