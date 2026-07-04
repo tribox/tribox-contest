@@ -55,6 +55,7 @@ h6 {
 }
 
 #header-logo {
+  display: block;
   height: 64px;
 }
 
@@ -74,6 +75,10 @@ h6 {
 @media screen and (max-width: 697px) {
   #header {
     margin-bottom: 24px;
+  }
+
+  #header-logo {
+    height: 40px;
   }
 }
 
