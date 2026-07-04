@@ -1,9 +1,9 @@
 .index-content {
-  color: #808080;
+  color: var(--color-text);
 }
 
 .index-content a:not(.index-event-row) {
-  color: #0088cc;
+  color: var(--color-link);
 }
 
 .index-lead {
@@ -13,7 +13,7 @@
 }
 
 .index-info-card {
-  border: 1px solid #e6e6e6;
+  border: 1px solid var(--color-text-light);
   border-radius: 12px;
   padding: 16px 20px;
   margin-bottom: 16px;
@@ -22,7 +22,7 @@
 .index-info-title {
   font-size: 15px;
   font-weight: bold;
-  color: #808080;
+  color: var(--color-text);
   margin-bottom: 8px;
 }
 
@@ -36,7 +36,7 @@
   display: inline-block;
   padding: 8px 16px;
   border-radius: 8px;
-  background: #0088cc;
+  background: var(--color-link);
   color: #ffffff;
   font-size: 13px;
   font-weight: bold;
@@ -79,7 +79,7 @@
 .index-contest-card {
   max-width: 520px;
   margin: 0 auto 24px;
-  box-shadow: 0 0 8px #bbbbbb;
+  box-shadow: var(--shadow-card);
   border-radius: 12px;
   padding: 20px 24px 0;
 }
@@ -89,7 +89,7 @@
   text-align: center;
   font-size: 20px;
   font-weight: bold;
-  background: linear-gradient(to bottom, #0096af, #009678);
+  background: var(--gradient-brand-vertical);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -100,7 +100,7 @@
   font-size: 12px;
   font-weight: bold;
   margin-bottom: 12px;
-  background: linear-gradient(to bottom, #0096af, #009678);
+  background: var(--gradient-brand-vertical);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -108,7 +108,7 @@
 
 .index-event-list {
   margin: 0 -24px;
-  border-top: 1px solid #e6e6e6;
+  border-top: 1px solid var(--color-text-light);
 }
 
 .index-event-section {
@@ -116,7 +116,7 @@
 }
 
 .index-event-section + .index-event-section {
-  border-top: 1px solid #e6e6e6;
+  border-top: 1px solid var(--color-text-light);
 }
 
 .index-event-row {
@@ -124,14 +124,14 @@
   align-items: center;
   height: 44px;
   padding: 0 8px;
-  color: #808080;
+  color: var(--color-text);
   text-decoration: none;
   transition: background-color 0.2s ease;
 }
 
 .index-event-row:hover {
-  background: #fafafa;
-  color: #808080;
+  background: var(--color-surface-hover);
+  color: var(--color-text);
 }
 
 .index-event-check {
@@ -154,7 +154,7 @@
 .index-event-resume-icon {
   font-size: 21px;
   line-height: 1;
-  color: #e74c3c;
+  color: var(--color-error);
 }
 
 .index-event-done {
@@ -190,7 +190,7 @@
   padding: 3px 0;
   border-radius: 4px;
   white-space: nowrap;
-  color: #808080;
+  color: var(--color-text);
 }
 
 .index-format-average {
@@ -216,7 +216,7 @@
   text-align: right;
   font-size: 12px;
   font-weight: bold;
-  color: #808080;
+  color: var(--color-text);
   white-space: nowrap;
 }
 

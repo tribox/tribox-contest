@@ -19,13 +19,13 @@ html {
 .ranking-title {
   font-size: 22px;
   font-weight: bold;
-  color: #808080;
+  color: var(--color-text);
   margin-bottom: 4px;
 }
 
 .ranking-period {
   font-size: 13px;
-  color: #808080;
+  color: var(--color-text);
   margin-bottom: 0;
 }
 
@@ -35,11 +35,11 @@ html {
 }
 
 .ranking-puzzle-switch a {
-  color: #0088cc;
+  color: var(--color-link);
 }
 
 .ranking-puzzle-switch a:hover {
-  color: #006699;
+  color: var(--color-link-hover);
 }
 
 .ranking-event-section {
@@ -52,19 +52,19 @@ html {
   gap: 8px;
   font-size: 18px;
   font-weight: bold;
-  color: #808080;
+  color: var(--color-text);
   margin: 0 0 8px;
 }
 
 .ranking-table {
-  color: #808080;
+  color: var(--color-text);
   table-layout: fixed;
   width: 100%;
 }
 
 .ranking-table-header {
   font-weight: bold;
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid var(--color-border);
   height: 40px;
 }
 
@@ -82,7 +82,7 @@ html {
 }
 
 .ranking-table-row:nth-child(5n) {
-  border-bottom: 1px solid #ccc;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .ranking-cell-padded {
@@ -116,7 +116,7 @@ html {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  color: #0088cc;
+  color: var(--color-link);
   text-decoration: none;
 }
 
@@ -137,7 +137,7 @@ html {
 }
 
 .ranking-link:hover {
-  color: #006699;
+  color: var(--color-link-hover);
 }
 
 .ranking-season-picker {

@@ -1,18 +1,18 @@
 .regulations-content {
-  color: #808080;
+  color: var(--color-text);
 }
 
 .regulations-content h2 {
   font-size: 22px;
   font-weight: bold;
-  color: #808080;
+  color: var(--color-text);
   margin-bottom: 12px;
 }
 
 .regulations-content h4 {
   font-size: 16px;
   font-weight: bold;
-  color: #808080;
+  color: var(--color-text);
   margin-top: 32px;
   margin-bottom: 8px;
 }
@@ -33,12 +33,12 @@
 }
 
 .regulations-content a {
-  color: #0088cc;
+  color: var(--color-link);
 }
 
 .regulations-content hr {
   border: none;
-  border-top: 1px solid #e6e6e6;
+  border-top: 1px solid var(--color-text-light);
   margin: 32px 0;
 }
 

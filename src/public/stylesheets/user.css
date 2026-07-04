@@ -10,14 +10,14 @@ html {
 .user-section-title {
   font-size: 20px;
   font-weight: bold;
-  color: #808080;
+  color: var(--color-text);
   margin: 40px 0 16px;
 }
 
 .user-subtitle {
   font-size: 16px;
   font-weight: bold;
-  color: #808080;
+  color: var(--color-text);
   margin: 0 0 12px;
 }
 
@@ -25,24 +25,24 @@ html {
 .user-name {
   font-size: 22px;
   font-weight: bold;
-  color: #808080;
+  color: var(--color-text);
   margin-bottom: 16px;
 }
 
 .user-name .user-verified {
-  color: #0088cc;
+  color: var(--color-link);
   font-size: 18px;
 }
 
 .user-name .user-id {
   font-size: 14px;
   font-weight: normal;
-  color: #b3b3b3;
+  color: var(--color-text-muted);
   margin-left: 4px;
 }
 
 .user-profile-table {
-  color: #808080;
+  color: var(--color-text);
   border-collapse: collapse;
   margin-bottom: 32px;
 }
@@ -64,11 +64,11 @@ html {
 }
 
 .user-profile-table a {
-  color: #0088cc;
+  color: var(--color-link);
 }
 
 .user-profile-table a:hover {
-  color: #006699;
+  color: var(--color-link-hover);
 }
 
 /* 過去シーズン選択カルーセル (contestresult-picker-contest を流用) */
@@ -82,7 +82,7 @@ html {
 /* 記録なしの案内 */
 .user-empty-note {
   font-size: 14px;
-  color: #808080;
+  color: var(--color-text);
   margin: 8px 0 24px;
 }
 
@@ -93,13 +93,13 @@ html {
   gap: 8px;
   font-size: 18px;
   font-weight: bold;
-  color: #808080;
+  color: var(--color-text);
   margin: 32px 0 8px;
 }
 
 .user-event-sp {
   font-size: 14px;
-  color: #808080;
+  color: var(--color-text);
   margin-bottom: 12px;
 }
 
@@ -140,7 +140,7 @@ html {
 /* ビデオ公開予約の注意書き */
 .user-video-note {
   font-size: 14px;
-  color: #808080;
+  color: var(--color-text);
   line-height: 1.8;
   margin: 8px 0 40px;
 }
@@ -150,11 +150,11 @@ html {
 }
 
 .user-video-note a {
-  color: #0088cc;
+  color: var(--color-link);
 }
 
 .user-video-note a:hover {
-  color: #006699;
+  color: var(--color-link-hover);
 }
 
 /* カラムの揃えを左に統一 */
@@ -193,8 +193,8 @@ html {
   margin: 0 8px 0 0;
   padding: 6px 10px;
   font-size: 14px;
-  color: #808080;
-  border: 1px solid #e6e6e6;
+  color: var(--color-text);
+  border: 1px solid var(--color-text-light);
   border-radius: 6px;
   vertical-align: middle;
 }
@@ -202,7 +202,7 @@ html {
 .user-video-btn {
   display: inline-block;
   padding: 7px 16px;
-  background: #0088cc;
+  background: var(--color-link);
   color: #ffffff !important;
   font-size: 14px;
   font-weight: bold;
