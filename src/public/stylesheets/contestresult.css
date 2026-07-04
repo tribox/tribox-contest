@@ -684,11 +684,11 @@ a.contestresult-puzzle-name:hover {
 /* タブレット */
 @media screen and (max-width: 1024px) {
   .contestresult-table-detail-records.deploy {
-    width: 240px;
+    width: 324px;
   }
 
   .contestresult-table-record-items {
-    width: 48px;
+    width: 64px;
     font-size: 0.85em;
   }
 }
@@ -730,11 +730,11 @@ a.contestresult-puzzle-name:hover {
   }
 
   .contestresult-table-detail-records.deploy {
-    width: 254px;
+    width: 304px;
   }
 
   .contestresult-table-record-items {
-    width: 50px;
+    width: 60px;
     font-size: 12px;
   }
 
@@ -744,7 +744,7 @@ a.contestresult-puzzle-name:hover {
   }
 
   .contestresult-table.deployed {
-    min-width: calc(100% + 254px);
+    min-width: calc(100% + 304px);
   }
 
   .contestresult-table.animating tbody tr:nth-child(n+26) {
@@ -786,7 +786,7 @@ a.contestresult-puzzle-name:hover {
   }
 
   .contestresult-table.deployed.puzzle-deployed {
-    min-width: calc(100% + 462px);
+    min-width: calc(100% + 512px);
   }
 
   /* rtl でスクロールを右端基準にし、パズル列が左に開いて見えるようにする */
