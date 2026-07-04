@@ -1,7 +1,16 @@
 // thead の deploy ボタン: 全行の記録を一括横開き
 var headButton = document.querySelector('thead .contestresult-table-deploy-button');
 if (headButton) {
+  var animatingTimer = null;
   headButton.addEventListener('click', function() {
+    // 開閉アニメーション中は画面外の行を隠してレイアウト計算を軽くする
+    var table = this.closest('table');
+    table.classList.add('animating');
+    clearTimeout(animatingTimer);
+    animatingTimer = setTimeout(function() {
+      table.classList.remove('animating');
+    }, 350);
+
     var img = this.querySelector('img');
     var isDeployed = img.src.includes('deploy.png') && !img.src.includes('undeploy.png');
     if (isDeployed) {
@@ -16,6 +25,7 @@ if (headButton) {
     document.querySelectorAll('.contestresult-table-detail-records').forEach(function(el) {
       el.classList.toggle('deploy');
     });
+    table.classList.toggle('deployed');
   });
 }
 

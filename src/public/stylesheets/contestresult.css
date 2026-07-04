@@ -567,6 +567,12 @@ a.contestresult-puzzle-name:hover {
   color: #808080;
 }
 
+/* 開閉アニメーション中は画面外の行を隠して再レイアウトを軽くする
+   (deploy ボタンは thead にあり、クリック時に見えるのは先頭の行だけ) */
+.contestresult-table.animating tbody tr:nth-child(n+41) {
+  display: none;
+}
+
 /* 詳細行: main.css の row-detail border を打ち消し */
 .contestresult-table .row-detail {
   border: none;
@@ -691,31 +697,26 @@ a.contestresult-puzzle-name:hover {
 
 /* スマホ */
 @media screen and (max-width: 768px) {
+  .contestresult-table {
+    font-size: 14px;
+    min-width: 100%;
+    transition: min-width 0.3s ease;
+  }
+
   .contestresult-table-col-sp {
     width: 36px;
   }
 
   .contestresult-table-col-place {
-    width: 40px;
+    width: 48px;
   }
 
   .contestresult-table-col-avg {
-    width: 72px;
-    font-size: 0.85em;
+    width: 64px;
   }
 
   .contestresult-table-col-deploy {
     width: 28px;
-  }
-
-  /* deploy 列を非表示 (333fm の detail ボタンは別クラスで残す) */
-  .contestresult-table-col-deploy,
-  .contestresult-table-col-deploy-body {
-    display: none;
-  }
-
-  .contestresult-table-col-detail-body {
-    display: table-cell;
   }
 
   .contestresult-table-hide-mobile {
@@ -730,9 +731,28 @@ a.contestresult-puzzle-name:hover {
     display: none;
   }
 
-  /* 横開きの個々の記録を無効化 */
-  .contestresult-table-detail-records,
   .contestresult-table-detail-records.deploy {
+    width: 254px;
+  }
+
+  .contestresult-table-record-items {
+    width: 50px;
+    font-size: 12px;
+  }
+
+  /* 記録を開いてテーブルが画面幅を超えたぶんは横スクロールで見せる */
+  .contestresult-table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* 記録列の開き分と同じだけテーブル幅を広げ、開閉中に名前・パズル列の幅が変わらないようにする */
+  .contestresult-table.deployed {
+    min-width: calc(100% + 254px);
+  }
+
+  /* スマホは1画面に映る行数が少ないので、アニメーション中に隠す行を増やす */
+  .contestresult-table.animating tbody tr:nth-child(n+26) {
     display: none;
   }
 
