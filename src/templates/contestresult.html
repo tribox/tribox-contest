@@ -79,7 +79,7 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                         <img
                           class="contestresult-puzzle-brand"
                           ng-if="p.brand"
-                          ng-src="https://store.tribox.com/user_data/img/category/{{ p.brand }}.png"
+                          ng-ng-src="https://store.tribox.com/user_data/img/category/{{ p.brand }}.png"
                           height="24"
                         />
                         <span class="contestresult-puzzle-brand-placeholder" ng-if="!p.brand"></span>
@@ -112,7 +112,7 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                         <img
                           class="contestresult-puzzle-brand"
                           ng-if="p.brand"
-                          ng-src="https://store.tribox.com/user_data/img/category/{{ p.brand }}.png"
+                          ng-ng-src="https://store.tribox.com/user_data/img/category/{{ p.brand }}.png"
                           height="24"
                         />
                         <span class="contestresult-puzzle-brand-placeholder" ng-if="!p.brand"></span>
@@ -218,7 +218,7 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                         <div class="contestresult-table-name">
                           <div class="contestresult-table-flag">
                             <img
-                              src="https://flagcdn.com/{{ r.user.iso2.toLowerCase() }}.svg"
+                              ng-src="https://flagcdn.com/{{ r.user.iso2.toLowerCase() }}.svg"
                               ng-show="r.user.iso2"
                               height="16"
                             />
@@ -241,13 +241,13 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                             target="_blank"
                           >
                             <img
-                              src="https://store.tribox.com/user_data/img/category/{{ r.puzzle.brand }}.png"
+                              ng-src="https://store.tribox.com/user_data/img/category/{{ r.puzzle.brand }}.png"
                               height="24"
                             />
                           </a>
                           <img
                             ng-if="r.puzzle.brand && r.puzzle.type != 'database'"
-                            src="https://store.tribox.com/user_data/img/category/{{ r.puzzle.brand }}.png"
+                            ng-src="https://store.tribox.com/user_data/img/category/{{ r.puzzle.brand }}.png"
                             height="24"
                           />
                           <a

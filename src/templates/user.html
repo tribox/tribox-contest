@@ -143,7 +143,7 @@
                       <span ng-show="!(thisUserData.iso2)">Loading...</span>
                       <span ng-show="thisUserData.iso2">
                         <img
-                          src="https://flagcdn.com/{{ thisUserData.iso2.toLowerCase() }}.svg"
+                          ng-src="https://flagcdn.com/{{ thisUserData.iso2.toLowerCase() }}.svg"
                           height="16"
                           style="vertical-align: middle"
                           ng-show="thisUserData.iso2"
@@ -338,7 +338,7 @@
                         <td class="contestresult-table-cell-padded contestresult-table-col-puzzle">
                           <div class="contestresult-table-puzzle">
                             <img
-                              src="https://store.tribox.com/user_data/img/category/{{ c.result.puzzle.brand }}.png"
+                              ng-src="https://store.tribox.com/user_data/img/category/{{ c.result.puzzle.brand }}.png"
                               ng-show="c.result.puzzle.brand"
                               height="24"
                             />
@@ -484,7 +484,7 @@
                           <td class="contestresult-table-cell-padded contestresult-table-col-puzzle">
                             <div class="contestresult-table-puzzle">
                               <img
-                                src="https://store.tribox.com/user_data/img/category/{{ c.result.puzzle.brand }}.png"
+                                ng-src="https://store.tribox.com/user_data/img/category/{{ c.result.puzzle.brand }}.png"
                                 ng-show="c.result.puzzle.brand"
                                 height="24"
                               />
