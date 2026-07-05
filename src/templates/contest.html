@@ -295,14 +295,14 @@ cid %]
                                 href="https://store.tribox.com/products/detail.php?product_id={{ r.puzzle.product }}"
                                 target="_blank"
                               ><img
-                                ng-src="https://store.tribox.com/user_data/img/category/{{ r.puzzle.brand }}.png"
-                                ng-show="r.puzzle.brand"
+                                ng-src="/assets/images/brand_logo/{{ r.puzzleIcon }}.png"
+                                ng-show="r.puzzleIcon"
                                 height="24"
                               /></a>
                               <img
                                 ng-if="r.puzzle.type != 'database'"
-                                ng-src="https://store.tribox.com/user_data/img/category/{{ r.puzzle.brand }}.png"
-                                ng-show="r.puzzle.brand"
+                                ng-src="/assets/images/brand_logo/{{ r.puzzleIcon }}.png"
+                                ng-show="r.puzzleIcon"
                                 height="24"
                               />
                               <a

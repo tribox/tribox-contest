@@ -3,6 +3,13 @@
 (Python版, あとで README.md に置き換える用)
 
 
+## Documentation
+
+* [フロントエンド開発ガイド](docs/frontend.md) — CSS変数・ブレイクポイント・ng-src などのルール集。
+  **パズルの商品名の省略表示とブランドロゴは、保存データではなく表示時に商品名から決定している**
+  (ルールは `src/public/javascripts/product-name-rules.js`)。詳細はガイド参照。
+
+
 ## Requirements
 
 * Docker

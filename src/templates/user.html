@@ -338,8 +338,8 @@
                         <td class="contestresult-table-cell-padded contestresult-table-col-puzzle">
                           <div class="contestresult-table-puzzle">
                             <img
-                              ng-src="https://store.tribox.com/user_data/img/category/{{ c.result.puzzle.brand }}.png"
-                              ng-show="c.result.puzzle.brand"
+                              ng-src="/assets/images/brand_logo/{{ c.result.puzzleIcon }}.png"
+                              ng-show="c.result.puzzleIcon"
                               height="24"
                             />
                             <a
@@ -484,8 +484,8 @@
                           <td class="contestresult-table-cell-padded contestresult-table-col-puzzle">
                             <div class="contestresult-table-puzzle">
                               <img
-                                ng-src="https://store.tribox.com/user_data/img/category/{{ c.result.puzzle.brand }}.png"
-                                ng-show="c.result.puzzle.brand"
+                                ng-src="/assets/images/brand_logo/{{ c.result.puzzleIcon }}.png"
+                                ng-show="c.result.puzzleIcon"
                                 height="24"
                               />
                               <a
@@ -787,6 +787,10 @@
                                                                       );
                                                                     result.puzzleF =
                                                                       TriboxContest.formatPuzzle(
+                                                                        result
+                                                                      );
+                                                                    result.puzzleIcon =
+                                                                      TriboxContest.puzzleBrandIcon(
                                                                         result
                                                                       );
                                                                     $timeout(
@@ -1173,6 +1177,10 @@
                                                               );
                                                             result.puzzleF =
                                                               TriboxContest.formatPuzzle(
+                                                                result
+                                                              );
+                                                            result.puzzleIcon =
+                                                              TriboxContest.puzzleBrandIcon(
                                                                 result
                                                               );
                                                             $timeout(

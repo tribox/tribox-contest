@@ -78,11 +78,11 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                         <span class="contestresult-puzzle-pct">{{ p.percentage }}%</span>
                         <img
                           class="contestresult-puzzle-brand"
-                          ng-if="p.brand"
-                          ng-src="https://store.tribox.com/user_data/img/category/{{ p.brand }}.png"
+                          ng-if="p.icon"
+                          ng-src="/assets/images/brand_logo/{{ p.icon }}.png"
                           height="24"
                         />
-                        <span class="contestresult-puzzle-brand-placeholder" ng-if="!p.brand"></span>
+                        <span class="contestresult-puzzle-brand-placeholder" ng-if="!p.icon"></span>
                         <div class="contestresult-puzzle-bar-wrapper">
                           <a
                             class="contestresult-puzzle-name"
@@ -111,11 +111,11 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                         <span class="contestresult-puzzle-pct">{{ p.percentage }}%</span>
                         <img
                           class="contestresult-puzzle-brand"
-                          ng-if="p.brand"
-                          ng-src="https://store.tribox.com/user_data/img/category/{{ p.brand }}.png"
+                          ng-if="p.icon"
+                          ng-src="/assets/images/brand_logo/{{ p.icon }}.png"
                           height="24"
                         />
-                        <span class="contestresult-puzzle-brand-placeholder" ng-if="!p.brand"></span>
+                        <span class="contestresult-puzzle-brand-placeholder" ng-if="!p.icon"></span>
                         <div class="contestresult-puzzle-bar-wrapper">
                           <a
                             class="contestresult-puzzle-name"
@@ -236,18 +236,18 @@ contest_url + "/contest/result/" + cid + "/" + eid %]
                       <td class="contestresult-table-cell-padded contestresult-table-col-puzzle">
                         <div class="contestresult-table-puzzle">
                           <a
-                            ng-if="r.puzzle.brand && r.puzzle.type == 'database'"
+                            ng-if="r.puzzleIcon && r.puzzle.type == 'database'"
                             href="https://store.tribox.com/products/detail.php?product_id={{ r.puzzle.product }}"
                             target="_blank"
                           >
                             <img
-                              ng-src="https://store.tribox.com/user_data/img/category/{{ r.puzzle.brand }}.png"
+                              ng-src="/assets/images/brand_logo/{{ r.puzzleIcon }}.png"
                               height="24"
                             />
                           </a>
                           <img
-                            ng-if="r.puzzle.brand && r.puzzle.type != 'database'"
-                            ng-src="https://store.tribox.com/user_data/img/category/{{ r.puzzle.brand }}.png"
+                            ng-if="r.puzzleIcon && r.puzzle.type != 'database'"
+                            ng-src="/assets/images/brand_logo/{{ r.puzzleIcon }}.png"
                             height="24"
                           />
                           <a
