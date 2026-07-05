@@ -220,10 +220,117 @@ def contesttimer(cid, eid):
         firebaseapp_wca_senderid=FIREBASEAPP_WCA_SENDERID,
     )
 
+CONFIRM_EVENT_CATEGORY = {
+    "222": 101,
+    "333": 103,
+    "333bf": 103,
+    "333oh": 103,
+    "333fm": 103,
+    "444": 107,
+    "555": 108,
+    "666": 525,
+    "777": 524,
+    "minx": 526,
+    "pyram": 527,
+    "skewb": 528,
+    "sq1": 113,
+    "clock": 544,
+}
+
+CONFIRM_CUBES_SQL = """
+    SELECT `product_id`, `name`, `category_id`, `parent_category_id` FROM (
+      SELECT `product_id`, `name`, C1.`category_id` as category_id, C1.`category_name` as category_name, C2.`category_id` as parent_category_id, C2.`category_name` as parent_category_name, `main_image`, EXPT.`except_store` AS except_flg
+       FROM (
+        SELECT P.`product_id`, `category_id`, `name`, `main_image`
+        FROM `dtb_product_categories` PC
+        INNER JOIN (
+          SELECT `product_id`, `name`, `main_image`
+          FROM `dtb_products`
+          WHERE (`status` = 1 OR (`status` = 2 AND `maker_id` = 39)) AND `del_flg` = 0
+        ) P
+        ON PC.`product_id` = P.`product_id`
+      ) PPC
+      LEFT OUTER JOIN
+      `dtb_category` C1
+      ON PPC.`category_id` = C1.`category_id`
+      LEFT OUTER JOIN
+      `dtb_category` C2
+      ON C1.`parent_category_id` = C2.`category_id`
+      LEFT OUTER JOIN
+      `stickers_puzzles_except` EXPT
+      ON PPC.`product_id` = EXPT.`puzzle_id`
+    ) PAC
+    WHERE PAC.`parent_category_id` IN (1, 3) AND (`except_flg` IS NULL OR `except_flg` = 0) AND `category_id` NOT IN (421, 428)
+    ORDER BY `name` ASC
+"""
+
+CONFIRM_BRANDS_SQL = """
+    SELECT `category_id`, `category_name`
+    FROM `dtb_category`
+    WHERE `parent_category_id` = 3
+    ORDER BY `category_name` ASC
+"""
+
+def build_confirm_puzzles(cube_rows, brand_rows, eid):
+    """カテゴリ・ブランドの行を商品ごとにまとめ、種目に対応するキューブをブランド別に分類する"""
+    puzzles = []
+
+    def flush(product_id, name, category_id, brand_id):
+        if category_id == -1:
+            return
+        if category_id in (104, 105):
+            category_id = 103
+        if brand_id == -1:
+            brand_id = 475
+        puzzles.append({"productId": product_id, "name": name, "categoryId": category_id, "brandId": brand_id})
+
+    prev_id = -1
+    name = ""
+    category_id = -1
+    brand_id = -1
+    for row_product_id, row_name, row_category_id, row_parent_category_id in cube_rows:
+        if prev_id != -1 and prev_id != row_product_id:
+            flush(prev_id, name, category_id, brand_id)
+            category_id = -1
+            brand_id = -1
+        if row_parent_category_id == 1:
+            category_id = row_category_id
+        elif row_parent_category_id == 3:
+            brand_id = row_category_id
+        name = row_name
+        prev_id = row_product_id
+    if prev_id != -1:
+        flush(prev_id, name, category_id, brand_id)
+
+    target_category = CONFIRM_EVENT_CATEGORY.get(eid, 103)
+    brands_puzzles = {}
+    for puzzle in puzzles:
+        if puzzle["categoryId"] == target_category:
+            brands_puzzles.setdefault(puzzle["brandId"], []).append(puzzle)
+
+    puzzle_brands = [
+        {"category_id": category_id, "category_name": category_name}
+        for category_id, category_name in brand_rows
+    ]
+    return brands_puzzles, puzzle_brands
+
+def get_confirm_puzzles(eid):
+    """参加確認ページの使用キューブ選択肢を Store DB から取得して返す"""
+    with get_store_db_connection() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(CONFIRM_CUBES_SQL)
+            cube_rows = cursor.fetchall()
+            cursor.execute(CONFIRM_BRANDS_SQL)
+            brand_rows = cursor.fetchall()
+    return build_confirm_puzzles(cube_rows, brand_rows, eid)
+
 @app.route("/contest/<cid>/<eid>/confirm")
 def contestconfirm(cid, eid):
+    brands_puzzles, puzzle_brands = get_confirm_puzzles(eid)
     return render_template(
         "contestconfirm.html",
+        brandsPuzzles=brands_puzzles,
+        puzzleBrands=puzzle_brands,
         cid=cid,
         eid=eid,
         contest_description=CONTEST_DESCRIPTION,
