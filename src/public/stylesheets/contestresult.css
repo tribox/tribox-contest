@@ -485,10 +485,9 @@ a.contestresult-puzzle-name:hover {
   max-width: 100%;
 }
 
-.contestresult-lottery-crown {
-  height: 16px;
-  width: auto;
-  max-width: none;
+.contestresult-lottery-gift {
+  font-size: 16px;
+  color: #f1c000;
   flex-shrink: 0;
   vertical-align: middle;
 }
