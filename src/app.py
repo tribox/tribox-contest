@@ -142,7 +142,15 @@ def get_default_redirect_ids():
     ) as res:
         contest = json.load(res)
     _default_ids_cache["lastContest"] = in_progress["lastContest"][1:]
-    _default_ids_cache["sid"] = str(contest["year"]) + str(contest["season"])
+    # 第1節の間は現シーズンのランキングが空なので直前のシーズンを指す
+    year = int(contest["year"])
+    season = int(contest["season"])
+    number = int(in_progress["contest"][6:])
+    if number == 1:
+        sid = f"{year}1" if season == 2 else f"{year - 1}2"
+    else:
+        sid = f"{year}{season}"
+    _default_ids_cache["sid"] = sid
     _default_ids_cache["expiresAt"] = now + 60
     return _default_ids_cache
 
