@@ -335,6 +335,7 @@ fetch_results_all=False) -%]
                                               $scope.resultsData[e][uid].detailsF = TriboxContest.formatDetails(results, e, Events);
                                               // Puzzle
                                               $scope.resultsData[e][uid].puzzleF = TriboxContest.formatPuzzle(results);
+                                              $scope.resultsData[e][uid].puzzleIcon = TriboxContest.puzzleBrandIcon(results);
 
                                               $scope.resultsTop3[e].push($scope.resultsData[e][uid]);
                                           }
@@ -405,6 +406,7 @@ fetch_results_all=False) -%]
                                       $scope.resultsData['e[[ eid ]]'][uid].detailsF = TriboxContest.formatDetails(results, 'e[[ eid ]]', Events);
                                       // Puzzle
                                       $scope.resultsData['e[[ eid ]]'][uid].puzzleF = TriboxContest.formatPuzzle(results);
+                                      $scope.resultsData['e[[ eid ]]'][uid].puzzleIcon = TriboxContest.puzzleBrandIcon(results);
 
                                       $scope.resultsAll['e[[ eid ]]'].push($scope.resultsData['e[[ eid ]]'][uid]);
 
@@ -416,13 +418,15 @@ fetch_results_all=False) -%]
                                               (_resultsPuzzlesAllObj[productId].count)++;
                                           } else {
                                               var productName = '';
+                                              var productIcon = '';
                                               if (0 < productId) {
-                                                  productName = TriboxContest.Products[productId];
+                                                  productName = TriboxContest.shortenProductName(TriboxContest.Products[productId]);
+                                                  productIcon = TriboxContest.productBrandIcon(TriboxContest.Products[productId]);
                                               }
                                               _resultsPuzzlesAllObj[productId] = {
                                                   'productId': productId,
                                                   'productName': productName,
-                                                  'brand': results.puzzle.brand,
+                                                  'icon': productIcon,
                                                   'count': 1
                                               };
                                           }
@@ -434,13 +438,15 @@ fetch_results_all=False) -%]
                                                   (_resultsPuzzlesObj[productId].count)++;
                                               } else {
                                                   var productName = '';
+                                                  var productIcon = '';
                                                   if (0 < productId) {
-                                                      productName = TriboxContest.Products[productId];
+                                                      productName = TriboxContest.shortenProductName(TriboxContest.Products[productId]);
+                                                      productIcon = TriboxContest.productBrandIcon(TriboxContest.Products[productId]);
                                                   }
                                                   _resultsPuzzlesObj[productId] = {
                                                       'productId': productId,
                                                       'productName': productName,
-                                                      'brand': results.puzzle.brand,
+                                                      'icon': productIcon,
                                                       'count': 1
                                                   };
                                               }

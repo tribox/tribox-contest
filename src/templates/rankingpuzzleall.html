@@ -107,11 +107,11 @@
                       <span class="contestresult-puzzle-pct">{{ p.percentage }}%</span>
                       <img
                         class="contestresult-puzzle-brand"
-                        ng-if="p.brand"
-                        ng-src="https://store.tribox.com/user_data/img/category/{{ p.brand }}.png"
+                        ng-if="p.icon"
+                        ng-src="/assets/images/brand_logo/{{ p.icon }}.png"
                         height="24"
                       />
-                      <span class="contestresult-puzzle-brand-placeholder" ng-if="!p.brand"></span>
+                      <span class="contestresult-puzzle-brand-placeholder" ng-if="!p.icon"></span>
                       <div class="contestresult-puzzle-bar-wrapper">
                         <a
                           class="contestresult-puzzle-name"
@@ -273,14 +273,21 @@
                                     Object.keys(usedPuzzles[eid]).forEach(
                                       function (productId) {
                                         var productName = "";
+                                        var productIcon = "";
                                         if (0 < productId) {
                                           productName =
-                                            TriboxContest.Products[productId];
+                                            TriboxContest.shortenProductName(
+                                              TriboxContest.Products[productId]
+                                            );
+                                          productIcon =
+                                            TriboxContest.productBrandIcon(
+                                              TriboxContest.Products[productId]
+                                            );
                                         }
                                         usedPuzzlesSorted[eid].push({
                                           productId: productId,
                                           productName: productName,
-                                          brand: puzzleBrands[eid][productId],
+                                          icon: productIcon,
                                           count: usedPuzzles[eid][productId],
                                         });
                                         usedPuzzlesSum +=

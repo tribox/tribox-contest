@@ -125,13 +125,13 @@
                     <div class="ranking-puzzle" ng-show="data.lastUsedPuzzleId != -1">
                       <a
                         class="ranking-puzzle-brand-link"
-                        ng-show="data.lastUsedPuzzleBrand"
+                        ng-show="data.lastUsedPuzzleIcon"
                         href="https://store.tribox.com/products/detail.php?product_id={{ data.lastUsedPuzzleId }}"
                         target="_blank"
                       >
                         <img
                           class="ranking-puzzle-brand"
-                          ng-src="https://store.tribox.com/user_data/img/category/{{ data.lastUsedPuzzleBrand }}.png"
+                          ng-src="/assets/images/brand_logo/{{ data.lastUsedPuzzleIcon }}.png"
                           height="24"
                         />
                       </a>
@@ -301,12 +301,14 @@
                                         var bestUsedPuzzleId = bestUsedPuzzles[eid][uid];
                                         var bestUsedPuzzleName = '';
                                         if (0 < bestUsedPuzzleId) {
-                                            bestUsedPuzzleName = TriboxContest.Products[bestUsedPuzzleId];
+                                            bestUsedPuzzleName = TriboxContest.shortenProductName(TriboxContest.Products[bestUsedPuzzleId]);
                                         }
                                         var lastUsedPuzzleId = lastUsedPuzzles[eid][uid];
                                         var lastUsedPuzzleName = '';
+                                        var lastUsedPuzzleIcon = '';
                                         if (0 < lastUsedPuzzleId) {
-                                            lastUsedPuzzleName = TriboxContest.Products[lastUsedPuzzleId];
+                                            lastUsedPuzzleName = TriboxContest.shortenProductName(TriboxContest.Products[lastUsedPuzzleId]);
+                                            lastUsedPuzzleIcon = TriboxContest.productBrandIcon(TriboxContest.Products[lastUsedPuzzleId]);
                                         }
                                         seasonPointsSorted[eid].push({
                                             'uid': uid, 'seasonPoint': seasonPoints[eid][uid],
@@ -315,7 +317,7 @@
                                             'bestUsedPuzzleName': bestUsedPuzzleName,
                                             'lastUsedPuzzleId': lastUsedPuzzleId,
                                             'lastUsedPuzzleName': lastUsedPuzzleName,
-                                            'lastUsedPuzzleBrand': lastUsedPuzzleBrands[eid][uid]
+                                            'lastUsedPuzzleIcon': lastUsedPuzzleIcon
                                         });
                                     }
                                 });

@@ -40,6 +40,15 @@ AngularJS と衝突するため、Jinja のデリミタを変更しています�
 <img ng-src="https://flagcdn.com/{{ r.user.iso2 }}.svg" />
 ```
 
+## 商品名の表示用省略とブランドロゴ
+
+パズルの商品名は表示時に `TriboxContest.shortenProductName`（basejs）で省略されます（ブランド名・仕様表記の除去）。ブランドロゴは保存データではなく**省略前の商品名から** `TriboxContest.productBrandIcon` が特定し、`images/brand_logo/<ブランド>.png` を表示します。商品名に複数ブランドが含まれる場合は最も規模の小さいブランド（グループ < メーカー < サブブランド < カスタムショップ）、同格なら ABC 順で先のロゴです。
+
+ルールはすべて **`src/public/javascripts/product-name-rules.js`** にあり、このファイルだけ編集すれば全ページに反映されます。
+
+- 名前から除去するブランド・仕様: `ProductNameSpecs` / `ProductNameBrands`（別のブランド名を含む名称は長い方を先に置く）
+- ロゴ: `BrandIcons`（新ブランドは `images/brand_logo/` に PNG を置いてエントリを追加）
+
 ## 色は CSS 変数を使う
 
 パレットは `main.css` 先頭の `:root` に定義しています（main.css は全ページで読み込まれます）。

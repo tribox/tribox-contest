@@ -116,14 +116,72 @@
         }
     };
 
+    // 商品名を表示用に省略する
+    // ルール (除去するブランド・仕様のリスト) は product-name-rules.js に定義されている。
+    TriboxContest.shortenProductName = function(name) {
+        if (!name) {
+            return name;
+        }
+        var specs = TriboxContest.ProductNameSpecs || [];
+        var brands = TriboxContest.ProductNameBrands || [];
+        var escapeRegExp = function(s) {
+            return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        };
+        specs.forEach(function(spec) {
+            name = name.split(spec).join('');
+        });
+        brands.forEach(function(brand) {
+            name = name.replace(new RegExp('(^|[\\s(])' + escapeRegExp(brand) + '($|[\\s)])', 'g'), '$1$2');
+        });
+        return name.replace(/\s{2,}/g, ' ').trim();
+    };
+
+    // 商品名からブランドを特定してロゴのファイル名を返す (特定できなければ '')
+    // 複数ブランドが含まれる場合は最も規模の小さいブランド、同格なら ABC 順で先のもの。
+    TriboxContest.productBrandIcon = function(name) {
+        if (!name) {
+            return '';
+        }
+        var escapeRegExp = function(s) {
+            return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        };
+        var best = null;
+        (TriboxContest.BrandIcons || []).forEach(function(brand) {
+            var hit = brand.match.some(function(token) {
+                var pattern = '(^|[\\s(])' + escapeRegExp(token) + (brand.loose ? '' : '($|[\\s)])');
+                return new RegExp(pattern).test(name);
+            });
+            if (!hit) {
+                return;
+            }
+            if (!best ||
+                brand.scale > best.scale ||
+                (brand.scale == best.scale && brand.icon.toLowerCase() < best.icon.toLowerCase())) {
+                best = brand;
+            }
+        });
+        return best ? best.icon : '';
+    };
+
     // Puzzle を整形する
     TriboxContest.formatPuzzle = function(results) {
         if (results.puzzle.type == 'database') {
-            return TriboxContest.Products[results.puzzle.product];
+            return TriboxContest.shortenProductName(TriboxContest.Products[results.puzzle.product]);
         } else if (results.puzzle.type == 'nodatabase') {
             return results.puzzle.input;
         } else {
             return 'その他・不明';
+        }
+    };
+
+    // Puzzle のブランドロゴを決める (省略前の商品名から特定する)
+    TriboxContest.puzzleBrandIcon = function(results) {
+        if (results.puzzle.type == 'database') {
+            return TriboxContest.productBrandIcon(TriboxContest.Products[results.puzzle.product]);
+        } else if (results.puzzle.type == 'nodatabase') {
+            return TriboxContest.productBrandIcon(results.puzzle.input);
+        } else {
+            return '';
         }
     };
 
@@ -354,5 +412,6 @@
     }]);
 
 </script>
+<script src="/assets/javascripts/product-name-rules.js"></script>
 
 [%- endmacro %]
