@@ -128,7 +128,7 @@ contest_url + '/contest/' + 'cid' + "/" + "eid" + "/confirm" %]
                         </select>
                         <label>キューブ</label>
                         <select class="form-control" ng-model="puzzle.product">
-                          [% for brandId, puzzles in brandsPuzzles %] [% for
+                          [% for brandId, puzzles in brandsPuzzles.items() %] [% for
                           puzzle in puzzles %]
                           <option
                             id="product-[[ puzzle.productId ]]"
