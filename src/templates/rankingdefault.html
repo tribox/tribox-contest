@@ -21,7 +21,17 @@
                 .child(snapInProgress.val().contest)
                 .once("value", function (snapContest) {
                   var contest = snapContest.val();
-                  window.location = "/ranking/" + contest.year + contest.season;
+                  // 第1節の間は現シーズンのランキングが空なので直前のシーズンへ
+                  var year = parseInt(contest.year, 10);
+                  var season = parseInt(contest.season, 10);
+                  var number = parseInt(snapInProgress.val().contest.slice(6), 10);
+                  var sid;
+                  if (number === 1) {
+                    sid = season === 2 ? "" + year + "1" : "" + (year - 1) + "2";
+                  } else {
+                    sid = "" + year + season;
+                  }
+                  window.location = "/ranking/" + sid;
                 });
             });
         },
