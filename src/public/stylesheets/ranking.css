@@ -117,6 +117,7 @@ html {
   overflow: hidden;
   text-overflow: ellipsis;
   color: var(--color-link);
+  font-weight: bold;
   text-decoration: none;
 }
 
