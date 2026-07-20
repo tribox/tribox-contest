@@ -134,6 +134,7 @@ firebase.auth().onAuthStateChanged(function(authData) {
 
     $scope.scrambleIndex = 0;
     $scope.scrambleIndexText = '1st';
+    $scope.scrambleFinished = false;
     //angular.element(document.getElementById('scramble-0')).removeClass('hide');
 
     // Judge Call
@@ -260,12 +261,19 @@ firebase.auth().onAuthStateChanged(function(authData) {
 
     var showScramble = function(index) {
         $timeout(function() {
-            if (window.TriboxContest.events['e[[ eid ]]'].attempts <= index) {
-                index = window.TriboxContest.events['e[[ eid ]]'].attempts - 1;
+            var attempts = window.TriboxContest.events['e[[ eid ]]'].attempts;
+            if (attempts <= index) {
+                // 全試技終了: スクランブルの代わりに終了メッセージを表示
+                $scope.scrambleFinished = true;
+                angular.element(document.getElementById('scramble-' + (attempts - 1))).addClass('hide');
+                angular.element(document.getElementById('scramble-finished')).removeClass('hide');
+            } else {
+                $scope.scrambleFinished = false;
+                $scope.scrambleIndexText = toOrdinal(index + 1);
+                angular.element(document.getElementById('scramble-' + (index - 1))).addClass('hide');
+                angular.element(document.getElementById('scramble-' + index)).removeClass('hide');
+                angular.element(document.getElementById('scramble-finished')).addClass('hide');
             }
-            $scope.scrambleIndexText = toOrdinal(index + 1);
-            angular.element(document.getElementById('scramble-' + (index - 1))).addClass('hide');
-            angular.element(document.getElementById('scramble-' + index)).removeClass('hide');
             $scope.resultsDetail = $scope.turnOnButtons(window.TriboxContest.events['e[[ eid ]]'].format, $scope.results);
         });
     };
