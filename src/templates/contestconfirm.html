@@ -152,6 +152,10 @@ contest_url + '/contest/' + 'cid' + "/" + "eid" + "/confirm" %]
                       </label>
                     </div>
                     <div class="col md-6">
+                      <p class="margin-bottom-10" style="font-size: 24px">
+                        <span class="cubing-icon event-[[ eid ]]" style="vertical-align: baseline;"></span>
+                        {{ events['e[[ eid ]]'].name }}
+                      </p>
                       <div ng-show="resultsData.type != 'solution'">
                         <p class="margin-bottom-0" style="font-size: 24px">
                           {{ resultTitle | uppercaseHead }}: {{ resultResult }}
