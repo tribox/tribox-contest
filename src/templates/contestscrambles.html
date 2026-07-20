@@ -3,7 +3,8 @@
     <thead>
         <tr>
             [% if showIndividual %]
-                <th>{{ scrambleIndexText }} Scramble:</th>
+                <th ng-hide="scrambleFinished">{{ scrambleIndexText }} Scramble:</th>
+                <th ng-show="scrambleFinished">Scramble:</th>
             [% else %]
                 <th colspan="2">Scrambles:</th>
             [% endif %]
@@ -25,6 +26,9 @@
                     <td>{{ s | removeHead }}</td>
                 </tr>
             [% endif %]
+            <tr id="scramble-finished" class="hide">
+                <td>すべての試技が終了しました。</td>
+            </tr>
         [% endif %]
     </tbody>
 </table>
