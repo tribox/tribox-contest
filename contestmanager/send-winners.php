@@ -45,18 +45,17 @@ $winnerslist = str_replace('_', ' ', $winnerslist);
 
 $subject = '[' . MY_EMAIL_CONTEST_NAME . '] 入賞賞金 (ポイント) 進呈のお知らせ';
 $body = $to_name . " 様\n\n"
-      . "triboxコンテストにご参加頂き、誠にありがとうございます。\n"
-      . $seasonstr . "のシーズンランキング入賞者のみなさまに、入賞賞金 (ポイント) についてお知らせ致します。\n\n"
+      . "triboxコンテストにご参加頂き、まことにありがとうございます。\n"
+      . $seasonstr . "のシーズンランキング入賞者のみなさまに、入賞賞金 (ポイント) についてお知らせいたします。\n\n"
       . $winnerslist . "\n"
       . "合計進呈ポイント: " . $point . "\n\n"
       . "https://contest.tribox.com/ranking/" . $season . "\n\n"
-      . "おめでとうございます！\n"
-      . "ポイントの受け取り方は次のとおりです。\n\n"
+      . "おめでとうございます！\n\n"
       . STORE_POINTS_NOTE . "\n"
       . "最新のパズル購入などにご利用ください。\n\n"
-      . "今シーズンもぜひよろしくお願い致します。\n"
-      . "https://contest.tribox.com/\n"
-      . "株式会社トライボックス\n";
+      . "今シーズンもよろしくお願いいたします。\n"
+      . "tribox CONTEST\n"
+      . "https://contest.tribox.com\n";
 
 // Send an email using PHPMailer
 $mailer = new PHPMailer(true);

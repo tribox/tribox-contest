@@ -34,16 +34,16 @@ $point = $argv[4];
 
 $subject = '[' . MY_EMAIL_CONTEST_NAME . '] 通算100節記念皆勤賞ポイント進呈のお知らせ';
 $body = $to_name . " 様\n\n"
-      . "いつもtriboxコンテストにご参加頂き、誠にありがとうございます。\n"
+      . "いつもtriboxコンテストにご参加頂き、まことにありがとうございます。\n"
       . "通算100節記念皆勤賞についてのお知らせです。\n\n"
       . "皆勤賞としてポイントを進呈させて頂きました。\n\n"
       . "進呈ポイント: " . $point . "\n\n"
       . "皆勤賞の条件: 通算100節目 (2018年前半期第21節) 終了時までに3×3×3で90回以上記録を残している方\n"
       . "※ストアと連携していないアカウントは対象外です。\n\n"
       . STORE_POINTS_NOTE . "\n"
-      . "今後ともぜひよろしくお願い致します。\n"
-      . "https://contest.tribox.com/\n"
-      . "株式会社トライボックス\n";
+      . "今後ともよろしくお願いいたします。\n"
+      . "tribox CONTEST\n"
+      . "https://contest.tribox.com\n";
 
 // Send an email using PHPMailer
 $mailer = new PHPMailer(true);

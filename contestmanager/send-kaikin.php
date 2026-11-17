@@ -42,7 +42,7 @@ if (substr($season, 4, 1) === '1') {
 
 $subject = '[' . MY_EMAIL_CONTEST_NAME . '] 皆勤賞ポイント進呈のお知らせ';
 $body = $to_name . " 様\n\n"
-      . "triboxコンテストにご参加頂き、誠にありがとうございます。\n"
+      . "triboxコンテストにご参加頂き、まことにありがとうございます。\n"
       . $seasonstr . "の皆勤賞についてのお知らせです。\n\n"
       . "ささやかではありますが、皆勤賞としてポイントを進呈させて頂きました。\n\n"
       . "なお皆勤賞は種目ごとに設定されており、1種目につき500ポイント（上限2000ポイント）を進呈しています。\n\n"
@@ -53,9 +53,9 @@ $body = $to_name . " 様\n\n"
       . "皆勤賞の条件: 対象の種目において、参加しなかった節が2回以下 かつ DNFが3回以下\n"
       . "※ストアと連携していないアカウントは対象外です。\n\n"
       . STORE_POINTS_NOTE . "\n"
-      . "今シーズンもぜひよろしくお願い致します。\n"
-      . "https://contest.tribox.com/\n"
-      . "株式会社トライボックス\n";
+      . "今シーズンもよろしくお願いいたします。\n"
+      . "tribox CONTEST\n"
+      . "https://contest.tribox.com\n";
 
 // Send an email using PHPMailer
 $mailer = new PHPMailer(true);
