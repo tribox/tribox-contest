@@ -10,6 +10,7 @@ var mysql = require('mysql');
 var exec = require('child_process').exec;
 
 var Config = require('./config.js');
+var storePoints = require('./store-points.js');
 
 var contestRef = require('./contestref.js').ref;
 
@@ -52,9 +53,8 @@ var appendPoints = function() {
                 append_log[logging_key] = {};
                 // ポイント加算処理・メール送信
                 if (result.customer_type == 0) { // store
-                    connectionStore.query('SELECT name01, name02, email, point FROM dtb_customer WHERE customer_id = ?', [
-                        result.customer_id
-                    ], function(error, results, fields) {
+                    // 送り先がストアの会員か tribox SELECT の人かは store-points.js が振り分ける
+                    storePoints.getCustomer(connectionStore, result.customer_id, function(error, customer) {
                         if (error) {
                             console.error(error);
                             console.error('Failed getting email address!');
@@ -62,17 +62,16 @@ var appendPoints = function() {
                         }
 
                         // ポイント加算顧客情報
-                        var name = results[0].name01 + ' ' + results[0].name02;
-                        var email = results[0].email;
+                        var name = customer.name;
+                        var email = customer.email;
                         console.log(email);
 
-                        // 進呈前ポイント数 (参考値でログに残すだけ)
-                        append_log[logging_key]['point_before'] = results[0].point;
+                        // 進呈前ポイント数 (参考値でログに残すだけ。tribox SELECT の人は null)
+                        append_log[logging_key]['point_before'] = customer.point;
 
                         console.log('UPDATE (id = ' + result.id + ')');
-                        connectionStore.query('UPDATE dtb_customer SET point = point + ? WHERE customer_id = ?', [
-                            result.point, result.customer_id
-                        ], function(error, results, fields) {
+                        var reason = Contests[result.contest_id].contestName + ' ' + Events[result.event_id].name + ' 抽選ポイント';
+                        storePoints.addPoint(connectionStore, result.customer_id, result.point, 'lottery-' + result.id, reason, function(error) {
                             if (error) {
                                 console.error(error);
                                 console.error('Failed updating point!');
@@ -102,8 +101,8 @@ var appendPoints = function() {
                                     //console.log(stdout);
                                     console.error(stderr);
 
-                                    // ポイント進呈後のポイント数をログしておく (参考値)
-                                    connectionStore.query('SELECT point FROM dtb_customer WHERE customer_id = ?', [
+                                    // ポイント進呈後のポイント数をログしておく (参考値。ストアの会員だけ)
+                                    if (!storePoints.isWmId(result.customer_id)) connectionStore.query('SELECT point FROM dtb_customer WHERE customer_id = ?', [
                                         result.customer_id
                                     ], function(error, results, fields) {
                                         if (error) {

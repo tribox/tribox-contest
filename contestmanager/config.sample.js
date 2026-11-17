@@ -22,6 +22,11 @@ exports.MYSQL_STORE_USER     = 'xxxxxxxx';
 exports.MYSQL_STORE_PASSWORD = 'xxxxxxxx';
 exports.MYSQL_STORE_DATABASE = 'xxxxxxxx';
 
+// wm-id（tribox SELECT のアカウントの窓口。Cloud Run のサービス。contestmanager/store-points.js）
+// 番号が 100,000,001 以上の人のポイントは、ストアの DB ではなくここに送る。鍵は別に共有する
+exports.WM_ID_URL = 'https://wm-id-xxxxxxxx.asia-northeast1.run.app';
+exports.WM_ID_KEY = 'xxxxxxxx';
+
 // MySQL の設定 (WCA)
 exports.MYSQL_WCA_HOST     = 'xxxxxxxx';
 exports.MYSQL_WCA_USER     = 'xxxxxxxx';

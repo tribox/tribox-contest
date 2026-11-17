@@ -10,6 +10,7 @@ var mysql = require('mysql');
 var exec = require('child_process').exec;
 
 var Config = require('./config.js');
+var storePoints = require('./store-points.js');
 
 var contestRef = require('./contestref.js').ref;
 
@@ -71,22 +72,19 @@ var appendPoints = function() {
             async.eachSeries(Ready, function(r, next) {
                 // ポイント加算処理・メール送信
                 if (r.customer_type == 0) { // store
-                    connectionStore.query('SELECT name01, name02, email FROM dtb_customer WHERE customer_id = ?', [
-                        r.customer_id
-                    ], function(error, results, fields) {
+                    // 送り先がストアの会員か tribox SELECT の人かは store-points.js が振り分ける
+                    storePoints.getCustomer(connectionStore, r.customer_id, function(error, customer) {
                         if (error) {
                             console.error(error);
                             console.error('Failed getting email address!');
                             process.exit(1);
                         } else {
                             // ポイント加算顧客情報
-                            var name = results[0].name01 + ' ' + results[0].name02;
-                            var email = results[0].email;
+                            var name = customer.name;
+                            var email = customer.email;
 
                             console.log('UPDATE (id = ' + r.id + ')');
-                            connectionStore.query('UPDATE dtb_customer SET point = point + ? WHERE customer_id = ?', [
-                                r.point_total, r.customer_id
-                            ], function(error, results, fields) {
+                            storePoints.addPoint(connectionStore, r.customer_id, r.point_total, 'kaikin100-' + r.id, 'kaikin100 ' + r.events_name.join('+'), function(error) {
                                 if (error) {
                                     console.error(error);
                                     console.error('Failed updating point!');
