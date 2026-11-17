@@ -46,7 +46,7 @@ $body = $to_name . " 様\n\n"
       . $contest_num . "節 " . $event_name . "種目 "
       . "におけるあなたの記録が不正と判断されたため、削除されました。\n"
       . "参加者本人が小さなお子様である場合、保護者の皆様にはその監督をお願いいたします。\n\n"
-      . "TORIBOコンテスト\n"
+      . "triboxコンテスト\n"
       . "https://contest.tribox.com\n";
 
 // Send an email using PHPMailer

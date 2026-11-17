@@ -32,7 +32,7 @@ $to = $argv[1];
 $subject = '【' . MY_EMAIL_CONTEST_NAME . '】テストメール';
 $body = $to . " 様\n\n"
       . "サーバーからのテストメールです。\n\n"
-      . "TORIBOコンテスト\n";
+      . "triboxコンテスト\n";
 
 // Send an email using PHPMailer
 $mailer = new PHPMailer(true);

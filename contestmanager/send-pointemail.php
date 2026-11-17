@@ -24,6 +24,7 @@ require_once('PHPMailer/src/PHPMailer.php');
 require_once('PHPMailer/src/SMTP.php');
 
 require_once('send-email-config.php');
+require_once('send-email-store.php');
 
 // Prepare email contents
 $to_email = $argv[1];
@@ -33,7 +34,7 @@ $event_name = $argv[4];
 $point = $argv[5];
 $point_type = $argv[6];
 
-$text = "おめでとうございます！\nTORIBOコンテストの抽選にて当選されましたので、\nお客様のTORIBOストアアカウントにポイントを進呈致しました。\n\n";
+$text = "おめでとうございます！\ntriboxコンテストの抽選ポイントが当たりました！\n\n";
 if ($point_type == 1) {
     $text = "参加ありがとうございます。\n契約アカウントの皆様に、ポイント進呈のお知らせです。\n\n";
 }
@@ -44,9 +45,8 @@ $body = $to_name . " 様\n\n"
       . "コンテスト名: " . $contest_name . "\n"
       . "種目名: " . $event_name . "\n"
       . "進呈ポイント: " . $point . "\n\n"
-      . "TORIBOストアのマイページよりご確認ください。\n"
-      . "https://store.tribox.com/mypage/\n\n"
-      . "TORIBOコンテスト\n"
+      . STORE_POINTS_NOTE . "\n"
+      . "triboxコンテスト\n"
       . "https://contest.tribox.com\n";
 
 // Send an email using PHPMailer

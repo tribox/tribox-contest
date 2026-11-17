@@ -32,9 +32,9 @@ $domain = $argv[3];
 
 $subject = '[' . MY_EMAIL_CONTEST_NAME . '] アカウント認証のためのメールアドレス確認';
 $body = $to . " 様\n\n"
-      . "アカウント認証を完了するためにTORIBOコンテストにログイン済みのデバイス・Webブラウザで以下のURLにアクセスしてください。\n"
+      . "アカウント認証を完了するためにtriboxコンテストにログイン済みのデバイス・Webブラウザで以下のURLにアクセスしてください。\n"
       . $domain . "/setting/verify/" . $token . "\n\n"
-      . "TORIBOコンテスト\n"
+      . "triboxコンテスト\n"
       . $domain . "\n";
 
 // Send an email using PHPMailer

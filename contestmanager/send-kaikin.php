@@ -24,6 +24,7 @@ require_once('PHPMailer/src/PHPMailer.php');
 require_once('PHPMailer/src/SMTP.php');
 
 require_once('send-email-config.php');
+require_once('send-email-store.php');
 
 // Prepare email contents
 $to_email = $argv[1];
@@ -41,18 +42,17 @@ if (substr($season, 4, 1) === '1') {
 
 $subject = '[' . MY_EMAIL_CONTEST_NAME . '] 皆勤賞ポイント進呈のお知らせ';
 $body = $to_name . " 様\n\n"
-      . "トリボコンテストにご参加頂き、誠にありがとうございます。\n"
+      . "triboxコンテストにご参加頂き、誠にありがとうございます。\n"
       . $seasonstr . "の皆勤賞についてのお知らせです。\n\n"
-      . "ささやかではありますが、皆勤賞としてTORIBOポイントを進呈させて頂きました。\n"
-      . "TORIBOストアのマイページよりご確認ください。\n"
-      . "https://store.tribox.com/mypage/\n\n"
+      . "ささやかではありますが、皆勤賞としてポイントを進呈させて頂きました。\n\n"
+      . STORE_POINTS_NOTE . "\n"
       . "なお皆勤賞は種目ごとに設定されており、1種目につき500ポイント（上限2000ポイント）を進呈しています。\n\n"
       . $to_name . " 様が皆勤賞を受賞された種目\n"
       . str_replace('+', "\n", $events_name)
       . "\n"
       . "合計進呈ポイント: " . $point . "\n\n"
       . "皆勤賞の条件: 対象の種目において、参加しなかった節が2回以下 かつ DNFが3回以下\n"
-      . "※非認証アカウント (TORIBOストアと連携していないアカウント) は対象外です。\n\n"
+      . "※ストアと連携していないアカウントは対象外です。\n\n"
       . "今シーズンもぜひよろしくお願い致します。\n"
       . "https://contest.tribox.com/\n"
       . "株式会社トライボックス\n";

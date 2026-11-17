@@ -24,6 +24,7 @@ require_once('PHPMailer/src/PHPMailer.php');
 require_once('PHPMailer/src/SMTP.php');
 
 require_once('send-email-config.php');
+require_once('send-email-store.php');
 
 // Prepare email contents
 $to_email = $argv[1];
@@ -33,14 +34,13 @@ $point = $argv[4];
 
 $subject = '[' . MY_EMAIL_CONTEST_NAME . '] 通算100節記念皆勤賞ポイント進呈のお知らせ';
 $body = $to_name . " 様\n\n"
-      . "いつもトリボコンテストにご参加頂き、誠にありがとうございます。\n"
+      . "いつもtriboxコンテストにご参加頂き、誠にありがとうございます。\n"
       . "通算100節記念皆勤賞についてのお知らせです。\n\n"
-      . "皆勤賞としてTORIBOポイントを進呈させて頂きました。\n"
-      . "TORIBOストアのマイページよりご確認ください。\n"
-      . "https://store.tribox.com/mypage/\n\n"
+      . "皆勤賞としてポイントを進呈させて頂きました。\n\n"
+      . STORE_POINTS_NOTE . "\n"
       . "進呈ポイント: " . $point . "\n\n"
       . "皆勤賞の条件: 通算100節目 (2018年前半期第21節) 終了時までに3×3×3で90回以上記録を残している方\n"
-      . "※非認証アカウント (TORIBOストアと連携していないアカウント) は対象外です。\n\n"
+      . "※ストアと連携していないアカウントは対象外です。\n\n"
       . "今後ともぜひよろしくお願い致します。\n"
       . "https://contest.tribox.com/\n"
       . "株式会社トライボックス\n";
