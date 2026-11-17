@@ -24,6 +24,7 @@ require_once('PHPMailer/src/PHPMailer.php');
 require_once('PHPMailer/src/SMTP.php');
 
 require_once('send-email-config.php');
+require_once('send-email-store.php');
 
 // Prepare email contents
 $to_email = $argv[1];
@@ -42,19 +43,19 @@ if (substr($season, 4, 1) === '1') {
 $winnerslist = str_replace('+', "\n", $events_name);
 $winnerslist = str_replace('_', ' ', $winnerslist);
 
-$subject = '[' . MY_EMAIL_CONTEST_NAME . '] 入賞賞金 (TORIBOポイント) 進呈のお知らせ';
+$subject = '[' . MY_EMAIL_CONTEST_NAME . '] 入賞賞金 (ポイント) 進呈のお知らせ';
 $body = $to_name . " 様\n\n"
-      . "トリボコンテストにご参加頂き、誠にありがとうございます。\n"
-      . $seasonstr . "のシーズンランキング入賞者のみなさまに、入賞賞金 (TORIBOポイント) についてお知らせ致します。\n\n"
+      . "triboxコンテストにご参加いただき、まことにありがとうございます。\n"
+      . $seasonstr . "のシーズンランキング入賞者のみなさまに、入賞賞金 (ポイント) についてお知らせいたします。\n\n"
       . $winnerslist . "\n"
       . "合計進呈ポイント: " . $point . "\n\n"
       . "https://contest.tribox.com/ranking/" . $season . "\n\n"
-      . "おめでとうございます！\n"
-      . "TORIBOポイントは、みなさまのTORIBOストアアカウントに既に付与されています。\n"
+      . "おめでとうございます！\n\n"
+      . STORE_POINTS_NOTE . "\n"
       . "最新のパズル購入などにご利用ください。\n\n"
-      . "今シーズンもぜひよろしくお願い致します。\n"
-      . "https://contest.tribox.com/\n"
-      . "株式会社トライボックス\n";
+      . "今シーズンもよろしくお願いいたします。\n"
+      . "tribox CONTEST\n"
+      . "https://contest.tribox.com\n";
 
 // Send an email using PHPMailer
 $mailer = new PHPMailer(true);
