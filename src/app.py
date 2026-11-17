@@ -11,6 +11,7 @@ from flask import Flask, make_response, redirect, render_template, request, send
 
 from src.models.verifying import Verifying
 from src.models.customer import Customer
+from src.models import wmid
 
 
 app = Flask(
@@ -682,27 +683,36 @@ def setting_verify():
                 if verifying_user_id:
                     error_message = "このコンテストアカウントはすでに認証済みです。"
                 else:
-                    # store DB接続
-                    with get_store_db_connection() as store_conn:
-                        # メールアドレスがストアに存在するかチェック
-                        customers = Customer.get_ones_by_email(store_conn, email)
-                        if customers:
-                            # 入力されたメールアドレスがストアに存在
-                            customer_id = customers[0].customer_id
+                    # 送り先は tribox SELECT のアカウントを先に探す（無ければ triboxストアの会員）。
+                    # tribox SELECT の人には wm-id が番号（100,000,001〜）を配り、それを会員番号と同じように使う
+                    customer_id = None
+                    lookup_failed = False
+                    try:
+                        customer_id = wmid.link(email)
+                    except wmid.WmIdError as e:
+                        app.logger.warning("verify: %s", e)
+                        lookup_failed = True
+                    if customer_id is None:
+                        with get_store_db_connection() as store_conn:
+                            customers = Customer.get_ones_by_email(store_conn, email)
+                            if customers:
+                                customer_id = customers[0].customer_id
 
-                            # そのメールアドレスが他のアカウントに結びつけられていないかチェック
-                            verifying_customer_id = Verifying.get_ones_by_customer_id(contest_conn, customer_id)
-                            if verifying_customer_id:
-                                error_message = "このストアアカウントはすでに他のコンテストアカウントに結びつけられています。"
-                            else:
-                                # トークンを生成してメール送信
-                                token = gen_token()
-                                send_email(email, token)
-                                Verifying.insert_verifying(contest_conn, token, user_id, customer_id)
-                                message = email + " 宛にメールを送信しました。メール内に書かれているリンクをクリックして認証を完了させてください。しばらく経ってもメールが届かない場合はお問い合わせください。"
+                    if customer_id is not None:
+                        # そのアカウントが他のコンテストアカウントに結びつけられていないかチェック
+                        verifying_customer_id = Verifying.get_ones_by_customer_id(contest_conn, customer_id)
+                        if verifying_customer_id:
+                            error_message = "このストアアカウントはすでに他のコンテストアカウントに結びつけられています。"
                         else:
-                            # ストアにメールアドレスが存在しない場合
-                            error_message = email + " は存在しないアカウントです。"
+                            # トークンを生成してメール送信
+                            token = gen_token()
+                            send_email(email, token)
+                            Verifying.insert_verifying(contest_conn, token, user_id, customer_id)
+                            message = email + " 宛にメールを送信しました。メール内に書かれているリンクをクリックして認証を完了させてください。しばらく経ってもメールが届かない場合はお問い合わせください。"
+                    elif lookup_failed:
+                        error_message = "いま確認できませんでした。時間をおいてもう一度お試しください。"
+                    else:
+                        error_message = email + " の tribox SELECT のアカウントが見つかりません。tribox SELECT（https://select.tribox.com/）でアカウントを作ってから、もう一度お試しください。"
 
     return render_template(
         "verify.html",
