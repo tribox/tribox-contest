@@ -9,7 +9,7 @@ define('STORE_POINTS_NOTE',
   . "ポイントはストアクレジットとして、数日以内にアカウントへ反映されます。\n"
   . "https://select.tribox.com/pages/account\n\n"
   . "■ まだ triboxストアアカウントを引き継いでいない方\n"
-  . "ポイントは旧ストアアカウント（現在非公開）に貯まっており、引き継ぐときにまとめて tribox SELECT のストアクレジットになります。\n"
+  . "ポイントは旧ストアアカウント（現在はログインできません）に貯まっており、引き継ぐときにまとめて tribox SELECT のストアクレジットになります。\n"
   . "引き継ぎは 2027年5月31日まで、こちらからお願いいたします。\n"
   . "https://select.tribox.com/pages/migrate\n"
 );
