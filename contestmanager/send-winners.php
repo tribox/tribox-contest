@@ -45,7 +45,7 @@ $winnerslist = str_replace('_', ' ', $winnerslist);
 
 $subject = '[' . MY_EMAIL_CONTEST_NAME . '] 入賞賞金 (ポイント) 進呈のお知らせ';
 $body = $to_name . " 様\n\n"
-      . "triboxコンテストにご参加頂き、まことにありがとうございます。\n"
+      . "triboxコンテストにご参加いただき、まことにありがとうございます。\n"
       . $seasonstr . "のシーズンランキング入賞者のみなさまに、入賞賞金 (ポイント) についてお知らせいたします。\n\n"
       . $winnerslist . "\n"
       . "合計進呈ポイント: " . $point . "\n\n"
